@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#2A2A2A"/> <!-- Color de fondo oscuro -->
+    <corners android:radius="8dp"/> <!-- Bordes redondeados -->
+    <padding android:left="12dp" android:right="12dp" />
+    <stroke android:width="2dp" android:color="#1DB954"/> <!-- Borde verde al estilo Spotify -->
+</shape>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="tv_song_name" type="id" />
+    <item name="iv_song_image" type="id" />
+    <item name="guideline2" type="id" />
+    <item name="tv_cur_time" type="id" />
+    <item name="seek_bar" type="id" />
+    <item name="tv_song_duration" type="id" />
+    <item name="guideline3" type="id" />
+    <item name="iv_play_pause_detail" type="id" />
+</resources>

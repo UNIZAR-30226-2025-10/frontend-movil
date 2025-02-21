@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="logo">logoIcon</string>
+    <string name="logInTitle">Feel the beat, live the sound.</string>
+    <string name="sign_up_btn">Registrate</string>
+    <string name="login_google_btn">Registrate con Google</string>
+    <string name="log_in_btn">Iniciar sesión</string>
+    <string name="content_description_media">image artist</string>
+</resources>
