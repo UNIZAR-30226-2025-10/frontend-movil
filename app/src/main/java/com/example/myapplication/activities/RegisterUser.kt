@@ -15,7 +15,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class RegisterUser : AppCompatActivity(){
+class RegisterUser : AppCompatActivity() {
+
     private lateinit var editTextUsername: EditText
     private lateinit var editTextEmail: EditText
     private lateinit var editTextPassword: EditText
@@ -46,19 +47,20 @@ class RegisterUser : AppCompatActivity(){
 
             val request = RegisterRequest(username, email, password)
 
-            if(username.isNotBlank() && email.isNotBlank() && password.isNotBlank()){
+            if (username.isNotBlank() && email.isNotBlank() && password.isNotBlank()) {
                 // Realizar la llamada de registro al servidor
                 apiService.postRegister(request).enqueue(object : Callback<RegisterResponse> {
                     override fun onResponse(
                         call: Call<RegisterResponse>,
                         response: Response<RegisterResponse>
                     ) {
-                        val statusCode = response.code()
+                        // Verifica si la respuesta es exitosa
                         if (response.isSuccessful) {
                             val registerResponse = response.body()
 
                             if (registerResponse != null) {
-                                if (statusCode == 201) {
+                                // Suponiendo que el código de error 0 es éxito
+                                if (registerResponse.codigoError == 0) {
                                     // Registro exitoso
                                     Toast.makeText(
                                         this@RegisterUser,
@@ -66,50 +68,28 @@ class RegisterUser : AppCompatActivity(){
                                         Toast.LENGTH_SHORT
                                     ).show()
                                     // Redirigir a la pantalla de inicio de sesión
-                                    val intent =
-                                        Intent(this@RegisterUser, Login::class.java)
+                                    val intent = Intent(this@RegisterUser, Login::class.java)
                                     startActivity(intent)
-                                    finish() // Finalizar la actividad actual para evitar volver atrás
+                                    finish() // Finalizar la actividad actual
+                                } else {
+                                    // Manejar error específico de la respuesta (como un correo ya en uso)
+                                    Toast.makeText(
+                                        this@RegisterUser,
+                                        "Error en el registro: Código ${registerResponse.codigoError}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             } else {
-                                //debug
                                 Toast.makeText(
                                     this@RegisterUser,
-                                    "Debug: statusCode != 201",
-                                    Toast.LENGTH_LONG
+                                    "Respuesta vacía del servidor.",
+                                    Toast.LENGTH_SHORT
                                 ).show()
                             }
+                        } else {
+                            // Si la respuesta no es exitosa
+                            handleErrorCode(response.code())
                         }
-                        else { // !response.isSuccesful eso quiere decir que el statusCode no es 2xx
-                            when (statusCode) {
-                                400 -> {
-                                    // Error en el registro
-                                    Toast.makeText(
-                                        this@RegisterUser,
-                                        "Error en el registro: Correo o usuario en uso",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-
-                                }
-                                500 -> {
-                                    // Error en la solicitud
-                                    Toast.makeText(
-                                        this@RegisterUser,
-                                        "Error interno en la solicitud",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-
-                                }
-                                else -> {//codigo de error desconocido
-                                    Toast.makeText(
-                                        this@RegisterUser,
-                                        "Error con codigo de error desconocido",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }
-                        }
-
                     }
 
                     override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
@@ -121,11 +101,38 @@ class RegisterUser : AppCompatActivity(){
                         ).show()
                     }
                 })
-            }
-            else{
+            } else {
                 Toast.makeText(this@RegisterUser, "Faltan campos por rellenar", Toast.LENGTH_SHORT).show()
             }
         }
+    }
 
+    private fun handleErrorCode(statusCode: Int) {
+        when (statusCode) {
+            400 -> {
+                // Error en el registro (correo o usuario ya en uso)
+                Toast.makeText(
+                    this@RegisterUser,
+                    "Error en el registro: Correo o usuario en uso",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            500 -> {
+                // Error interno en la solicitud
+                Toast.makeText(
+                    this@RegisterUser,
+                    "Error interno en la solicitud",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            else -> {
+                // Código de error desconocido
+                Toast.makeText(
+                    this@RegisterUser,
+                    "Error con código de error desconocido: $statusCode",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 }
