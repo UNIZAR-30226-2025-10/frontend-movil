@@ -1,13 +1,14 @@
 package com.example.myapplication.io.response
 
-class RegisterUserResponse (
-    val token: String?,
+data class RegisterUserResponse(
     val respuestaHTTP: Int,
-    val correo: String?,
-    val nombreUsuario: String?,
-    val fotoUsuario: String?,
-    val esOyente: Boolean?,
-    val esArtista: Boolean?,
-    val esPendiente: Boolean?,
-    val nombreArtistico: String?
+    val token: String?,
+    val usuario: Usuario?
+)
+class Usuario (
+    val correo: String,
+    val fotoPerfil: String,
+    val nombreUsuario: String,
+    val tipo: String,
+    val volumen: Int,
 )

@@ -52,7 +52,7 @@ class RegisterUser : AppCompatActivity() {
         }
     }
 
-    private fun registerUser(nombreUsuario: String, correo: String, contrasenya: String) {
+    private fun registerUser(correo: String, nombreUsuario: String, contrasenya: String) {
         val request = RegisterUserRequest(correo, nombreUsuario, contrasenya, true)
 
         apiService.postRegisterOyente(request).enqueue(object : Callback<RegisterUserResponse> {
@@ -60,7 +60,11 @@ class RegisterUser : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val registerResponse = response.body()
                     if (registerResponse != null) {
-                        if (registerResponse.respuestaHTTP == 200) {
+                        Log.d("MiApp", "Código de respuesta: ${registerResponse.respuestaHTTP}")
+                    }
+                    if (registerResponse != null) {
+                        Log.d("MiApp", "Respuesta exitosa: ${registerResponse}")
+                        if (registerResponse.respuestaHTTP == 0) {
                             showToast("Registro exitoso")
                             guardarDatosUsuario(registerResponse)
                             navigateToMainScreen()
@@ -92,23 +96,37 @@ class RegisterUser : AppCompatActivity() {
     }
 
     private fun guardarDatosUsuario(registerResponse: RegisterUserResponse) {
-        // Usando la clase Preferencias para guardar los datos
+        // Agregar logs para cada valor que se guarda
+        Log.d("guardarDatosUsuario", "Guardando datos del usuario")
+
+        // Guardar los valores utilizando la clase Preferencias
         Preferencias.guardarValorString("token", registerResponse.token ?: "")
-        Preferencias.guardarValorString("correo", registerResponse.correo ?: "")
-        Preferencias.guardarValorString("nombreUsuario", registerResponse.nombreUsuario ?: "")
-        Preferencias.guardarValorString("fotoUsuario", registerResponse.fotoUsuario ?: "")
-        Preferencias.guardarValorBooleano("esOyente", registerResponse.esOyente ?: false)
-        Preferencias.guardarValorBooleano("esArtista", registerResponse.esArtista ?: false)
-        Preferencias.guardarValorBooleano("esPendiente", registerResponse.esPendiente ?: false)
-        Preferencias.guardarValorString("nombreArtistico", registerResponse.nombreArtistico ?: "")
+        Log.d("guardarDatosUsuario", "Token guardado: ${registerResponse.token ?: "null"}")
+
+        Preferencias.guardarValorString("correo", registerResponse.usuario?.correo ?: "")
+        Log.d("guardarDatosUsuario", "Correo guardado: ${registerResponse.usuario?.correo ?: "null"}")
+
+        Preferencias.guardarValorString("fotoPerfil", registerResponse.usuario?.fotoPerfil ?: "")
+        Log.d("guardarDatosUsuario", "Foto de perfil guardada: ${registerResponse.usuario?.fotoPerfil ?: "null"}")
+
+        Preferencias.guardarValorString("nombreUsuario", registerResponse.usuario?.nombreUsuario ?: "")
+        Log.d("guardarDatosUsuario", "Nombre de usuario guardado: ${registerResponse.usuario?.nombreUsuario ?: "null"}")
+
+        Preferencias.guardarValorString("esOyente", registerResponse.usuario?.tipo ?: "")
+        Log.d("guardarDatosUsuario", "Es oyente: ${registerResponse.usuario?.tipo ?: ""}")
+
+        Preferencias.guardarValorEntero("volumen", registerResponse.usuario?.volumen ?: 0)
+        Log.d("guardarDatosUsuario", "Es artista: ${registerResponse.usuario?.volumen ?: 0}")
+
     }
+
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun navigateToMainScreen() {
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, Home::class.java)
         startActivity(intent)
         finish()
     }
