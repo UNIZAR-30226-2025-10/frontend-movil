@@ -1,8 +1,8 @@
 package com.example.myapplication.io.request
 
 data class RegisterUserRequest(
-    val username: String,
-    val email: String ,
-    val password: String,
+    val nombreUsuario: String,
+    val correo: String ,
+    val contrasenya: String,
     val esOyente: Boolean
 )

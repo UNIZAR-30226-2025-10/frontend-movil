@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/fondo"
+    android:gravity="center_horizontal">
+
+    <!-- Logo -->
+    <ImageView
+        android:id="@+id/logoImageView"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="100dp"
+        android:contentDescription="@string/logo"
+        android:elevation="10dp"
+        android:src="@drawable/logo"
+        app:tint="#FFFFFF" />
+
+    <!-- Texto descriptivo -->
+    <TextView
+        android:id="@+id/textoDescriptivo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="INTRODUCE TU CÓDIGO DE ARTISTA"
+        android:textSize="16sp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="32dp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textAlignment="center" />
+
+    <!-- Entrada para el código -->
+    <EditText
+        android:id="@+id/etEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Código"
+        android:textColorHint="#B3B3B3"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/borde_azul_redondo"
+        android:padding="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp" />
+
+    <!-- Botón de crear cuenta -->
+    <Button
+        android:id="@+id/nextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Crear cuenta de artista"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="@color/blueNuestro"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp" />
+</LinearLayout>
