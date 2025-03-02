@@ -22,7 +22,7 @@ class Inicio : AppCompatActivity() {
         }
 
         logInButton.setOnClickListener {
-            // Ir a pantalla de registro
+            // Ir a pantalla de  elegir tipo de registro
             startActivity(Intent(this, ElegirRegistro::class.java))
         }
 

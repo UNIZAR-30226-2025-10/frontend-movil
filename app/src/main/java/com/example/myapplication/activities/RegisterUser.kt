@@ -44,6 +44,16 @@ class RegisterUser : AppCompatActivity() {
             val email = editTextEmail.text.toString().trim()
             val password = editTextPassword.text.toString().trim()
 
+            if (!isValidUsername(username)) {
+                showToast("El nombre de usuario no puede contener '@'.")
+                return@setOnClickListener
+            }
+
+            if (!isValidPassword(password)) {
+                showToast("La contraseña debe tener al menos 8 caracteres, una letra y un carácter especial.")
+                return@setOnClickListener
+            }
+
             if (username.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()) {
                 registerUser(username, email, password)
             } else {
@@ -60,13 +70,10 @@ class RegisterUser : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val registerResponse = response.body()
                     if (registerResponse != null) {
-                        Log.d("MiApp", "Código de respuesta: ${registerResponse.respuestaHTTP}")
-                    }
-                    if (registerResponse != null) {
                         Log.d("MiApp", "Respuesta exitosa: ${registerResponse}")
                         if (registerResponse.respuestaHTTP == 0) {
                             showToast("Registro exitoso")
-                            guardarDatosUsuario(registerResponse)
+                            guardarDatosOyente(registerResponse)
                             navigateToMainScreen()
                         } else {
                             handleErrorCode(registerResponse.respuestaHTTP)
@@ -95,31 +102,41 @@ class RegisterUser : AppCompatActivity() {
         showToast(message)
     }
 
-    private fun guardarDatosUsuario(registerResponse: RegisterUserResponse) {
+    private fun guardarDatosOyente(registerResponse: RegisterUserResponse) {
         // Agregar logs para cada valor que se guarda
-        Log.d("guardarDatosUsuario", "Guardando datos del usuario")
+        Log.d("guardarDatosOyente", "Guardando datos del usuario")
 
         // Guardar los valores utilizando la clase Preferencias
         Preferencias.guardarValorString("token", registerResponse.token ?: "")
-        Log.d("guardarDatosUsuario", "Token guardado: ${registerResponse.token ?: "null"}")
+        Log.d("guardarDatosOyente", "Token guardado: ${registerResponse.token ?: "null"}")
 
-        Preferencias.guardarValorString("correo", registerResponse.usuario?.correo ?: "")
-        Log.d("guardarDatosUsuario", "Correo guardado: ${registerResponse.usuario?.correo ?: "null"}")
+        Preferencias.guardarValorString("correo", registerResponse.oyente?.correo ?: "")
+        Log.d("guardarDatosOyente", "Correo guardado: ${registerResponse.oyente?.correo ?: "null"}")
 
-        Preferencias.guardarValorString("fotoPerfil", registerResponse.usuario?.fotoPerfil ?: "")
-        Log.d("guardarDatosUsuario", "Foto de perfil guardada: ${registerResponse.usuario?.fotoPerfil ?: "null"}")
+        Preferencias.guardarValorString("fotoPerfil", registerResponse.oyente?.fotoPerfil ?: "")
+        Log.d("guardarDatosOyente", "Foto de perfil guardada: ${registerResponse.oyente?.fotoPerfil ?: "null"}")
 
-        Preferencias.guardarValorString("nombreUsuario", registerResponse.usuario?.nombreUsuario ?: "")
-        Log.d("guardarDatosUsuario", "Nombre de usuario guardado: ${registerResponse.usuario?.nombreUsuario ?: "null"}")
+        Preferencias.guardarValorString("nombreUsuario", registerResponse.oyente?.nombreUsuario ?: "")
+        Log.d("guardarDatosOyente", "Nombre de usuario guardado: ${registerResponse.oyente?.nombreUsuario ?: "null"}")
 
-        Preferencias.guardarValorString("esOyente", registerResponse.usuario?.tipo ?: "")
-        Log.d("guardarDatosUsuario", "Es oyente: ${registerResponse.usuario?.tipo ?: ""}")
+        Preferencias.guardarValorString("esOyente", registerResponse.oyente?.tipo ?: "")
+        Log.d("guardarDatosOyente", "Es oyente: ${registerResponse.oyente?.tipo ?: ""}")
 
-        Preferencias.guardarValorEntero("volumen", registerResponse.usuario?.volumen ?: 0)
-        Log.d("guardarDatosUsuario", "Es artista: ${registerResponse.usuario?.volumen ?: 0}")
+        Preferencias.guardarValorEntero("volumen", registerResponse.oyente?.volumen ?: 0)
+        Log.d("guardarDatosOyente", "Es artista: ${registerResponse.oyente?.volumen ?: 0}")
 
     }
 
+    // Función para validar el nombre de usuario (no debe contener "@")
+    private fun isValidUsername(username: String): Boolean {
+        return !username.contains("@") && username.isNotEmpty()
+    }
+
+    // Función para validar la contraseña (mínimo 8 caracteres, 1 letra y 1 carácter especial)
+    private fun isValidPassword(password: String): Boolean {
+        val regex = Regex("^(?=.*[A-Za-z])(?=.*[!@#\$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,}$")
+        return regex.matches(password)
+    }
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()

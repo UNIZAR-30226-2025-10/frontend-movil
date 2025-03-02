@@ -3,9 +3,10 @@ package com.example.myapplication.io.response
 data class RegisterUserResponse(
     val respuestaHTTP: Int,
     val token: String?,
-    val usuario: Usuario?
+    val oyente: Oyente?
 )
-class Usuario (
+
+class Oyente (
     val correo: String,
     val fotoPerfil: String,
     val nombreUsuario: String,
