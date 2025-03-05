@@ -68,7 +68,7 @@ class Login : AppCompatActivity() {
                         if(loginResponse.respuestaHTTP == 0){
                             showToast("Login existoso")
                             guardarDatosUsuario(loginResponse)
-                            navigateToMainScreen()
+                            navigate(loginResponse)
                         } else{
                             handleErrorCode(loginResponse.respuestaHTTP)
                         }
@@ -129,17 +129,24 @@ class Login : AppCompatActivity() {
         Preferencias.guardarValorString("nombreUsuario", loginResponse.usuario?.nombreUsuario ?: "")
         Log.d("guardarDatosOyente", "Nombre de usuario guardado: ${loginResponse.usuario?.nombreUsuario ?: "null"}")
 
-        Preferencias.guardarValorString("esOyente", loginResponse.usuario?.tipo ?: "")
-        Log.d("guardarDatosOyente", "Es oyente: ${loginResponse.usuario?.tipo ?: ""}")
+        Preferencias.guardarValorString("esOyente", loginResponse.tipo ?: "")
+        Log.d("guardarDatosOyente", "Es oyente: ${loginResponse.tipo ?: ""}")
 
         Preferencias.guardarValorEntero("volumen", loginResponse.usuario?.volumen ?: 0)
         Log.d("guardarDatosOyente", "Es artista: ${loginResponse.usuario?.volumen ?: 0}")
     }
 
-    private fun navigateToMainScreen() {
-        val intent = Intent(this, Home::class.java)
-        startActivity(intent)
-        finish()
+    private fun navigate(loginResponse: LoginResponse) {
+        if(loginResponse.tipo == "pendiente"){
+            val intent = Intent(this, CodigoArtista::class.java)
+            startActivity(intent)
+            finish()
+        }else{
+            val intent = Intent(this, Home::class.java)
+            startActivity(intent)
+            finish()
+        }
+
     }
 
     private fun showToast(message: String) {
