@@ -34,8 +34,20 @@ class Login : AppCompatActivity() {
         editTextUsername = findViewById(R.id.etName)
         editTextPassword = findViewById(R.id.etPassword)
 
-        //Referenciar el botón de login
+        //Referenciar el botones
         val buttonLogin: Button = findViewById(R.id.loginButton)
+        val buttonRegister: Button = findViewById(R.id.registerLink)
+        val buttonForgotPass: Button = findViewById(R.id.forgotPass)
+
+        //Evento clic del he olvidado contraseña
+        buttonForgotPass.setOnClickListener{
+            startActivity(Intent(this, CambiarPassword1::class.java))
+        }
+
+        //Evento clic de ir a registro
+        buttonRegister.setOnClickListener{
+             startActivity(Intent(this, ElegirRegistro::class.java))
+        }
 
         // Evento clic del botón de login
         buttonLogin.setOnClickListener {

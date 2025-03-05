@@ -67,6 +67,21 @@
             android:exported="false"
             android:theme="@style/Theme.MyApplication"/>
 
+        <!-- Agregar la actividad Home -->
+        <activity android:name=".activities.CambiarPassword1"
+            android:exported="false"
+            android:theme="@style/Theme.MyApplication"/>
+
+        <!-- Agregar la actividad Home -->
+        <activity android:name=".activities.CambiarPassword2"
+            android:exported="false"
+            android:theme="@style/Theme.MyApplication"/>
+
+        <!-- Agregar la actividad Home -->
+        <activity android:name=".activities.CambiarPassword3"
+            android:exported="false"
+            android:theme="@style/Theme.MyApplication"/>
+
     </application>
 
 </manifest>
