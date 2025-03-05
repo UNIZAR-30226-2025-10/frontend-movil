@@ -17,7 +17,34 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Contenido Principal -->
+    <!-- Botón Borrar Cuenta -->
+    <Button
+        android:id="@+id/botonDeleteAccount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Borrar Cuenta"
+        android:backgroundTint="#D32F2F"
+        android:textColor="#FFFFFF"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.4"/> <!-- Ajusta este valor para moverlo más arriba o abajo -->
+
+    <!-- Botón Log Out -->
+    <Button
+        android:id="@+id/botonLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Log Out"
+        android:backgroundTint="#1976D2"
+        android:textColor="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@id/botonDeleteAccount"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_marginTop="16dp"/>
+
+    <!--
     <LinearLayout
         android:id="@+id/mainContent"
         android:layout_width="match_parent"
@@ -27,7 +54,6 @@
         android:layout_marginTop="80dp"
         app:layout_constraintTop_toBottomOf="@id/toolbar">
 
-        <!-- Título de la sección Escuchado Recientemente -->
         <TextView
             android:id="@+id/recentlyListenedTitle"
             android:layout_width="wrap_content"
@@ -37,14 +63,12 @@
             android:textColor="#000e3b"
             android:layout_marginBottom="10dp"/>
 
-        <!-- RecyclerView para Escuchado Recientemente -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recentlyListened"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"/>
 
-        <!-- Título de la sección Playlists -->
         <TextView
             android:id="@+id/playlistsTitle"
             android:layout_width="wrap_content"
@@ -54,14 +78,12 @@
             android:textColor="#000e3b"
             android:layout_marginBottom="10dp"/>
 
-        <!-- RecyclerView para Playlists -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/playlistsRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"/>
 
-        <!-- Título de la sección Últimas Canciones -->
         <TextView
             android:id="@+id/latestSongsTitle"
             android:layout_width="wrap_content"
@@ -71,14 +93,12 @@
             android:textColor="#000e3b"
             android:layout_marginBottom="10dp"/>
 
-        <!-- RecyclerView para Últimas Canciones -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/latestSongsRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"/>
 
-        <!-- Título de la sección Recomendaciones -->
         <TextView
             android:id="@+id/recommendationsTitle"
             android:layout_width="wrap_content"
@@ -88,12 +108,11 @@
             android:textColor="#000e3b"
             android:layout_marginBottom="10dp"/>
 
-        <!-- RecyclerView para Recomendaciones -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recommendationsRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
     </LinearLayout>
-
+    -->
 </androidx.constraintlayout.widget.ConstraintLayout>
