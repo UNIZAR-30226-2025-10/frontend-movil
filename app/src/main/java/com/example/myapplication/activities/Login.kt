@@ -65,6 +65,11 @@ class Login : AppCompatActivity() {
                     val loginResponse = response.body()
                     if (loginResponse != null) {
                         Log.d("MiApp", "Respuesta exitosa: ${loginResponse}")
+                        Log.d("MiApp", "Respuesta exitosa tipo: ${loginResponse.tipo}")
+                        Log.d("MiApp", "Respuesta exitosa correo: ${loginResponse.usuario?.correo}")
+                        Log.d("MiApp", "Respuesta exitosa foto: ${loginResponse.usuario?.fotoPerfil}")
+                        Log.d("MiApp", "Respuesta exitosa user: ${loginResponse.usuario?.nombreUsuario}")
+                        Log.d("MiApp", "Respuesta exitosa volumen: ${loginResponse.usuario?.volumen}")
                         if(loginResponse.respuestaHTTP == 0){
                             showToast("Login existoso")
                             guardarDatosUsuario(loginResponse)
@@ -138,6 +143,11 @@ class Login : AppCompatActivity() {
 
     private fun navigate(loginResponse: LoginResponse) {
         if(loginResponse.tipo == "pendiente"){
+            val intent = Intent(this, Pendiente::class.java)
+            startActivity(intent)
+            finish()
+        }else if(loginResponse.tipo == "valido"){
+            Log.d("guardarDatosOyente", "Es valido: ${loginResponse.tipo ?: "null"}")
             val intent = Intent(this, CodigoArtista::class.java)
             startActivity(intent)
             finish()

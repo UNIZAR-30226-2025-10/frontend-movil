@@ -1,4 +1,8 @@
 package com.example.myapplication.io.request
 
-class RegisterArtistRequest {
-}
+data class RegisterArtistRequest(
+    val correo: String ,
+    val nombreUsuario: String,
+    val contrasenya: String,
+    val nombreArtistico: String
+)

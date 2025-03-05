@@ -52,6 +52,21 @@
             android:exported="false"
             android:theme="@style/Theme.MyApplication"/>
 
+        <!-- Agregar la actividad Codigo Artista -->
+        <activity android:name=".activities.CodigoArtista"
+            android:exported="false"
+            android:theme="@style/Theme.MyApplication"/>
+
+        <!-- Agregar la actividad Pendiente -->
+        <activity android:name=".activities.Pendiente"
+            android:exported="false"
+            android:theme="@style/Theme.MyApplication"/>
+
+        <!-- Agregar la actividad Home -->
+        <activity android:name=".activities.Home"
+            android:exported="false"
+            android:theme="@style/Theme.MyApplication"/>
+
     </application>
 
 </manifest>
