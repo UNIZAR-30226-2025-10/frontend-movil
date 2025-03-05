@@ -119,8 +119,8 @@ class RegisterUser : AppCompatActivity() {
         Preferencias.guardarValorString("nombreUsuario", registerResponse.oyente?.nombreUsuario ?: "")
         Log.d("guardarDatosOyente", "Nombre de usuario guardado: ${registerResponse.oyente?.nombreUsuario ?: "null"}")
 
-        Preferencias.guardarValorString("esOyente", registerResponse.oyente?.tipo ?: "")
-        Log.d("guardarDatosOyente", "Es oyente: ${registerResponse.oyente?.tipo ?: ""}")
+        Preferencias.guardarValorString("esOyente", registerResponse.tipo ?: "")
+        Log.d("guardarDatosOyente", "Es oyente: ${registerResponse.tipo ?: ""}")
 
         Preferencias.guardarValorEntero("volumen", registerResponse.oyente?.volumen ?: 0)
         Log.d("guardarDatosOyente", "Es artista: ${registerResponse.oyente?.volumen ?: 0}")
