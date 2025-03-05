@@ -2,88 +2,115 @@ package com.example.myapplication.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import retrofit2.Call
 import com.example.myapplication.R
+import com.example.myapplication.utils.Preferencias
+import com.example.myapplication.io.ApiService
+import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import com.example.myapplication.io.ApiService
-import com.example.myapplication.io.response.LoginResponse
 
 class Home : AppCompatActivity() {
 
-    private lateinit var btnLogout: Button
-    private lateinit var btnDeleteAccount: Button
     private lateinit var apiService: ApiService
-    private var token: String? = null  // El token será almacenado después del login
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home)
 
-        btnLogout = findViewById(R.id.botonLogout)
-        btnDeleteAccount = findViewById(R.id.botonDeleteAccount)
-
-        // Obtener el token del login (suponiendo que lo guardas al hacer login)
-        token = getTokenFromSharedPrefs()
-
+        // Inicialización de ApiService
         apiService = ApiService.create()
 
-        btnLogout.setOnClickListener {
-            token?.let { it -> logoutUser(it) }
+        // Referenciar los botones
+        val buttonLogout: Button = findViewById(R.id.botonLogout)
+        val buttonDeleteAccount: Button = findViewById(R.id.botonDeleteAccount)
+
+        // Evento clic del botón de logout
+        buttonLogout.setOnClickListener {
+            logout()
         }
 
-        btnDeleteAccount.setOnClickListener {
-            token?.let { it -> deleteUserAccount(it) }
+        // Evento clic del botón de delete account
+        buttonDeleteAccount.setOnClickListener {
+            deleteAccount()
         }
     }
 
-    private fun logoutUser(token: String) {
-        apiService.logout("Bearer $token").enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful) {
-                    Toast.makeText(this@Home, "Sesión cerrada", Toast.LENGTH_SHORT).show()
-                    navigateToLogin()
-                } else {
-                    Toast.makeText(this@Home, "Error al cerrar sesión", Toast.LENGTH_SHORT).show()
+    // Método para hacer logout utilizando la API
+    private fun logout() {
+        val token = Preferencias.obtenerValorString("token", "")
+
+        if (token.isNotEmpty()) {
+            // Llamada a la API para hacer logout
+            apiService.logout("Bearer $token").enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (response.isSuccessful) {
+                        // Borrar los datos guardados
+                        Preferencias.guardarValorString("token", "")
+                        Preferencias.guardarValorString("correo", "")
+                        Preferencias.guardarValorString("fotoPerfil", "")
+                        Preferencias.guardarValorString("nombreUsuario", "")
+                        Preferencias.guardarValorString("esOyente", "")
+                        Preferencias.guardarValorEntero("volumen", 0)
+
+                        // Mostrar mensaje y redirigir a login
+                        Toast.makeText(this@Home, "Has cerrado sesión correctamente", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(this@Home, Login::class.java)
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        Toast.makeText(this@Home, "Error al cerrar sesión", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
 
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                Toast.makeText(this@Home, "Fallo de conexión", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
-
-    private fun deleteUserAccount(token: String) {
-        apiService.deleteAccount("Bearer $token").enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful) {
-                    Toast.makeText(this@Home, "Cuenta eliminada", Toast.LENGTH_SHORT).show()
-                    navigateToLogin()
-                } else {
-                    Toast.makeText(this@Home, "Error al eliminar cuenta", Toast.LENGTH_SHORT).show()
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Toast.makeText(this@Home, "Error al hacer logout: ${t.message}", Toast.LENGTH_SHORT).show()
+                    Log.e("MiApp", "Error al hacer logout: ${t.message}")
                 }
-            }
-
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                Toast.makeText(this@Home, "Fallo de conexión", Toast.LENGTH_SHORT).show()
-            }
-        })
+            })
+        } else {
+            Toast.makeText(this, "No se ha encontrado un token válido", Toast.LENGTH_SHORT).show()
+        }
     }
 
-    private fun navigateToLogin() {
-        val intent = Intent(this, Inicio::class.java)
-        startActivity(intent)
-        finish()
-    }
+    // Método para eliminar la cuenta
+    private fun deleteAccount() {
+        val token = Preferencias.obtenerValorString("token", "")
 
-    private fun getTokenFromSharedPrefs(): String? {
-        // Recupera el token desde SharedPreferences (o el método que uses)
-        val sharedPrefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        return sharedPrefs.getString("token", null)
+        if (token.isNotEmpty()) {
+            apiService.deleteAccount("Bearer $token").enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (response.isSuccessful) {
+                        // Borrar los datos del usuario después de eliminar la cuenta
+                        Preferencias.guardarValorString("token", "")
+                        Preferencias.guardarValorString("correo", "")
+                        Preferencias.guardarValorString("fotoPerfil", "")
+                        Preferencias.guardarValorString("nombreUsuario", "")
+                        Preferencias.guardarValorString("esOyente", "")
+                        Preferencias.guardarValorEntero("volumen", 0)
+
+                        Toast.makeText(this@Home, "Cuenta eliminada correctamente", Toast.LENGTH_SHORT).show()
+
+                        // Redirigir a la pantalla de login
+                        val intent = Intent(this@Home, Login::class.java)
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        Toast.makeText(this@Home, "Error al eliminar la cuenta", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Toast.makeText(this@Home, "Error en la solicitud: ${t.message}", Toast.LENGTH_SHORT).show()
+                    Log.e("MiApp", "Error al eliminar cuenta: ${t.message}")
+                }
+            })
+        } else {
+            Toast.makeText(this, "No se ha encontrado un token válido", Toast.LENGTH_SHORT).show()
+        }
     }
 }
 
