@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 class ItemAdapter(private val items: List<String>) : RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_view, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_search, parent, false)
         return ItemViewHolder(view)
     }
 
@@ -22,7 +22,7 @@ class ItemAdapter(private val items: List<String>) : RecyclerView.Adapter<ItemAd
     }
 
     class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val itemTextView: TextView = itemView.findViewById(R.id.itemText)
+        private val itemTextView: TextView = itemView.findViewById(R.id.textView)
 
         fun bind(item: String) {
             itemTextView.text = item

@@ -138,7 +138,7 @@ class Login : AppCompatActivity() {
 
     private fun navigate(loginResponse: LoginResponse) {
         if(loginResponse.tipo == "pendiente"){
-            val intent = Intent(this, CodigoArtista::class.java)
+            val intent = Intent(this, Home::class.java)
             startActivity(intent)
             finish()
         }else{
