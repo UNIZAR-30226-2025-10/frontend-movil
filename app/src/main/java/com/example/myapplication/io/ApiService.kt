@@ -46,7 +46,7 @@ interface ApiService {
     ): Call<BuscadorResponse>
 
     companion object Factory {
-        private const val BASE_URL = "http://192.168.0.28:5000" // URL de la API
+        private const val BASE_URL = "https://api-noizz.onrender.com" // URL de la API
 
         fun create(): ApiService {
             val retrofit = Retrofit.Builder()
