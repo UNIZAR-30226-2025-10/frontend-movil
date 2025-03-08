@@ -7,9 +7,9 @@ data class LoginResponse(
     val usuario: Usuario?
 )
 
-class Usuario(
+class Usuario (
     val correo: String,
     val fotoPerfil: String,
     val nombreUsuario: String,
-    val volumen: Int
+    val volumen: Int,
 )

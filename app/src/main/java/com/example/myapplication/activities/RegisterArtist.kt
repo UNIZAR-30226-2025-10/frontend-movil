@@ -1,6 +1,8 @@
 package com.example.myapplication.activities
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -8,12 +10,19 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
 import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.request.RegisterArtistRequest
+import com.example.myapplication.io.response.RegisterArtistResponse
+import com.example.myapplication.io.response.RegisterUserResponse
+import com.example.myapplication.utils.Preferencias
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-class RegisterArtist : AppCompatActivity(){
-   /* private lateinit var editTextEmail: EditText
-    private lateinit var buttonSubmit: Button
+
+class RegisterArtist : AppCompatActivity() {
+
+    private lateinit var editTextUsername: EditText
+    private lateinit var editTextEmail: EditText
+    private lateinit var editTextPassword: EditText
+    private lateinit var editTextArtisticname: EditText
     private lateinit var apiService: ApiService
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,48 +32,123 @@ class RegisterArtist : AppCompatActivity(){
         // Inicializar ApiService
         apiService = ApiService.create()
 
-        // Referenciar el campo de correo y el botón de enviar
+        // Referenciar los EditText desde el layout
+        editTextUsername = findViewById(R.id.nombreUsuario)
         editTextEmail = findViewById(R.id.email)
-        buttonSubmit = findViewById(R.id.submitButton)
+        editTextArtisticname = findViewById(R.id.nombreArtisitico)
+        editTextPassword = findViewById(R.id.contraseña)
 
-        // Evento clic del botón para solicitar el código
-        buttonSubmit.setOnClickListener {
+
+        // Referenciar el botón de registro
+        val buttonRegister: Button = findViewById(R.id.enviarSolicitud)
+
+        // Evento clic del botón de registro
+        buttonRegister.setOnClickListener {
+            val username = editTextUsername.text.toString().trim()
             val email = editTextEmail.text.toString().trim()
+            val password = editTextPassword.text.toString().trim()
+            val artisticname = editTextArtisticname.text.toString().trim()
 
-            if (email.isNotEmpty()) {
-                sendResetRequest(email)
+            if (!isValidUsername(username)) {
+                showToast("El nombre de usuario no puede contener '@'.")
+                return@setOnClickListener
+            }
+
+            if (!isValidPassword(password)) {
+                showToast("La contraseña debe tener al menos 8 caracteres, una letra y un carácter especial.")
+                return@setOnClickListener
+            }
+
+            if (username.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() && artisticname.isNotEmpty()) {
+                registerArtist(email, username, password, artisticname)
             } else {
-                showToast("Por favor, ingrese un correo electrónico")
+                showToast("Todos los campos son obligatorios")
             }
         }
     }
 
-    private fun sendResetRequest(email: String) {
-        val request = ForgotPasswordRequest(email)
+    private fun registerArtist(correo: String, nombreUsuario: String, contrasenya: String, nombreArtistico: String) {
+        Log.d("EnvioRegistro", "Respuesta exitosa: ${correo}")
+        Log.d("EnvioRegistro", "Respuesta exitosa: ${nombreUsuario}")
+        Log.d("EnvioRegistro", "Respuesta exitosa: ${contrasenya}")
+        Log.d("EnvioRegistro", "Respuesta exitosa: ${nombreArtistico}")
 
-        apiService.forgotPassword(request).enqueue(object : Callback<Unit> {
-            override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+        val request = RegisterArtistRequest(correo, nombreUsuario, contrasenya, nombreArtistico)
+
+        apiService.postRegisterArtista(request).enqueue(object : Callback<RegisterArtistResponse> {
+            override fun onResponse(call: Call<RegisterArtistResponse>, response: Response<RegisterArtistResponse>) {
                 if (response.isSuccessful) {
-                    showToast("Correo de recuperación enviado. Revisa tu bandeja de entrada.")
-                    navigateToVerificationActivity(email)
+                    val registerResponse = response.body()
+                    if (registerResponse != null) {
+                        Log.d("MiApp", "Respuesta exitosa: ${registerResponse}")
+                        if (registerResponse.respuestaHTTP == 0) {
+                            showToast("Registro exitoso")
+                            guardarDatosOyente(registerResponse)
+                            navigateToPendiente()
+                        } else {
+                            handleErrorCode(registerResponse.respuestaHTTP)
+                        }
+                    } else {
+                        showToast("Error: Respuesta vacía del servidor")
+                    }
                 } else {
-                    showToast("Error al enviar el correo")
+                    showToast("Error en el registro: Código ${response.code()}")
                 }
             }
 
-            override fun onFailure(call: Call<Unit>, t: Throwable) {
+            override fun onFailure(call: Call<RegisterArtistResponse>, t: Throwable) {
                 showToast("Error en la solicitud: ${t.message}")
+                Log.e("MiApp", "Error en la solicitud: ${t.message}")
             }
         })
+    }
+
+    private fun handleErrorCode(statusCode: Int) {
+        val message = when (statusCode) {
+            400 -> "Error: Correo o usuario en uso"
+            500 -> "Error interno del servidor"
+            else -> "Error desconocido ($statusCode)"
+        }
+        showToast(message)
+    }
+
+    private fun guardarDatosOyente(registerResponse: RegisterArtistResponse) {
+        // Agregar logs para cada valor que se guarda
+        Log.d("guardarDatosArtista", "Guardando datos del usuario")
+
+        // Guardar los valores utilizando la clase Preferencias
+
+        Preferencias.guardarValorString("tipo", registerResponse.tipo ?: "")
+        Log.d("guardarDatosArtista", "Tipo guardado: ${registerResponse.tipo ?: "null"}")
+
+        Preferencias.guardarValorString("token", registerResponse.token ?: "")
+        Log.d("guardarDatosArtista", "Token guardado: ${registerResponse.token ?: "null"}")
+
+        Preferencias.guardarValorString("correo", registerResponse.pendiente?.correo ?: "")
+        Log.d("guardarDatosArtista", "Correo guardado: ${registerResponse.pendiente?.correo ?: "null"}")
+
+        Preferencias.guardarValorString("nombreUsuario", registerResponse.pendiente?.nombreUsuario ?: "")
+        Log.d("guardarDatosArtista", "Nombre de usuario guardado: ${registerResponse.pendiente?.nombreUsuario ?: "null"}")
+    }
+
+    // Función para validar el nombre de usuario (no debe contener "@")
+    private fun isValidUsername(username: String): Boolean {
+        return !username.contains("@") && username.isNotEmpty()
+    }
+
+    // Función para validar la contraseña (mínimo 8 caracteres, 1 letra y 1 carácter especial)
+    private fun isValidPassword(password: String): Boolean {
+        val regex = Regex("^(?=.*[A-Za-z])(?=.*[!@#\$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,}$")
+        return regex.matches(password)
     }
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun navigateToVerificationActivity(email: String) {
-        val intent = Intent(this, VerifyCodeActivity::class.java)
-        intent.putExtra("email", email)
+    private fun navigateToPendiente() {
+        val intent = Intent(this, Pendiente::class.java)
         startActivity(intent)
-    }*/
+        finish()
+    }
 }

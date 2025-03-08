@@ -1,4 +1,14 @@
 package com.example.myapplication.io.response
 
-class RegisterArtistResponse {
-}
+data class RegisterArtistResponse(
+    val respuestaHTTP: Int,
+    val pendiente: Pendiente?,
+    val tipo: String,
+    val token: String?
+
+)
+
+class Pendiente(
+    val correo: String,
+    val nombreUsuario: String
+)

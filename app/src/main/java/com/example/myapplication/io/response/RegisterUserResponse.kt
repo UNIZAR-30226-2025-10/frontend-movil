@@ -7,9 +7,9 @@ data class RegisterUserResponse(
     val oyente: Oyente?
 )
 
-class Oyente(
+class Oyente (
     val correo: String,
     val fotoPerfil: String,
     val nombreUsuario: String,
-    val volumen: Int
+    val volumen: Int,
 )
