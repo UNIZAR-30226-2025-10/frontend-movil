@@ -77,8 +77,26 @@
             android:exported="false"
             android:theme="@style/Theme.MyApplication"/>
 
-        <!-- Agregar la actividad Home -->
         <activity android:name=".activities.CambiarPassword3"
+            android:exported="false"
+            android:theme="@style/Theme.MyApplication"/>
+            
+        <!-- Agregar la actividad Perfil-->
+        <activity android:name=".activities.Perfil"
+            android:exported="false"
+            android:theme="@style/Theme.MyApplication"/>
+
+        <!-- Agregar la actividad Borrar cuenta -->
+        <activity android:name=".activities.DeleteAccount"
+            android:exported="false"
+            android:theme="@style/Theme.MyApplication"/>
+
+        <!-- Agregar la actividad Cerrar sesion -->
+        <activity android:name=".activities.Logout"
+            android:exported="false"
+            android:theme="@style/Theme.MyApplication"/>
+
+        <activity android:name=".activities.Buscador"
             android:exported="false"
             android:theme="@style/Theme.MyApplication"/>
 

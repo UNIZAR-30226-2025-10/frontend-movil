@@ -30,4 +30,7 @@ object Preferencias {
     fun obtenerValorEntero(key: String, defaultValue: Int): Int {
         return sharedPreferences.getInt(key, defaultValue)
     }
+    fun borrarDatosUsuario(){
+        sharedPreferences.edit().clear().apply()
+    }
 }
