@@ -10,15 +10,12 @@ import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.io.response.*
 
-class CancionAdapter(private val listaCanciones: List<Cancion>) : RecyclerView.Adapter<CancionAdapter.CancionViewHolder>() {
+class CancionAdapter(private var listaCanciones: List<Cancion>) : RecyclerView.Adapter<CancionAdapter.CancionViewHolder>() {
 
-    private var results: List<SearchResultItem> = emptyList()
+    // Cambia el método para actualizar la lista
     fun updateData(searchResponse: List<Cancion>) {
-        results = listOf(
-            SearchResultItem.HeaderItem("Canciones"),
-            SearchResultItem.CancionItem(searchResponse)
-        )
-        notifyDataSetChanged()
+        listaCanciones = searchResponse  // Actualiza directamente listaCanciones
+        notifyDataSetChanged()  // Notifica al adaptador que se actualizó la lista
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CancionViewHolder {
@@ -45,4 +42,3 @@ class CancionAdapter(private val listaCanciones: List<Cancion>) : RecyclerView.A
         val imagenCancion: ImageView = itemView.findViewById(R.id.imageView)
     }
 }
-

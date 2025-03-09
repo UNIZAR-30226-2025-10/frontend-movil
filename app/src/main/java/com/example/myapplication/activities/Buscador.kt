@@ -55,10 +55,13 @@ class Buscador : AppCompatActivity() {
                 if (response.isSuccessful) {
                     response.body()?.let {
                         if (it.respuestaHTTP == 0) {
-                            // Actualiza los datos con la lista de canciones obtenida
-                            val canciones = it.canciones // Asume que el nombre del campo es "resultadoCanciones"
-                            cancionAdapter.updateData(canciones)
-                            showToast("Búsqueda exitosa")
+                            val canciones = it.canciones
+                            if (canciones.isNotEmpty()) {
+                                cancionAdapter.updateData(canciones)
+                                showToast("Se encontraron ${canciones.size} canciones")
+                            } else {
+                                showToast("No se encontraron canciones")
+                            }
                         } else {
                             handleErrorCode(it.respuestaHTTP)
                         }
