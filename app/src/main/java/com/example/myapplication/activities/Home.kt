@@ -1,24 +1,14 @@
 package com.example.myapplication.activities
 
-import Buscador
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
-import com.example.myapplication.utils.Preferencias
 import com.example.myapplication.io.ApiService
-import com.example.myapplication.io.request.DeleteAccountRequest
-import com.example.myapplication.io.response.DeleteAccountResponse
-import com.example.myapplication.io.response.LogOutResponse
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+
 
 class Home : AppCompatActivity() {
 

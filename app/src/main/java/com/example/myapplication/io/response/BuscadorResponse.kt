@@ -1,5 +1,6 @@
 package com.example.myapplication.io.response
 
+// Modelo de respuesta de la API
 data class BuscadorResponse(
     val respuestaHTTP: Int,
     val canciones: List<Cancion>,
@@ -9,30 +10,46 @@ data class BuscadorResponse(
     val perfiles: List<Perfil>
 )
 
-class Cancion(
+// Clases de datos para cada entidad
+data class Cancion(
     val fotoPortada: String,
     val id: Int,
     val nombre: String,
     val nombreArtisticoArtista: String
 )
-class Album(
+
+data class Album(
     val fotoPortada: String,
     val id: Int,
     val nombre: String,
     val nombreArtisticoArtista: String
 )
-class Playlist(
+
+data class Playlist(
     val fotoPortada: String,
     val id: Int,
     val nombre: String,
     val nombreUsuarioCreador: String
 )
-class Artista(
+
+/*data class Artista(  // La descomenté y la convertí en data class
     val fotoPerfil: String,
     val nombreArtistico: String,
     val nombreUsuario: String
-)
-class Perfil(
+)*/
+
+data class Perfil(
     val fotoPerfil: String,
     val nombreUsuario: String
 )
+
+// Clases selladas para usar en el adaptador
+sealed class SearchResultItem {
+    data class CancionItem(val cancion: List<Cancion>) : SearchResultItem()
+    data class AlbumItem(val album: List<Album>) : SearchResultItem()
+    data class ArtistaItem(val artista: List<Artista>) : SearchResultItem()
+    data class PlaylistItem(val playlist: List<Playlist>) : SearchResultItem()
+    data class PerfilItem(val perfil: List<Perfil>) : SearchResultItem()
+    data class HeaderItem(val title: String) : SearchResultItem()
+}
+
