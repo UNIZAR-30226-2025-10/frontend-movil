@@ -107,6 +107,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <TextView
+                android:id="@+id/textViewTituloCanciones"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CANCIONES"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="8dp" />
+
             <!-- RecyclerView para Canciones -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewCanciones"
@@ -114,6 +124,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 tools:ignore="NotSibling" />
+
+            <TextView
+                android:id="@+id/textViewTituloArtistas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ARTISTAS"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="8dp" />
 
             <!-- RecyclerView para Artistas -->
             <androidx.recyclerview.widget.RecyclerView
@@ -123,6 +143,16 @@
                 android:layout_marginTop="20dp"
                 tools:ignore="NotSibling" />
 
+            <TextView
+                android:id="@+id/textViewTituloAlbumes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ALBUMES"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="8dp" />
+
             <!-- RecyclerView para Álbumes -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewAlbumes"
@@ -131,6 +161,16 @@
                 android:layout_marginTop="20dp"
                 tools:ignore="NotSibling" />
 
+            <TextView
+                android:id="@+id/textViewTituloPlaylists"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PLAYLISTS"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="8dp" />
+
             <!-- RecyclerView para Playlists -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewPlaylists"
@@ -138,6 +178,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 tools:ignore="NotSibling" />
+
+            <TextView
+                android:id="@+id/textViewTituloPerfiles"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PERFILES"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="8dp" />
 
             <!-- RecyclerView para Perfiles -->
             <androidx.recyclerview.widget.RecyclerView
