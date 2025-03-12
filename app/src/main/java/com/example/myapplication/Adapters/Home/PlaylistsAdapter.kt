@@ -10,11 +10,12 @@ import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.io.response.*
 
-class PlaylistsAdapter (private var listaMisPLaylists: List<MisPlaylist>) : RecyclerView.Adapter<PlaylistsAdapter.MisPlaylistViewHolder>() {
+class PlaylistsAdapter (private var listaMisPLaylists: MutableList<MisPlaylist>) : RecyclerView.Adapter<PlaylistsAdapter.MisPlaylistViewHolder>() {
 
     // Cambia el método para actualizar la lista
     fun updateDataMisPlaylists(searchResponse: List<MisPlaylist>) {
-        listaMisPLaylists = searchResponse  // Actualiza directamente listaCanciones
+        listaMisPLaylists.clear()
+        listaMisPLaylists.addAll(searchResponse)  // Actualiza directamente listaCanciones
         notifyDataSetChanged()  // Notifica al adaptador que se actualizó la lista
     }
 

@@ -8,7 +8,7 @@ import com.example.myapplication.io.response.RegisterUserResponse
 import com.example.myapplication.io.request.DeleteAccountRequest
 import com.example.myapplication.io.response.BuscadorResponse
 import com.example.myapplication.io.response.DeleteAccountResponse
-import com.example.myapplication.io.response.HistorialArtistasResponse
+import com.example.myapplication.io.response.HistorialRecientesResponse
 import com.example.myapplication.io.response.LogOutResponse
 import com.example.myapplication.io.response.HistorialEscuchasResponse
 import com.example.myapplication.io.response.PlaylistsResponse
@@ -51,8 +51,8 @@ interface ApiService {
 
 
     // Agregar los nuevos métodos para obtener datos del home
-    @GET("/get-historial-artistas")
-    fun getHistorialArtistas(@Header("Authorization") token: String): Call<HistorialArtistasResponse>
+    @GET("/get-historial-colecciones")
+    fun getHistorialRecientes(@Header("Authorization") token: String): Call<HistorialRecientesResponse>
 
     @GET("/get-historial-canciones")
     fun getHistorialEscuchas(@Header("Authorization") token: String): Call<HistorialEscuchasResponse>

@@ -10,10 +10,11 @@ import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.io.response.HCancion
 
-    class EscuchasAdapter(private var listaEscuchas: List<HCancion>) : RecyclerView.Adapter<EscuchasAdapter.EscuchaViewHolder>() {
+    class EscuchasAdapter(private var listaEscuchas: MutableList<HCancion>) : RecyclerView.Adapter<EscuchasAdapter.EscuchaViewHolder>() {
     // Cambia el método para actualizar la lista
     fun updateDataEscucha(searchResponse: List<HCancion>) {
-        listaEscuchas = searchResponse
+        listaEscuchas.clear()
+        listaEscuchas.addAll(searchResponse)
         notifyDataSetChanged()  // Notifica al adaptador que se actualizó la lista
     }
 

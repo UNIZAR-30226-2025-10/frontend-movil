@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.io.request.DeleteAccountRequest
 import com.example.myapplication.io.response.DeleteAccountResponse
-import com.example.myapplication.io.response.HistorialArtistasResponse
+import com.example.myapplication.io.response.HistorialRecientesResponse
 import com.example.myapplication.io.response.LogOutResponse
 import retrofit2.Call
 import retrofit2.Callback
@@ -28,7 +28,7 @@ import retrofit2.Response
 import com.example.myapplication.io.response.HistorialEscuchasResponse
 import com.example.myapplication.io.response.PlaylistsResponse
 import com.example.myapplication.io.response.RecomendacionesResponse
-import com.example.myapplication.Adapters.Home.ArtistasAdapter
+import com.example.myapplication.Adapters.Home.RecientesAdapter
 import com.example.myapplication.Adapters.Home.EscuchasAdapter
 import com.example.myapplication.Adapters.Home.PlaylistsAdapter
 import com.example.myapplication.Adapters.Home.RecomendacionesAdapter
@@ -36,11 +36,11 @@ import com.example.myapplication.Adapters.Home.RecomendacionesAdapter
 class Home : AppCompatActivity() {
 
     private lateinit var apiService: ApiService
-    private lateinit var recyclerViewArtistas: RecyclerView
+    private lateinit var recyclerViewRecientes: RecyclerView
     private lateinit var recyclerViewEscuchas: RecyclerView
     private lateinit var recyclerViewPlaylists: RecyclerView
     private lateinit var recyclerViewRecomendaciones: RecyclerView
-    private lateinit var artistasAdapter: ArtistasAdapter
+    private lateinit var RecientesAdapter: RecientesAdapter
     private lateinit var escuchasAdapter: EscuchasAdapter
     private lateinit var playlistsAdapter: PlaylistsAdapter
     private lateinit var recomendacionesAdapter: RecomendacionesAdapter
@@ -55,8 +55,8 @@ class Home : AppCompatActivity() {
 
 
         //Inicializar los recyclerView
-        recyclerViewArtistas = findViewById(R.id.recyclerViewArtistasH)
-        recyclerViewArtistas.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        recyclerViewRecientes = findViewById(R.id.recyclerViewRecientes)
+        recyclerViewRecientes.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
         recyclerViewEscuchas = findViewById(R.id.recyclerViewEscuchas)
         recyclerViewEscuchas.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
@@ -68,8 +68,8 @@ class Home : AppCompatActivity() {
         recyclerViewRecomendaciones.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
         // Inicia los adaptadores
-        artistasAdapter = ArtistasAdapter(mutableListOf())
-        recyclerViewArtistas.adapter = artistasAdapter
+        RecientesAdapter = RecientesAdapter(mutableListOf())
+        recyclerViewRecientes.adapter = RecientesAdapter
 
         escuchasAdapter = EscuchasAdapter(mutableListOf())
         recyclerViewEscuchas.adapter = escuchasAdapter
@@ -88,28 +88,34 @@ class Home : AppCompatActivity() {
     }
 
     private fun loadHomeData() {
-        getHistorialartistas()
-        getHistorialEscuchas()
-        getMisPlaylists()
-        getRecomendaciones()
+        getHistorialRecientes()
+        //getHistorialEscuchas()
+        //getMisPlaylists()
+        //getRecomendaciones()
     }
 
-    private fun getHistorialartistas() {
+    private fun getHistorialRecientes() {
         val token = Preferencias.obtenerValorString("token", "")
-        apiService.getHistorialArtistas("Bearer $token").enqueue(object : Callback<HistorialArtistasResponse> {
-            override fun onResponse(call: Call<HistorialArtistasResponse>, response: Response<HistorialArtistasResponse>) {
+        apiService.getHistorialRecientes("Bearer $token").enqueue(object : Callback<HistorialRecientesResponse> {
+            override fun onResponse(call: Call<HistorialRecientesResponse>, response: Response<HistorialRecientesResponse>) {
+                Log.d("Mi app", "entra en on response Recientes")
                 if (response.isSuccessful) {
+                    Log.d("Mi app", "entra en on response succesful Recientes")
                     response.body()?.let {
                         if (it.respuestaHTTP == 0) {
-                            val artistas = it.historial_artistas
+                            Log.d("Mi app", "entra en on respuesta http Recientes")
+                            val Recientes = it.historial_Recientes
+                            Log.d("Mi app", "recientes = $Recientes")
 
                             // Actualizar y mostrar las canciones si las hay
-                            if (artistas.isNotEmpty()) {
-                                artistasAdapter.updateDataArtista(artistas)
-                                recyclerViewArtistas.visibility = View.VISIBLE
+                            if (Recientes.isNotEmpty()) {
+                                Log.d("Mi app", "no esta vacía")
+                                RecientesAdapter.updateDataReciente(Recientes)
+                                recyclerViewRecientes.visibility = View.VISIBLE
                             } else {
-                                recyclerViewArtistas.visibility = View.GONE
-                                showToast("No hay artistas")
+                                Log.d("Mi app", "no hay recientes")
+                                recyclerViewRecientes.visibility = View.GONE
+                                showToast("No hay Recientes")
                             }
 
                         } else {
@@ -119,9 +125,10 @@ class Home : AppCompatActivity() {
                 } else {
                     showToast("Error en la búsqueda: Código ${response.code()}")
                 }
+                Log.d("Mi app", "sale de recientes")
             }
 
-            override fun onFailure(call: Call<HistorialArtistasResponse>, t: Throwable) {
+            override fun onFailure(call: Call<HistorialRecientesResponse>, t: Throwable) {
                 showToast("Error en la solicitud: ${t.message}")
             }
         })
@@ -131,6 +138,7 @@ class Home : AppCompatActivity() {
         val token = Preferencias.obtenerValorString("token", "")
         apiService.getHistorialEscuchas("Bearer $token").enqueue(object : Callback<HistorialEscuchasResponse> {
             override fun onResponse(call: Call<HistorialEscuchasResponse>, response: Response<HistorialEscuchasResponse>) {
+                Log.d("Mi app", "entra en on response Escuchas")
                 if (response.isSuccessful) {
                     response.body()?.let {
                         if (it.respuestaHTTP == 0) {
@@ -166,6 +174,7 @@ class Home : AppCompatActivity() {
         val token = Preferencias.obtenerValorString("token", "")
         apiService.getMisPlaylists("Bearer $token").enqueue(object : Callback<PlaylistsResponse> {
             override fun onResponse(call: Call<PlaylistsResponse>, response: Response<PlaylistsResponse>) {
+                Log.d("Mi app", "entra en on response Playlists")
                 if (response.isSuccessful) {
                     response.body()?.let {
                         if (it.respuestaHTTP == 0) {
@@ -199,6 +208,7 @@ class Home : AppCompatActivity() {
         val token = Preferencias.obtenerValorString("token", "")
         apiService.getRecomendaciones("Bearer $token").enqueue(object : Callback<RecomendacionesResponse> {
             override fun onResponse(call: Call<RecomendacionesResponse>, response: Response<RecomendacionesResponse>) {
+                Log.d("Mi app", "entra en on response Recomendaciones")
                 if (response.isSuccessful) {
                     response.body()?.let {
                         if (it.respuestaHTTP == 0) {

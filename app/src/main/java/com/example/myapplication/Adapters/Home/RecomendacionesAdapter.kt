@@ -10,10 +10,11 @@ import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.io.response.Recomendaciones
 
-class RecomendacionesAdapter (private var listaRecomendaciones: List<Recomendaciones>) : RecyclerView.Adapter<RecomendacionesAdapter.RecomendacionViewHolder>() {
+class RecomendacionesAdapter (private var listaRecomendaciones: MutableList<Recomendaciones>) : RecyclerView.Adapter<RecomendacionesAdapter.RecomendacionViewHolder>() {
     // Cambia el método para actualizar la lista
     fun updateDataRecomendacion(searchResponse: List<Recomendaciones>) {
-        listaRecomendaciones = searchResponse
+        listaRecomendaciones.clear()
+        listaRecomendaciones.addAll(searchResponse)
         notifyDataSetChanged()  // Notifica al adaptador que se actualizó la lista
     }
 

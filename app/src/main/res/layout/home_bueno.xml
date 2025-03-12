@@ -55,18 +55,18 @@
 
 
             <TextView
-                android:id="@+id/textViewTituloArtistasH"
+                android:id="@+id/textViewTituloRecientes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ARTISTAS"
+                android:text="Escuchado recientemente"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_gravity="center_horizontal"
                 android:paddingBottom="8dp" />
 
-            <!-- RecyclerView para Artistas -->
+            <!-- RecyclerView para Recientes -->
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewArtistasH"
+                android:id="@+id/recyclerViewRecientes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
@@ -77,7 +77,7 @@
                 android:id="@+id/textViewTituloEscuchas"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ULTIMAS ESCUCHAS"
+                android:text="Ultimas Escuchas"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_gravity="center_horizontal"
@@ -96,7 +96,7 @@
                 android:id="@+id/textViewTituloMisPlaylists"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="MIS PLAYLISTS"
+                android:text="Mis Playlists"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_gravity="center_horizontal"
@@ -115,7 +115,7 @@
                 android:id="@+id/textViewTituloRecomendaciones"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="RECOMENDACIONES"
+                android:text="Recomendaciones"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_gravity="center_horizontal"
