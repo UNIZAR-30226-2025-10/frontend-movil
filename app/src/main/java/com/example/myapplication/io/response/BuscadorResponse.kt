@@ -13,21 +13,21 @@ data class BuscadorResponse(
 // Clases de datos para cada entidad
 data class Cancion(
     val fotoPortada: String,
-    val id: Int,
+    val id: String,
     val nombre: String,
     val nombreArtisticoArtista: String
 )
 
 data class Album(
     val fotoPortada: String,
-    val id: Int,
+    val id: String,
     val nombre: String,
     val nombreArtisticoArtista: String
 )
 
 data class Playlist(
     val fotoPortada: String,
-    val id: Int,
+    val id: String,
     val nombre: String,
     val nombreUsuarioCreador: String
 )

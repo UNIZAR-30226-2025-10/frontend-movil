@@ -2,6 +2,7 @@ package com.example.myapplication.activities
 
 import HeaderAdapter
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -103,7 +104,14 @@ class Buscador : AppCompatActivity() {
         recyclerViewPerfil.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
         // Inicia los adaptadores
-        cancionAdapter = CancionAdapter(mutableListOf())
+        cancionAdapter = CancionAdapter(mutableListOf()) { cancion ->
+            val intent = Intent(this, CancionDetail::class.java)
+            intent.putExtra("nombre", cancion.nombre)
+            intent.putExtra("artista", cancion.nombreArtisticoArtista)
+            intent.putExtra("imagen", cancion.fotoPortada)
+            intent.putExtra("id", cancion.id)
+            startActivity(intent)
+        }
         recyclerViewCancion.adapter = cancionAdapter
 
         artistaAdapter = ArtistaAdapter(mutableListOf())

@@ -1,5 +1,6 @@
 package com.example.myapplication.Adapters.Buscador
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,12 +11,14 @@ import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.io.response.*
 
-class CancionAdapter(private var listaCanciones: List<Cancion>) : RecyclerView.Adapter<CancionAdapter.CancionViewHolder>() {
+class CancionAdapter(
+    private var listaCanciones: List<Cancion>,
+    private val clickListener: (Cancion) -> Unit
+) : RecyclerView.Adapter<CancionAdapter.CancionViewHolder>() {
 
-    // Cambia el método para actualizar la lista
     fun updateData(searchResponse: List<Cancion>) {
-        listaCanciones = searchResponse  // Actualiza directamente listaCanciones
-        notifyDataSetChanged()  // Notifica al adaptador que se actualizó la lista
+        listaCanciones = searchResponse
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CancionViewHolder {
@@ -27,14 +30,16 @@ class CancionAdapter(private var listaCanciones: List<Cancion>) : RecyclerView.A
         val cancion = listaCanciones[position]
         holder.nombreCancion.text = cancion.nombre
         holder.artistaCancion.text = cancion.nombreArtisticoArtista
+        Log.d("MiApp", "Cancion detalle id: ${cancion.id}")
         Glide.with(holder.itemView.context)
             .load(cancion.fotoPortada)
             .into(holder.imagenCancion)
+
+        // Corrección: Se pasa una lambda en lugar de ejecutar la función
+        holder.itemView.setOnClickListener { clickListener(cancion) }
     }
 
-    override fun getItemCount(): Int {
-        return listaCanciones.size
-    }
+    override fun getItemCount(): Int = listaCanciones.size
 
     class CancionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nombreCancion: TextView = itemView.findViewById(R.id.textView)

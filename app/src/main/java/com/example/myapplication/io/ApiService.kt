@@ -1,5 +1,7 @@
 package com.example.myapplication.io
 
+import com.example.myapplication.io.request.ActualizarFavoritoRequest
+import com.example.myapplication.io.request.AudioRequest
 import com.example.myapplication.io.response.LoginResponse
 import com.example.myapplication.io.request.LoginRequest
 import com.example.myapplication.io.request.RegisterArtistRequest
@@ -15,6 +17,10 @@ import com.example.myapplication.io.request.CambiarPass1Request
 import com.example.myapplication.io.request.CambiarPass2Request
 import com.example.myapplication.io.request.CambiarPass3Request
 import com.example.myapplication.io.request.DeleteAccountRequest
+import com.example.myapplication.io.request.PlayPauseRequest
+import com.example.myapplication.io.request.PlayPauseResponse
+import com.example.myapplication.io.response.ActualizarFavoritoResponse
+import com.example.myapplication.io.response.AudioResponse
 import com.example.myapplication.io.response.BuscadorResponse
 import com.example.myapplication.io.response.DeleteAccountResponse
 import com.example.myapplication.io.response.LogOutResponse
@@ -25,6 +31,7 @@ import retrofit2.http.POST
 import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.GET
+import retrofit2.http.PUT
 import retrofit2.http.Query
 
 interface ApiService {
@@ -71,6 +78,25 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Query("termino") termino: String
     ): Call<BuscadorResponse>
+
+    @PUT("/put-cancion-sola")
+    fun reproducirCancion(
+        @Header("Authorization") token: String,
+        @Body request: AudioRequest
+    ): Call<AudioResponse>
+
+    @PUT("/change-fav")
+    fun actualizarFavorito(
+        @Header("Authorization") token: String,
+        @Body request: ActualizarFavoritoRequest
+    ): Call<ActualizarFavoritoResponse>
+
+    @PUT("/play-pause")
+    fun playPause(
+        @Header("Authorization") token: String,
+        @Body request: PlayPauseRequest
+    ): Call<PlayPauseResponse>
+
 
     companion object Factory {
         private const val BASE_URL = "https://api-noizz.onrender.com" // URL de la API

@@ -1,120 +1,93 @@
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
-    tools:context=".activities.MainActivity">
+    android:padding="16dp">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tv_song_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="SONG NAME"
-        android:textSize="24sp"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/iv_song_image"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+    <!-- Imagen de la canción -->
     <ImageView
-        android:id="@+id/iv_song_image"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:background="@color/white"
-        app:tint="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/guideline2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:id="@+id/imageViewCancion"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:scaleType="centerCrop" />
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tv_cur_time"
-        android:layout_width="50dp"
+    <!-- Nombre de la canción -->
+    <TextView
+        android:id="@+id/textViewNombreCancion"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:gravity="center"
-        android:text="00:00"
-        android:textSize="14sp"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/seek_bar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/seek_bar" />
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:layout_below="@id/imageViewCancion"
+        android:layout_centerHorizontal="true" />
 
+    <!-- Artista de la canción -->
+    <TextView
+        android:id="@+id/textViewArtista"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:layout_marginTop="8dp"
+        android:layout_below="@id/textViewNombreCancion"
+        android:layout_centerHorizontal="true" />
+
+    <!-- Botón de Favorito (Corazón) -->
+    <ImageButton
+        android:id="@+id/btn_favorito"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/textViewArtista"
+        android:layout_marginEnd="70dp"
+        android:background="@null"
+        android:contentDescription="Botón de favorito"
+        android:src="@drawable/ic_heart_vacio" />
+
+    <!-- Barra de progreso de la canción -->
     <SeekBar
-        android:id="@+id/seek_bar"
-        android:layout_width="0dp"
-        android:layout_height="18dp"
-        android:progressTint="@color/white"
-        android:thumbTint="@color/white"
-        app:layout_constraintEnd_toStartOf="@+id/tv_song_duration"
-        app:layout_constraintStart_toEndOf="@+id/tv_cur_time"
-        app:layout_constraintTop_toTopOf="@+id/guideline3" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tv_song_duration"
-        android:layout_width="50dp"
+        android:id="@+id/seekBarProgreso"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/btn_favorito" />
+
+    <!-- Controles de reproducción -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:gravity="center"
-        android:text="00:00"
-        android:textSize="14sp"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/seek_bar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/seek_bar" />
-
-    <ImageView
-        android:id="@+id/iv_play_pause_detail"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:layout_marginTop="32dp"
-        android:background="@drawable/circle_drawable"
-        android:src="@drawable/ic_play"
-        app:tint="@color/colorAccent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/seek_bar" />
-
-    <ImageView
-        android:id="@+id/iv_skip_previous"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_marginEnd="16dp"
-        android:src="@drawable/ic_skip_previous"
-        app:tint="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_play_pause_detail"
-        app:layout_constraintEnd_toStartOf="@+id/iv_play_pause_detail"
-        app:layout_constraintTop_toTopOf="@+id/iv_play_pause_detail" />
-
-    <ImageView
-        android:id="@+id/iv_skip"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="16dp"
-        android:src="@drawable/ic_skip"
-        app:tint="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_play_pause_detail"
-        app:layout_constraintStart_toEndOf="@+id/iv_play_pause_detail"
-        app:layout_constraintTop_toTopOf="@+id/iv_play_pause_detail" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="439dp" />
+        android:layout_below="@id/seekBarProgreso">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.7" />
+        <ImageButton
+            android:id="@+id/btnRetroceder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Retroceder"
+            android:background="@null"
+            android:src="@android:drawable/ic_media_previous" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageButton
+            android:id="@+id/btn_PlayPause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@null"
+            android:contentDescription="Reproducir/Pausar"
+            android:src="@android:drawable/ic_media_play" />
+
+        <ImageButton
+            android:id="@+id/btnAvanzar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Avanzar"
+            android:background="@null"
+            android:src="@android:drawable/ic_media_next" />
+
+    </LinearLayout>
+</RelativeLayout>
