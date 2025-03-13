@@ -40,6 +40,132 @@
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 
+    <!-- Contenido scrolleable -->
+    <android.widget.ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toTopOf="@id/miniPlayer">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewHeadersRecientes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:scrollbars="none" />
+
+            <!--
+            <TextView
+                android:id="@+id/textViewTituloRecientes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Escuchado recientemente"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="8dp" />
+            -->
+
+            <!-- RecyclerView para Recientes -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewRecientes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                tools:ignore="NotSibling" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewHeadersEscuchas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:scrollbars="none" />
+
+            <!--
+            <TextView
+                android:id="@+id/textViewTituloEscuchas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ultimas Escuchas"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="8dp" />
+            -->
+
+            <!-- RecyclerView para Artistas -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewEscuchas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                tools:ignore="NotSibling" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewHeadersPlaylists"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:scrollbars="none" />
+
+            <!--
+            <TextView
+                android:id="@+id/textViewTituloMisPlaylists"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mis Playlists"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="8dp" />
+            -->
+
+            <!-- RecyclerView para Playlists -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewMisPlaylists"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                tools:ignore="NotSibling" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewHeadersRecomendaciones"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:scrollbars="none" />
+
+            <!--
+            <TextView
+                android:id="@+id/textViewTituloRecomendaciones"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Recomendaciones"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="8dp" />
+            -->
+
+            <!-- RecyclerView para Recomendaciones -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewRecomendaciones"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                tools:ignore="NotSibling" />
+
+
+        </LinearLayout>
+    </android.widget.ScrollView>
+
     <!-- Mini reproductor de música -->
     <LinearLayout
         android:id="@+id/miniPlayer"

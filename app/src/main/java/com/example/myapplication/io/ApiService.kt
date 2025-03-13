@@ -23,7 +23,11 @@ import com.example.myapplication.io.response.ActualizarFavoritoResponse
 import com.example.myapplication.io.response.AudioResponse
 import com.example.myapplication.io.response.BuscadorResponse
 import com.example.myapplication.io.response.DeleteAccountResponse
+import com.example.myapplication.io.response.HistorialRecientesResponse
 import com.example.myapplication.io.response.LogOutResponse
+import com.example.myapplication.io.response.HistorialEscuchasResponse
+import com.example.myapplication.io.response.PlaylistsResponse
+import com.example.myapplication.io.response.RecomendacionesResponse
 import retrofit2.Retrofit
 import retrofit2.Call
 import retrofit2.converter.gson.GsonConverterFactory
@@ -96,6 +100,19 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body request: PlayPauseRequest
     ): Call<PlayPauseResponse>
+
+    @GET("/get-historial-colecciones")
+    fun getHistorialRecientes(@Header("Authorization") token: String): Call<HistorialRecientesResponse>
+
+    @GET("/get-historial-canciones")
+    fun getHistorialEscuchas(@Header("Authorization") token: String): Call<HistorialEscuchasResponse>
+
+
+    @GET("/get-mis-playlists")
+    fun getMisPlaylists(@Header("Authorization") token: String): Call<PlaylistsResponse>
+
+    @GET("/get-recomendaciones")
+    fun getRecomendaciones(@Header("Authorization") token: String): Call<RecomendacionesResponse>
 
 
     companion object Factory {
