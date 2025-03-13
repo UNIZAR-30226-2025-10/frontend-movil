@@ -1,15 +1,20 @@
 package com.example.myapplication.activities
 
+
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.Button
 import android.widget.EditText
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
+import com.example.myapplication.utils.Preferencias
 import com.example.myapplication.io.ApiService
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -317,5 +322,3 @@ class Home : AppCompatActivity() {
     }
 
 }
-
-
