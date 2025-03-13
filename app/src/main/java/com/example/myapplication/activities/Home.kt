@@ -89,9 +89,9 @@ class Home : AppCompatActivity() {
 
     private fun loadHomeData() {
         getHistorialRecientes()
-        //getHistorialEscuchas()
-        //getMisPlaylists()
-        //getRecomendaciones()
+        getHistorialEscuchas()
+        getMisPlaylists()
+        getRecomendaciones()
     }
 
     private fun getHistorialRecientes() {
@@ -103,8 +103,8 @@ class Home : AppCompatActivity() {
                     Log.d("Mi app", "entra en on response succesful Recientes")
                     response.body()?.let {
                         if (it.respuestaHTTP == 0) {
-                            Log.d("Mi app", "entra en on respuesta http Recientes")
-                            val Recientes = it.historial_Recientes
+                            Log.d("Mi app", "entra en respuesta http Recientes")
+                            val Recientes = it.historial_colecciones
                             Log.d("Mi app", "recientes = $Recientes")
 
                             // Actualizar y mostrar las canciones si las hay
@@ -140,9 +140,12 @@ class Home : AppCompatActivity() {
             override fun onResponse(call: Call<HistorialEscuchasResponse>, response: Response<HistorialEscuchasResponse>) {
                 Log.d("Mi app", "entra en on response Escuchas")
                 if (response.isSuccessful) {
+                    Log.d("Mi app", "entra en on response succesful Escuchas")
                     response.body()?.let {
                         if (it.respuestaHTTP == 0) {
-                            val escuchas = it.historial_escuchas
+                            Log.d("Mi app", "entra en respuesta http escuchas = $it")
+                            val escuchas = it.historial_canciones
+                            Log.d("Mi app", "recientes = $escuchas")
 
                             // Actualizar y mostrar las canciones si las hay
                             if (escuchas.isNotEmpty()) {
@@ -178,7 +181,7 @@ class Home : AppCompatActivity() {
                 if (response.isSuccessful) {
                     response.body()?.let {
                         if (it.respuestaHTTP == 0) {
-                            val misPlaylists = it.mis_playlists
+                            val misPlaylists = it.playlists
 
                             // Actualizar y mostrar las canciones si las hay
                             if (misPlaylists.isNotEmpty()) {
