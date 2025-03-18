@@ -28,6 +28,7 @@ import com.example.myapplication.io.response.LogOutResponse
 import com.example.myapplication.io.response.HistorialEscuchasResponse
 import com.example.myapplication.io.response.PlaylistsResponse
 import com.example.myapplication.io.response.RecomendacionesResponse
+import com.example.myapplication.io.response.InfoSeguidoresResponse
 import retrofit2.Retrofit
 import retrofit2.Call
 import retrofit2.converter.gson.GsonConverterFactory
@@ -113,6 +114,9 @@ interface ApiService {
 
     @GET("/get-recomendaciones")
     fun getRecomendaciones(@Header("Authorization") token: String): Call<RecomendacionesResponse>
+
+    @GET("/get-mis-datos-oyente")
+    fun getMisDatosOyente(@Header("Authorization") token: String): Call<InfoSeguidoresResponse>
 
 
     companion object Factory {
