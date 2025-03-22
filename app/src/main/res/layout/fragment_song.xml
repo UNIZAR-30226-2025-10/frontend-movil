@@ -1,16 +1,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
     <!-- Imagen de la canción -->
     <ImageView
         android:id="@+id/imageViewCancion"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="50dp"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="40dp"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"
         android:scaleType="centerCrop" />
 
     <!-- Nombre de la canción -->
@@ -34,7 +33,7 @@
         android:layout_below="@id/textViewNombreCancion"
         android:layout_centerHorizontal="true" />
 
-    <!-- Botón de Favorito (Corazón) -->
+    <!-- Botón de Favorito -->
     <ImageButton
         android:id="@+id/btn_favorito"
         android:layout_width="wrap_content"
@@ -51,17 +50,17 @@
         android:id="@+id/seekBarProgreso"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_below="@id/btn_favorito" />
+        android:layout_below="@id/btn_favorito"
+        android:layout_marginTop="20dp" />
 
     <!-- Controles de reproducción -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/seekBarProgreso"
         android:layout_marginTop="20dp"
         android:gravity="center"
-        android:orientation="horizontal"
-        android:layout_below="@id/seekBarProgreso">
+        android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/btnRetroceder"
@@ -90,4 +89,51 @@
             android:src="@android:drawable/ic_media_next" />
 
     </LinearLayout>
+
+    <!-- Barra de navegación inferior -->
+    <LinearLayout
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="#000e3b"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:layout_alignParentBottom="true"
+        android:gravity="center">
+
+        <!-- Botón Home -->
+        <ImageButton
+            android:id="@+id/nav_home"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_home"
+            android:background="@android:color/transparent"
+            android:contentDescription="Home"
+            app:tint="#FFFFFF" />
+
+        <!-- Botón Buscar -->
+        <ImageButton
+            android:id="@+id/nav_search"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_search"
+            android:background="@android:color/transparent"
+            android:contentDescription="Buscar"
+            app:tint="#FFFFFF" />
+
+        <!-- Botón Crear -->
+        <ImageButton
+            android:id="@+id/nav_create"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_add"
+            android:background="@android:color/transparent"
+            android:contentDescription="Crear"
+            app:tint="#FFFFFF" />
+
+    </LinearLayout>
+
 </RelativeLayout>

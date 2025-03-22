@@ -313,5 +313,40 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:gravity="center"/>
+        android:gravity="center">
+
+        <!-- Botón Home -->
+        <ImageButton
+            android:id="@+id/nav_home"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_home"
+            android:background="@android:color/transparent"
+            android:contentDescription="Home"
+            android:layout_weight="1"
+            app:tint="#FFFFFF" />
+
+        <!-- Botón Buscar -->
+        <ImageButton
+            android:id="@+id/nav_search"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_search"
+            android:background="@android:color/transparent"
+            android:contentDescription="Buscar"
+            android:layout_weight="1"
+            app:tint="#FFFFFF" />
+
+        <!-- Botón Crear -->
+        <ImageButton
+            android:id="@+id/nav_create"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_add"
+            android:background="@android:color/transparent"
+            android:contentDescription="Crear"
+            android:layout_weight="1"
+            app:tint="#FFFFFF" />
+
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

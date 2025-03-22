@@ -20,6 +20,7 @@ import com.example.myapplication.io.request.DeleteAccountRequest
 import com.example.myapplication.io.request.PlayPauseRequest
 import com.example.myapplication.io.request.PlayPauseResponse
 import com.example.myapplication.io.response.ActualizarFavoritoResponse
+import com.example.myapplication.io.response.AddReproduccionResponse
 import com.example.myapplication.io.response.AudioResponse
 import com.example.myapplication.io.response.BuscadorResponse
 import com.example.myapplication.io.response.DeleteAccountResponse
@@ -87,6 +88,7 @@ interface ApiService {
     @PUT("/put-cancion-sola")
     fun reproducirCancion(
         @Header("Authorization") token: String,
+        @Header("sid") sid: String,
         @Body request: AudioRequest
     ): Call<AudioResponse>
 
@@ -95,6 +97,12 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body request: ActualizarFavoritoRequest
     ): Call<ActualizarFavoritoResponse>
+
+    @PUT("/add-reproduccion")
+    fun addReproduccion(
+        @Header("Authorization") token: String,
+    ): Call<AddReproduccionResponse>
+
 
     @PUT("/play-pause")
     fun playPause(

@@ -26,7 +26,6 @@ class PlayPause : AppCompatActivity() {
 
         apiService = ApiService.create()
 
-        val id = intent.getStringExtra("ID_CANCION")
         val reproduciendo = intent.getBooleanExtra("ESTADO_REPRODUCCION", false)
         val progresoMMSS = intent.getIntExtra("PROGRESO", 0)
 
@@ -44,13 +43,12 @@ class PlayPause : AppCompatActivity() {
         }
 
         // Enviar actualización a la API
-        if (id != null) {
-            actualizarEstadoReproduccion(id, reproduciendo, progresoMMSS)
-        }
+        actualizarEstadoReproduccion(reproduciendo, progresoMMSS)
+
     }
 
-    private fun actualizarEstadoReproduccion(id: String, reproduciendo: Boolean, progreso: Int) {
-        val request = PlayPauseRequest(id, reproduciendo, progreso)
+    private fun actualizarEstadoReproduccion(reproduciendo: Boolean, progreso: Int) {
+        val request = PlayPauseRequest(reproduciendo, progreso)
         val token = Preferencias.obtenerValorString("token", "")
         val authHeader = "Bearer $token"
 
@@ -67,6 +65,7 @@ class PlayPause : AppCompatActivity() {
 
             override fun onFailure(call: Call<PlayPauseResponse>, t: Throwable) {
                 Toast.makeText(this@PlayPause, "Error de conexión", Toast.LENGTH_SHORT).show()
+                finish()
             }
         })
     }

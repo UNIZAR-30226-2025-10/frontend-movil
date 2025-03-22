@@ -151,6 +151,14 @@ class Login : AppCompatActivity() {
 
         Preferencias.guardarValorEntero("volumen", loginResponse.usuario?.volumen ?: 0)
         Log.d("guardarDatosOyente", "Es artista: ${loginResponse.usuario?.volumen ?: 0}")
+
+        // Conectar el WebSocket después de guardar los datos del usuario
+        val token = loginResponse.token ?: ""
+        val webSocketManager = WebSocketManager.getInstance()
+        webSocketManager.connectWebSocket(token) { message ->
+            // Maneja los mensajes recibidos del servidor
+            Log.d("WebSocket", "Mensaje recibido: $message")
+        }
     }
 
     private fun navigate(loginResponse: LoginResponse) {
