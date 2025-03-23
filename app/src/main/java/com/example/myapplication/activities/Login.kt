@@ -150,7 +150,7 @@ class Login : AppCompatActivity() {
         Log.d("guardarDatosOyente", "Es oyente: ${loginResponse.tipo ?: ""}")
 
         Preferencias.guardarValorEntero("volumen", loginResponse.usuario?.volumen ?: 0)
-        Log.d("guardarDatosOyente", "Es artista: ${loginResponse.usuario?.volumen ?: 0}")
+        Log.d("guardarDatosOyente", "Volumen: ${loginResponse.usuario?.volumen ?: 0}")
 
         // Conectar el WebSocket después de guardar los datos del usuario
         val token = loginResponse.token ?: ""

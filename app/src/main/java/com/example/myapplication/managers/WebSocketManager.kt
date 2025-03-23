@@ -28,7 +28,7 @@ class WebSocketManager{
         sid = UUID.randomUUID().toString() // Genera un sid único
 
         val request = Request.Builder()
-            .url("https://api-noizz.onrender.com") // URL del servidor WebSocket
+            .url("wss://api-noizz.onrender.com/socket.io/?EIO=4&transport=websocket") // URL del servidor WebSocket
             .addHeader("Authorization", "Bearer $token") // Token JWT
             .addHeader("sid", sid!!) // Envía el sid
             .build()
