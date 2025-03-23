@@ -1,5 +1,7 @@
 import android.util.Log
 import okhttp3.*
+import org.json.JSONException
+import org.json.JSONObject
 import java.util.UUID
 
 class WebSocketManager{
@@ -40,8 +42,21 @@ class WebSocketManager{
 
             override fun onMessage(webSocket: WebSocket, text: String) {
                 Log.d("WebSocket", "Mensaje recibido: $text")
+
+                // Verifica si el mensaje es la respuesta con el SID
+                if (text.startsWith("0{")) {
+                    try {
+                        val json = JSONObject(text.substring(1)) // Elimina el primer "0"
+                        sid = json.getString("sid") // Almacena el SID recibido
+                        Log.d("WebSocket", "SID asignado desde el servidor: $sid")
+                    } catch (e: JSONException) {
+                        Log.e("WebSocket", "Error al parsear el SID: ${e.message}")
+                    }
+                }
+
                 onMessageReceived(text)
             }
+
 
             override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
                 Log.d("WebSocket", "Conexión cerrada: $reason")

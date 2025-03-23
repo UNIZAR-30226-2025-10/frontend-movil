@@ -117,7 +117,8 @@ class CancionDetail : AppCompatActivity() {
         val request = AudioRequest(id)
         val token = Preferencias.obtenerValorString("token", "")
         val authHeader = "Bearer $token"
-        val sid = WebSocketManager.getInstance().getSid() 
+        val sid = WebSocketManager.getInstance().getSid()
+        Log.d("WebSocket", "El SID actual es: $sid")
 
         if (sid == null) {
             Log.e("MiApp", "No se ha generado un sid para el WebSocket")
