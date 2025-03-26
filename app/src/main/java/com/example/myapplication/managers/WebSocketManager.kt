@@ -1,10 +1,9 @@
 import android.util.Log
-import okhttp3.*
-import org.json.JSONException
+import io.socket.client.IO
+import io.socket.client.Socket
 import org.json.JSONObject
-import java.util.UUID
 
-class WebSocketManager{
+class WebSocketManager {
 
     companion object {
         @Volatile
@@ -17,67 +16,61 @@ class WebSocketManager{
         }
     }
 
-    private var webSocket: WebSocket? = null
-    private var sid: String? = null // Almacena el sid
-    private val client = OkHttpClient()
+    private var socket: Socket? = null
+    private var sid: String? = null // Guardamos el SID aquí
 
-    fun connectWebSocket(token: String, onMessageReceived: (String) -> Unit) {
-        if (webSocket != null) {
-            Log.d("WebSocket", "Ya hay una conexión WebSocket activa")
+    fun connectWebSocket(token: String, onMessageReceived: (String) -> Unit, onConnectError: (String) -> Unit) {
+        if (socket != null && socket!!.connected()) {
+            Log.d("WebSocket", "Ya hay una conexión activa")
             return
         }
 
-        sid = UUID.randomUUID().toString() // Genera un sid único
+        try {
+            val options = IO.Options()
+            options.transports = arrayOf("websocket", "polling")
+            options.forceNew = true
+            options.reconnection = true
+            options.extraHeaders = mapOf("Authorization" to listOf("Bearer $token"))
 
-        val request = Request.Builder()
-            .url("wss://api-noizz.onrender.com/socket.io/?EIO=4&transport=websocket") // URL del servidor WebSocket
-            .addHeader("Authorization", "Bearer $token") // Token JWT
-            .addHeader("sid", sid!!) // Envía el sid
-            .build()
+            socket = IO.socket("http://172.20.10.4:5000", options)
+            //socket = IO.socket("http://api-noizz.onrender.com", options)
+            //socket = IO.socket("http://192.1.65.102:5000", options)
 
-        val listener = object : WebSocketListener() {
-            override fun onOpen(webSocket: WebSocket, response: Response) {
-                Log.d("WebSocket", "Conexión abierta con sid: $sid")
+            // Evento de conexión
+            socket?.on(Socket.EVENT_CONNECT) {
+                sid = socket?.id() // Guardamos el SID
+                Log.d("WebSocket", "Conectado al servidor con SID: $sid")
             }
 
-            override fun onMessage(webSocket: WebSocket, text: String) {
-                Log.d("WebSocket", "Mensaje recibido: $text")
-
-                // Verifica si el mensaje es la respuesta con el SID
-                if (text.startsWith("0{")) {
-                    try {
-                        val json = JSONObject(text.substring(1)) // Elimina el primer "0"
-                        sid = json.getString("sid") // Almacena el SID recibido
-                        Log.d("WebSocket", "SID asignado desde el servidor: $sid")
-                    } catch (e: JSONException) {
-                        Log.e("WebSocket", "Error al parsear el SID: ${e.message}")
-                    }
-                }
-
-                onMessageReceived(text)
+            // Manejo de errores
+            socket?.on(Socket.EVENT_CONNECT_ERROR) { args ->
+                Log.e("WebSocket", "Error de conexión: ${args[0]}")
+                onConnectError(args[0].toString())
             }
 
-
-            override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-                Log.d("WebSocket", "Conexión cerrada: $reason")
+            // Escuchar mensajes
+            socket?.on("mensaje") { args ->
+                val mensaje = args[0].toString()
+                Log.d("WebSocket", "Mensaje recibido: $mensaje")
+                onMessageReceived(mensaje)
             }
 
-            override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-                Log.e("WebSocket", "Error en la conexión: ${t.message}")
-            }
+            socket?.connect()
+
+        } catch (e: Exception) {
+            Log.e("WebSocket", "Error al conectar: ${e.message}")
+            onConnectError(e.message ?: "Error desconocido")
         }
-
-        webSocket = client.newWebSocket(request, listener)
     }
 
+    // Método para obtener el SID
     fun getSid(): String? {
         return sid
     }
 
     fun closeWebSocket() {
-        webSocket?.close(1000, "Cierre normal")
-        webSocket = null
+        socket?.disconnect()
+        socket = null
         sid = null
     }
 }
-

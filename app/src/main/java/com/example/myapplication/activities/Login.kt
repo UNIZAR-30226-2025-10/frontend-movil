@@ -155,10 +155,12 @@ class Login : AppCompatActivity() {
         // Conectar el WebSocket después de guardar los datos del usuario
         val token = loginResponse.token ?: ""
         val webSocketManager = WebSocketManager.getInstance()
-        webSocketManager.connectWebSocket(token) { message ->
-            // Maneja los mensajes recibidos del servidor
-            Log.d("WebSocket", "Mensaje recibido: $message")
-        }
+
+        webSocketManager.connectWebSocket(token,
+            { message -> Log.d("WebSocket", "Mensaje recibido: $message") },
+            { error -> Log.e("WebSocket", "Error de conexión: $error") }
+        )
+
     }
 
     private fun navigate(loginResponse: LoginResponse) {
