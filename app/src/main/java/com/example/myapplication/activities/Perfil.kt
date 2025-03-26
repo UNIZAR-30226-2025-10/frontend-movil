@@ -82,9 +82,13 @@ class Perfil : AppCompatActivity()  {
                 if (response.isSuccessful) {
                     response.body()?.let {
                         if (it.respuestaHTTP == 0) {
-                            val nombreperfil = it.nombre
-                            val seguidores = it.seguidores_count
-                            val seguidos = it.seguidos_count
+                            val nombreperfil = it.nombreUsuario
+                            val seguidores = it.numSeguidores
+                            val seguidos = it.numSeguidos
+
+                            Log.d("Mi app", "ha tomado info: $nombreperfil")
+                            Log.d("Mi app", "ha tomado info: $seguidores")
+                            Log.d("Mi app", "ha tomado info: $seguidos")
 
                             val usernameTextView = findViewById<TextView>(R.id.username)
                             val followersTextView = findViewById<TextView>(R.id.followers)
