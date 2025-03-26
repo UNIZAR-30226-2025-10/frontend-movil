@@ -1,4 +1,5 @@
 import android.util.Log
+import com.example.myapplication.utils.Preferencias
 import io.socket.client.IO
 import io.socket.client.Socket
 import org.json.JSONObject
@@ -39,6 +40,7 @@ class WebSocketManager {
             // Evento de conexión
             socket?.on(Socket.EVENT_CONNECT) {
                 sid = socket?.id() // Guardamos el SID
+                Preferencias.guardarValorString("sid", sid ?: "")
                 Log.d("WebSocket", "Conectado al servidor con SID: $sid")
             }
 
@@ -65,6 +67,7 @@ class WebSocketManager {
 
     // Método para obtener el SID
     fun getSid(): String? {
+        val sid = Preferencias.obtenerValorString("sid", "")
         return sid
     }
 
@@ -72,5 +75,6 @@ class WebSocketManager {
         socket?.disconnect()
         socket = null
         sid = null
+        Log.d("WebSocket", "Desconectado web socket")
     }
 }
