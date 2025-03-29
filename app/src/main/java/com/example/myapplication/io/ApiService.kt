@@ -17,6 +17,7 @@ import com.example.myapplication.io.request.CambiarPass1Request
 import com.example.myapplication.io.request.CambiarPass2Request
 import com.example.myapplication.io.request.CambiarPass3Request
 import com.example.myapplication.io.request.DeleteAccountRequest
+import com.example.myapplication.io.request.EditarPerfilRequest
 import com.example.myapplication.io.request.PlayPauseRequest
 import com.example.myapplication.io.request.PlayPauseResponse
 import com.example.myapplication.io.response.ActualizarFavoritoResponse
@@ -24,6 +25,7 @@ import com.example.myapplication.io.response.AddReproduccionResponse
 import com.example.myapplication.io.response.AudioResponse
 import com.example.myapplication.io.response.BuscadorResponse
 import com.example.myapplication.io.response.DeleteAccountResponse
+import com.example.myapplication.io.response.EditarPerfilResponse
 import com.example.myapplication.io.response.HistorialRecientesResponse
 import com.example.myapplication.io.response.LogOutResponse
 import com.example.myapplication.io.response.HistorialEscuchasResponse
@@ -126,10 +128,12 @@ interface ApiService {
     @GET("/get-mis-datos-oyente")
     fun getMisDatosOyente(@Header("Authorization") token: String): Call<InfoSeguidoresResponse>
 
+    @PUT("/change-datos-oyente")
+    fun updateProfile(@Header("Authorization") token: String, request: EditarPerfilRequest): Call<EditarPerfilResponse>
 
     companion object Factory {
-        //private const val BASE_URL = "https://api-noizz.onrender.com" // URL de la API
-        private const val BASE_URL = "http://172.20.10.4:5000"
+        private const val BASE_URL = "https://api-noizz.onrender.com" // URL de la API
+        //private const val BASE_URL = "http://172.20.10.4:5000"
         //private const val BASE_URL = "http://10.1.65.120:5000"
         fun create(): ApiService {
             val retrofit = Retrofit.Builder()

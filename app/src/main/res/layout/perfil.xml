@@ -70,11 +70,12 @@
                     android:layout_centerHorizontal="true"/>
 
                 <!-- Botón Editar Perfil -->
-                <TextView
+                <Button
                     android:id="@+id/editProfile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Editar perfil"
+                    android:background="@android:color/transparent"
                     android:textSize="14sp"
                     android:textColor="#1DB954"
                     android:layout_alignEnd="@id/profileImage"
@@ -86,7 +87,6 @@
                     android:id="@+id/username"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Martarata2004"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:textColor="#000003"
@@ -107,7 +107,6 @@
                         android:id="@+id/followers"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="10 Seguidores"
                         android:textSize="14sp"
                         android:textColor="#000003"
                         android:paddingEnd="16dp"/>
@@ -116,7 +115,6 @@
                         android:id="@+id/following"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="32 Seguidos"
                         android:textSize="14sp"
                         android:textColor="#000003"/>
                 </LinearLayout>

@@ -33,8 +33,8 @@ class WebSocketManager {
             options.reconnection = true
             options.extraHeaders = mapOf("Authorization" to listOf("Bearer $token"))
 
-            socket = IO.socket("http://172.20.10.4:5000", options)
-            //socket = IO.socket("http://api-noizz.onrender.com", options)
+            //socket = IO.socket("http://172.20.10.4:5000", options)
+            socket = IO.socket("http://api-noizz.onrender.com", options)
             //socket = IO.socket("http://192.1.65.102:5000", options)
 
             // Evento de conexión
