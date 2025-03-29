@@ -130,7 +130,10 @@ interface ApiService {
     fun getMisDatosOyente(@Header("Authorization") token: String): Call<InfoSeguidoresResponse>
 
     @PUT("/change-datos-oyente")
-    fun updateProfile(@Header("Authorization") token: String, request: EditarPerfilRequest): Call<EditarPerfilResponse>
+    fun updateProfile(
+        @Header("Authorization") token: String,
+        @Body request: EditarPerfilRequest
+    ): Call<EditarPerfilResponse>
 
     @GET("/get-signature")
     fun getSignature(

@@ -134,6 +134,7 @@ class Perfil : AppCompatActivity() {
         Log.d("MiAppPerfil", "PERFIL show edit 5")
         btnSave.setOnClickListener {
             imageUri?.let { it1 -> getSignatureCloudinary(it1) }
+            Log.d("MiAppPerfil", "PERFIL show edit 5.1")
             updateUserProfile(editUsername.text.toString())
             Log.d("MiAppPerfil", "PERFIL show edit 6")
 
@@ -164,11 +165,11 @@ class Perfil : AppCompatActivity() {
                     signatureResponse?.let {
                         // Acceder a los datos de la respuesta
                         val signature = it.signature
-                        val apiKey = it.api_key
+                        val apiKey = it.apiKey
                         val timestamp = it.timestamp
-                        val cloudName = it.cloud_name
+                        val cloudName = it.cloudName
 
-                        // Aquí puedes hacer lo que necesites con los valores
+
                         Log.d("Signature", "Signature: $signature")
                         Log.d("Signature", "API Key: $apiKey")
                         Log.d("Signature", "Timestamp: $timestamp")
@@ -188,31 +189,37 @@ class Perfil : AppCompatActivity() {
                 showToast("Error en la solicitud: ${t.message}")
             }
         })
+        Log.d("Signature", "Signature FUERA")
     }
 
     private fun uploadImageToCloudinary(signatureData: GetSignatureResponse, imagenURI: Uri, folder: String) {
         try {
+
+            Log.d("uploadImageToCloudinary", "uploadImageToCloudinary 1")
             // Obtener el stream del archivo a partir del URI
             val inputStream = contentResolver.openInputStream(imagenURI) ?: run {
                 showToast("Error al abrir la imagen")
                 return
             }
 
+            Log.d("uploadImageToCloudinary", "uploadImageToCloudinary 2")
+
             val byteArray = inputStream.readBytes()
             inputStream.close()
 
+            Log.d("uploadImageToCloudinary", "uploadImageToCloudinary 3")
             val requestFile = RequestBody.create(MediaType.parse("image/*"), byteArray)
             val filePart = MultipartBody.Part.createFormData("file", "image.jpg", requestFile)
 
             // Crear request bodies para los parámetros
-            val apiKey = RequestBody.create(MediaType.parse("text/plain"), signatureData.api_key)
+            val apiKey = RequestBody.create(MediaType.parse("text/plain"), signatureData.apiKey)
             val timestamp = RequestBody.create(MediaType.parse("text/plain"), signatureData.timestamp.toString())
             val signature = RequestBody.create(MediaType.parse("text/plain"), signatureData.signature)
             val folderPart = RequestBody.create(MediaType.parse("text/plain"), folder)
 
             // Llamada a la API de Cloudinary
             apiServiceCloud.uploadImage(
-                signatureData.cloud_name,
+                signatureData.cloudName,
                 filePart,
                 apiKey,
                 timestamp,
@@ -231,24 +238,31 @@ class Perfil : AppCompatActivity() {
                             showToast("Imagen subida con éxito")
                         } ?: showToast("Error: Respuesta vacía de Cloudinary")
                     } else {
+                        Log.d("uploadImageToCloudinary", "ERROR 3 ${response.errorBody()?.string()}")
                         showToast("Error al subir la imagen: ${response.errorBody()?.string()}")
                     }
                 }
 
                 override fun onFailure(call: Call<CloudinaryResponse>, t: Throwable) {
+                    Log.d("uploadImageToCloudinary", "ERROR 3 ${t.message}")
                     showToast("Error en la subida: ${t.message}")
                 }
             })
         } catch (e: Exception) {
+            Log.d("uploadImageToCloudinary", "ERROR 4 ${e.message}")
             showToast("Error al procesar la imagen: ${e.message}")
         }
     }
 
     private fun updateUserProfile(newUsername: String) {
-        val request = EditarPerfilRequest(imageUri.toString(), newUsername)
+        Log.d("updateUserProfile", "1")
+        val imagen = Preferencias.obtenerValorString("profile_image", "")
+        Log.d("updateUserProfile", "imag{$imagen}")
+        Log.d("updateUserProfile", "user{$newUsername}")
+        val request = EditarPerfilRequest(imagen, newUsername)
         val token = Preferencias.obtenerValorString("token", "")
         val authHeader = "Bearer $token"
-
+        Log.d("updateUserProfile", "2")
         apiService.updateProfile(authHeader, request).enqueue(object : Callback<EditarPerfilResponse> {
             override fun onResponse(call: Call<EditarPerfilResponse>, response: Response<EditarPerfilResponse>) {
                 if (response.isSuccessful) {
@@ -256,11 +270,13 @@ class Perfil : AppCompatActivity() {
                     Preferencias.guardarValorString("username", newUsername)
                     showToast("Perfil actualizado")
                 } else {
+                    Log.d("updateUserProfile", "Error en la solicitud ${response.code()}")
                     showToast("Error al actualizar perfil")
                 }
             }
 
             override fun onFailure(call: Call<EditarPerfilResponse>, t: Throwable) {
+                Log.d("updateUserProfile", "Error en la solicitud2")
                 showToast("Error en la solicitud: ${t.message}")
             }
         })

@@ -1,9 +1,11 @@
 package com.example.myapplication.io.response
 
+import com.google.gson.annotations.SerializedName
+
 data class GetSignatureResponse(
     val respuestaHTTP: Int,
     val signature: String,
-    val api_key: String,
+    @SerializedName("api_key") val apiKey: String,
     val timestamp: Long,
-    val cloud_name: String
+    @SerializedName("cloud_name") val cloudName: String
 )

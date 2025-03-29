@@ -17,7 +17,7 @@ interface CloudinaryApiService {
     @POST("v1_1/{cloud_name}/image/upload")
     fun uploadImage(
         @Path("cloud_name") cloudName: String,
-        @Part("file") file: MultipartBody.Part,
+        @Part file: MultipartBody.Part,
         @Part("api_key") apiKey: RequestBody,
         @Part("timestamp") timestamp: RequestBody,
         @Part("signature") signature: RequestBody,
