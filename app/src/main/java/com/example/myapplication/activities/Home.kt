@@ -1,8 +1,9 @@
 package com.example.myapplication.activities
 
-import Buscador
+
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -18,6 +19,7 @@ import com.example.myapplication.utils.Preferencias
 import com.example.myapplication.io.ApiService
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.myapplication.io.request.DeleteAccountRequest
 import com.example.myapplication.io.response.DeleteAccountResponse
 import com.example.myapplication.io.response.HistorialRecientesResponse
@@ -59,6 +61,25 @@ class Home : AppCompatActivity() {
 
         // Inicializar API Service
         apiService = ApiService.create()
+
+        val profileImageButton = findViewById<ImageButton>(R.id.profileImageButton)
+
+        // Obtener la URL de la imagen de perfil desde SharedPreferences
+        val profileImageUrl = Preferencias.obtenerValorString("fotoPerfil", "")
+
+        // Verificar si la API devolvió "DEFAULT" o si no hay imagen guardada
+        if (profileImageUrl.isNullOrEmpty() || profileImageUrl == "DEFAULT") {
+            // Cargar la imagen predeterminada
+            profileImageButton.setImageResource(R.drawable.ic_profile)
+        } else {
+            // Cargar la imagen desde la URL con Glide
+            Glide.with(this)
+                .load(profileImageUrl)
+                .circleCrop()
+                .placeholder(R.drawable.ic_profile) // Imagen por defecto mientras carga
+                .error(R.drawable.ic_profile) // Imagen si hay error
+                .into(profileImageButton)
+        }
 
         // Configurar RecyclerView para los encabezados
         val headersRecientes = listOf("Escuchado recientemente")
@@ -322,5 +343,3 @@ class Home : AppCompatActivity() {
     }
 
 }
-
-

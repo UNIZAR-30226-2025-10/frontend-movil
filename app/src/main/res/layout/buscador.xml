@@ -6,8 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".activities.Home">
+    tools:context=".activities.Home"
+    android:fitsSystemWindows="true">
 
+    <!-- Barra de navegación -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -38,6 +40,7 @@
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 
+    <!-- Título del buscador -->
     <TextView
         android:id="@+id/searchTitle"
         android:layout_width="wrap_content"
@@ -51,7 +54,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"/>
 
+    <!-- Barra de búsqueda -->
     <androidx.cardview.widget.CardView
+        android:id="@+id/barraBuscador"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginStart="16dp"
@@ -89,15 +94,146 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <!-- ScrollView para los RecyclerViews -->
+    <android.widget.ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/searchInput"
-        app:layout_constraintBottom_toTopOf="@id/miniPlayer"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/barraBuscador"
+        app:layout_constraintBottom_toTopOf="@id/miniPlayer">
 
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewHeadersCanciones"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:scrollbars="none" />
+
+            <!--<TextView
+                android:id="@+id/textViewTituloCanciones"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CANCIONES"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="8dp" />-->
+
+            <!-- RecyclerView para Canciones -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewCanciones"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                tools:ignore="NotSibling" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewHeadersArtistas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:scrollbars="none" />
+            <!--<TextView
+                android:id="@+id/textViewTituloArtistas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ARTISTAS"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="8dp" />-->
+
+            <!-- RecyclerView para Artistas -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewArtistas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                tools:ignore="NotSibling" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewHeadersÁlbumes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:scrollbars="none" />
+            <!--<TextView
+                android:id="@+id/textViewTituloAlbumes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ÁLBUMES"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="8dp" />-->
+
+            <!-- RecyclerView para Álbumes -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewAlbumes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                tools:ignore="NotSibling" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewHeadersPlaylists"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:scrollbars="none" />
+
+            <!--<TextView
+                android:id="@+id/textViewTituloPlaylists"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PLAYLISTS"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="8dp" />-->
+
+            <!-- RecyclerView para Playlists -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewPlaylists"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                tools:ignore="NotSibling" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewHeadersPerfiles"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:scrollbars="none" />
+
+            <!--<TextView
+                android:id="@+id/textViewTituloPerfiles"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PERFILES"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="8dp" />-->
+
+            <!-- RecyclerView para Perfiles -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewPerfiles"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                tools:ignore="NotSibling" />
+
+        </LinearLayout>
+    </android.widget.ScrollView>
+
+    <!-- Mini player -->
     <LinearLayout
         android:id="@+id/miniPlayer"
         android:layout_width="match_parent"
@@ -166,6 +302,7 @@
             app:tint="#FFFFFF"/>
     </LinearLayout>
 
+    <!-- Barra de navegación inferior -->
     <LinearLayout
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
@@ -176,5 +313,40 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:gravity="center"/>
+        android:gravity="center">
+
+        <!-- Botón Home -->
+        <ImageButton
+            android:id="@+id/nav_home"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_home"
+            android:background="@android:color/transparent"
+            android:contentDescription="Home"
+            android:layout_weight="1"
+            app:tint="#FFFFFF" />
+
+        <!-- Botón Buscar -->
+        <ImageButton
+            android:id="@+id/nav_search"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_search"
+            android:background="@android:color/transparent"
+            android:contentDescription="Buscar"
+            android:layout_weight="1"
+            app:tint="#FFFFFF" />
+
+        <!-- Botón Crear -->
+        <ImageButton
+            android:id="@+id/nav_create"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_add"
+            android:background="@android:color/transparent"
+            android:contentDescription="Crear"
+            android:layout_weight="1"
+            app:tint="#FFFFFF" />
+
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -26,9 +26,9 @@
     </RelativeLayout>
 
 
-    <!-- Entrada para el correo -->
+    <!-- Entrada para la nueva contraseña -->
     <EditText
-        android:id="@+id/etEmail"
+        android:id="@+id/newPass"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Introducir nueva contraseña"

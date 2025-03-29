@@ -18,10 +18,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="Nombre de la playlist"
+        android:text="Nombre del album"
         android:textSize="12sp"
         android:maxLines="1"
         android:ellipsize="end" />
-    
-</LinearLayout>
 
+    <TextView
+        android:id="@+id/textViewArtist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:text="Nombre del Artista"
+        android:textSize="10sp"
+        android:maxLines="1"
+        android:ellipsize="end" />
+
+</LinearLayout>

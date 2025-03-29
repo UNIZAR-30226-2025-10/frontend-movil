@@ -4,16 +4,11 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
 import com.example.myapplication.utils.Preferencias
 import com.example.myapplication.io.ApiService
-import com.example.myapplication.io.request.DeleteAccountRequest
-import com.example.myapplication.io.response.DeleteAccountResponse
 import com.example.myapplication.io.response.LogOutResponse
 import retrofit2.Call
 import retrofit2.Callback
@@ -37,6 +32,10 @@ class Logout : AppCompatActivity() {
     private fun logout() {
         val token = Preferencias.obtenerValorString("token", "")
         val authHeader = "Bearer $token"
+
+        // Cerrar la conexión WebSocket si está abierta
+        WebSocketManager.getInstance().closeWebSocket()
+
         // Llamada a la API para hacer logout
         apiService.logout(authHeader).enqueue(object : Callback<LogOutResponse> {
             override fun onResponse(call: Call<LogOutResponse>, response: Response<LogOutResponse>) {
@@ -44,11 +43,11 @@ class Logout : AppCompatActivity() {
                     val logoutResponse = response.body()
                     if (logoutResponse != null) {
                         Log.d("MiApp", "Respuesta exitosa: ${logoutResponse}")
-                        if(logoutResponse.respuestaHTTP == 0){
-                            Preferencias.borrarDatosUsuario()
-                            showToast("Logout existoso")
-                            navigateInicio()
-                        } else{
+                        if (logoutResponse.respuestaHTTP == 0) {
+                            Preferencias.borrarDatosUsuario() // Limpiar preferencias
+                            showToast("Logout exitoso")
+                            navigateInicio() // Redirigir al inicio
+                        } else {
                             handleErrorCode(logoutResponse.respuestaHTTP)
                         }
                     } else {

@@ -34,8 +34,20 @@ class Login : AppCompatActivity() {
         editTextUsername = findViewById(R.id.etName)
         editTextPassword = findViewById(R.id.etPassword)
 
-        //Referenciar el botón de login
+        //Referenciar el botones
         val buttonLogin: Button = findViewById(R.id.loginButton)
+        val buttonRegister: Button = findViewById(R.id.registerLink)
+        val buttonForgotPass: Button = findViewById(R.id.forgotPass)
+
+        //Evento clic del he olvidado contraseña
+        buttonForgotPass.setOnClickListener{
+            startActivity(Intent(this, CambiarPassword1::class.java))
+        }
+
+        //Evento clic de ir a registro
+        buttonRegister.setOnClickListener{
+             startActivity(Intent(this, ElegirRegistro::class.java))
+        }
 
         // Evento clic del botón de login
         buttonLogin.setOnClickListener {
@@ -65,6 +77,11 @@ class Login : AppCompatActivity() {
                     val loginResponse = response.body()
                     if (loginResponse != null) {
                         Log.d("MiApp", "Respuesta exitosa: ${loginResponse}")
+                        Log.d("MiApp", "Respuesta exitosa tipo: ${loginResponse.tipo}")
+                        Log.d("MiApp", "Respuesta exitosa correo: ${loginResponse.usuario?.correo}")
+                        Log.d("MiApp", "Respuesta exitosa foto: ${loginResponse.usuario?.fotoPerfil}")
+                        Log.d("MiApp", "Respuesta exitosa user: ${loginResponse.usuario?.nombreUsuario}")
+                        Log.d("MiApp", "Respuesta exitosa volumen: ${loginResponse.usuario?.volumen}")
                         if(loginResponse.respuestaHTTP == 0){
                             showToast("Login existoso")
                             guardarDatosUsuario(loginResponse)
@@ -133,12 +150,27 @@ class Login : AppCompatActivity() {
         Log.d("guardarDatosOyente", "Es oyente: ${loginResponse.tipo ?: ""}")
 
         Preferencias.guardarValorEntero("volumen", loginResponse.usuario?.volumen ?: 0)
-        Log.d("guardarDatosOyente", "Es artista: ${loginResponse.usuario?.volumen ?: 0}")
+        Log.d("guardarDatosOyente", "Volumen: ${loginResponse.usuario?.volumen ?: 0}")
+
+        // Conectar el WebSocket después de guardar los datos del usuario
+        val token = loginResponse.token ?: ""
+        val webSocketManager = WebSocketManager.getInstance()
+
+        webSocketManager.connectWebSocket(token,
+            { message -> Log.d("WebSocket", "Mensaje recibido: $message") },
+            { error -> Log.e("WebSocket", "Error de conexión: $error") }
+        )
+
     }
 
     private fun navigate(loginResponse: LoginResponse) {
         if(loginResponse.tipo == "pendiente"){
-            val intent = Intent(this, Home::class.java)
+            val intent = Intent(this, Pendiente::class.java)
+            startActivity(intent)
+            finish()
+        }else if(loginResponse.tipo == "valido"){
+            Log.d("guardarDatosOyente", "Es valido: ${loginResponse.tipo ?: "null"}")
+            val intent = Intent(this, CodigoArtista::class.java)
             startActivity(intent)
             finish()
         }else{
