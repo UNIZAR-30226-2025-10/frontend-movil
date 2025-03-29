@@ -22,11 +22,17 @@ import com.example.myapplication.Adapters.Home.HeaderAdapter
 import com.example.myapplication.Adapters.Home.PlaylistsAdapter
 import com.example.myapplication.R
 import com.example.myapplication.io.ApiService
+import com.example.myapplication.io.CloudinaryApiService
 import com.example.myapplication.io.request.EditarPerfilRequest
+import com.example.myapplication.io.response.CloudinaryResponse
 import com.example.myapplication.io.response.EditarPerfilResponse
+import com.example.myapplication.io.response.GetSignatureResponse
 import com.example.myapplication.io.response.InfoSeguidoresResponse
 import com.example.myapplication.io.response.PlaylistsResponse
 import com.example.myapplication.utils.Preferencias
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -34,6 +40,7 @@ import retrofit2.Response
 class Perfil : AppCompatActivity() {
 
     private lateinit var apiService: ApiService
+    private lateinit var apiServiceCloud: CloudinaryApiService
     private lateinit var recyclerViewPlaylists: RecyclerView
     private lateinit var headerPlaylistsRecyclerView: RecyclerView
     private lateinit var playlistsAdapter: PlaylistsAdapter
@@ -57,6 +64,7 @@ class Perfil : AppCompatActivity() {
         Log.d("MiAppPerfil", "PERFIL 1")
 
         apiService = ApiService.create()
+        apiServiceCloud = CloudinaryApiService.create()
         Log.d("MiAppPerfil", "PERFIL 1.2")
         usernameTextView = findViewById(R.id.username)
         Log.d("MiAppPerfil", "PERFIL 1.2")
@@ -125,6 +133,7 @@ class Perfil : AppCompatActivity() {
 
         Log.d("MiAppPerfil", "PERFIL show edit 5")
         btnSave.setOnClickListener {
+            imageUri?.let { it1 -> getSignatureCloudinary(it1) }
             updateUserProfile(editUsername.text.toString())
             Log.d("MiAppPerfil", "PERFIL show edit 6")
 
@@ -137,6 +146,102 @@ class Perfil : AppCompatActivity() {
         }
 
         dialog.show()
+    }
+
+    private fun getSignatureCloudinary(imagenURI: Uri){
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+        val folder = "perfiles"
+
+        Log.d("Signature", "Signature 1")
+        Log.d("Signature", "Signature 1 token: {$authHeader}")
+        Log.d("Signature", "Signature 1 folder {$folder}")
+        apiService.getSignature(authHeader, folder).enqueue(object : Callback<GetSignatureResponse> {
+            override fun onResponse(call: Call<GetSignatureResponse>, response: Response<GetSignatureResponse>) {
+                Log.d("Signature", "Signature 2")
+                if (response.isSuccessful) {
+                    val signatureResponse = response.body()
+                    signatureResponse?.let {
+                        // Acceder a los datos de la respuesta
+                        val signature = it.signature
+                        val apiKey = it.api_key
+                        val timestamp = it.timestamp
+                        val cloudName = it.cloud_name
+
+                        // Aquí puedes hacer lo que necesites con los valores
+                        Log.d("Signature", "Signature: $signature")
+                        Log.d("Signature", "API Key: $apiKey")
+                        Log.d("Signature", "Timestamp: $timestamp")
+                        Log.d("Signature", "Cloud Name: $cloudName")
+
+                        uploadImageToCloudinary(it, imagenURI, folder)
+                    }
+                    showToast("Get signature correcto")
+                } else {
+                    Log.d("Signature", "Signature 2")
+                    showToast("Error al Get signature")
+                }
+            }
+
+            override fun onFailure(call: Call<GetSignatureResponse>, t: Throwable) {
+                Log.d("Signature", "Error en la solicitud: ${t.message}")
+                showToast("Error en la solicitud: ${t.message}")
+            }
+        })
+    }
+
+    private fun uploadImageToCloudinary(signatureData: GetSignatureResponse, imagenURI: Uri, folder: String) {
+        try {
+            // Obtener el stream del archivo a partir del URI
+            val inputStream = contentResolver.openInputStream(imagenURI) ?: run {
+                showToast("Error al abrir la imagen")
+                return
+            }
+
+            val byteArray = inputStream.readBytes()
+            inputStream.close()
+
+            val requestFile = RequestBody.create(MediaType.parse("image/*"), byteArray)
+            val filePart = MultipartBody.Part.createFormData("file", "image.jpg", requestFile)
+
+            // Crear request bodies para los parámetros
+            val apiKey = RequestBody.create(MediaType.parse("text/plain"), signatureData.api_key)
+            val timestamp = RequestBody.create(MediaType.parse("text/plain"), signatureData.timestamp.toString())
+            val signature = RequestBody.create(MediaType.parse("text/plain"), signatureData.signature)
+            val folderPart = RequestBody.create(MediaType.parse("text/plain"), folder)
+
+            // Llamada a la API de Cloudinary
+            apiServiceCloud.uploadImage(
+                signatureData.cloud_name,
+                filePart,
+                apiKey,
+                timestamp,
+                signature,
+                folderPart
+            ).enqueue(object : Callback<CloudinaryResponse> {
+                override fun onResponse(call: Call<CloudinaryResponse>, response: Response<CloudinaryResponse>) {
+                    if (response.isSuccessful) {
+                        response.body()?.let {
+                            val imageUrl = it.secure_url
+                            Log.d("Cloudinary Upload", "Imagen subida correctamente: $imageUrl")
+
+                            // Guardar URL en preferencias
+                            Preferencias.guardarValorString("profile_image", imageUrl)
+
+                            showToast("Imagen subida con éxito")
+                        } ?: showToast("Error: Respuesta vacía de Cloudinary")
+                    } else {
+                        showToast("Error al subir la imagen: ${response.errorBody()?.string()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<CloudinaryResponse>, t: Throwable) {
+                    showToast("Error en la subida: ${t.message}")
+                }
+            })
+        } catch (e: Exception) {
+            showToast("Error al procesar la imagen: ${e.message}")
+        }
     }
 
     private fun updateUserProfile(newUsername: String) {

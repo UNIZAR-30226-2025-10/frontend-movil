@@ -26,6 +26,7 @@ import com.example.myapplication.io.response.AudioResponse
 import com.example.myapplication.io.response.BuscadorResponse
 import com.example.myapplication.io.response.DeleteAccountResponse
 import com.example.myapplication.io.response.EditarPerfilResponse
+import com.example.myapplication.io.response.GetSignatureResponse
 import com.example.myapplication.io.response.HistorialRecientesResponse
 import com.example.myapplication.io.response.LogOutResponse
 import com.example.myapplication.io.response.HistorialEscuchasResponse
@@ -130,6 +131,13 @@ interface ApiService {
 
     @PUT("/change-datos-oyente")
     fun updateProfile(@Header("Authorization") token: String, request: EditarPerfilRequest): Call<EditarPerfilResponse>
+
+    @GET("/get-signature")
+    fun getSignature(
+        @Header("Authorization") token: String,
+        @Query("folder") folder: String
+    ): Call<GetSignatureResponse>
+
 
     companion object Factory {
         private const val BASE_URL = "https://api-noizz.onrender.com" // URL de la API
