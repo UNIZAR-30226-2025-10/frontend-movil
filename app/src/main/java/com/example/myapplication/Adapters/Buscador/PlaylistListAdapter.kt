@@ -10,7 +10,10 @@ import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.io.response.*
 
-class PlaylistAdapter(private var listaPLaylists: List<Playlist>) : RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder>() {
+class PlaylistAdapter(
+    private var listaPLaylists: List<Playlist>,
+    private val clickListener: (Playlist) -> Unit
+) : RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder>() {
 
     // Cambia el método para actualizar la lista
     fun updateDataPlaylists(searchResponse: List<Playlist>) {
@@ -29,6 +32,8 @@ class PlaylistAdapter(private var listaPLaylists: List<Playlist>) : RecyclerView
         Glide.with(holder.itemView.context)
             .load(playlist.fotoPortada)
             .into(holder.imagenPlaylist)
+
+        holder.itemView.setOnClickListener { clickListener(playlist) }
     }
 
     override fun getItemCount(): Int {

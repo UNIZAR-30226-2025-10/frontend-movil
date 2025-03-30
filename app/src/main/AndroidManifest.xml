@@ -114,9 +114,13 @@
             android:exported="false"
             android:theme="@style/Theme.MyApplication"/>
 
-        <activity android:name=".activities.Home"
+
+        <activity android:name=".activities.PlaylistDetail"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false"
             android:theme="@style/Theme.MyApplication"/>
+
+
 
     </application>
 

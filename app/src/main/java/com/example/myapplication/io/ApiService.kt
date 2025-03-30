@@ -17,6 +17,7 @@ import com.example.myapplication.io.request.CambiarPass1Request
 import com.example.myapplication.io.request.CambiarPass2Request
 import com.example.myapplication.io.request.CambiarPass3Request
 import com.example.myapplication.io.request.DeleteAccountRequest
+import com.example.myapplication.io.request.PlaylistRequest
 import com.example.myapplication.io.request.EditarPerfilRequest
 import com.example.myapplication.io.request.PlayPauseRequest
 import com.example.myapplication.io.request.PlayPauseResponse
@@ -33,6 +34,7 @@ import com.example.myapplication.io.response.HistorialEscuchasResponse
 import com.example.myapplication.io.response.PlaylistsResponse
 import com.example.myapplication.io.response.RecomendacionesResponse
 import com.example.myapplication.io.response.InfoSeguidoresResponse
+import com.example.myapplication.io.response.PlaylistResponse
 import retrofit2.Retrofit
 import retrofit2.Call
 import retrofit2.converter.gson.GsonConverterFactory
@@ -76,7 +78,7 @@ interface ApiService {
     ): Call<DeleteAccountResponse>
 
     // Nuevo método para cerrar sesión
-    @POST("logout") // 
+    @POST("logout") //
     fun logout(
         @Header("Authorization") authHeader: String
     ): Call<LogOutResponse>
@@ -94,6 +96,12 @@ interface ApiService {
         @Header("sid") sid: String,
         @Body request: AudioRequest
     ): Call<AudioResponse>
+
+    @GET("/get-datos-playlist")
+    fun getDatosPlaylist(
+        @Header("Authorization") token: String,
+        @Query ("id") playlistId: String
+    ): Call<PlaylistResponse>
 
     @PUT("/change-fav")
     fun actualizarFavorito(

@@ -83,7 +83,14 @@ class Perfil : AppCompatActivity() {
 
         recyclerViewPlaylists = findViewById(R.id.recyclerViewPlaylistsP)
         recyclerViewPlaylists.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        playlistsAdapter = PlaylistsAdapter(mutableListOf())
+        playlistsAdapter = PlaylistsAdapter(mutableListOf()){ playlist ->
+            val intent = Intent(this, PlaylistDetail::class.java)
+            intent.putExtra("nombre", playlist.nombre)
+            intent.putExtra("usuario", playlist.nombreUsuarioCreador)
+            intent.putExtra("imagen", playlist.fotoPortada)
+            intent.putExtra("id", playlist.id)
+            startActivity(intent)
+        }
         recyclerViewPlaylists.adapter = playlistsAdapter
 
         Log.d("MiAppPerfil", "PERFIL 1.4")

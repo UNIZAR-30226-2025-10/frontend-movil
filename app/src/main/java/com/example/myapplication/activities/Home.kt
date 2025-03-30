@@ -131,7 +131,15 @@ class Home : AppCompatActivity() {
         escuchasAdapter = EscuchasAdapter(mutableListOf())
         recyclerViewEscuchas.adapter = escuchasAdapter
 
-        playlistsAdapter = PlaylistsAdapter(mutableListOf())
+        playlistsAdapter = PlaylistsAdapter(mutableListOf()){ playlist ->
+            val intent = Intent(this, PlaylistDetail::class.java)
+            intent.putExtra("nombre", playlist.nombre)
+            intent.putExtra("usuario", playlist.nombreUsuarioCreador)
+            intent.putExtra("imagen", playlist.fotoPortada)
+            intent.putExtra("id", playlist.id)
+            Log.d("Playlist", "Home ->Playlist")
+            startActivity(intent)
+        }
         recyclerViewPlaylists.adapter = playlistsAdapter
 
         recomendacionesAdapter = RecomendacionesAdapter(mutableListOf())

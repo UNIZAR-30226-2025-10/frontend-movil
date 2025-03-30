@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
@@ -120,7 +121,15 @@ class Buscador : AppCompatActivity() {
         albumAdapter = AlbumAdapter(mutableListOf())
         recyclerViewAlbum.adapter = albumAdapter
 
-        playlistAdapter = PlaylistAdapter(mutableListOf())
+        playlistAdapter = PlaylistAdapter(mutableListOf()) { playlist ->
+            val intent = Intent(this, PlaylistDetail::class.java)
+            intent.putExtra("nombre", playlist.nombre)
+            intent.putExtra("usuario", playlist.nombreUsuarioCreador)
+            intent.putExtra("imagen", playlist.fotoPortada)
+            intent.putExtra("id", playlist.id)
+            Log.d("Playlist", "Buscador -> Playlist")
+            startActivity(intent)
+        }
         recyclerViewPlaylist.adapter = playlistAdapter
 
         perfilAdapter = PerfilAdapter(mutableListOf())

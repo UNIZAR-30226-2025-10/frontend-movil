@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="16dp"
+    android:viewportWidth="48"
+    android:viewportHeight="16">
+
+    <!-- Primer círculo (más pequeño) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M8,8a3,3 0 1,1 -0.01,0z" />
+
+    <!-- Segundo círculo (más pequeño) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M24,8a3,3 0 1,1 -0.01,0z" />
+
+    <!-- Tercer círculo (más pequeño) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M40,8a3,3 0 1,1 -0.01,0z" />
+</vector>
