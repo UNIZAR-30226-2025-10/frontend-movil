@@ -163,23 +163,23 @@ class Home : AppCompatActivity() {
         val token = Preferencias.obtenerValorString("token", "")
         apiService.getHistorialRecientes("Bearer $token").enqueue(object : Callback<HistorialRecientesResponse> {
             override fun onResponse(call: Call<HistorialRecientesResponse>, response: Response<HistorialRecientesResponse>) {
-                Log.d("Mi app", "entra en on response Recientes")
+                Log.d("MiApp", "entra en on response Recientes")
                 if (response.isSuccessful) {
-                    Log.d("Mi app", "entra en on response succesful Recientes")
+                    Log.d("MiApp", "entra en on response succesful Recientes")
                     response.body()?.let {
                         if (it.respuestaHTTP == 0) {
-                            Log.d("Mi app", "entra en respuesta http Recientes")
+                            Log.d("MiApp", "entra en respuesta http Recientes")
                             val Recientes = it.historial_colecciones
-                            Log.d("Mi app", "recientes = $Recientes")
+                            Log.d("MiApp", "recientes = $Recientes")
 
                             // Actualizar y mostrar las canciones si las hay
                             if (Recientes.isNotEmpty()) {
-                                Log.d("Mi app", "no esta vacía")
+                                Log.d("MiApp", "no esta vacía")
                                 RecientesAdapter.updateDataReciente(Recientes)
                                 recyclerViewRecientes.visibility = View.VISIBLE
                                 headerRecientesRecyclerView.visibility = View.VISIBLE
                             } else {
-                                Log.d("Mi app", "no hay recientes")
+                                Log.d("MiApp", "no hay recientes")
                                 recyclerViewRecientes.visibility = View.GONE
                                 headerRecientesRecyclerView.visibility = View.GONE
                                 showToast("No hay Recientes")
@@ -192,7 +192,7 @@ class Home : AppCompatActivity() {
                 } else {
                     showToast("Error en la búsqueda: Código ${response.code()}")
                 }
-                Log.d("Mi app", "sale de recientes")
+                Log.d("MiApp", "sale de recientes")
             }
 
             override fun onFailure(call: Call<HistorialRecientesResponse>, t: Throwable) {
@@ -205,14 +205,14 @@ class Home : AppCompatActivity() {
         val token = Preferencias.obtenerValorString("token", "")
         apiService.getHistorialEscuchas("Bearer $token").enqueue(object : Callback<HistorialEscuchasResponse> {
             override fun onResponse(call: Call<HistorialEscuchasResponse>, response: Response<HistorialEscuchasResponse>) {
-                Log.d("Mi app", "entra en on response Escuchas")
+                Log.d("MiApp", "entra en on response Escuchas")
                 if (response.isSuccessful) {
-                    Log.d("Mi app", "entra en on response succesful Escuchas")
+                    Log.d("MiApp", "entra en on response succesful Escuchas")
                     response.body()?.let {
                         if (it.respuestaHTTP == 0) {
-                            Log.d("Mi app", "entra en respuesta http escuchas = $it")
+                            Log.d("MiApp", "entra en respuesta http escuchas = $it")
                             val escuchas = it.historial_canciones
-                            Log.d("Mi app", "recientes = $escuchas")
+                            Log.d("MiApp", "recientes = $escuchas")
 
                             // Actualizar y mostrar las canciones si las hay
                             if (escuchas.isNotEmpty()) {
@@ -246,7 +246,7 @@ class Home : AppCompatActivity() {
         val token = Preferencias.obtenerValorString("token", "")
         apiService.getMisPlaylists("Bearer $token").enqueue(object : Callback<PlaylistsResponse> {
             override fun onResponse(call: Call<PlaylistsResponse>, response: Response<PlaylistsResponse>) {
-                Log.d("Mi app", "entra en on response Playlists")
+                Log.d("MiApp", "entra en on response Playlists")
                 if (response.isSuccessful) {
                     response.body()?.let {
                         if (it.respuestaHTTP == 0) {
@@ -282,7 +282,7 @@ class Home : AppCompatActivity() {
         val token = Preferencias.obtenerValorString("token", "")
         apiService.getRecomendaciones("Bearer $token").enqueue(object : Callback<RecomendacionesResponse> {
             override fun onResponse(call: Call<RecomendacionesResponse>, response: Response<RecomendacionesResponse>) {
-                Log.d("Mi app", "entra en on response Recomendaciones")
+                Log.d("MiApp", "entra en on response Recomendaciones")
                 if (response.isSuccessful) {
                     response.body()?.let {
                         if (it.respuestaHTTP == 0) {
