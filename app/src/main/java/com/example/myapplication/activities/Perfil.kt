@@ -102,6 +102,7 @@ class Perfil : AppCompatActivity() {
         Log.d("MiAppPerfil", "PERFIL 2")
         loadProfileData()
         Log.d("MiAppPerfil", "PERFIL 3")
+        setupNavigation()
     }
 
     private fun showEditProfileDialog() {
@@ -382,5 +383,28 @@ class Perfil : AppCompatActivity() {
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setupNavigation() {
+        val buttonPerfil: ImageButton = findViewById(R.id.profileImageButton)
+        val buttonHome: ImageButton = findViewById(R.id.nav_home)
+        val buttonSearch: ImageButton = findViewById(R.id.nav_search)
+        val buttonCrear: ImageButton = findViewById(R.id.nav_create)
+
+        buttonPerfil.setOnClickListener {
+            startActivity(Intent(this, Perfil::class.java))
+        }
+
+        buttonHome.setOnClickListener {
+            startActivity(Intent(this, Home::class.java))
+        }
+
+        buttonSearch.setOnClickListener {
+            startActivity(Intent(this, Buscador::class.java))
+        }
+
+        buttonCrear.setOnClickListener {
+            startActivity(Intent(this, Perfil::class.java))
+        }
     }
 }

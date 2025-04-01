@@ -125,7 +125,6 @@ class CancionDetail : AppCompatActivity() {
             buttonCrear.setOnClickListener {
                 startActivity(Intent(this, Perfil::class.java))
             }
-
     }
 
     private fun actualizarFavoritoEstado() {
@@ -244,4 +243,5 @@ class CancionDetail : AppCompatActivity() {
         mediaPlayer = null
         webSocketManager.closeWebSocket() // Cerrar la conexión WebSocket
     }
+
 }
