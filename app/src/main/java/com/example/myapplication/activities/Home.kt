@@ -154,6 +154,7 @@ class Home : AppCompatActivity() {
 
     private fun loadHomeData() {
         getHistorialRecientes()
+        Log.d("MiApp", "ha hecho recientes")
         getHistorialEscuchas()
         getMisPlaylists()
         getRecomendaciones()
