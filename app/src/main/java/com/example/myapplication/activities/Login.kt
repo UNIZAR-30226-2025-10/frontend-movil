@@ -173,6 +173,11 @@ class Login : AppCompatActivity() {
             val intent = Intent(this, CodigoArtista::class.java)
             startActivity(intent)
             finish()
+        }else if(loginResponse.tipo == "admin"){
+            Log.d("guardarDatosOyente", "Es valido: ${loginResponse.tipo ?: "null"}")
+            val intent = Intent(this, Admin::class.java)
+            startActivity(intent)
+            finish()
         }else{
             val intent = Intent(this, Home::class.java)
             startActivity(intent)

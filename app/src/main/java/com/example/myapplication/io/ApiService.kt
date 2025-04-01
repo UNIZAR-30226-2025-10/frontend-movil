@@ -34,6 +34,7 @@ import com.example.myapplication.io.response.HistorialEscuchasResponse
 import com.example.myapplication.io.response.PlaylistsResponse
 import com.example.myapplication.io.response.RecomendacionesResponse
 import com.example.myapplication.io.response.InfoSeguidoresResponse
+import com.example.myapplication.io.response.PendientesResponse
 import com.example.myapplication.io.response.PlaylistResponse
 import retrofit2.Retrofit
 import retrofit2.Call
@@ -148,10 +149,17 @@ interface ApiService {
         @Query("folder") folder: String
     ): Call<GetSignatureResponse>
 
+    @GET("/get_pendientes")
+    fun getPendientes(
+        @Header("Authorization") token: String
+    ): Call<PendientesResponse>
+
+
+
 
     companion object Factory {
-        private const val BASE_URL = "https://api-noizz.onrender.com" // URL de la API
-        //private const val BASE_URL = "http://172.20.10.4:5000"
+        //private const val BASE_URL = "https://api-noizz.onrender.com" // URL de la API
+        private const val BASE_URL = "http://192.168.0.62:5000"
         //private const val BASE_URL = "http://10.1.65.120:5000"
         fun create(): ApiService {
             val retrofit = Retrofit.Builder()
