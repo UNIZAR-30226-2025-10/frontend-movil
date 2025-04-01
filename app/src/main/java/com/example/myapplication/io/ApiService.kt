@@ -78,10 +78,9 @@ interface ApiService {
     ): Call<DeleteAccountResponse>
 
     // Nuevo método para cerrar sesión
-    @POST("logout") //
-    fun logout(
-        @Header("Authorization") authHeader: String
-    ): Call<LogOutResponse>
+    @POST("logout")  // <- Asegúrate de que esta línea esté presente
+    fun logout(@Header("Authorization") authHeader: String): Call<Void>
+
 
     // Nuevo método para el buscador
     @GET("/search")

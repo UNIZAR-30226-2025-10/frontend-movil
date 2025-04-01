@@ -6,10 +6,8 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.myapplication.R
 import com.example.myapplication.utils.Preferencias
 import com.example.myapplication.io.ApiService
-import com.example.myapplication.io.response.LogOutResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -33,48 +31,46 @@ class Logout : AppCompatActivity() {
         val token = Preferencias.obtenerValorString("token", "")
         val authHeader = "Bearer $token"
 
+        Log.d("LOGOUT", "Iniciando logout...")
+        Log.d("LOGOUT", "Token obtenido: $token")
+
+        if (token.isEmpty()) {
+            Log.e("LOGOUT", "Error: No se encontró un token guardado.")
+            showToast("Error: No hay sesión iniciada.")
+            return
+        }
+
         // Cerrar la conexión WebSocket si está abierta
+        Log.d("LOGOUT", "Cerrando WebSocket...")
         WebSocketManager.getInstance().closeWebSocket()
 
         // Llamada a la API para hacer logout
-        apiService.logout(authHeader).enqueue(object : Callback<LogOutResponse> {
-            override fun onResponse(call: Call<LogOutResponse>, response: Response<LogOutResponse>) {
+        apiService.logout(authHeader).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                Log.d("LOGOUT", "Respuesta recibida del servidor. Código: ${response.code()}")
+
                 if (response.isSuccessful) {
-                    val logoutResponse = response.body()
-                    if (logoutResponse != null) {
-                        Log.d("MiApp", "Respuesta exitosa: ${logoutResponse}")
-                        if (logoutResponse.respuestaHTTP == 0) {
-                            Preferencias.borrarDatosUsuario() // Limpiar preferencias
-                            showToast("Logout exitoso")
-                            navigateInicio() // Redirigir al inicio
-                        } else {
-                            handleErrorCode(logoutResponse.respuestaHTTP)
-                        }
-                    } else {
-                        showToast("Logout fallido: Datos incorrectos")
-                    }
+                    Log.d("LOGOUT", "Logout exitoso. Borrando datos de usuario...")
+                    Preferencias.borrarDatosUsuario()
+                    showToast("Logout exitoso")
+                    navigateInicio()
                 } else {
+                    Log.e("LOGOUT", "Error en el logout. Código HTTP: ${response.code()}")
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("LOGOUT", "Cuerpo del error: $errorBody")
                     showToast("Error en el logout: Código ${response.code()}")
                 }
             }
 
-            override fun onFailure(call: Call<LogOutResponse>, t: Throwable) {
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("LOGOUT", "Fallo en la solicitud: ${t.message}")
                 showToast("Error en la solicitud: ${t.message}")
-                Log.e("MiApp", "Error en la solicitud: ${t.message}")
             }
         })
     }
 
-    private fun handleErrorCode(statusCode: Int) {
-        val message = when (statusCode) {
-            400 -> "Error: Correo o usuario en uso"
-            500 -> "Error interno del servidor"
-            else -> "Error desconocido ($statusCode)"
-        }
-        showToast(message)
-    }
-
     private fun navigateInicio() {
+        Log.d("LOGOUT", "Redirigiendo al inicio...")
         val intent = Intent(this, Inicio::class.java)
         startActivity(intent)
         finish()

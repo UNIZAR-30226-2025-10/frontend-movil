@@ -21,13 +21,13 @@ class RecientesAdapter(private var listaRecientes: MutableList<HRecientes>) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecienteHViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_reciente, parent, false)
-        //Log.d("RecientesAdapter", "Inflando item_reciente: ${view.findViewById<TextView>(R.id.textViewReciente)}")
         return RecienteHViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: RecienteHViewHolder, position: Int) {
         val Reciente = listaRecientes[position]
         holder.nombre.text = Reciente.nombre
+        holder.autor.text = Reciente.autor
         Glide.with(holder.itemView.context)
             .load(Reciente.fotoPortada)
             .into(holder.fotoPortada)
@@ -39,6 +39,7 @@ class RecientesAdapter(private var listaRecientes: MutableList<HRecientes>) :
 
     class RecienteHViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nombre: TextView = itemView.findViewById(R.id.textViewReciente)
+        val autor: TextView = itemView.findViewById(R.id.textViewReciente2)
         val fotoPortada: ImageView = itemView.findViewById(R.id.imageViewReciente)
     }
 }
