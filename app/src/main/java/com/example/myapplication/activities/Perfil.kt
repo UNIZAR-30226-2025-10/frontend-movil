@@ -88,12 +88,49 @@ class Perfil : AppCompatActivity() {
         Log.d("MiAppPerfil", "PERFIL 1.4")
 
         findViewById<Button>(R.id.editProfile).setOnClickListener { showEditProfileDialog() }
-        findViewById<Button>(R.id.botonDeleteAccount).setOnClickListener { startActivity(Intent(this, DeleteAccount::class.java)) }
         findViewById<Button>(R.id.botonLogout).setOnClickListener { startActivity(Intent(this, Logout::class.java)) }
+
+        val buttonDeleteAccount: Button = findViewById(R.id.botonDeleteAccount)
+        // Mostrar diálogo para eliminar cuenta
+        buttonDeleteAccount.setOnClickListener {
+            showDeleteAccountDialog()
+        }
+
 
         Log.d("MiAppPerfil", "PERFIL 2")
         loadProfileData()
         Log.d("MiAppPerfil", "PERFIL 3")
+    }
+
+    private fun showDeleteAccountDialog() {
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.dialog_delete_account)
+
+        val window: Window? = dialog.window
+        window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        dialog.setCancelable(true)
+
+        val editPassword = dialog.findViewById<EditText>(R.id.editPassword)
+        val btnConfirm = dialog.findViewById<Button>(R.id.btnConfirm)
+        val btnCancel = dialog.findViewById<Button>(R.id.btnCancel)
+
+        btnCancel.setOnClickListener { dialog.dismiss() }
+
+        btnConfirm.setOnClickListener {
+            val password = editPassword.text.toString().trim()
+            if (password.isNotEmpty()) {
+                val intent = Intent(this, DeleteAccount::class.java)
+                intent.putExtra("password", password)
+                startActivity(intent)
+                dialog.dismiss()
+            } else {
+                showToast("Introduce tu contraseña")
+            }
+        }
+
+        dialog.show()
     }
 
     private fun showEditProfileDialog() {
