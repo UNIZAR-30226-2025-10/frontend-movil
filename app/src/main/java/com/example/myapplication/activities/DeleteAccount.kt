@@ -1,20 +1,13 @@
 package com.example.myapplication.activities
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.myapplication.R
-import com.example.myapplication.utils.Preferencias
 import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.request.DeleteAccountRequest
-import com.example.myapplication.io.response.DeleteAccountResponse
-import com.example.myapplication.io.response.LogOutResponse
+import com.example.myapplication.utils.Preferencias
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,81 +15,68 @@ import retrofit2.Response
 class DeleteAccount : AppCompatActivity() {
 
     private lateinit var apiService: ApiService
-    private lateinit var editTextPassword: EditText
 
-    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.borrar_cuenta)
+        Log.d("Delete", "Actividad DeleteAccount iniciada sin layout")
 
-        // Inicialización de ApiService
         apiService = ApiService.create()
 
-        // Referenciar los botones
-        val buttonDeleteAccount: Button = findViewById(R.id.botonDeleteAccount)
-        editTextPassword = findViewById(R.id.contrasenya)
+        // Recuperar la contraseña del Intent
+        val receivedPassword = intent.getStringExtra("password") ?: ""
 
-        val contrasenya = editTextPassword.text.toString().trim()
-
-        // Evento clic del botón de delete account
-        buttonDeleteAccount.setOnClickListener {
-            borrarCuenta(contrasenya)
+        if (receivedPassword.isEmpty()) {
+            Log.e("Delete", "Error: No se recibió una contraseña válida desde el perfil")
+            showToast("Error: No se recibió una contraseña válida")
+            finish() // Cerrar la actividad si no hay contraseña
+            return
         }
+
+        Log.d("Delete", "Contraseña recibida del Intent: $receivedPassword")
+
+        // Iniciar el proceso de eliminación de cuenta
+        borrarCuenta(receivedPassword)
     }
 
-    // Método para eliminar la cuenta
     private fun borrarCuenta(contrasenya: String) {
+        Log.d("Delete", "Iniciando proceso de eliminación de cuenta")
 
-        val deleteRequest: DeleteAccountRequest
-        deleteRequest = DeleteAccountRequest(contrasenya)
+        val deleteRequest = DeleteAccountRequest(contrasenya)
         val token = Preferencias.obtenerValorString("token", "")
         val authHeader = "Bearer $token"
 
-        // Llamada a la API para hacer logout
-        apiService.deleteAccount(authHeader,deleteRequest).enqueue(object : Callback<DeleteAccountResponse> {
-            override fun onResponse(call: Call<DeleteAccountResponse>, response: Response<DeleteAccountResponse>) {
+        Log.d("Delete", "Token obtenido: $token")
+
+        apiService.deleteAccount(authHeader, deleteRequest).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                Log.d("Delete", "Respuesta de la API recibida - Código: ${response.code()}")
+
                 if (response.isSuccessful) {
-                    val deleteResponse = response.body()
-                    if (deleteResponse != null) {
-                        Log.d("MiApp", "Respuesta exitosa: ${deleteResponse}")
-                        if(deleteResponse.respuestaHTTP == 0){
-                            // Borrar los datos guardados en preferencias
-                            Preferencias.borrarDatosUsuario() 
-                            showToast("Cuenta borrada con existoso")
-                            navigateInicio()
-                        } else{
-                            handleErrorCode(deleteResponse.respuestaHTTP)
-                        }
-                    } else {
-                        showToast("Delete account fallido: datos incorrectos")
-                    }
+                    Log.d("Delete", "Cuenta eliminada exitosamente")
+                    Preferencias.borrarDatosUsuario()
+                    showToast("Cuenta borrada con éxito")
+                    navigateInicio()
                 } else {
-                    showToast("Error en el delete account: Código ${response.code()}")
+                    Log.e("Delete", "Error en la eliminación - Código: ${response.code()}")
+                    showToast("Error en la eliminación: Código ${response.code()}")
+                    finish()
                 }
             }
 
-            override fun onFailure(call: Call<DeleteAccountResponse>, t: Throwable) {
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("Delete", "Error en la solicitud: ${t.message}")
                 showToast("Error en la solicitud: ${t.message}")
-                Log.e("MiApp", "Error en la solicitud: ${t.message}")
+                finish()
             }
         })
     }
 
-    private fun handleErrorCode(statusCode: Int) {
-        val message = when (statusCode) {
-            400 -> "Error: Correo o usuario en uso"
-            500 -> "Error interno del servidor"
-            else -> "Error desconocido ($statusCode)"
-        }
-        showToast(message)
-    }
-
     private fun navigateInicio() {
+        Log.d("Delete", "Navegando a la pantalla de inicio")
         val intent = Intent(this, Inicio::class.java)
         startActivity(intent)
         finish()
     }
-
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
