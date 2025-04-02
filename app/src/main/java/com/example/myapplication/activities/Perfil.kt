@@ -46,6 +46,7 @@ class Perfil : AppCompatActivity() {
     private lateinit var playlistsAdapter: PlaylistsAdapter
     private lateinit var usernameTextView: TextView
     private lateinit var profileImageView: ImageView
+    private lateinit var profileImageButton: ImageView
     private var imageUri: Uri? = null
     private var profileImageViewDialog: ImageView? = null
     private val openGalleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -68,9 +69,39 @@ class Perfil : AppCompatActivity() {
         Log.d("MiAppPerfil", "PERFIL 1.2")
         usernameTextView = findViewById(R.id.username)
         Log.d("MiAppPerfil", "PERFIL 1.2")
-        profileImageView = findViewById(R.id.profileImageButton)
+        profileImageButton = findViewById(R.id.profileImageButton)
+        profileImageView = findViewById(R.id.profileImage)
 
         Log.d("MiAppPerfil", "PERFIL 1.2")
+
+        // Obtener la URL de la imagen de perfil desde SharedPreferences
+        val profileImageUrl = Preferencias.obtenerValorString("fotoPerfil", "")
+
+        Log.d("ProfileImage", "URL de la imagen de perfil: $profileImageUrl")
+
+
+        // Verificar si la API devolvió "DEFAULT" o si no hay imagen guardada
+        if (profileImageUrl.isNullOrEmpty() || profileImageUrl == "DEFAULT") {
+            // Cargar la imagen predeterminada
+            profileImageButton.setImageResource(R.drawable.ic_profile)
+            profileImageView.setImageResource(R.drawable.ic_profile)
+        } else {
+            // Cargar la imagen desde la URL con Glide
+            Glide.with(this)
+                .load(profileImageUrl)
+                .circleCrop()
+                .placeholder(R.drawable.ic_profile) // Imagen por defecto mientras carga
+                .error(R.drawable.ic_profile) // Imagen si hay error
+                .into(profileImageButton)
+            // Cargar la imagen desde la URL con Glide
+            Glide.with(this)
+                .load(profileImageUrl)
+                .circleCrop()
+                .placeholder(R.drawable.ic_profile) // Imagen por defecto mientras carga
+                .error(R.drawable.ic_profile) // Imagen si hay error
+                .into(profileImageView)
+        }
+
 
         val headersPlaylists = listOf("Mis playlists")
         val headerPlaylistsAdapter = HeaderAdapter(headersPlaylists)

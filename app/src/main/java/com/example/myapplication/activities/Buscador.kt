@@ -10,10 +10,12 @@ import android.util.Log
 import android.view.View
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.myapplication.Adapters.Buscador.AlbumAdapter
 import com.example.myapplication.Adapters.Buscador.ArtistaAdapter
 import com.example.myapplication.R
@@ -57,6 +59,28 @@ class Buscador : AppCompatActivity() {
         setContentView(R.layout.buscador)
 
         apiService = ApiService.create()
+
+        val profileImageButton = findViewById<ImageButton>(R.id.profileImageButton)
+
+        // Obtener la URL de la imagen de perfil desde SharedPreferences
+        val profileImageUrl = Preferencias.obtenerValorString("fotoPerfil", "")
+
+        Log.d("ProfileImage", "URL de la imagen de perfil: $profileImageUrl")
+
+
+        // Verificar si la API devolvió "DEFAULT" o si no hay imagen guardada
+        if (profileImageUrl.isNullOrEmpty() || profileImageUrl == "DEFAULT") {
+            // Cargar la imagen predeterminada
+            profileImageButton.setImageResource(R.drawable.ic_profile)
+        } else {
+            // Cargar la imagen desde la URL con Glide
+            Glide.with(this)
+                .load(profileImageUrl)
+                .circleCrop()
+                .placeholder(R.drawable.ic_profile) // Imagen por defecto mientras carga
+                .error(R.drawable.ic_profile) // Imagen si hay error
+                .into(profileImageButton)
+        }
 
         // Configurar RecyclerView para los encabezados
         val headersCanciones = listOf("Canciones")
@@ -156,6 +180,8 @@ class Buscador : AppCompatActivity() {
         checkPlaylists = findViewById(R.id.checkPlaylists)
         checkPerfiles = findViewById(R.id.checkPerfiles)
 
+        setupNavigation()
+
         // Configurar eventos de cambio en los CheckBox para actualizar la vista
         val checkBoxes = listOf(checkCanciones, checkArtistas, checkAlbumes, checkPlaylists, checkPerfiles)
         for (checkBox in checkBoxes) {
@@ -215,7 +241,28 @@ class Buscador : AppCompatActivity() {
         headerPerfilesRecyclerView.visibility = if (todosDesmarcados || checkPerfiles.isChecked) View.VISIBLE else View.GONE
     }
 
+    private fun setupNavigation() {
+        val buttonPerfil: ImageButton = findViewById(R.id.profileImageButton)
+        val buttonHome: ImageButton = findViewById(R.id.nav_home)
+        val buttonSearch: ImageButton = findViewById(R.id.nav_search)
+        val buttonCrear: ImageButton = findViewById(R.id.nav_create)
 
+        buttonPerfil.setOnClickListener {
+            startActivity(Intent(this, Perfil::class.java))
+        }
+
+        buttonHome.setOnClickListener {
+            startActivity(Intent(this, Home::class.java))
+        }
+
+        buttonSearch.setOnClickListener {
+            startActivity(Intent(this, Buscador::class.java))
+        }
+
+        buttonCrear.setOnClickListener {
+            startActivity(Intent(this, Perfil::class.java))
+        }
+    }
 
     private fun handleErrorCode(statusCode: Int) {
         val message = when (statusCode) {

@@ -22,7 +22,6 @@
             android:layout_height="match_parent"
             android:padding="8dp">
 
-            <!-- Imagen de perfil como botón -->
             <ImageButton
                 android:id="@+id/profileImageButton"
                 android:layout_width="40dp"
@@ -31,8 +30,8 @@
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="16dp"
                 android:scaleType="centerCrop"
-                android:background="@android:color/transparent"
                 android:src="@drawable/ic_profile"
+                android:background="@android:color/transparent"
                 android:contentDescription="Imagen de perfil"
                 android:clickable="true"
                 android:focusable="true"/>
