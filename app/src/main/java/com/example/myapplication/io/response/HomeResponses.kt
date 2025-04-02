@@ -2,6 +2,8 @@ package com.example.myapplication.io.response
 
 data class HistorialRecientesResponse(val respuestaHTTP: Int, val historial_colecciones: List<HRecientes>)
 
+data class HistorialArtistasResponse(val respuestaHTTP: Int, val historial_artistas: List<HArtistas>)
+
 data class HistorialEscuchasResponse(val respuestaHTTP: Int, val historial_canciones: List<HCancion>)
 
 data class PlaylistsResponse(val respuestaHTTP: Int, val playlists: List<MisPlaylist>)
@@ -14,6 +16,13 @@ data class HRecientes(
     val fotoPortada: String,
     val autor: String
 )
+
+    data class HArtistas(
+    val nombreUsuario: String,
+    val nombreArtistico: String,
+    val fotoPerfil: String
+)
+
 
 data class HCancion(
     val id: String,

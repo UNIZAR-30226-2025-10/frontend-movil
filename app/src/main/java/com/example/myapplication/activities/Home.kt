@@ -30,11 +30,14 @@ import retrofit2.Response
 import com.example.myapplication.io.response.HistorialEscuchasResponse
 import com.example.myapplication.io.response.PlaylistsResponse
 import com.example.myapplication.io.response.RecomendacionesResponse
-import com.example.myapplication.Adapters.Home.RecientesAdapter
+import com.example.myapplication.Adapters.Home.RecientesYArtistasAdapter
 import com.example.myapplication.Adapters.Home.EscuchasAdapter
 import com.example.myapplication.Adapters.Home.HeaderAdapter
 import com.example.myapplication.Adapters.Home.PlaylistsAdapter
 import com.example.myapplication.Adapters.Home.RecomendacionesAdapter
+import com.example.myapplication.io.response.HArtistas
+import com.example.myapplication.io.response.HRecientes
+import com.example.myapplication.io.response.HistorialArtistasResponse
 
 class Home : AppCompatActivity() {
 
@@ -44,7 +47,7 @@ class Home : AppCompatActivity() {
     private lateinit var recyclerViewPlaylists: RecyclerView
     private lateinit var recyclerViewRecomendaciones: RecyclerView
 
-    private lateinit var RecientesAdapter: RecientesAdapter
+    private lateinit var RecientesAdapter: RecientesYArtistasAdapter
     private lateinit var escuchasAdapter: EscuchasAdapter
     private lateinit var playlistsAdapter: PlaylistsAdapter
     private lateinit var recomendacionesAdapter: RecomendacionesAdapter
@@ -54,6 +57,8 @@ class Home : AppCompatActivity() {
     private lateinit var headerPlaylistsRecyclerView: RecyclerView
     private lateinit var headerRecomendacionesRecyclerView: RecyclerView
 
+    private val listaRecientes = mutableListOf<HRecientes>()
+    private val listaArtistas = mutableListOf<HArtistas>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -128,7 +133,7 @@ class Home : AppCompatActivity() {
         recyclerViewRecomendaciones.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
         // Inicia los adaptadores
-        RecientesAdapter = RecientesAdapter(mutableListOf())
+        RecientesAdapter = RecientesYArtistasAdapter(mutableListOf())
         recyclerViewRecientes.adapter = RecientesAdapter
 
         escuchasAdapter = EscuchasAdapter(mutableListOf())
@@ -156,39 +161,30 @@ class Home : AppCompatActivity() {
     }
 
     private fun loadHomeData() {
-        getHistorialRecientes()
+        getRecientes()
         Log.d("MiApp", "ha hecho recientes")
         getHistorialEscuchas()
         getMisPlaylists()
         getRecomendaciones()
     }
 
+    private fun getRecientes() {
+        getHistorialRecientes()
+        getHistorialArtistas()
+    }
+
     private fun getHistorialRecientes() {
         val token = Preferencias.obtenerValorString("token", "")
         apiService.getHistorialRecientes("Bearer $token").enqueue(object : Callback<HistorialRecientesResponse> {
             override fun onResponse(call: Call<HistorialRecientesResponse>, response: Response<HistorialRecientesResponse>) {
-                Log.d("MiApp", "entra en on response Recientes")
                 if (response.isSuccessful) {
-                    Log.d("MiApp", "entra en on response succesful Recientes")
                     response.body()?.let {
                         if (it.respuestaHTTP == 0) {
-                            Log.d("MiApp", "entra en respuesta http Recientes")
-                            val Recientes = it.historial_colecciones
-                            Log.d("MiApp", "recientes = $Recientes")
-
-                            // Actualizar y mostrar las canciones si las hay
-                            if (Recientes.isNotEmpty()) {
-                                Log.d("MiApp", "no esta vacía")
-                                RecientesAdapter.updateDataReciente(Recientes)
-                                recyclerViewRecientes.visibility = View.VISIBLE
-                                headerRecientesRecyclerView.visibility = View.VISIBLE
-                            } else {
-                                Log.d("MiApp", "no hay recientes")
-                                recyclerViewRecientes.visibility = View.GONE
-                                headerRecientesRecyclerView.visibility = View.GONE
-                                showToast("No hay Recientes")
-                            }
-
+                            Log.d("MiApp", "entra en respuesta http recientes = $it")
+                            listaRecientes.clear()
+                            listaRecientes.addAll(it.historial_colecciones)
+                            Log.d("MiApp", "ha asignado la lista bien recientes")
+                            verificarDatosCompletos()
                         } else {
                             handleErrorCode(it.respuestaHTTP)
                         }
@@ -196,7 +192,6 @@ class Home : AppCompatActivity() {
                 } else {
                     showToast("Error en la búsqueda: Código ${response.code()}")
                 }
-                Log.d("MiApp", "sale de recientes")
             }
 
             override fun onFailure(call: Call<HistorialRecientesResponse>, t: Throwable) {
@@ -204,6 +199,62 @@ class Home : AppCompatActivity() {
             }
         })
     }
+
+    private fun getHistorialArtistas() {
+        val token = Preferencias.obtenerValorString("token", "")
+        apiService.getHistorialArtistas("Bearer $token").enqueue(object : Callback<HistorialArtistasResponse> {
+            override fun onResponse(call: Call<HistorialArtistasResponse>, response: Response<HistorialArtistasResponse>) {
+                Log.d("MiApp", "entra en on response Artistas")
+                if (response.isSuccessful) {
+                    Log.d("MiApp", "entra en on response succesful Artistas")
+                    response.body()?.let {
+                        if (it.respuestaHTTP == 0) {
+                            Log.d("MiApp", "entra en respuesta http artistas = $it")
+                            listaArtistas.clear()
+                            listaArtistas.addAll(it.historial_artistas)
+                            Log.d("MiApp", "ha asignado la lista bien")
+                            verificarDatosCompletos()
+                        } else {
+                            handleErrorCode(it.respuestaHTTP)
+                        }
+                    } ?: showToast("Búsqueda fallida: Datos incorrectos")
+                } else {
+                    showToast("Error en la búsqueda: Código ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<HistorialArtistasResponse>, t: Throwable) {
+                showToast("Error en la solicitud: ${t.message}")
+            }
+        })
+    }
+
+    private fun verificarDatosCompletos() {
+        Log.d("MiApp", "entra en verificar datos")
+        if (listaRecientes.isNotEmpty() && listaArtistas.isNotEmpty()) {
+            Log.d("MiApp", "listas no vacias")
+            mezclarArtistasyRecientes()
+        }
+    }
+
+    private fun mezclarArtistasyRecientes() {
+        val listaMezclada = mutableListOf<Any>()
+        var i = 0
+        var j = 0
+
+        while (i < listaRecientes.size || j < listaArtistas.size) {
+            repeat(3) { if (i < listaRecientes.size) listaMezclada.add(listaRecientes[i++]) }
+            repeat(3) { if (j < listaArtistas.size) listaMezclada.add(listaArtistas[j++]) }
+            if (i < listaRecientes.size) listaMezclada.add(listaRecientes[i++])
+            if (j < listaArtistas.size) listaMezclada.add(listaArtistas[j++])
+        }
+        Log.d("MiApp", "mezcla listas y las manda a actualizar")
+        RecientesAdapter.updateData(listaMezclada)
+        recyclerViewRecientes.visibility = View.VISIBLE
+        headerRecientesRecyclerView.visibility = View.VISIBLE
+        Log.d("MiApp", "ha actualizado correctamente")
+    }
+
 
     private fun getHistorialEscuchas() {
         val token = Preferencias.obtenerValorString("token", "")
@@ -216,7 +267,7 @@ class Home : AppCompatActivity() {
                         if (it.respuestaHTTP == 0) {
                             Log.d("MiApp", "entra en respuesta http escuchas = $it")
                             val escuchas = it.historial_canciones
-                            Log.d("MiApp", "recientes = $escuchas")
+                            Log.d("MiApp", "escuchas = $escuchas")
 
                             // Actualizar y mostrar las canciones si las hay
                             if (escuchas.isNotEmpty()) {

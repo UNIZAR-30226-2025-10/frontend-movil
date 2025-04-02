@@ -28,6 +28,7 @@ import com.example.myapplication.io.response.BuscadorResponse
 import com.example.myapplication.io.response.DeleteAccountResponse
 import com.example.myapplication.io.response.EditarPerfilResponse
 import com.example.myapplication.io.response.GetSignatureResponse
+import com.example.myapplication.io.response.HistorialArtistasResponse
 import com.example.myapplication.io.response.HistorialRecientesResponse
 import com.example.myapplication.io.response.LogOutResponse
 import com.example.myapplication.io.response.HistorialEscuchasResponse
@@ -125,6 +126,9 @@ interface ApiService {
 
     @GET("/get-historial-colecciones")
     fun getHistorialRecientes(@Header("Authorization") token: String): Call<HistorialRecientesResponse>
+
+    @GET("/get-historial-artistas")
+    fun getHistorialArtistas(@Header("Authorization") token: String): Call<HistorialArtistasResponse>
 
     @GET("/get-historial-canciones")
     fun getHistorialEscuchas(@Header("Authorization") token: String): Call<HistorialEscuchasResponse>
