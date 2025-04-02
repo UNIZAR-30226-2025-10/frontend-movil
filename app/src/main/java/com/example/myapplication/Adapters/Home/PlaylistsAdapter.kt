@@ -12,7 +12,7 @@ import com.example.myapplication.io.response.*
 
 class PlaylistsAdapter (
     private var listaMisPLaylists: MutableList<MisPlaylist>,
-    private val clickListener: (Playlist) -> Unit
+    private val clickListener: (MisPlaylist) -> Unit
 ) : RecyclerView.Adapter<PlaylistsAdapter.MisPlaylistViewHolder>() {
 
     // Cambia el método para actualizar la lista
@@ -33,6 +33,8 @@ class PlaylistsAdapter (
         Glide.with(holder.itemView.context)
             .load(playlist.fotoPortada)
             .into(holder.imagenPlaylist)
+
+        holder.itemView.setOnClickListener { clickListener(playlist) }
     }
 
     override fun getItemCount(): Int {

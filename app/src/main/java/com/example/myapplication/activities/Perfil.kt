@@ -117,7 +117,6 @@ class Perfil : AppCompatActivity() {
         playlistsAdapter = PlaylistsAdapter(mutableListOf()){ playlist ->
             val intent = Intent(this, PlaylistDetail::class.java)
             intent.putExtra("nombre", playlist.nombre)
-            intent.putExtra("usuario", playlist.nombreUsuarioCreador)
             intent.putExtra("imagen", playlist.fotoPortada)
             intent.putExtra("id", playlist.id)
             startActivity(intent)

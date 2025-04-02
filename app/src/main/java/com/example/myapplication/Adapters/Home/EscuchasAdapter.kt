@@ -10,7 +10,11 @@ import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.io.response.HCancion
 
-    class EscuchasAdapter(private var listaEscuchas: MutableList<HCancion>) : RecyclerView.Adapter<EscuchasAdapter.EscuchaViewHolder>() {
+
+class EscuchasAdapter(
+        private var listaEscuchas: MutableList<HCancion>,
+        private val clickListener: (HCancion) -> Unit,
+    ) : RecyclerView.Adapter<EscuchasAdapter.EscuchaViewHolder>() {
     // Cambia el método para actualizar la lista
     fun updateDataEscucha(searchResponse: List<HCancion>) {
         listaEscuchas.clear()
@@ -30,6 +34,8 @@ import com.example.myapplication.io.response.HCancion
         Glide.with(holder.itemView.context)
             .load(escucha.fotoPortada)
             .into(holder.imagenCancion)
+
+        holder.itemView.setOnClickListener { clickListener(escucha) }
     }
 
     override fun getItemCount(): Int {
