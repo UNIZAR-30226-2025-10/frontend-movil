@@ -75,7 +75,7 @@ class Perfil : AppCompatActivity() {
         Log.d("MiAppPerfil", "PERFIL 1.2")
 
         // Obtener la URL de la imagen de perfil desde SharedPreferences
-        val profileImageUrl = Preferencias.obtenerValorString("fotoPerfil", "")
+        val profileImageUrl = Preferencias.obtenerValorString("fotoPerfil", "DEFAULT")
 
         Log.d("ProfileImage", "URL de la imagen de perfil: $profileImageUrl")
 
@@ -196,7 +196,7 @@ class Perfil : AppCompatActivity() {
 
         editUsername.setText(usernameTextView.text.toString())
         Glide.with(this)
-            .load(Preferencias.obtenerValorString("profile_image", "DEFAULT"))
+            .load(Preferencias.obtenerValorString("fotoPerfil", "DEFAULT"))
             .placeholder(R.drawable.ic_profile)
             .error(R.drawable.ic_profile)
             .into(profileImageViewDialog!!)
