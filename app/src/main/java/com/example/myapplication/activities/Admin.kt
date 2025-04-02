@@ -36,15 +36,14 @@ class Admin : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("MiApp", "admin 1")
         setContentView(R.layout.solicitudes_admin)
 
         apiService = ApiService.create()
 
         findViewById<Button>(R.id.btnLogout).setOnClickListener { startActivity(Intent(this, Logout::class.java)) }
-
-
+        Log.d("MiApp", "admin 2")
         loadSolicitudes()
-
 
     }
 

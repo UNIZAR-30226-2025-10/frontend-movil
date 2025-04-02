@@ -67,6 +67,9 @@ class Home : AppCompatActivity() {
         // Obtener la URL de la imagen de perfil desde SharedPreferences
         val profileImageUrl = Preferencias.obtenerValorString("fotoPerfil", "")
 
+        Log.d("ProfileImage", "URL de la imagen de perfil: $profileImageUrl")
+
+
         // Verificar si la API devolvió "DEFAULT" o si no hay imagen guardada
         if (profileImageUrl.isNullOrEmpty() || profileImageUrl == "DEFAULT") {
             // Cargar la imagen predeterminada

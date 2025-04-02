@@ -195,21 +195,26 @@ class Buscador : AppCompatActivity() {
     }
 
     private fun aplicarFiltros() {
-        recyclerViewCancion.visibility = if (checkCanciones.isChecked) View.VISIBLE else View.GONE
-        headerCancionesRecyclerView.visibility = if (checkCanciones.isChecked) View.VISIBLE else View.GONE
+        val todosDesmarcados = !(checkCanciones.isChecked || checkArtistas.isChecked ||
+                checkAlbumes.isChecked || checkPlaylists.isChecked || checkPerfiles.isChecked)
 
-        recyclerViewArtista.visibility = if (checkArtistas.isChecked) View.VISIBLE else View.GONE
-        headerArtistasRecyclerView.visibility = if (checkArtistas.isChecked) View.VISIBLE else View.GONE
+        // Si todos están desmarcados, mostrar todas las categorías
+        recyclerViewCancion.visibility = if (todosDesmarcados || checkCanciones.isChecked) View.VISIBLE else View.GONE
+        headerCancionesRecyclerView.visibility = if (todosDesmarcados || checkCanciones.isChecked) View.VISIBLE else View.GONE
 
-        recyclerViewAlbum.visibility = if (checkAlbumes.isChecked) View.VISIBLE else View.GONE
-        headerAlbumesRecyclerView.visibility = if (checkAlbumes.isChecked) View.VISIBLE else View.GONE
+        recyclerViewArtista.visibility = if (todosDesmarcados || checkArtistas.isChecked) View.VISIBLE else View.GONE
+        headerArtistasRecyclerView.visibility = if (todosDesmarcados || checkArtistas.isChecked) View.VISIBLE else View.GONE
 
-        recyclerViewPlaylist.visibility = if (checkPlaylists.isChecked) View.VISIBLE else View.GONE
-        headerPlaylistsRecyclerView.visibility = if (checkPlaylists.isChecked) View.VISIBLE else View.GONE
+        recyclerViewAlbum.visibility = if (todosDesmarcados || checkAlbumes.isChecked) View.VISIBLE else View.GONE
+        headerAlbumesRecyclerView.visibility = if (todosDesmarcados || checkAlbumes.isChecked) View.VISIBLE else View.GONE
 
-        recyclerViewPerfil.visibility = if (checkPerfiles.isChecked) View.VISIBLE else View.GONE
-        headerPerfilesRecyclerView.visibility = if (checkPerfiles.isChecked) View.VISIBLE else View.GONE
+        recyclerViewPlaylist.visibility = if (todosDesmarcados || checkPlaylists.isChecked) View.VISIBLE else View.GONE
+        headerPlaylistsRecyclerView.visibility = if (todosDesmarcados || checkPlaylists.isChecked) View.VISIBLE else View.GONE
+
+        recyclerViewPerfil.visibility = if (todosDesmarcados || checkPerfiles.isChecked) View.VISIBLE else View.GONE
+        headerPerfilesRecyclerView.visibility = if (todosDesmarcados || checkPerfiles.isChecked) View.VISIBLE else View.GONE
     }
+
 
 
     private fun handleErrorCode(statusCode: Int) {

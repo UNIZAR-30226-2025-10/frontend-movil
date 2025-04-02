@@ -111,35 +111,35 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Canciones"
-                android:checked="true"/>
+                android:checked="false"/>
 
             <CheckBox
                 android:id="@+id/checkArtistas"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Artistas"
-                android:checked="true"/>
+                android:checked="false"/>
 
             <CheckBox
                 android:id="@+id/checkAlbumes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Álbumes"
-                android:checked="true"/>
+                android:checked="false"/>
 
             <CheckBox
                 android:id="@+id/checkPlaylists"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Playlists"
-                android:checked="true"/>
+                android:checked="false"/>
 
             <CheckBox
                 android:id="@+id/checkPerfiles"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Perfiles"
-                android:checked="true"/>
+                android:checked="false"/>
         </LinearLayout>
     </HorizontalScrollView>
 
