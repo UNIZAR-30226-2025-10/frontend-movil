@@ -34,6 +34,7 @@ import com.example.myapplication.io.response.HistorialArtistasResponse
 import com.example.myapplication.io.response.HistorialRecientesResponse
 import com.example.myapplication.io.response.LogOutResponse
 import com.example.myapplication.io.response.HistorialEscuchasResponse
+import com.example.myapplication.io.response.InfoPerfilArtistaResponse
 import com.example.myapplication.io.response.PlaylistsResponse
 import com.example.myapplication.io.response.RecomendacionesResponse
 import com.example.myapplication.io.response.InfoSeguidoresResponse
@@ -144,6 +145,9 @@ interface ApiService {
 
     @GET("/get-mis-datos-oyente")
     fun getMisDatosOyente(@Header("Authorization") token: String): Call<InfoSeguidoresResponse>
+
+    @GET("/get-mis-datos-artista")
+    fun getMisDatosArtista(@Header("Authorization") token: String): Call<InfoPerfilArtistaResponse>
 
     @PUT("/change-datos-oyente")
     fun updateProfile(

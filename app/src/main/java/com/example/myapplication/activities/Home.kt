@@ -382,7 +382,15 @@ class Home : AppCompatActivity() {
         val buttonCrear: ImageButton = findViewById(R.id.nav_create)
 
         buttonPerfil.setOnClickListener {
-            startActivity(Intent(this, Perfil::class.java))
+            val esOyente = Preferencias.obtenerValorString("esOyente", "")
+            if (esOyente == "oyente") {
+                Log.d("Login", "El usuario es un oyente")
+                startActivity(Intent(this, Perfil::class.java))
+            } else {
+                Log.d("Login", "El usuario NO es un oyente")
+                startActivity(Intent(this, PerfilArtista::class.java))
+            }
+
         }
 
         buttonHome.setOnClickListener {
