@@ -84,8 +84,6 @@ class PlaylistDetail : AppCompatActivity() {
         buttonCrear.setOnClickListener {
             startActivity(Intent(this, Perfil::class.java))
         }
-
-        setupNavigation()
     }
 
     // Función para realizar la llamada a la API y obtener los datos
@@ -127,28 +125,5 @@ class PlaylistDetail : AppCompatActivity() {
                 Toast.makeText(this@PlaylistDetail, "Error de conexión: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
-    }
-
-    private fun setupNavigation() {
-        val buttonPerfil: ImageButton = findViewById(R.id.profileImageButton)
-        val buttonHome: ImageButton = findViewById(R.id.nav_home)
-        val buttonSearch: ImageButton = findViewById(R.id.nav_search)
-        val buttonCrear: ImageButton = findViewById(R.id.nav_create)
-
-        buttonPerfil.setOnClickListener {
-            startActivity(Intent(this, Perfil::class.java))
-        }
-
-        buttonHome.setOnClickListener {
-            startActivity(Intent(this, Home::class.java))
-        }
-
-        buttonSearch.setOnClickListener {
-            startActivity(Intent(this, Buscador::class.java))
-        }
-
-        buttonCrear.setOnClickListener {
-            startActivity(Intent(this, Perfil::class.java))
-        }
     }
 }
