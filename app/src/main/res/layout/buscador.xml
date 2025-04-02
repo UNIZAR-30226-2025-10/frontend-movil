@@ -94,12 +94,61 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+    <HorizontalScrollView
+        android:id="@+id/filtros"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/barraBuscador">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <CheckBox
+                android:id="@+id/checkCanciones"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Canciones"
+                android:checked="true"/>
+
+            <CheckBox
+                android:id="@+id/checkArtistas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Artistas"
+                android:checked="true"/>
+
+            <CheckBox
+                android:id="@+id/checkAlbumes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Álbumes"
+                android:checked="true"/>
+
+            <CheckBox
+                android:id="@+id/checkPlaylists"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Playlists"
+                android:checked="true"/>
+
+            <CheckBox
+                android:id="@+id/checkPerfiles"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Perfiles"
+                android:checked="true"/>
+        </LinearLayout>
+    </HorizontalScrollView>
+
     <!-- ScrollView para los RecyclerViews -->
     <android.widget.ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/barraBuscador"
+        app:layout_constraintTop_toBottomOf="@id/filtros"
         app:layout_constraintBottom_toTopOf="@id/miniPlayer">
 
         <LinearLayout

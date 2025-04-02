@@ -8,8 +8,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.CheckBox
 import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,6 +45,11 @@ class Buscador : AppCompatActivity() {
     private lateinit var playlistAdapter: PlaylistAdapter
     private lateinit var perfilAdapter: PerfilAdapter
     private lateinit var apiService: ApiService
+    private lateinit var checkCanciones: CheckBox
+    private lateinit var checkArtistas: CheckBox
+    private lateinit var checkAlbumes: CheckBox
+    private lateinit var checkPlaylists: CheckBox
+    private lateinit var checkPerfiles: CheckBox
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -145,7 +150,19 @@ class Buscador : AppCompatActivity() {
             override fun afterTextChanged(editable: Editable?) {}
         })
 
-        setupNavigation()
+        checkCanciones = findViewById(R.id.checkCanciones)
+        checkArtistas = findViewById(R.id.checkArtistas)
+        checkAlbumes = findViewById(R.id.checkAlbumes)
+        checkPlaylists = findViewById(R.id.checkPlaylists)
+        checkPerfiles = findViewById(R.id.checkPerfiles)
+
+        // Configurar eventos de cambio en los CheckBox para actualizar la vista
+        val checkBoxes = listOf(checkCanciones, checkArtistas, checkAlbumes, checkPlaylists, checkPerfiles)
+        for (checkBox in checkBoxes) {
+            checkBox.setOnCheckedChangeListener { _, _ ->
+                aplicarFiltros()
+            }
+        }
     }
 
     private fun search(termino: String) {
@@ -156,69 +173,12 @@ class Buscador : AppCompatActivity() {
                 if (response.isSuccessful) {
                     response.body()?.let {
                         if (it.respuestaHTTP == 0) {
-                            val canciones = it.canciones
-                            val artistas = it.artistas
-                            val albumes = it.albumes
-                            val playlist = it.playlists
-                            val perfil = it.perfiles
-
-                            // Actualizar y mostrar las canciones si las hay
-                            if (canciones.isNotEmpty()) {
-                                cancionAdapter.updateData(canciones)
-                                recyclerViewCancion.visibility = View.VISIBLE
-                                headerCancionesRecyclerView.visibility = View.VISIBLE
-                            } else {
-                                recyclerViewPlaylist.visibility = View.GONE
-                                headerPlaylistsRecyclerView.visibility = View.GONE
-                                showToast("No se encontraron canciones")
-                            }
-
-                            // Actualizar y mostrar los artistas si los hay
-                            if (artistas.isNotEmpty()) {
-                                artistaAdapter.updateDataArtista(artistas)
-                                recyclerViewArtista.visibility = View.VISIBLE
-                                headerArtistasRecyclerView.visibility = View.VISIBLE
-                            } else {
-                                recyclerViewPlaylist.visibility = View.GONE
-                                headerPlaylistsRecyclerView.visibility = View.GONE
-                                showToast("No se encontraron artistas")
-                            }
-
-                            // Actualizar y mostrar los álbumes si los hay
-                            if (albumes.isNotEmpty()) {
-                                albumAdapter.updateDataAlbum(albumes)
-                                recyclerViewAlbum.visibility = View.VISIBLE
-                                headerAlbumesRecyclerView.visibility = View.VISIBLE
-                            } else {
-                                recyclerViewPlaylist.visibility = View.GONE
-                                headerPlaylistsRecyclerView.visibility = View.GONE
-                                showToast("No se encontraron albumes")
-                            }
-
-                            // Actualizar y mostrar las playlists si las hay
-                            if (playlist.isNotEmpty()) {
-                                playlistAdapter.updateDataPlaylists(playlist)
-                                recyclerViewPlaylist.visibility = View.VISIBLE
-                                headerPlaylistsRecyclerView.visibility = View.VISIBLE
-                            } else {
-                                recyclerViewPlaylist.visibility = View.GONE
-                                headerPlaylistsRecyclerView.visibility = View.GONE
-                                showToast("No se encontraron playlists")
-                            }
-
-                            // Mostrar los perfiles solo si hay perfiles
-                            if (perfil.isNotEmpty()) {
-                                perfilAdapter.updateDataPerfiles(perfil)
-                                recyclerViewPerfil.visibility = View.VISIBLE
-                                headerPerfilesRecyclerView.visibility = View.VISIBLE
-
-                                showToast("Se encontraron ${perfil.size} perfiles")
-                            } else {
-                                recyclerViewPerfil.visibility = View.GONE
-                                headerPerfilesRecyclerView.visibility = View.GONE
-
-                                showToast("No se encontraron perfiles")
-                            }
+                            cancionAdapter.updateData(it.canciones)
+                            artistaAdapter.updateDataArtista(it.artistas)
+                            albumAdapter.updateDataAlbum(it.albumes)
+                            playlistAdapter.updateDataPlaylists(it.playlists)
+                            perfilAdapter.updateDataPerfiles(it.perfiles)
+                            aplicarFiltros()
                         } else {
                             handleErrorCode(it.respuestaHTTP)
                         }
@@ -234,6 +194,24 @@ class Buscador : AppCompatActivity() {
         })
     }
 
+    private fun aplicarFiltros() {
+        recyclerViewCancion.visibility = if (checkCanciones.isChecked) View.VISIBLE else View.GONE
+        headerCancionesRecyclerView.visibility = if (checkCanciones.isChecked) View.VISIBLE else View.GONE
+
+        recyclerViewArtista.visibility = if (checkArtistas.isChecked) View.VISIBLE else View.GONE
+        headerArtistasRecyclerView.visibility = if (checkArtistas.isChecked) View.VISIBLE else View.GONE
+
+        recyclerViewAlbum.visibility = if (checkAlbumes.isChecked) View.VISIBLE else View.GONE
+        headerAlbumesRecyclerView.visibility = if (checkAlbumes.isChecked) View.VISIBLE else View.GONE
+
+        recyclerViewPlaylist.visibility = if (checkPlaylists.isChecked) View.VISIBLE else View.GONE
+        headerPlaylistsRecyclerView.visibility = if (checkPlaylists.isChecked) View.VISIBLE else View.GONE
+
+        recyclerViewPerfil.visibility = if (checkPerfiles.isChecked) View.VISIBLE else View.GONE
+        headerPerfilesRecyclerView.visibility = if (checkPerfiles.isChecked) View.VISIBLE else View.GONE
+    }
+
+
     private fun handleErrorCode(statusCode: Int) {
         val message = when (statusCode) {
             400 -> "Error: Correo o usuario en uso"
@@ -245,28 +223,5 @@ class Buscador : AppCompatActivity() {
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun setupNavigation() {
-        val buttonPerfil: ImageButton = findViewById(R.id.profileImageButton)
-        val buttonHome: ImageButton = findViewById(R.id.nav_home)
-        val buttonSearch: ImageButton = findViewById(R.id.nav_search)
-        val buttonCrear: ImageButton = findViewById(R.id.nav_create)
-
-        buttonPerfil.setOnClickListener {
-            startActivity(Intent(this, Perfil::class.java))
-        }
-
-        buttonHome.setOnClickListener {
-            startActivity(Intent(this, Home::class.java))
-        }
-
-        buttonSearch.setOnClickListener {
-            startActivity(Intent(this, Buscador::class.java))
-        }
-
-        buttonCrear.setOnClickListener {
-            startActivity(Intent(this, Perfil::class.java))
-        }
     }
 }
