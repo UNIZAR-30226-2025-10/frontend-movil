@@ -23,6 +23,8 @@ import com.example.myapplication.io.response.AudioResponse
 import com.example.myapplication.utils.Preferencias
 import WebSocketManager
 import com.example.myapplication.io.request.ActualizarFavoritoRequest
+import com.example.myapplication.io.request.PlayPauseRequest
+import com.example.myapplication.io.request.PlayPauseResponse
 import com.example.myapplication.io.response.ActualizarFavoritoResponse
 import retrofit2.Call
 import retrofit2.Callback
@@ -89,20 +91,16 @@ class CancionDetail : AppCompatActivity() {
         btnPlayPause.setOnClickListener {
             mediaPlayer?.let {
                 if (it.isPlaying) {
+                    // Pausar la canción
                     it.pause()
-                    btnPlayPause.setImageResource(R.drawable.ic_pause)
+                    btnPlayPause.setImageResource(R.drawable.ic_pause) // Cambiar el icono a 'Play'
+                    actualizarEstadoReproduccion(false, it.currentPosition) // Enviar estado 'pausado' con el progreso
                 } else {
+                    // Reanudar la canción
                     it.start()
+                    btnPlayPause.setImageResource(R.drawable.ic_play) // Cambiar el icono a 'Pause'
+                    actualizarEstadoReproduccion(true, it.currentPosition) // Enviar estado 'reproduciendo' con el progreso actual
                 }
-                val reproduciendo = mediaPlayer?.isPlaying == true
-                val progreso = (mediaPlayer?.currentPosition ?: 0) / 1000
-                val intent = Intent(this, PlayPause::class.java).apply {
-                    putExtra("estado_reproduccion", reproduciendo)
-                    putExtra("progreso", progreso)
-                }
-
-                val options = ActivityOptions.makeCustomAnimation(this, 0, 0)
-                startActivity(intent, options.toBundle())
             }
         }
 
@@ -206,13 +204,16 @@ class CancionDetail : AppCompatActivity() {
         })
     }
 
-    private fun reproducirAudio(audioUrl: String) {
+    private fun reproducirAudio(audioUrl: String, progreso: Int = 0) {
         try {
             mediaPlayer?.release()
             mediaPlayer = MediaPlayer().apply {
                 setDataSource(audioUrl)
                 prepareAsync()
                 setOnPreparedListener {
+                    if (progreso > 0) {
+                        seekTo(progreso) // Reanudar desde el progreso guardado
+                    }
                     start()
                     seekBar.max = duration
                     actualizarSeekBar()
@@ -263,6 +264,29 @@ class CancionDetail : AppCompatActivity() {
 
             override fun onFailure(call: Call<AddReproduccionResponse>, t: Throwable) {
                 Log.e("MiApp", "Error de conexión al registrar reproducción")
+            }
+        })
+    }
+
+    private fun actualizarEstadoReproduccion(reproduciendo: Boolean, progreso: Int) {
+        val request = PlayPauseRequest(reproduciendo, progreso)
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+
+        apiService.playPause(authHeader, request).enqueue(object : Callback<PlayPauseResponse> {
+            override fun onResponse(call: Call<PlayPauseResponse>, response: Response<PlayPauseResponse>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(this@CancionDetail, "Estado playpause actualizado", Toast.LENGTH_SHORT).show()
+                    // Regresar a la pantalla anterior
+                    finish()
+                } else {
+                    Toast.makeText(this@CancionDetail, "Error al actualizar el estado", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<PlayPauseResponse>, t: Throwable) {
+                Toast.makeText(this@CancionDetail, "Error de conexión", Toast.LENGTH_SHORT).show()
+                finish()
             }
         })
     }

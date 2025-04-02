@@ -62,35 +62,35 @@
         android:gravity="center"
         android:orientation="horizontal">
 
-        <ImageButton
-            android:id="@+id/btnRetroceder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="Retroceder"
-            android:background="@null"
-            android:src="@android:drawable/ic_media_previous" />
+    <!-- <ImageButton
+        android:id="@+id/btnRetroceder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="Retroceder"
+        android:background="@null"
+        android:src="@android:drawable/ic_media_previous" />  -->
 
-        <ImageButton
-            android:id="@+id/btn_PlayPause"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:background="@null"
-            android:contentDescription="Reproducir/Pausar"
-            android:src="@android:drawable/ic_media_play" />
+    <ImageButton
+        android:id="@+id/btn_PlayPause"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@null"
+        android:contentDescription="Reproducir/Pausar"
+        android:src="@drawable/ic_play" />
 
-        <ImageButton
-            android:id="@+id/btnAvanzar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="Avanzar"
-            android:background="@null"
-            android:src="@android:drawable/ic_media_next" />
+<!-- <ImageButton
+    android:id="@+id/btnAvanzar"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:contentDescription="Avanzar"
+    android:background="@null"
+    android:src="@android:drawable/ic_media_next" /> -->
 
-    </LinearLayout>
+</LinearLayout>
 
-    <!-- Barra de navegación inferior -->
+<!-- Barra de navegación inferior -->
     <LinearLayout
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
