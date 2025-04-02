@@ -21,6 +21,8 @@ import com.example.myapplication.io.request.PlaylistRequest
 import com.example.myapplication.io.request.EditarPerfilRequest
 import com.example.myapplication.io.request.PlayPauseRequest
 import com.example.myapplication.io.request.PlayPauseResponse
+import com.example.myapplication.io.request.ValidarArtistaRequest
+import com.example.myapplication.io.request.ValidarArtistaResponse
 import com.example.myapplication.io.response.ActualizarFavoritoResponse
 import com.example.myapplication.io.response.AddReproduccionResponse
 import com.example.myapplication.io.response.AudioResponse
@@ -159,6 +161,12 @@ interface ApiService {
     fun getPendientes(
         @Header("Authorization") token: String
     ): Call<PendientesResponse>
+
+    @POST("/check_artista")
+    fun validarArtista(
+        @Header("Authorization") token: String,
+        @Body request: ValidarArtistaRequest
+    ): Call<ValidarArtistaResponse>
 
 
 

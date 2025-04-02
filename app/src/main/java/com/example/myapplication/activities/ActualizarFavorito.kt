@@ -1,5 +1,6 @@
 package com.example.myapplication.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -44,6 +45,9 @@ class ActualizarFavorito : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Toast.makeText(this@ActualizarFavorito, "Estado de favorito actualizado", Toast.LENGTH_SHORT).show()
                     // Regresar a la pantalla anterior
+                    val resultIntent = Intent()
+                    resultIntent.putExtra("es_favorito", fav) // Devolver el nuevo estado del favorito
+                    setResult(RESULT_OK, resultIntent)
                     finish()
                 } else {
                     Toast.makeText(this@ActualizarFavorito, "Error al actualizar el estado", Toast.LENGTH_SHORT).show()

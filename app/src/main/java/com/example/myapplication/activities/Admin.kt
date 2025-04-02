@@ -19,6 +19,8 @@ import com.example.myapplication.Adapters.Home.RecomendacionesAdapter
 import com.example.myapplication.Adapters.SolicitudesAdmin.SolicitudAdapter
 import com.example.myapplication.R
 import com.example.myapplication.io.ApiService
+import com.example.myapplication.io.request.ValidarArtistaRequest
+import com.example.myapplication.io.request.ValidarArtistaResponse
 import com.example.myapplication.io.response.HistorialRecientesResponse
 import com.example.myapplication.io.response.PendientesResponse
 import com.example.myapplication.utils.Preferencias
@@ -30,49 +32,41 @@ class Admin : AppCompatActivity() {
 
     private lateinit var apiService: ApiService
     private lateinit var recyclerSolicitudes: RecyclerView
-    private lateinit var SolicitudAdapter: SolicitudAdapter
-
-
+    private lateinit var solicitudAdapter: SolicitudAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("MiApp", "admin 1")
         setContentView(R.layout.solicitudes_admin)
 
         apiService = ApiService.create()
+        recyclerSolicitudes = findViewById(R.id.recyclerSolicitudes)
+        solicitudAdapter = SolicitudAdapter(
+            solicitudes = emptyList(),
+            onAceptarClick = { solicitud -> validarSolicitud(solicitud.correo, true) },
+            onRechazarClick = { solicitud -> validarSolicitud(solicitud.correo, false) }
+        )
 
-        findViewById<Button>(R.id.btnLogout).setOnClickListener { startActivity(Intent(this, Logout::class.java)) }
-        Log.d("MiApp", "admin 2")
+        recyclerSolicitudes.layoutManager = LinearLayoutManager(this)
+        recyclerSolicitudes.adapter = solicitudAdapter
+
+        findViewById<Button>(R.id.btnLogout).setOnClickListener {
+            startActivity(Intent(this, Logout::class.java))
+        }
+
         loadSolicitudes()
-
     }
-
 
     private fun loadSolicitudes() {
         val token = Preferencias.obtenerValorString("token", "")
-        apiService.getPendientes("Bearer $token").enqueue(object :
-            Callback<PendientesResponse> {
+        val authHeader = "Bearer $token"
+        apiService.getPendientes(authHeader).enqueue(object : Callback<PendientesResponse> {
             override fun onResponse(call: Call<PendientesResponse>, response: Response<PendientesResponse>) {
-                Log.d("MiApp", "entra en on response pendientes")
                 if (response.isSuccessful) {
-                    Log.d("MiApp", "entra en on response succesful pendientes")
                     response.body()?.let {
                         if (it.respuestaHTTP == 0) {
-                            Log.d("MiApp", "entra en respuesta http pendientes")
                             val solicitudesPendientes = it.pendientes
-                            Log.d("MiApp", "pendientes = $solicitudesPendientes")
-
-                            // Actualizar y mostrar las canciones si las hay
-                            if (solicitudesPendientes.isNotEmpty()) {
-                                Log.d("MiApp", "no esta vacía")
-                                SolicitudAdapter.updateDataSolicitudes(solicitudesPendientes)
-                                recyclerSolicitudes.visibility = View.VISIBLE
-                            } else {
-                                Log.d("MiApp", "no hay pendientes")
-                                recyclerSolicitudes.visibility = View.GONE
-                                showToast("No hay pendientes")
-                            }
-
+                            solicitudAdapter.updateDataSolicitudes(solicitudesPendientes)
+                            recyclerSolicitudes.visibility = if (solicitudesPendientes.isNotEmpty()) View.VISIBLE else View.GONE
                         } else {
                             handleErrorCode(it.respuestaHTTP)
                         }
@@ -80,7 +74,6 @@ class Admin : AppCompatActivity() {
                 } else {
                     showToast("Error en la búsqueda: Código ${response.code()}")
                 }
-                Log.d("MiApp", "sale de recientes")
             }
 
             override fun onFailure(call: Call<PendientesResponse>, t: Throwable) {
@@ -89,6 +82,26 @@ class Admin : AppCompatActivity() {
         })
     }
 
+    private fun validarSolicitud(correo: String, esValida: Boolean) {
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+        val requestBody = ValidarArtistaRequest(correo, esValida)
+
+        apiService.validarArtista(authHeader, requestBody).enqueue(object : Callback<ValidarArtistaResponse> {
+            override fun onResponse(call: Call<ValidarArtistaResponse>, response: Response<ValidarArtistaResponse>) {
+                if (response.isSuccessful) {
+                    showToast(if (esValida) "Solicitud aceptada" else "Solicitud rechazada")
+                    loadSolicitudes()
+                } else {
+                    showToast("Error al procesar la solicitud: Código ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<ValidarArtistaResponse>, t: Throwable) {
+                showToast("Error en la solicitud: ${t.message}")
+            }
+        })
+    }
 
     private fun handleErrorCode(statusCode: Int) {
         val message = when (statusCode) {

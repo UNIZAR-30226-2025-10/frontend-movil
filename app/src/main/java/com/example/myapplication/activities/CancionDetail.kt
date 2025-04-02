@@ -22,6 +22,8 @@ import com.example.myapplication.io.response.AddReproduccionResponse
 import com.example.myapplication.io.response.AudioResponse
 import com.example.myapplication.utils.Preferencias
 import WebSocketManager
+import com.example.myapplication.io.request.ActualizarFavoritoRequest
+import com.example.myapplication.io.response.ActualizarFavoritoResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -79,13 +81,9 @@ class CancionDetail : AppCompatActivity() {
         btnFavorito.setOnClickListener {
             isFavorito = !isFavorito
             actualizarFavoritoEstado()
-
-            val intent = Intent(this, ActualizarFavorito::class.java)
-            intent.putExtra("cancion_id", id)
-            intent.putExtra("es_favorito", isFavorito)
-
-            val options = ActivityOptions.makeCustomAnimation(this, 0, 0)
-            startActivity(intent, options.toBundle())
+            if (id != null) {
+                actualizarFavorito(id, isFavorito)
+            }
         }
 
         btnPlayPause.setOnClickListener {
@@ -127,8 +125,35 @@ class CancionDetail : AppCompatActivity() {
             }
     }
 
+
     private fun actualizarFavoritoEstado() {
         btnFavorito.setImageResource(if (isFavorito) R.drawable.ic_heart_lleno else R.drawable.ic_heart_vacio)
+    }
+
+    private fun actualizarFavorito(id: String, fav: Boolean) {
+        val request = ActualizarFavoritoRequest(id, fav)
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+
+        // Llamar al servicio API para actualizar el estado del favorito
+        apiService.actualizarFavorito(authHeader, request).enqueue(object : Callback<ActualizarFavoritoResponse> {
+            override fun onResponse(call: Call<ActualizarFavoritoResponse>, response: Response<ActualizarFavoritoResponse>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(this@CancionDetail, "Estado de favorito actualizado", Toast.LENGTH_SHORT).show()
+                    // Regresar a la pantalla anterior
+                    val resultIntent = Intent()
+                    resultIntent.putExtra("es_favorito", fav) // Devolver el nuevo estado del favorito
+                    setResult(RESULT_OK, resultIntent)
+                    finish()
+                } else {
+                    Toast.makeText(this@CancionDetail, "Error al actualizar el estado", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ActualizarFavoritoResponse>, t: Throwable) {
+                Toast.makeText(this@CancionDetail, "Error de conexión", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     private fun reproducir(id: String) {
@@ -192,6 +217,10 @@ class CancionDetail : AppCompatActivity() {
                     seekBar.max = duration
                     actualizarSeekBar()
                 }
+                setOnCompletionListener {
+                    it.seekTo(0) // Reinicia la canción al inicio
+                    it.start() // Vuelve a reproducir
+                }
                 setOnErrorListener { _, what, extra ->
                     Log.e("MiApp", "Error en MediaPlayer: what=$what, extra=$extra")
                     Toast.makeText(this@CancionDetail, "Error al reproducir el audio", Toast.LENGTH_SHORT).show()
@@ -203,6 +232,7 @@ class CancionDetail : AppCompatActivity() {
             Toast.makeText(this, "Error al reproducir el audio", Toast.LENGTH_SHORT).show()
         }
     }
+
 
     private fun actualizarSeekBar() {
         mediaPlayer?.let { mp ->
