@@ -1,5 +1,6 @@
 package com.example.myapplication.Adapters.Home
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +34,10 @@ class PlaylistsAdapter (
         Glide.with(holder.itemView.context)
             .load(playlist.fotoPortada)
             .into(holder.imagenPlaylist)
+
+        val imagen = holder.imagenPlaylist
+        Log.d("AdapterP", "Imagen playlist: $imagen")
+
 
         holder.itemView.setOnClickListener { clickListener(playlist) }
     }
