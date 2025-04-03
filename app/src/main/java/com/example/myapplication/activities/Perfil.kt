@@ -165,7 +165,7 @@ class Perfil : AppCompatActivity() {
                 startActivity(intent)
                 dialog.dismiss()
             } else {
-                showToast("Introduce tu contraseña")
+                //showToast("Introduce tu contraseña")
             }
         }
 
@@ -252,16 +252,16 @@ class Perfil : AppCompatActivity() {
 
                         uploadImageToCloudinary(it, imagenURI, folder)
                     }
-                    showToast("Get signature correcto")
+                    //showToast("Get signature correcto")
                 } else {
                     Log.d("Signature", "Signature 2")
-                    showToast("Error al Get signature")
+                   // showToast("Error al Get signature")
                 }
             }
 
             override fun onFailure(call: Call<GetSignatureResponse>, t: Throwable) {
                 Log.d("Signature", "Error en la solicitud: ${t.message}")
-                showToast("Error en la solicitud: ${t.message}")
+                //showToast("Error en la solicitud: ${t.message}")
             }
         })
         Log.d("Signature", "Signature FUERA")
@@ -273,7 +273,7 @@ class Perfil : AppCompatActivity() {
             Log.d("uploadImageToCloudinary", "uploadImageToCloudinary 1")
             // Obtener el stream del archivo a partir del URI
             val inputStream = contentResolver.openInputStream(imagenURI) ?: run {
-                showToast("Error al abrir la imagen")
+                //showToast("Error al abrir la imagen")
                 return
             }
 
@@ -329,22 +329,22 @@ class Perfil : AppCompatActivity() {
                                     .into(profileImageButton)
                             }
 
-                            showToast("Imagen subida con éxito")
-                        } ?: showToast("Error: Respuesta vacía de Cloudinary")
+                            //showToast("Imagen subida con éxito")
+                        } //?: showToast("Error: Respuesta vacía de Cloudinary")
                     } else {
                         Log.d("uploadImageToCloudinary", "ERROR 3 ${response.errorBody()?.string()}")
-                        showToast("Error al subir la imagen: ${response.errorBody()?.string()}")
+                        //showToast("Error al subir la imagen: ${response.errorBody()?.string()}")
                     }
                 }
 
                 override fun onFailure(call: Call<CloudinaryResponse>, t: Throwable) {
                     Log.d("uploadImageToCloudinary", "ERROR 3 ${t.message}")
-                    showToast("Error en la subida: ${t.message}")
+                    //showToast("Error en la subida: ${t.message}")
                 }
             })
         } catch (e: Exception) {
             Log.d("uploadImageToCloudinary", "ERROR 4 ${e.message}")
-            showToast("Error al procesar la imagen: ${e.message}")
+            //showToast("Error al procesar la imagen: ${e.message}")
         }
     }
 
@@ -362,16 +362,16 @@ class Perfil : AppCompatActivity() {
                 if (response.isSuccessful) {
                     usernameTextView.text = newUsername
                     Preferencias.guardarValorString("username", newUsername)
-                    showToast("Perfil actualizado")
+                    //showToast("Perfil actualizado")
                 } else {
                     Log.d("updateUserProfile", "Error en la solicitud ${response.code()}")
-                    showToast("Error al actualizar perfil")
+                    //showToast("Error al actualizar perfil")
                 }
             }
 
             override fun onFailure(call: Call<EditarPerfilResponse>, t: Throwable) {
                 Log.d("updateUserProfile", "Error en la solicitud2")
-                showToast("Error en la solicitud: ${t.message}")
+                //showToast("Error en la solicitud: ${t.message}")
             }
         })
     }
@@ -412,14 +412,14 @@ class Perfil : AppCompatActivity() {
                         } else {
                             handleErrorCode(it.respuestaHTTP)
                         }
-                    } ?: showToast("Búsqueda fallida: Datos incorrectos")
+                    } //?: showToast("Búsqueda fallida: Datos incorrectos")
                 } else {
-                    showToast("Error en la búsqueda: Código ${response.code()}")
+                    //showToast("Error en la búsqueda: Código ${response.code()}")
                 }
             }
 
             override fun onFailure(call: Call<InfoSeguidoresResponse>, t: Throwable) {
-                showToast("Error en la solicitud: ${t.message}")
+                //showToast("Error en la solicitud: ${t.message}")
             }
         })
     }
@@ -442,20 +442,20 @@ class Perfil : AppCompatActivity() {
                             } else {
                                 recyclerViewPlaylists.visibility = View.GONE
                                 headerPlaylistsRecyclerView.visibility = View.GONE
-                                showToast("No hay playlists")
+                                //showToast("No hay playlists")
                             }
 
                         } else {
                             handleErrorCode(it.respuestaHTTP)
                         }
-                    } ?: showToast("Búsqueda fallida: Datos incorrectos")
+                    } //?: showToast("Búsqueda fallida: Datos incorrectos")
                 } else {
-                    showToast("Error en la búsqueda: Código ${response.code()}")
+                    //showToast("Error en la búsqueda: Código ${response.code()}")
                 }
             }
 
             override fun onFailure(call: Call<PlaylistsResponse>, t: Throwable) {
-                showToast("Error en la solicitud: ${t.message}")
+                //showToast("Error en la solicitud: ${t.message}")
             }
         })
     }
@@ -466,7 +466,7 @@ class Perfil : AppCompatActivity() {
             500 -> "Error interno del servidor"
             else -> "Error desconocido ($statusCode)"
         }
-        showToast(message)
+        //showToast(message)
     }
 
     private fun showToast(message: String) {

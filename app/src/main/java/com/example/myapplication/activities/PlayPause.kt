@@ -59,12 +59,12 @@ class PlayPause : AppCompatActivity() {
                     // Regresar a la pantalla anterior
                     finish()
                 } else {
-                    Toast.makeText(this@PlayPause, "Error al actualizar el estado", Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(this@PlayPause, "Error al actualizar el estado", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<PlayPauseResponse>, t: Throwable) {
-                Toast.makeText(this@PlayPause, "Error de conexión", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this@PlayPause, "Error de conexión", Toast.LENGTH_SHORT).show()
                 finish()
             }
         })

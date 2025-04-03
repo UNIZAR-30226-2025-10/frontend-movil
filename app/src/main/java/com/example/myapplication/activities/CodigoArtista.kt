@@ -72,15 +72,15 @@ class CodigoArtista : AppCompatActivity() {
                             handleErrorCode(registerResponse.respuestaHTTP)
                         }
                     } else {
-                        showToast("Error: Respuesta vacía del servidor")
+                       // showToast("Error: Respuesta vacía del servidor")
                     }
                 } else {
-                    showToast("Error en el verificar codigo: Código ${response.code()}")
+                    //showToast("Error en el verificar codigo: Código ${response.code()}")
                 }
             }
 
             override fun onFailure(call: Call<VerifyArtistResponse>, t: Throwable) {
-                showToast("Error en la solicitud: ${t.message}")
+                //showToast("Error en la solicitud: ${t.message}")
                 Log.e("MiApp", "Error en la solicitud: ${t.message}")
             }
         })
@@ -92,7 +92,7 @@ class CodigoArtista : AppCompatActivity() {
             500 -> "Error interno del servidor"
             else -> "Error desconocido ($statusCode)"
         }
-        showToast(message)
+        //showToast(message)
     }
 
     private fun guardarDatosArtista(registerResponse: VerifyArtistResponse) {

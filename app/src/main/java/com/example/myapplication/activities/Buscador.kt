@@ -208,14 +208,14 @@ class Buscador : AppCompatActivity() {
                         } else {
                             handleErrorCode(it.respuestaHTTP)
                         }
-                    } ?: showToast("Búsqueda fallida: Datos incorrectos")
+                    } //showToast("Búsqueda fallida: Datos incorrectos")
                 } else {
-                    showToast("Error en la búsqueda: Código ${response.code()}")
+                    //showToast("Error en la búsqueda: Código ${response.code()}")
                 }
             }
 
             override fun onFailure(call: Call<BuscadorResponse>, t: Throwable) {
-                showToast("Error en la solicitud: ${t.message}")
+               // showToast("Error en la solicitud: ${t.message}")
             }
         })
     }

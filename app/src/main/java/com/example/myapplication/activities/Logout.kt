@@ -36,7 +36,7 @@ class Logout : AppCompatActivity() {
 
         if (token.isEmpty()) {
             Log.e("LOGOUT", "Error: No se encontró un token guardado.")
-            showToast("Error: No hay sesión iniciada.")
+            //showToast("Error: No hay sesión iniciada.")
             return
         }
 
@@ -52,19 +52,19 @@ class Logout : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Log.d("LOGOUT", "Logout exitoso. Borrando datos de usuario...")
                     Preferencias.borrarDatosUsuario()
-                    showToast("Logout exitoso")
+                    //showToast("Logout exitoso")
                     navigateInicio()
                 } else {
                     Log.e("LOGOUT", "Error en el logout. Código HTTP: ${response.code()}")
                     val errorBody = response.errorBody()?.string()
                     Log.e("LOGOUT", "Cuerpo del error: $errorBody")
-                    showToast("Error en el logout: Código ${response.code()}")
+                    //showToast("Error en el logout: Código ${response.code()}")
                 }
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
                 Log.e("LOGOUT", "Fallo en la solicitud: ${t.message}")
-                showToast("Error en la solicitud: ${t.message}")
+                //showToast("Error en la solicitud: ${t.message}")
             }
         })
     }

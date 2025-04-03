@@ -147,7 +147,7 @@ class PerfilArtista : AppCompatActivity() {
                 startActivity(intent)
                 dialog.dismiss()
             } else {
-                showToast("Introduce tu contraseña")
+                //showToast("Introduce tu contraseña")
             }
         }
 
@@ -234,16 +234,16 @@ class PerfilArtista : AppCompatActivity() {
 
                         uploadImageToCloudinary(it, imagenURI, folder)
                     }
-                    showToast("Get signature correcto")
+                    //showToast("Get signature correcto")
                 } else {
                     Log.d("Signature", "Signature 2")
-                    showToast("Error al Get signature")
+                    //showToast("Error al Get signature")
                 }
             }
 
             override fun onFailure(call: Call<GetSignatureResponse>, t: Throwable) {
                 Log.d("Signature", "Error en la solicitud: ${t.message}")
-                showToast("Error en la solicitud: ${t.message}")
+               // showToast("Error en la solicitud: ${t.message}")
             }
         })
         Log.d("Signature", "Signature FUERA")
@@ -292,22 +292,22 @@ class PerfilArtista : AppCompatActivity() {
                             // Guardar URL en preferencias
                             Preferencias.guardarValorString("profile_image", imageUrl)
 
-                            showToast("Imagen subida con éxito")
-                        } ?: showToast("Error: Respuesta vacía de Cloudinary")
+                            //showToast("Imagen subida con éxito")
+                        } //?: showToast("Error: Respuesta vacía de Cloudinary")
                     } else {
                         Log.d("uploadImageToCloudinary", "ERROR 3 ${response.errorBody()?.string()}")
-                        showToast("Error al subir la imagen: ${response.errorBody()?.string()}")
+                        //showToast("Error al subir la imagen: ${response.errorBody()?.string()}")
                     }
                 }
 
                 override fun onFailure(call: Call<CloudinaryResponse>, t: Throwable) {
                     Log.d("uploadImageToCloudinary", "ERROR 3 ${t.message}")
-                    showToast("Error en la subida: ${t.message}")
+                    //showToast("Error en la subida: ${t.message}")
                 }
             })
         } catch (e: Exception) {
             Log.d("uploadImageToCloudinary", "ERROR 4 ${e.message}")
-            showToast("Error al procesar la imagen: ${e.message}")
+            //showToast("Error al procesar la imagen: ${e.message}")
         }
     }
 
@@ -325,16 +325,16 @@ class PerfilArtista : AppCompatActivity() {
                 if (response.isSuccessful) {
                     usernameTextView.text = newUsername
                     Preferencias.guardarValorString("username", newUsername)
-                    showToast("Perfil actualizado")
+                    //showToast("Perfil actualizado")
                 } else {
                     Log.d("updateUserProfile", "Error en la solicitud ${response.code()}")
-                    showToast("Error al actualizar perfil")
+                    //showToast("Error al actualizar perfil")
                 }
             }
 
             override fun onFailure(call: Call<EditarPerfilResponse>, t: Throwable) {
                 Log.d("updateUserProfile", "Error en la solicitud2")
-                showToast("Error en la solicitud: ${t.message}")
+                //showToast("Error en la solicitud: ${t.message}")
             }
         })
     }
@@ -371,14 +371,14 @@ class PerfilArtista : AppCompatActivity() {
                         } else {
                             handleErrorCode(it.respuestaHTTP)
                         }
-                    } ?: showToast("Búsqueda fallida: Datos incorrectos")
+                    } //?: showToast("Búsqueda fallida: Datos incorrectos")
                 } else {
-                    showToast("Error en la búsqueda: Código ${response.code()}")
+                    //showToast("Error en la búsqueda: Código ${response.code()}")
                 }
             }
 
             override fun onFailure(call: Call<InfoPerfilArtistaResponse>, t: Throwable) {
-                showToast("Error en la solicitud: ${t.message}")
+                //showToast("Error en la solicitud: ${t.message}")
             }
         })
     }
@@ -390,7 +390,7 @@ class PerfilArtista : AppCompatActivity() {
             500 -> "Error interno del servidor"
             else -> "Error desconocido ($statusCode)"
         }
-        showToast(message)
+        //showToast(message)
     }
 
     private fun showToast(message: String) {

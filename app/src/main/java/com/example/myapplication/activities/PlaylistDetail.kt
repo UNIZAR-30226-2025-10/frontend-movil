@@ -116,13 +116,13 @@ class PlaylistDetail : AppCompatActivity() {
 
                 } else {
                     // Manejo de error en caso de que la respuesta no sea exitosa
-                    Toast.makeText(this@PlaylistDetail, "Error al obtener los datos de la playlist", Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(this@PlaylistDetail, "Error al obtener los datos de la playlist", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<PlaylistResponse>, t: Throwable) {
                 // Manejo de error si ocurre un fallo en la conexión
-                Toast.makeText(this@PlaylistDetail, "Error de conexión: ${t.message}", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this@PlaylistDetail, "Error de conexión: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }

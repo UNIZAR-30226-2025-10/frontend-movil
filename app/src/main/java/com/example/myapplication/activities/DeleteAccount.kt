@@ -27,7 +27,7 @@ class DeleteAccount : AppCompatActivity() {
 
         if (receivedPassword.isEmpty()) {
             Log.e("Delete", "Error: No se recibió una contraseña válida desde el perfil")
-            showToast("Error: No se recibió una contraseña válida")
+            //showToast("Error: No se recibió una contraseña válida")
             finish() // Cerrar la actividad si no hay contraseña
             return
         }
@@ -54,18 +54,18 @@ class DeleteAccount : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Log.d("Delete", "Cuenta eliminada exitosamente")
                     Preferencias.borrarDatosUsuario()
-                    showToast("Cuenta borrada con éxito")
+                    //showToast("Cuenta borrada con éxito")
                     navigateInicio()
                 } else {
                     Log.e("Delete", "Error en la eliminación - Código: ${response.code()}")
-                    showToast("Error en la eliminación: Código ${response.code()}")
+                    //showToast("Error en la eliminación: Código ${response.code()}")
                     finish()
                 }
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
                 Log.e("Delete", "Error en la solicitud: ${t.message}")
-                showToast("Error en la solicitud: ${t.message}")
+                //showToast("Error en la solicitud: ${t.message}")
                 finish()
             }
         })
@@ -79,6 +79,6 @@ class DeleteAccount : AppCompatActivity() {
     }
 
     private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        //Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

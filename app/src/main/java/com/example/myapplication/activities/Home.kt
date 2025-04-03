@@ -194,14 +194,14 @@ class Home : AppCompatActivity() {
                         } else {
                             handleErrorCode(it.respuestaHTTP)
                         }
-                    } ?: showToast("Búsqueda fallida: Datos incorrectos")
+                    } //?: showToast("Búsqueda fallida: Datos incorrectos")
                 } else {
-                    showToast("Error en la búsqueda: Código ${response.code()}")
+                    //showToast("Error en la búsqueda: Código ${response.code()}")
                 }
             }
 
             override fun onFailure(call: Call<HistorialRecientesResponse>, t: Throwable) {
-                showToast("Error en la solicitud: ${t.message}")
+                //showToast("Error en la solicitud: ${t.message}")
             }
         })
     }
@@ -223,14 +223,14 @@ class Home : AppCompatActivity() {
                         } else {
                             handleErrorCode(it.respuestaHTTP)
                         }
-                    } ?: showToast("Búsqueda fallida: Datos incorrectos")
+                    } //?: showToast("Búsqueda fallida: Datos incorrectos")
                 } else {
-                    showToast("Error en la búsqueda: Código ${response.code()}")
+                    //showToast("Error en la búsqueda: Código ${response.code()}")
                 }
             }
 
             override fun onFailure(call: Call<HistorialArtistasResponse>, t: Throwable) {
-                showToast("Error en la solicitud: ${t.message}")
+                //showToast("Error en la solicitud: ${t.message}")
             }
         })
     }
@@ -283,20 +283,20 @@ class Home : AppCompatActivity() {
                             } else {
                                 recyclerViewEscuchas.visibility = View.GONE
                                 headerEscuchasRecyclerView.visibility = View.GONE
-                                showToast("No hay escuchas")
+                                //showToast("No hay escuchas")
                             }
 
                         } else {
                             handleErrorCode(it.respuestaHTTP)
                         }
-                    } ?: showToast("Búsqueda fallida: Datos incorrectos")
+                    } //?: showToast("Búsqueda fallida: Datos incorrectos")
                 } else {
-                    showToast("Error en la búsqueda: Código ${response.code()}")
+                    //showToast("Error en la búsqueda: Código ${response.code()}")
                 }
             }
 
             override fun onFailure(call: Call<HistorialEscuchasResponse>, t: Throwable) {
-                showToast("Error en la solicitud: ${t.message}")
+                //showToast("Error en la solicitud: ${t.message}")
             }
         })
     }
@@ -321,20 +321,20 @@ class Home : AppCompatActivity() {
                             } else {
                                 recyclerViewPlaylists.visibility = View.GONE
                                 headerPlaylistsRecyclerView.visibility = View.GONE
-                                showToast("No hay playlists")
+                                //showToast("No hay playlists")
                             }
 
                         } else {
                             handleErrorCode(it.respuestaHTTP)
                         }
-                    } ?: showToast("Búsqueda fallida: Datos incorrectos")
+                    } //?: showToast("Búsqueda fallida: Datos incorrectos")
                 } else {
-                    showToast("Error en la búsqueda: Código ${response.code()}")
+                    //showToast("Error en la búsqueda: Código ${response.code()}")
                 }
             }
 
             override fun onFailure(call: Call<PlaylistsResponse>, t: Throwable) {
-                showToast("Error en la solicitud: ${t.message}")
+                //showToast("Error en la solicitud: ${t.message}")
             }
         })
     }
@@ -357,20 +357,20 @@ class Home : AppCompatActivity() {
                             } else {
                                 recyclerViewRecomendaciones.visibility = View.GONE
                                 headerRecomendacionesRecyclerView.visibility = View.GONE
-                                showToast("No hay recomendaciones")
+                                //showToast("No hay recomendaciones")
                             }
 
                         } else {
                             handleErrorCode(it.respuestaHTTP)
                         }
-                    } ?: showToast("Búsqueda fallida: Datos incorrectos")
+                    } //?: showToast("Búsqueda fallida: Datos incorrectos")
                 } else {
-                    showToast("Error en la búsqueda: Código ${response.code()}")
+                    //showToast("Error en la búsqueda: Código ${response.code()}")
                 }
             }
 
             override fun onFailure(call: Call<RecomendacionesResponse>, t: Throwable) {
-                showToast("Error en la solicitud: ${t.message}")
+                //showToast("Error en la solicitud: ${t.message}")
             }
         })
     }
@@ -412,7 +412,7 @@ class Home : AppCompatActivity() {
             500 -> "Error interno del servidor"
             else -> "Error desconocido ($statusCode)"
         }
-        showToast(message)
+        //showToast(message)
     }
 
     private fun showToast(message: String) {

@@ -177,7 +177,8 @@ class CancionDetail : AppCompatActivity() {
                         Log.d("API_RESPONSE", "Respuesta exitosa: $respuestaTexto")
 
                         // Mostrar en Toast
-                        Toast.makeText(this@CancionDetail, respuestaTexto, Toast.LENGTH_LONG).show()
+
+                        //Toast.makeText(this@CancionDetail, respuestaTexto, Toast.LENGTH_LONG).show()
 
                         reproducirAudio(audioResponse.audio)
                         isFavorito = audioResponse.fav
@@ -190,7 +191,7 @@ class CancionDetail : AppCompatActivity() {
                     Log.e("API_RESPONSE", "Error en la respuesta: Código ${response.code()} - $errorMensaje")
 
                     // Mostrar en Toast
-                    Toast.makeText(this@CancionDetail, "Error: $errorMensaje", Toast.LENGTH_LONG).show()
+                    //Toast.makeText(this@CancionDetail, "Error: $errorMensaje", Toast.LENGTH_LONG).show()
                 }
             }
 
@@ -199,7 +200,7 @@ class CancionDetail : AppCompatActivity() {
                 Log.e("API_RESPONSE", "Error de conexión: ${t.message}", t)
 
                 // Mostrar en Toast
-                Toast.makeText(this@CancionDetail, "Error de conexión: ${t.message}", Toast.LENGTH_LONG).show()
+                //Toast.makeText(this@CancionDetail, "Error de conexión: ${t.message}", Toast.LENGTH_LONG).show()
             }
         })
     }
@@ -224,13 +225,13 @@ class CancionDetail : AppCompatActivity() {
                 }
                 setOnErrorListener { _, what, extra ->
                     Log.e("MiApp", "Error en MediaPlayer: what=$what, extra=$extra")
-                    Toast.makeText(this@CancionDetail, "Error al reproducir el audio", Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(this@CancionDetail, "Error al reproducir el audio", Toast.LENGTH_SHORT).show()
                     true
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(this, "Error al reproducir el audio", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this, "Error al reproducir el audio", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -276,16 +277,16 @@ class CancionDetail : AppCompatActivity() {
         apiService.playPause(authHeader, request).enqueue(object : Callback<PlayPauseResponse> {
             override fun onResponse(call: Call<PlayPauseResponse>, response: Response<PlayPauseResponse>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(this@CancionDetail, "Estado playpause actualizado", Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(this@CancionDetail, "Estado playpause actualizado", Toast.LENGTH_SHORT).show()
                     // Regresar a la pantalla anterior
                     finish()
                 } else {
-                    Toast.makeText(this@CancionDetail, "Error al actualizar el estado", Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(this@CancionDetail, "Error al actualizar el estado", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<PlayPauseResponse>, t: Throwable) {
-                Toast.makeText(this@CancionDetail, "Error de conexión", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this@CancionDetail, "Error de conexión", Toast.LENGTH_SHORT).show()
                 finish()
             }
         })

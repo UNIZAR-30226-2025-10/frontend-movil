@@ -71,22 +71,22 @@ class CambiarPassword2 : AppCompatActivity() {
                     val registerResponse = response.body()
                     if (registerResponse != null) {
                         if (registerResponse.respuestaHTTP == 0) {
-                            showToast("Registro exitoso")
+                            //showToast("Registro exitoso")
                             guardarDatosCambioPass(registerResponse)
                             navigateToNext(correo)
                         } else {
                             handleErrorCode(registerResponse.respuestaHTTP)
                         }
                     } else {
-                        showToast("Error: Respuesta vacía del servidor")
+                        //showToast("Error: Respuesta vacía del servidor")
                     }
                 } else {
-                    showToast("Error en el verificar codigo: Código ${response.code()}")
+                    //showToast("Error en el verificar codigo: Código ${response.code()}")
                 }
             }
 
             override fun onFailure(call: Call<CambiarPass2Response>, t: Throwable) {
-                showToast("Error en la solicitud: ${t.message}")
+                //showToast("Error en la solicitud: ${t.message}")
                 Log.e("MiApp", "Error en la solicitud: ${t.message}")
             }
         })
@@ -98,7 +98,7 @@ class CambiarPassword2 : AppCompatActivity() {
             500 -> "Error interno del servidor"
             else -> "Error desconocido ($statusCode)"
         }
-        showToast(message)
+        //showToast(message)
     }
 
     private fun guardarDatosCambioPass(registerResponse: CambiarPass2Response) {
