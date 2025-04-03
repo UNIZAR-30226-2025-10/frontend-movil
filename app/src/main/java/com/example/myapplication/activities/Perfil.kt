@@ -308,7 +308,26 @@ class Perfil : AppCompatActivity() {
                             Log.d("Cloudinary Upload", "Imagen subida correctamente: $imageUrl")
 
                             // Guardar URL en preferencias
-                            Preferencias.guardarValorString("profile_image", imageUrl)
+                            Preferencias.guardarValorString("fotoPerfil", imageUrl)
+
+                            val profileImageUrl = Preferencias.obtenerValorString("fotoPerfil", "")
+
+                            Log.d("ProfileImage", "URL de la imagen de perfil: $profileImageUrl")
+
+
+                            // Verificar si la API devolvió "DEFAULT" o si no hay imagen guardada
+                            if (profileImageUrl.isNullOrEmpty() || profileImageUrl == "DEFAULT") {
+                                // Cargar la imagen predeterminada
+                                profileImageButton.setImageResource(R.drawable.ic_profile)
+                            } else {
+                                // Cargar la imagen desde la URL con Glide
+                                Glide.with(applicationContext)
+                                    .load(profileImageUrl)
+                                    .circleCrop()
+                                    .placeholder(R.drawable.ic_profile) // Imagen por defecto mientras carga
+                                    .error(R.drawable.ic_profile) // Imagen si hay error
+                                    .into(profileImageButton)
+                            }
 
                             showToast("Imagen subida con éxito")
                         } ?: showToast("Error: Respuesta vacía de Cloudinary")
@@ -331,7 +350,7 @@ class Perfil : AppCompatActivity() {
 
     private fun updateUserProfile(newUsername: String) {
         Log.d("updateUserProfile", "1")
-        val imagen = Preferencias.obtenerValorString("profile_image", "")
+        val imagen = Preferencias.obtenerValorString("fotoPerfil", "")
         Log.d("updateUserProfile", "imag{$imagen}")
         Log.d("updateUserProfile", "user{$newUsername}")
         val request = EditarPerfilRequest(imagen, newUsername)
@@ -387,6 +406,8 @@ class Perfil : AppCompatActivity() {
                             usernameTextView.text = nombreperfil
                             followersTextView.text = "$seguidores Seguidores"
                             followingTextView.text = "$seguidos Seguidos"
+
+
 
                         } else {
                             handleErrorCode(it.respuestaHTTP)

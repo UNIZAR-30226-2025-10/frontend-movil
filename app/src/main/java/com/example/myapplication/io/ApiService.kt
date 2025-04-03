@@ -40,6 +40,7 @@ import com.example.myapplication.io.response.RecomendacionesResponse
 import com.example.myapplication.io.response.InfoSeguidoresResponse
 import com.example.myapplication.io.response.PendientesResponse
 import com.example.myapplication.io.response.PlaylistResponse
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.Call
 import retrofit2.converter.gson.GsonConverterFactory
@@ -51,6 +52,7 @@ import retrofit2.http.GET
 import retrofit2.http.HTTP
 import retrofit2.http.PUT
 import retrofit2.http.Query
+import java.util.concurrent.TimeUnit
 
 interface ApiService {
     @POST("login") // Petición a la ruta del login
@@ -180,10 +182,18 @@ interface ApiService {
         //private const val BASE_URL = "http://192.168.0.62:5000"
         //private const val BASE_URL = "http://10.1.65.120:5000"
         fun create(): ApiService {
+            val okHttpClient = OkHttpClient.Builder()
+                .connectTimeout(60, TimeUnit.SECONDS)  // Timeout de conexión
+                .readTimeout(60, TimeUnit.SECONDS)     // Timeout de lectura
+                .writeTimeout(60, TimeUnit.SECONDS)    // Timeout de escritura
+                .build()
+
             val retrofit = Retrofit.Builder()
                 .baseUrl(BASE_URL)
+                .client(okHttpClient)  // Asigna el OkHttpClient con los timeouts
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
+
             return retrofit.create(ApiService::class.java)
         }
     }
