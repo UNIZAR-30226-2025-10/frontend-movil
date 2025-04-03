@@ -61,17 +61,15 @@ class Admin : AppCompatActivity() {
         val authHeader = "Bearer $token"
         apiService.getPendientes(authHeader).enqueue(object : Callback<PendientesResponse> {
             override fun onResponse(call: Call<PendientesResponse>, response: Response<PendientesResponse>) {
+                Log.d("ADMIN_RESPONES", "response: ${response.isSuccessful}")
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        if (it.respuestaHTTP == 0) {
                             val solicitudesPendientes = it.pendientes
                             solicitudAdapter.updateDataSolicitudes(solicitudesPendientes)
                             recyclerSolicitudes.visibility = if (solicitudesPendientes.isNotEmpty()) View.VISIBLE else View.GONE
-                        } else {
-                            handleErrorCode(it.respuestaHTTP)
-                        }
                     } ?: showToast("Búsqueda fallida: Datos incorrectos")
                 } else {
+                    Log.d("ADMIN_RESPONES", "ERROR BUSQUEDA: ${response.body()}")
                     showToast("Error en la búsqueda: Código ${response.code()}")
                 }
             }
@@ -87,8 +85,8 @@ class Admin : AppCompatActivity() {
         val authHeader = "Bearer $token"
         val requestBody = ValidarArtistaRequest(correo, esValida)
 
-        apiService.validarArtista(authHeader, requestBody).enqueue(object : Callback<ValidarArtistaResponse> {
-            override fun onResponse(call: Call<ValidarArtistaResponse>, response: Response<ValidarArtistaResponse>) {
+        apiService.validarArtista(authHeader, requestBody).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     showToast(if (esValida) "Solicitud aceptada" else "Solicitud rechazada")
                     loadSolicitudes()
@@ -97,7 +95,8 @@ class Admin : AppCompatActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<ValidarArtistaResponse>, t: Throwable) {
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.d("ADMIN_RESPONES", "ERROR BUSQUEDA: ${t.message}")
                 showToast("Error en la solicitud: ${t.message}")
             }
         })

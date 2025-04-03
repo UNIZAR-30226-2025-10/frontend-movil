@@ -161,16 +161,16 @@ interface ApiService {
         @Query("folder") folder: String
     ): Call<GetSignatureResponse>
 
-    @GET("/get_pendientes")
+    @GET("/get-pendientes")
     fun getPendientes(
         @Header("Authorization") token: String
     ): Call<PendientesResponse>
 
-    @POST("/check_artista")
+    @POST("/check-artista")
     fun validarArtista(
         @Header("Authorization") token: String,
         @Body request: ValidarArtistaRequest
-    ): Call<ValidarArtistaResponse>
+    ): Call<Void>
 
 
 

@@ -22,12 +22,12 @@ class MainActivity : AppCompatActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             val token = Preferencias.obtenerValorString("token", "")
 
-            val nextActivity = if (token != null) {
+            /*val nextActivity = if (token != null) {
                 Home::class.java
             } else {
                 Inicio::class.java
-            }
-            //val nextActivity =  Inicio::class.java
+            }*/
+            val nextActivity =  Inicio::class.java
 
             val intent = Intent(this, nextActivity)
             startActivity(intent)

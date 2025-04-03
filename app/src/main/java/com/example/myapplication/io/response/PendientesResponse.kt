@@ -1,11 +1,12 @@
 package com.example.myapplication.io.response
 
+import com.google.gson.annotations.SerializedName
+
 data class PendientesResponse(
-    val respuestaHTTP: Int,
-    val pendientes: List<PendienteItem>
+    @SerializedName("pendientes") val pendientes: List<PendienteItem>
 )
 
 data class PendienteItem(
-    val correo: String,
-    val nombreArtistico: String
+    @SerializedName("correo") val correo: String,
+    @SerializedName("nombreArtistico") val nombreArtistico: String
 )

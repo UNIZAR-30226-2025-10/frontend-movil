@@ -14,21 +14,24 @@
         android:contentDescription="@string/logo"
         android:elevation="10dp"
         android:src="@drawable/logo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:tint="#FFFFFF" />
 
     <LinearLayout
-        android:layout_width="325dp"
-        android:layout_height="294dp"
-        android:layout_gravity="center"
+        android:id="@+id/contenedor_solicitud"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:background="@color/blueNuestro"
         android:orientation="vertical"
         android:padding="20dp"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="43dp"
-        tools:layout_editor_absoluteY="315dp">
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        app:layout_constraintTop_toBottomOf="@id/logoImageView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:id="@+id/tv_message"
@@ -56,7 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
-            android:text="Cerrar sesion"
+            android:text="Cerrar sesión"
             android:textColor="#FFFFFF" />
 
     </LinearLayout>
