@@ -71,14 +71,14 @@ interface ApiService {
     ): Call<VerifyArtistResponse>
 
     @POST("/forgot-password")
-    fun CambiarPass1(@Body requestBody: CambiarPass1Request): Call<CambiarPass1Response>
+    fun CambiarPass1(@Body requestBody: CambiarPass1Request): Call<Void>
     @POST("/verify-codigo")
     fun CambiarPass2(@Body requestBody: CambiarPass2Request): Call<CambiarPass2Response>
     @POST("/reset-password")
     fun CambiarPass3(
         @Header("Authorization") authHeader: String,
         @Body request: CambiarPass3Request
-    ): Call<CambiarPass3Response>
+    ): Call<Void>
 
     @HTTP(method = "DELETE", path = "/delete-account", hasBody = true)
     fun deleteAccount(

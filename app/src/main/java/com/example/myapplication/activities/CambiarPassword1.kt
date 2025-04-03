@@ -50,28 +50,22 @@ class CambiarPassword1 : AppCompatActivity() {
 
     private fun enviarcorreo(correo: String) {
         val request = CambiarPass1Request(correo)
-        apiService.CambiarPass1(request).enqueue(object : Callback<CambiarPass1Response> {
+        apiService.CambiarPass1(request).enqueue(object : Callback<Void> {
 
-            override fun onResponse(call: Call<CambiarPass1Response>, response: Response<CambiarPass1Response>) {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 Log.d("MiApp", "Respuesta : ${response.code()}")
                 if (response.isSuccessful) {
-                    val registerResponse = response.body()
-                    if (registerResponse != null) {
-                        if (registerResponse.respuestaHTTP == 0) {
-                            //showToast("Registro exitoso")
+
+
+                            showToast("Rcmabia1 bine")
                             navigateToNext(correo)
-                        } else {
-                            handleErrorCode(registerResponse.respuestaHTTP)
-                        }
-                    } else {
-                        //showToast("Error: Respuesta vacía del servidor")
-                    }
+
                 } else {
                     //showToast("Error en el verificar codigo: Código ${response.code()}")
                 }
             }
 
-            override fun onFailure(call: Call<CambiarPass1Response>, t: Throwable) {
+            override fun onFailure(call: Call<Void>, t: Throwable) {
                 //showToast("Error en la solicitud: ${t.message}")
                 Log.e("MiApp", "Error en la solicitud: ${t.message}")
             }
