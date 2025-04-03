@@ -44,8 +44,14 @@ class RegisterUser : AppCompatActivity() {
             val email = editTextEmail.text.toString().trim()
             val password = editTextPassword.text.toString().trim()
 
+            // Validaciones
             if (!isValidUsername(username)) {
                 showToast("El nombre de usuario no puede contener '@'.")
+                return@setOnClickListener
+            }
+
+            if (!isValidEmail(email)) {
+                showToast("El correo electrónico debe contener un '@'.")
                 return@setOnClickListener
             }
 
@@ -82,7 +88,13 @@ class RegisterUser : AppCompatActivity() {
                         showToast("Error: Respuesta vacía del servidor")
                     }
                 } else {
-                    showToast("Error en el registro: Código ${response.code()}")
+                    if (response.code() == 409) {
+                        // Manejar el código 409 - Conflicto, extraer el mensaje del cuerpo de la respuesta
+                        val errorResponse = response.errorBody()?.string()
+                        showToast("Error: $errorResponse")
+                    } else {
+                        showToast("Error en el registro: Código ${response.code()}")
+                    }
                 }
             }
 
@@ -103,10 +115,8 @@ class RegisterUser : AppCompatActivity() {
     }
 
     private fun guardarDatosOyente(registerResponse: RegisterUserResponse) {
-        // Agregar logs para cada valor que se guarda
         Log.d("guardarDatosOyente", "Guardando datos del usuario")
 
-        // Guardar los valores utilizando la clase Preferencias
         Preferencias.guardarValorString("token", registerResponse.token ?: "")
         Log.d("guardarDatosOyente", "Token guardado: ${registerResponse.token ?: "null"}")
 
@@ -124,12 +134,16 @@ class RegisterUser : AppCompatActivity() {
 
         Preferencias.guardarValorEntero("volumen", registerResponse.oyente?.volumen ?: 0)
         Log.d("guardarDatosOyente", "Es artista: ${registerResponse.oyente?.volumen ?: 0}")
-
     }
 
     // Función para validar el nombre de usuario (no debe contener "@")
     private fun isValidUsername(username: String): Boolean {
         return !username.contains("@") && username.isNotEmpty()
+    }
+
+    // Función para validar el correo (debe contener "@")
+    private fun isValidEmail(email: String): Boolean {
+        return email.contains("@") && email.isNotEmpty()
     }
 
     // Función para validar la contraseña (mínimo 8 caracteres, 1 letra y 1 carácter especial)
@@ -139,7 +153,7 @@ class RegisterUser : AppCompatActivity() {
     }
 
     private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
     private fun navigateToMainScreen() {
