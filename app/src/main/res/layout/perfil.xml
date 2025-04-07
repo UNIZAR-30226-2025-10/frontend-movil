@@ -108,14 +108,22 @@
                         android:layout_height="wrap_content"
                         android:textSize="14sp"
                         android:textColor="#000003"
-                        android:paddingEnd="16dp"/>
+                        android:paddingEnd="16dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:textStyle="bold"
+                        android:foreground="?attr/selectableItemBackground" />
 
                     <TextView
                         android:id="@+id/following"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="14sp"
-                        android:textColor="#000003"/>
+                        android:textColor="#000003"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:textStyle="bold"
+                        android:foreground="?attr/selectableItemBackground" />
                 </LinearLayout>
             </RelativeLayout>
 

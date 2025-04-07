@@ -1,0 +1,27 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Estado cuando no se sigue -->
+    <item android:state_selected="false" android:state_pressed="false">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/blueNuestro"/> <!-- Color de tu tema -->
+            <corners android:radius="16dp"/>
+            <stroke android:width="1dp" android:color="@color/blueNuestro"/>
+        </shape>
+    </item>
+
+    <!-- Estado cuando se está siguiendo -->
+    <item android:state_selected="true" android:state_pressed="false">
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/white"/>
+            <corners android:radius="16dp"/>
+            <stroke android:width="1dp" android:color="@color/blueNuestro"/>
+        </shape>
+    </item>
+
+    <!-- Estado presionado -->
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#CC0000FF"/> <!-- Versión semitransparente del color principal -->
+            <corners android:radius="16dp"/>
+        </shape>
+    </item>
+</selector>

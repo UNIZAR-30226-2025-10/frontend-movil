@@ -134,6 +134,19 @@ class Perfil : AppCompatActivity() {
             showDeleteAccountDialog()
         }
 
+        val followers: TextView = findViewById(R.id.followers)
+        val following: TextView = findViewById(R.id.following)
+
+        followers.setOnClickListener {
+            //Toast.makeText(this, "Abrir lista de seguidores", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, Seguidores::class.java))
+        }
+
+        following.setOnClickListener {
+            //Toast.makeText(this, "Abrir lista de seguidos", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, Seguidos::class.java))
+        }
+
 
         Log.d("MiAppPerfil", "PERFIL 2")
         loadProfileData()

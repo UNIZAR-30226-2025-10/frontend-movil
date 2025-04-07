@@ -16,6 +16,7 @@ import com.example.myapplication.io.response.VerifyArtistResponse
 import com.example.myapplication.io.request.CambiarPass1Request
 import com.example.myapplication.io.request.CambiarPass2Request
 import com.example.myapplication.io.request.CambiarPass3Request
+import com.example.myapplication.io.request.ChangeFollowRequest
 import com.example.myapplication.io.request.DeleteAccountRequest
 import com.example.myapplication.io.request.PlaylistRequest
 import com.example.myapplication.io.request.EditarPerfilRequest
@@ -40,6 +41,8 @@ import com.example.myapplication.io.response.RecomendacionesResponse
 import com.example.myapplication.io.response.InfoSeguidoresResponse
 import com.example.myapplication.io.response.PendientesResponse
 import com.example.myapplication.io.response.PlaylistResponse
+import com.example.myapplication.io.response.SeguidoresResponse
+import com.example.myapplication.io.response.SeguidosResponse
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.Call
@@ -172,6 +175,22 @@ interface ApiService {
     fun validarArtista(
         @Header("Authorization") token: String,
         @Body request: ValidarArtistaRequest
+    ): Call<Void>
+
+    @GET("/get-mis-seguidos")
+    fun getSeguidos(
+        @Header("Authorization") token: String
+    ): Call<SeguidosResponse>
+
+    @GET("/get-mis-seguidores")
+    fun getSeguidores(
+        @Header("Authorization") token: String
+    ): Call<SeguidoresResponse>
+
+    @PUT("/change-follow")
+    fun changeFollow(
+        @Header("Authorization") token: String,
+        @Body request: ChangeFollowRequest
     ): Call<Void>
 
 

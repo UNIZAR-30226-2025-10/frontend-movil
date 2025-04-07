@@ -11,4 +11,6 @@
     <color name="colorAccent">#08FF04</color>
     <color name="blueNuestro">#8CA4FF</color>
     <color name="fondo">#000E3B</color>
+    <color name="colorFollowText">#FFFFFF</color>
+    <color name="colorFollowingText">#000e3b</color>
 </resources>
