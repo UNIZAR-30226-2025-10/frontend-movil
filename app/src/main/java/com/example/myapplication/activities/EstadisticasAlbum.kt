@@ -18,12 +18,18 @@ import retrofit2.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import java.text.NumberFormat
+
 
 class EstadisticasAlbum : AppCompatActivity() {
 
     private lateinit var imageView: ImageView
     private lateinit var text1: TextView
     private lateinit var text2: TextView
+    private lateinit var nombreAlbum: TextView
+    private lateinit var nCanciones: TextView
+    private lateinit var nMegustas: TextView
+    private lateinit var nRepros: TextView
     private lateinit var apiService: ApiService
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: CancionEstAdapter
@@ -39,6 +45,10 @@ class EstadisticasAlbum : AppCompatActivity() {
         imageView = findViewById(R.id.centerImage)
         text1 = findViewById(R.id.text1)
         text2 = findViewById(R.id.text2)
+        nombreAlbum = findViewById(R.id.nombreAlbum)
+        nCanciones = findViewById(R.id.num_canciones)
+        nMegustas = findViewById(R.id.me_gustas)
+        nRepros = findViewById(R.id.reproducciones)
 
         recyclerView = findViewById(R.id.recyclerCanciones)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -54,7 +64,7 @@ class EstadisticasAlbum : AppCompatActivity() {
 
     fun formatearFecha(fechaIso: String): String {
         val fecha = LocalDate.parse(fechaIso)
-        val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale("es", "ES"))
+        val formatter = DateTimeFormatter.ofPattern("d 'de' MMMM 'de' yyyy", Locale("es", "ES"))
         return fecha.format(formatter)
     }
 
@@ -76,6 +86,18 @@ class EstadisticasAlbum : AppCompatActivity() {
                                 val fechaFormateada = formatearFecha(stats.fechaPublicacion).replaceFirstChar { it.uppercase() }
                                 text1.text = formatearDuracion(stats.duracion)
                                 text2.text = fechaFormateada
+                                nombreAlbum.text = stats.nombre
+
+                                val num = "${stats.canciones.size} canciones"
+                                nCanciones.text = num
+
+                                val meGustas = "${stats.favs} Me Gustas"
+                                nMegustas.text = meGustas
+
+                                val format = NumberFormat.getInstance(Locale("es", "ES"))
+                                val formattedRepros = format.format(stats.reproducciones)
+                                val repros = "$formattedRepros Reproducciones"
+                                nRepros.text = repros
 
                                 Glide.with(this@EstadisticasAlbum)
                                     .load(it.fotoPortada)
