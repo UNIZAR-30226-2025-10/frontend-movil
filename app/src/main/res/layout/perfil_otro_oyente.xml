@@ -5,8 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F5F5"
-    tools:context=".activities.Home">
+    tools:context=".activities.OtroOyente">
 
+    <!-- Toolbar -->
     <!-- Barra de herramientas con imagen de perfil alineada a la derecha -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -38,10 +39,12 @@
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 
+    <!-- Contenido desplazable -->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -66,20 +69,7 @@
                     android:background="@drawable/circle_background"
                     android:src="@drawable/ic_profile"
                     android:contentDescription="Foto de perfil"
-                    android:layout_centerHorizontal="true"/>
-
-                <!-- Botón Editar Perfil -->
-                <Button
-                    android:id="@+id/editProfile"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Editar perfil"
-                    android:background="@android:color/transparent"
-                    android:textSize="14sp"
-                    android:textColor="#1DB954"
-                    android:layout_alignEnd="@id/profileImage"
-                    android:layout_marginEnd="-130dp"
-                    android:layout_alignTop="@id/profileImage"/>
+                    android:layout_centerHorizontal="true" />
 
                 <!-- Nombre de usuario -->
                 <TextView
@@ -91,80 +81,56 @@
                     android:textColor="#000003"
                     android:layout_below="@id/profileImage"
                     android:layout_centerHorizontal="true"
-                    android:paddingTop="8dp"/>
+                    android:paddingTop="8dp" />
 
-                <!-- Seguidores y Seguidos -->
-                <LinearLayout
+                <!-- Botón de seguir -->
+                <Button
+                    android:id="@+id/btnFollow"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:layout_height="32dp"
+                    android:textSize="12sp"
+                    android:background="@drawable/btn_follow_selector"
+                    android:paddingHorizontal="16dp"
                     android:layout_below="@id/username"
                     android:layout_centerHorizontal="true"
-                    android:paddingTop="8dp">
+                    android:layout_marginTop="8dp" />
 
-                    <TextView
-                        android:id="@+id/followers"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:textColor="#000003"
-                        android:paddingEnd="16dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:textStyle="bold"
-                        android:foreground="?attr/selectableItemBackground" />
-
-                    <TextView
-                        android:id="@+id/following"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:textColor="#000003"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:textStyle="bold"
-                        android:foreground="?attr/selectableItemBackground" />
-                </LinearLayout>
+                <!-- Último mensaje (visible solo si ya sigues) -->
+                <TextView
+                    android:id="@+id/lastMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Último mensaje de este oyente..."
+                    android:textColor="#555555"
+                    android:textStyle="italic"
+                    android:layout_below="@id/btnFollow"
+                    android:layout_centerHorizontal="true"
+                    android:paddingTop="12dp"
+                    android:visibility="gone" />
             </RelativeLayout>
 
-            <!-- Botones de Borrar Cuenta y Logout -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="16dp"
-                android:layout_gravity="center_horizontal">
-
-                <Button
-                    android:id="@+id/botonDeleteAccount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#D32F2F"
-                    android:text="Borrar Cuenta"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginEnd="8dp"/>
-
-                <Button
-                    android:id="@+id/botonLogout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#1976D2"
-                    android:text="Log Out"
-                    android:textColor="#FFFFFF"/>
-            </LinearLayout>
-
-            <!-- Sección de Mis Playlists -->
+            <!-- Sección de Playlists del oyente -->
             <LinearLayout
                 android:id="@+id/sectionPlaylists"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginTop="24dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Playlists públicas"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#000003"
+                    android:layout_marginBottom="8dp" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerViewHeadersPlaylistsP"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="8dp"
                     android:scrollbars="none" />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -173,7 +139,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:orientation="horizontal"
-                    android:scrollbars="horizontal"/>
+                    android:scrollbars="horizontal" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
@@ -190,15 +156,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Imagen de la canción -->
         <ImageView
             android:id="@+id/songImage"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:scaleType="centerCrop"
-            android:contentDescription="Portada de la canción"/>
+            android:contentDescription="Portada de la canción" />
 
-        <!-- Información de la canción -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -216,7 +180,7 @@
                 android:textSize="14sp"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/songArtist"
@@ -226,9 +190,8 @@
                 android:textColor="#B3B3B3"
                 android:textSize="12sp"
                 android:maxLines="1"
-                android:ellipsize="end"/>
+                android:ellipsize="end" />
 
-            <!-- Barra de progreso de reproducción -->
             <ProgressBar
                 android:id="@+id/progressBar"
                 style="?android:attr/progressBarStyleHorizontal"
@@ -236,10 +199,9 @@
                 android:layout_height="4dp"
                 android:progress="40"
                 android:progressTint="#1DB954"
-                android:backgroundTint="#555555"/>
+                android:backgroundTint="#555555" />
         </LinearLayout>
 
-        <!-- Botón de stop -->
         <ImageButton
             android:id="@+id/stopButton"
             android:layout_width="40dp"
@@ -247,10 +209,10 @@
             android:src="@android:drawable/ic_media_pause"
             android:contentDescription="Detener"
             android:background="@android:color/transparent"
-            app:tint="#FFFFFF"/>
+            app:tint="#FFFFFF" />
     </LinearLayout>
 
-    <!-- Navigation Bar en la parte inferior -->
+    <!-- Bottom Navigation -->
     <LinearLayout
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
@@ -263,7 +225,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:gravity="center">
 
-        <!-- Botón Home -->
         <ImageButton
             android:id="@+id/nav_home"
             android:layout_width="40dp"
@@ -274,7 +235,6 @@
             android:layout_weight="1"
             app:tint="#FFFFFF" />
 
-        <!-- Botón Buscar -->
         <ImageButton
             android:id="@+id/nav_search"
             android:layout_width="40dp"
@@ -285,7 +245,6 @@
             android:layout_weight="1"
             app:tint="#FFFFFF" />
 
-        <!-- Botón Crear -->
         <ImageButton
             android:id="@+id/nav_create"
             android:layout_width="40dp"
@@ -295,7 +254,5 @@
             android:contentDescription="Crear"
             android:layout_weight="1"
             app:tint="#FFFFFF" />
-
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

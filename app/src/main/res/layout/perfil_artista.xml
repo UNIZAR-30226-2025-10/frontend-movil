@@ -160,6 +160,28 @@
                     android:text="Log Out"
                     android:textColor="#FFFFFF"/>
             </LinearLayout>
+            <!-- Sección de Mis Albums -->
+            <LinearLayout
+                android:id="@+id/sectionAlbums"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewHeadersAlbums"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:scrollbars="none" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewAlbums"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    android:scrollbars="horizontal"/>
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
