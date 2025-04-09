@@ -191,6 +191,7 @@ class Buscador : AppCompatActivity() {
         }
     }
 
+
     private fun search(termino: String) {
         val token = Preferencias.obtenerValorString("token", "")
         val authHeader = "Bearer $token"

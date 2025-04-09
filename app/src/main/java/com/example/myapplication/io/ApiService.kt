@@ -30,6 +30,7 @@ import com.example.myapplication.io.response.AudioResponse
 import com.example.myapplication.io.response.BuscadorResponse
 import com.example.myapplication.io.response.DeleteAccountResponse
 import com.example.myapplication.io.response.EditarPerfilResponse
+import com.example.myapplication.io.response.GetMisAlbumesResponse
 import com.example.myapplication.io.response.GetSignatureResponse
 import com.example.myapplication.io.response.HistorialArtistasResponse
 import com.example.myapplication.io.response.HistorialRecientesResponse
@@ -192,6 +193,11 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body request: ChangeFollowRequest
     ): Call<Void>
+
+    @GET("/get-mis-albumes")
+    fun getMisAlbumes(
+        @Header("Authorization") token: String
+    ): Call<GetMisAlbumesResponse>
 
 
 

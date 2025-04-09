@@ -12,8 +12,13 @@ import com.example.myapplication.R
 import com.example.myapplication.io.response.Seguidores
 
 class SeguidoresAdapter(
-    private val followers: List<Seguidores>
+    private var followers: MutableList<Seguidores>,
+    private val followListener: OnFollowListener
 ) : RecyclerView.Adapter<SeguidoresAdapter.FollowersViewHolder>() {
+
+    interface OnFollowListener {
+        fun onFollowStatusChanged(userId: String, isFollowing: Boolean, position: Int)
+    }
 
     class FollowersViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val ivProfile: ImageView = view.findViewById(R.id.ivProfile)
@@ -30,7 +35,6 @@ class SeguidoresAdapter(
     override fun onBindViewHolder(holder: FollowersViewHolder, position: Int) {
         val user = followers[position]
 
-        // Load profile image
         Glide.with(holder.itemView.context)
             .load(user.fotoPerfil)
             .placeholder(R.drawable.ic_profile)
@@ -38,14 +42,38 @@ class SeguidoresAdapter(
             .into(holder.ivProfile)
 
         holder.tvName.text = user.nombreUsuario
+        updateFollowButton(holder.btnFollow, user.followBack)
 
-        // Configure follow button
-        holder.btnFollow.text = if (user.followBack) "✔" else "+"
-        holder.btnFollow.setBackgroundResource(
-            if (user.followBack) R.drawable.bg_following
+        holder.btnFollow.setOnClickListener {
+            val newFollowStatus = !user.followBack
+            // Actualizar visualmente inmediatamente
+            user.followBack = newFollowStatus
+            updateFollowButton(holder.btnFollow, newFollowStatus)
+            // Notificar al activity para llamar a la API
+            followListener.onFollowStatusChanged(user.nombreUsuario, newFollowStatus, position)
+        }
+    }
+
+    private fun updateFollowButton(button: Button, isFollowing: Boolean) {
+        button.text = if (isFollowing) "Siguiendo" else "Seguir"
+        button.setBackgroundResource(
+            if (isFollowing) R.drawable.bg_following
             else R.drawable.bg_not_following
         )
     }
 
     override fun getItemCount() = followers.size
+
+    fun updateList(newFollowers: List<Seguidores>) {
+        followers.clear()
+        followers.addAll(newFollowers)
+        notifyDataSetChanged()
+    }
+
+    fun updateItem(position: Int, isFollowing: Boolean) {
+        if (position in 0 until followers.size) {
+            followers[position].followBack = isFollowing
+            notifyItemChanged(position)
+        }
+    }
 }

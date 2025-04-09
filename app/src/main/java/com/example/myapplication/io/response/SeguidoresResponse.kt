@@ -9,5 +9,5 @@ class Seguidores (
     val tipo: String,
     val fotoPerfil: String,
     val nombreUsuario: String,
-    val followBack: Boolean,
+    var followBack: Boolean,
 )
