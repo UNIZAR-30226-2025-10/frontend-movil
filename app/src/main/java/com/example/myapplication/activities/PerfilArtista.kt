@@ -68,9 +68,7 @@ class PerfilArtista : AppCompatActivity() {
         recyclerViewAlbums = findViewById(R.id.recyclerViewAlbums)
         recyclerViewAlbums.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         albumAdapter = AlbumsAdapter(mutableListOf()) { album ->
-            val intent = Intent(this, AlbumDetail::class.java)
-            intent.putExtra("nombre", album.nombre)
-            intent.putExtra("imagen", album.fotoPortada)
+            val intent = Intent(this, EstadisticasAlbum::class.java)
             intent.putExtra("id", album.id)
             startActivity(intent)
         }

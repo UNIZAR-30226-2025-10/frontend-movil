@@ -10,7 +10,9 @@ import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.io.response.*
 
-class AlbumAdapter(private var listaAlbumes: List<Album>) : RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
+class AlbumAdapter(
+    private var listaAlbumes: List<Album>,
+) : RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
 
     // Cambia el método para actualizar la lista
     fun updateDataAlbum(searchResponse: List<Album>) {
@@ -30,6 +32,7 @@ class AlbumAdapter(private var listaAlbumes: List<Album>) : RecyclerView.Adapter
         Glide.with(holder.itemView.context)
             .load(album.fotoPortada)
             .into(holder.imagenAlbum)
+
     }
 
     override fun getItemCount(): Int {

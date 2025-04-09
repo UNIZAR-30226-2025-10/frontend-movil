@@ -12,6 +12,7 @@ import com.example.myapplication.Adapters.EstadisticasAlbum.CancionEstAdapter
 import com.example.myapplication.R
 import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.response.EstadisticasAlbumResponse
+import com.example.myapplication.io.response.MiAlbum
 import com.example.myapplication.utils.Preferencias
 import retrofit2.*
 import java.time.LocalDate
@@ -26,13 +27,14 @@ class EstadisticasAlbum : AppCompatActivity() {
     private lateinit var apiService: ApiService
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: CancionEstAdapter
-    private lateinit var idAlbum: String
+    private var idAlbum: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.estadisticas_album)
 
-        // COGER ID DEL ALBUM
+        idAlbum = intent.getStringExtra("id")
+        apiService = ApiService.create()
 
         imageView = findViewById(R.id.centerImage)
         text1 = findViewById(R.id.text1)
@@ -60,28 +62,35 @@ class EstadisticasAlbum : AppCompatActivity() {
         val token = Preferencias.obtenerValorString("token", "")
         val authHeader = "Bearer $token"
 
-        apiService.getEstadisticasAlbum(authHeader, idAlbum).enqueue(object : Callback<EstadisticasAlbumResponse> {
-            override fun onResponse(call: Call<EstadisticasAlbumResponse>, response: Response<EstadisticasAlbumResponse>) {
-                if (response.isSuccessful) {
-                    val stats = response.body()
-                    stats?.let {
-                        val fechaFormateada = formatearFecha(stats.fechaPublicacion).replaceFirstChar { it.uppercase() }
-                        text1.text = formatearDuracion(stats.duracion)
-                        text2.text = fechaFormateada
+        if (idAlbum != null) {
+            val id = idAlbum as String
+            apiService.getEstadisticasAlbum(authHeader, id)
+                .enqueue(object : Callback<EstadisticasAlbumResponse> {
+                    override fun onResponse(
+                        call: Call<EstadisticasAlbumResponse>,
+                        response: Response<EstadisticasAlbumResponse>
+                    ) {
+                        if (response.isSuccessful) {
+                            val stats = response.body()
+                            stats?.let {
+                                val fechaFormateada = formatearFecha(stats.fechaPublicacion).replaceFirstChar { it.uppercase() }
+                                text1.text = formatearDuracion(stats.duracion)
+                                text2.text = fechaFormateada
 
-                        Glide.with(this@EstadisticasAlbum)
-                            .load(it.fotoPortada)
-                            .into(imageView)
+                                Glide.with(this@EstadisticasAlbum)
+                                    .load(it.fotoPortada)
+                                    .into(imageView)
 
-                        adapter = CancionEstAdapter(stats.canciones, stats.nombreArtisticoArtista)
-                        recyclerView.adapter = adapter
+                                adapter = CancionEstAdapter(stats.canciones, stats.nombreArtisticoArtista)
+                                recyclerView.adapter = adapter
+                            }
+                        }
                     }
-                }
-            }
 
-            override fun onFailure(call: Call<EstadisticasAlbumResponse>, t: Throwable) {
-                Log.d("Pedir estadisticas álbum", "Error en la solicitud: ${t.message}")
-            }
-        })
+                    override fun onFailure(call: Call<EstadisticasAlbumResponse>, t: Throwable) {
+                        Log.d("Pedir estadisticas álbum", "Error en la solicitud: ${t.message}")
+                    }
+                })
+        }
     }
 }

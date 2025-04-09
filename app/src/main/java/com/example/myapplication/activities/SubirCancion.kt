@@ -349,7 +349,7 @@ class SubirCancion : AppCompatActivity() {
             override fun onResponse(call: Call<CrearAlbumResponse>, response: Response<CrearAlbumResponse>) {
                 if (response.isSuccessful) {
                     Log.d("Crear album", "Album creado con éxito")
-                    crearCancion(nombreCancion,audioUrl,feats)
+                    obtenerAlbumsActualizado(nombreAlbum, nombreCancion, audioUrl, feats)
                 }
             }
             override fun onFailure(call: Call<CrearAlbumResponse>, t: Throwable) {
@@ -608,7 +608,7 @@ class SubirCancion : AppCompatActivity() {
             Log.d("Crear canción", "Dentro if")
             val album = albumSeleccionado as MiAlbum
             val request = CrearCancionRequest(nombreCancion, durationEntera, audioUrl, album.id, listaEtiquetas, feats)
-
+            Log.d("Crear cancion", album.id)
             apiService.crearCancion(authHeader, request).enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     if (response.isSuccessful) {
@@ -621,5 +621,33 @@ class SubirCancion : AppCompatActivity() {
                 }
             })
         }
+    }
+
+    private fun obtenerAlbumsActualizado(nombreAlbum: String, nombreCancion: String, audioUrl: String, feats: List<String>) {
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+
+        apiService.getMisAlbumesArtista(authHeader).enqueue(object : Callback<MisAlbumesResponse> {
+            override fun onResponse(
+                call: Call<MisAlbumesResponse>,
+                response: Response<MisAlbumesResponse>
+            ) {
+                if (response.isSuccessful) {
+                    val misAlbumes = response.body()?.albumes ?: emptyList()
+                    val albumNuevo = misAlbumes.firstOrNull { it.nombre == nombreAlbum }
+                    albumSeleccionado = albumNuevo
+                    crearCancion(nombreCancion,audioUrl,feats)
+
+                } else {
+                    Log.d("Mis albumes", "Error al obtener los álbumes: ${response.code()} - ${response.message()}")
+                    Toast.makeText(this@SubirCancion, "Error cargando álbumes", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<MisAlbumesResponse>, t: Throwable) {
+                Log.d("Mis albumes", "Error en la solicitud: ${t.message}")
+                Toast.makeText(this@SubirCancion, "Error en la solicitud: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }

@@ -133,13 +133,16 @@
             android:exported="false"
             android:theme="@style/Theme.MyApplication"/>
 
-        <service android:name=".managers.MusicPlayerService" />
 
         <activity android:name=".activities.Seguidos"
             android:exported="false"
             android:theme="@style/Theme.MyApplication"/>
 
         <activity android:name=".activities.Seguidores"
+            android:exported="false"
+            android:theme="@style/Theme.MyApplication"/>
+
+        <activity android:name=".activities.EstadisticasAlbum"
             android:exported="false"
             android:theme="@style/Theme.MyApplication"/>
 
