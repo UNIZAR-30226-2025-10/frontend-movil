@@ -1,5 +1,6 @@
 package com.example.myapplication.Adapters.Home
 
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.myapplication.R
 import com.example.myapplication.io.response.Recomendaciones
 
@@ -26,8 +28,24 @@ class RecomendacionesAdapter (private var listaRecomendaciones: MutableList<Reco
     override fun onBindViewHolder(holder: RecomendacionViewHolder, position: Int) {
         val recomendacion = listaRecomendaciones[position]
         holder.nombreCancion.text = recomendacion.nombre
+        var foto: Any
+        if (recomendacion.fotoPortada == "DEFAULT") {
+            foto = R.drawable.no_cancion
+        } else {
+            foto = recomendacion.fotoPortada
+        }
         Glide.with(holder.itemView.context)
-            .load(recomendacion.fotoPortada)
+            .load(foto)
+            .centerCrop()
+            .transform(
+                RoundedCorners(
+                    TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP,
+                        12f,
+                        holder.itemView.context.resources.displayMetrics
+                    ).toInt()
+                )
+            )
             .into(holder.imagenCancion)
     }
 

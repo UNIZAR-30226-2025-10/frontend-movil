@@ -12,6 +12,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
@@ -51,11 +52,17 @@ class Home : AppCompatActivity() {
     private lateinit var escuchasAdapter: EscuchasAdapter
     private lateinit var playlistsAdapter: PlaylistsAdapter
     private lateinit var recomendacionesAdapter: RecomendacionesAdapter
+    /*
+    private lateinit var headerRecientesTextView: RecyclerView
+    private lateinit var headerEscuchasTextView: RecyclerView
+    private lateinit var headerPlaylistsTextView: RecyclerView
+    private lateinit var headerRecomendacionesTextView: RecyclerView
+    */
 
-    private lateinit var headerRecientesRecyclerView: RecyclerView
-    private lateinit var headerEscuchasRecyclerView: RecyclerView
-    private lateinit var headerPlaylistsRecyclerView: RecyclerView
-    private lateinit var headerRecomendacionesRecyclerView: RecyclerView
+    private lateinit var headerRecientesTextView: TextView
+    private lateinit var headerEscuchasTextView: TextView
+    private lateinit var headerPlaylistsTextView: TextView
+    private lateinit var headerRecomendacionesTextView: TextView
 
     private val listaRecientes = mutableListOf<HRecientes>()
     private val listaArtistas = mutableListOf<HArtistas>()
@@ -89,35 +96,50 @@ class Home : AppCompatActivity() {
                 .into(profileImageButton)
         }
 
+        /*
         // Configurar RecyclerView para los encabezados
         val headersRecientes = listOf("Escuchado recientemente")
         val headerRecientesAdapter = HeaderAdapter(headersRecientes)
-        headerRecientesRecyclerView = findViewById(R.id.recyclerViewHeadersRecientes)
-        headerRecientesRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        headerRecientesRecyclerView.adapter = headerRecientesAdapter
-        headerRecientesRecyclerView.visibility = View.INVISIBLE
+        headerRecientesTextView = findViewById(R.id.recyclerViewHeadersRecientes)
+        headerRecientesTextView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        headerRecientesTextView.adapter = headerRecientesAdapter
+        headerRecientesTextView.visibility = View.INVISIBLE
 
         val headersEscuchas = listOf("Úiltimas escuchas")
         val headerEscuchasAdapter = HeaderAdapter(headersEscuchas)
-        headerEscuchasRecyclerView = findViewById(R.id.recyclerViewHeadersEscuchas)
-        headerEscuchasRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        headerEscuchasRecyclerView.adapter = headerEscuchasAdapter
-        headerEscuchasRecyclerView.visibility = View.INVISIBLE
+        headerEscuchasTextView = findViewById(R.id.recyclerViewHeadersEscuchas)
+        headerEscuchasTextView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        headerEscuchasTextView.adapter = headerEscuchasAdapter
+        headerEscuchasTextView.visibility = View.INVISIBLE
 
 
         val headersPlaylists = listOf("Mis playlists")
         val headerPlaylistsAdapter = HeaderAdapter(headersPlaylists)
-        headerPlaylistsRecyclerView = findViewById(R.id.recyclerViewHeadersPlaylists)
-        headerPlaylistsRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        headerPlaylistsRecyclerView.adapter = headerPlaylistsAdapter
-        headerPlaylistsRecyclerView.visibility = View.INVISIBLE
+        headerPlaylistsTextView = findViewById(R.id.recyclerViewHeadersPlaylists)
+        headerPlaylistsTextView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        headerPlaylistsTextView.adapter = headerPlaylistsAdapter
+        headerPlaylistsTextView.visibility = View.INVISIBLE
 
         val headersRecomendaciones = listOf("Recomendaciones")
         val headerRecomendacionesAdapter = HeaderAdapter(headersRecomendaciones)
-        headerRecomendacionesRecyclerView = findViewById(R.id.recyclerViewHeadersRecomendaciones)
-        headerRecomendacionesRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        headerRecomendacionesRecyclerView.adapter = headerRecomendacionesAdapter
-        headerRecomendacionesRecyclerView.visibility = View.INVISIBLE
+        headerRecomendacionesTextView = findViewById(R.id.recyclerViewHeadersRecomendaciones)
+        headerRecomendacionesTextView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        headerRecomendacionesTextView.adapter = headerRecomendacionesAdapter
+        headerRecomendacionesTextView.visibility = View.INVISIBLE
+        */
+
+        // Configurar TextView para los encabezados
+        headerRecientesTextView = findViewById(R.id.textViewHeadersRecientes)
+        headerRecientesTextView.visibility = View.INVISIBLE
+        
+        headerEscuchasTextView = findViewById(R.id.textViewHeadersEscuchas)
+        headerEscuchasTextView.visibility = View.INVISIBLE
+        
+        headerPlaylistsTextView = findViewById(R.id.textViewHeadersPlaylists)
+        headerPlaylistsTextView.visibility = View.INVISIBLE
+        
+        headerRecomendacionesTextView = findViewById(R.id.textViewHeadersRecomendaciones)
+        headerRecomendacionesTextView.visibility = View.INVISIBLE
 
         //Inicializar los recyclerView
         recyclerViewRecientes = findViewById(R.id.recyclerViewRecientes)
@@ -257,7 +279,7 @@ class Home : AppCompatActivity() {
         Log.d("MiApp", "mezcla listas y las manda a actualizar")
         RecientesAdapter.updateData(listaMezclada)
         recyclerViewRecientes.visibility = View.VISIBLE
-        headerRecientesRecyclerView.visibility = View.VISIBLE
+        headerRecientesTextView.visibility = View.VISIBLE
         Log.d("MiApp", "ha actualizado correctamente")
     }
 
@@ -279,10 +301,10 @@ class Home : AppCompatActivity() {
                             if (escuchas.isNotEmpty()) {
                                 escuchasAdapter.updateDataEscucha(escuchas)
                                 recyclerViewEscuchas.visibility = View.VISIBLE
-                                headerEscuchasRecyclerView.visibility = View.VISIBLE
+                                headerEscuchasTextView.visibility = View.VISIBLE
                             } else {
                                 recyclerViewEscuchas.visibility = View.GONE
-                                headerEscuchasRecyclerView.visibility = View.GONE
+                                headerEscuchasTextView.visibility = View.GONE
                                 showToast("No hay escuchas")
                             }
 
@@ -317,10 +339,10 @@ class Home : AppCompatActivity() {
                             if (misPlaylists.isNotEmpty()) {
                                 playlistsAdapter.updateDataMisPlaylists(misPlaylists)
                                 recyclerViewPlaylists.visibility = View.VISIBLE
-                                headerPlaylistsRecyclerView.visibility = View.VISIBLE
+                                headerPlaylistsTextView.visibility = View.VISIBLE
                             } else {
                                 recyclerViewPlaylists.visibility = View.GONE
-                                headerPlaylistsRecyclerView.visibility = View.GONE
+                                headerPlaylistsTextView.visibility = View.GONE
                                 showToast("No hay playlists")
                             }
 
@@ -353,10 +375,10 @@ class Home : AppCompatActivity() {
                             if (recomendaciones.isNotEmpty()) {
                                 recomendacionesAdapter.updateDataRecomendacion(recomendaciones)
                                 recyclerViewRecomendaciones.visibility = View.VISIBLE
-                                headerRecomendacionesRecyclerView.visibility = View.VISIBLE
+                                headerRecomendacionesTextView.visibility = View.VISIBLE
                             } else {
                                 recyclerViewRecomendaciones.visibility = View.GONE
-                                headerRecomendacionesRecyclerView.visibility = View.GONE
+                                headerRecomendacionesTextView.visibility = View.GONE
                                 showToast("No hay recomendaciones")
                             }
 

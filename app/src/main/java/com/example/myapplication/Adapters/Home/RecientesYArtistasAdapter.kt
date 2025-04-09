@@ -1,5 +1,6 @@
 package com.example.myapplication.Adapters.Home
 
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.myapplication.R
 import com.example.myapplication.io.response.*
 
@@ -58,7 +60,27 @@ class RecientesYArtistasAdapter(private var items: MutableList<Any>) :
         fun bind(reciente: HRecientes) {
             nombre.text = reciente.nombre
             autor.text = reciente.autor
-            Glide.with(itemView.context).load(reciente.fotoPortada).into(fotoPortada)
+
+            var foto: Any
+            if (reciente.fotoPortada == "DEFAULT") {
+                foto = R.drawable.no_cancion
+            } else {
+                foto = reciente.fotoPortada
+            }
+
+            Glide.with(itemView.context)
+                .load(foto)
+                .centerCrop()
+                .transform(
+                    RoundedCorners(
+                        TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP,
+                            12f,
+                            itemView.resources.displayMetrics
+                        ).toInt()
+                    )
+                )
+                .into(fotoPortada)
         }
     }
 
@@ -68,7 +90,18 @@ class RecientesYArtistasAdapter(private var items: MutableList<Any>) :
 
         fun bind(artista: HArtistas) {
             nombre.text = artista.nombreArtistico
-            Glide.with(itemView.context).load(artista.fotoPerfil).into(fotoPerfil)
+
+            var foto: Any
+            if (artista.fotoPerfil == "DEFAULT") {
+                foto = R.drawable.ic_profile
+            } else {
+                foto = artista.fotoPerfil
+            }
+
+            Glide.with(itemView.context)
+                .load(foto)
+                .circleCrop()
+                .into(fotoPerfil)
         }
     }
 }

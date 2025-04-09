@@ -1,5 +1,6 @@
 package com.example.myapplication.Adapters.Home
 
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.myapplication.R
 import com.example.myapplication.io.response.*
 
@@ -28,8 +30,26 @@ class RecientesAdapter(private var listaRecientes: MutableList<HRecientes>) :
         val Reciente = listaRecientes[position]
         holder.nombre.text = Reciente.nombre
         holder.autor.text = Reciente.autor
+
+        var foto: Any
+        if (Reciente.fotoPortada == "DEFAULT") {
+            foto = R.drawable.no_cancion
+        } else {
+            foto = Reciente.fotoPortada
+        }
+
         Glide.with(holder.itemView.context)
-            .load(Reciente.fotoPortada)
+            .load(foto)
+            .centerCrop()
+            .transform(
+                RoundedCorners(
+                    TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP,
+                        12f,
+                        holder.itemView.resources.displayMetrics
+                    ).toInt()
+                )
+            )
             .into(holder.fotoPortada)
     }
 

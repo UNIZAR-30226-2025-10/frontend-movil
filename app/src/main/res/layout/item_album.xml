@@ -4,32 +4,39 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="4dp"
-    android:gravity="center_horizontal">
+    android:layout_marginEnd="8dp">
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="73dp"
-        android:layout_height="63dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/logo" />
+        android:src="@drawable/no_cancion"
+        android:background="@drawable/rounded_edittext"
+        android:clipToOutline="true"
+        android:outlineProvider="background" />
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="Nombre del album"
+        android:textStyle="bold"
+        android:textColor="#000E3B"
+        android:fontFamily="@font/poppins_bold"
         android:textSize="12sp"
         android:maxLines="1"
         android:ellipsize="end" />
 
     <TextView
         android:id="@+id/textViewArtist"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
         android:text="Nombre del Artista"
-        android:textSize="10sp"
+        android:textColor="#000E3B"
+        android:fontFamily="@font/poppins_regular"
+        android:textSize="12sp"
         android:maxLines="1"
         android:ellipsize="end" />
 
