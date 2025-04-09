@@ -16,6 +16,8 @@ import com.example.myapplication.io.response.VerifyArtistResponse
 import com.example.myapplication.io.request.CambiarPass1Request
 import com.example.myapplication.io.request.CambiarPass2Request
 import com.example.myapplication.io.request.CambiarPass3Request
+import com.example.myapplication.io.request.CrearAlbumRequest
+import com.example.myapplication.io.request.CrearCancionRequest
 import com.example.myapplication.io.request.DeleteAccountRequest
 import com.example.myapplication.io.request.PlaylistRequest
 import com.example.myapplication.io.request.EditarPerfilRequest
@@ -27,8 +29,11 @@ import com.example.myapplication.io.response.ActualizarFavoritoResponse
 import com.example.myapplication.io.response.AddReproduccionResponse
 import com.example.myapplication.io.response.AudioResponse
 import com.example.myapplication.io.response.BuscadorResponse
+import com.example.myapplication.io.response.CrearAlbumResponse
 import com.example.myapplication.io.response.DeleteAccountResponse
 import com.example.myapplication.io.response.EditarPerfilResponse
+import com.example.myapplication.io.response.EstadisticasAlbumResponse
+import com.example.myapplication.io.response.GetEtiquetasResponse
 import com.example.myapplication.io.response.GetSignatureResponse
 import com.example.myapplication.io.response.HistorialArtistasResponse
 import com.example.myapplication.io.response.HistorialRecientesResponse
@@ -38,6 +43,7 @@ import com.example.myapplication.io.response.InfoPerfilArtistaResponse
 import com.example.myapplication.io.response.PlaylistsResponse
 import com.example.myapplication.io.response.RecomendacionesResponse
 import com.example.myapplication.io.response.InfoSeguidoresResponse
+import com.example.myapplication.io.response.MisAlbumesResponse
 import com.example.myapplication.io.response.PendientesResponse
 import com.example.myapplication.io.response.PlaylistResponse
 import okhttp3.OkHttpClient
@@ -174,6 +180,33 @@ interface ApiService {
         @Body request: ValidarArtistaRequest
     ): Call<Void>
 
+    @GET("/get-mis-albumes")
+    fun getMisAlbumesArtista (
+        @Header("Authorization") token: String
+    ): Call<MisAlbumesResponse>
+
+    @POST("/create-album")
+    fun crearAlbum(
+        @Header("Authorization") token: String,
+        @Body request: CrearAlbumRequest
+    ): Call<CrearAlbumResponse>
+
+    @GET("/get-tags")
+    fun getEtiquetas (
+        @Header("Authorization") token: String
+    ): Call<GetEtiquetasResponse>
+
+    @POST("/create-cancion")
+    fun crearCancion(
+        @Header("Authorization") token: String,
+        @Body request: CrearCancionRequest
+    ): Call<Void>
+
+    @GET("/get-estadisticas-album")
+    fun getEstadisticasAlbum(
+        @Header("Authorization") token: String,
+        @Query("id") id: String
+    ): Call<EstadisticasAlbumResponse>
 
 
 

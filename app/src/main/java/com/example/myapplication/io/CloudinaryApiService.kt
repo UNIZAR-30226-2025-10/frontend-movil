@@ -1,5 +1,6 @@
 package com.example.myapplication.io
 
+import com.example.myapplication.io.response.CloudinaryAudioResponse
 import com.example.myapplication.io.response.CloudinaryResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -23,6 +24,17 @@ interface CloudinaryApiService {
         @Part("signature") signature: RequestBody,
         @Part("folder") folder: RequestBody
     ): Call<CloudinaryResponse>
+
+    @Multipart
+    @POST("v1_1/{cloud_name}/video/upload")
+    fun uploadAudio(
+        @Path("cloud_name") cloudName: String,
+        @Part file: MultipartBody.Part,
+        @Part("api_key") apiKey: RequestBody,
+        @Part("timestamp") timestamp: RequestBody,
+        @Part("signature") signature: RequestBody,
+        @Part("folder") folder: RequestBody
+    ): Call<CloudinaryAudioResponse>
 
     companion object Factory {
         private const val BASE_URL = "https://api.cloudinary.com" // URL de la API

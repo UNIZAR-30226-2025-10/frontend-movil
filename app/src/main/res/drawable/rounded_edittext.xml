@@ -1,0 +1,11 @@
+<!-- res/drawable/rounded_edittext.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Color de fondo -->
+    <solid android:color="#FFFFFF" />
+
+    <!-- Bordes redondeados -->
+    <corners android:radius="12dp" />
+
+    <!-- Borde con color gris -->
+    <stroke android:color="#B0B0B0" android:width="2dp" />
+</shape>
