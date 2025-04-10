@@ -2,8 +2,10 @@ package com.example.myapplication.activities
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -11,6 +13,7 @@ import com.bumptech.glide.Glide
 import com.example.myapplication.Adapters.EstadisticasAlbum.CancionEstAdapter
 import com.example.myapplication.R
 import com.example.myapplication.io.ApiService
+import com.example.myapplication.io.response.CancionEst
 import com.example.myapplication.io.response.EstadisticasAlbumResponse
 import com.example.myapplication.io.response.MiAlbum
 import com.example.myapplication.utils.Preferencias
@@ -19,6 +22,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.text.NumberFormat
+
 
 
 class EstadisticasAlbum : AppCompatActivity() {
@@ -99,11 +103,16 @@ class EstadisticasAlbum : AppCompatActivity() {
                                 val repros = "$formattedRepros Reproducciones"
                                 nRepros.text = repros
 
+
                                 Glide.with(this@EstadisticasAlbum)
                                     .load(it.fotoPortada)
                                     .into(imageView)
 
-                                adapter = CancionEstAdapter(stats.canciones, stats.nombreArtisticoArtista)
+                                adapter = CancionEstAdapter(stats.canciones, stats.nombreArtisticoArtista,  object : CancionEstAdapter.OnEstadisticasClickListener{
+                                    override fun onVerEstadisticasClick(cancion: CancionEst) {
+                                        Toast.makeText(this@EstadisticasAlbum, "Ver estadísticas", Toast.LENGTH_SHORT).show()
+                                    }
+                                })
                                 recyclerView.adapter = adapter
                             }
                         }
