@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
+    android:background="#DDDCDC"
     tools:context=".activities.Home">
 
     <!-- Barra de herramientas con imagen de perfil alineada a la derecha -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="65dp"
         android:background="#000e3b"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
@@ -20,15 +20,40 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="8dp">
+            android:orientation="horizontal">
 
+            <ImageView
+                android:id="@+id/toolbar_logo"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:src="@drawable/logo"
+                android:layout_centerVertical="true"
+                android:contentDescription="@string/logo"/>
+
+            <!-- Imagen de notificaciones como botón -->
+            <ImageButton
+                android:id="@+id/notificationImageButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:padding="4dp"
+                android:layout_marginEnd="92dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/notification"
+                android:background="@android:color/transparent"
+                android:contentDescription="Imagen de notificaciones"
+                android:clickable="true"
+                android:focusable="true"/>
+
+            <!-- Imagen de perfil como botón -->
             <ImageButton
                 android:id="@+id/profileImageButton"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="21dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_profile"
                 android:background="@android:color/transparent"
@@ -38,10 +63,157 @@
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 
+    <!-- Sección de perfil con estructura horizontal -->
+    <LinearLayout
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        android:id="@+id/profileSection"
+        android:backgroundTint="#E9E6E6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:background="#F4F4F4">
+
+        <!-- Parte izquierda: perfil y datos -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:layout_marginRight="10dp">
+
+            <!-- Imagen de perfil -->
+            <ImageView
+                android:id="@+id/profileImage"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_profile"
+                android:background="@drawable/circle_background"
+                android:contentDescription="Foto de perfil"
+                android:layout_gravity="center_vertical"/>
+            <!-- Parte izquierda: perfil y datos -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingLeft="8dp">
+                <!-- Nombre de usuario -->
+                <TextView
+                    android:id="@+id/username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="user_name"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="#000E3B"
+                    android:layout_marginTop="4dp"/>
+
+                <!-- Nombre de usuario -->
+                <TextView
+                    android:id="@+id/artisticname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Artistic Name"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:textColor="#000E3B"/>
+
+                <!-- Seguidores -->
+                <TextView
+                    android:id="@+id/followers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="Seguidores"
+                    android:textSize="14sp"
+                    android:textColor="#000E3B"
+                    android:layout_marginTop="2dp"/>
+
+                <!-- Seguidos -->
+                <TextView
+                    android:id="@+id/following"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Seguidos"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="14sp"
+                    android:textColor="#000E3B"
+                    android:layout_marginTop="3dp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Parte derecha: botones -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="end">
+
+            <!-- Editar perfil (texto superior derecho) -->
+            <!-- Botón Editar Perfil -->
+            <Button
+                android:id="@+id/editProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:text="Editar perfil"
+                android:fontFamily="@font/poppins_regular"
+                android:background="@android:color/transparent"
+                android:textSize="12sp"
+                android:textColor="#000E3B"/>
+
+            <!-- Botón Editar Perfil -->
+            <Button
+                android:id="@+id/changePassword"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:text="Cambiar contraseña"
+                android:fontFamily="@font/poppins_regular"
+                android:background="@android:color/transparent"
+                android:textSize="12sp"
+                android:textColor="#000E3B"/>
+
+            <!-- Botón: Cerrar sesión -->
+            <Button
+                android:id="@+id/botonLogout"
+                android:layout_width="wrap_content"
+                android:layout_height="37dp"
+                android:textSize="12sp"
+                android:text="Cerrar Sesión"
+                android:fontFamily="@font/poppins_bold"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/rounded_button"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp"/>
+
+            <!-- Botón: Eliminar cuenta -->
+            <Button
+                android:id="@+id/botonDeleteAccount"
+                android:layout_width="wrap_content"
+                android:layout_height="37dp"
+                android:text="Eliminar Cuenta"
+                android:textSize="12sp"
+                android:fontFamily="@font/poppins_bold"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/rounded_button"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintTop_toBottomOf="@+id/profileSection"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -49,140 +221,64 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="16dp"
+            >
 
-            <!-- Sección de perfil -->
-            <RelativeLayout
-                android:id="@+id/profileSection"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <!-- Foto de perfil -->
-                <ImageView
-                    android:id="@+id/profileImage"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:scaleType="centerCrop"
-                    android:background="@drawable/circle_background"
-                    android:src="@drawable/ic_profile"
-                    android:contentDescription="Foto de perfil"
-                    android:layout_centerHorizontal="true"/>
-
-                <!-- Botón Editar Perfil -->
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <!-- Botón: Cerrar sesión -->
                 <Button
-                    android:id="@+id/editProfile"
+                    android:id="@+id/subirAlbum"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Editar perfil"
-                    android:background="@android:color/transparent"
-                    android:textSize="14sp"
-                    android:textColor="#1DB954"
-                    android:layout_alignEnd="@id/profileImage"
-                    android:layout_marginEnd="-130dp"
-                    android:layout_alignTop="@id/profileImage"/>
+                    android:layout_height="37dp"
+                    android:textSize="12sp"
+                    android:text="Subir Álbum"
+                    android:fontFamily="@font/poppins_bold"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/rounded_button"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="3dp"
+                    android:layout_marginRight="12dp"/>
 
-                <!-- Botón Subir Canción -->
-
+                <!-- Botón: Eliminar cuenta -->
                 <Button
                     android:id="@+id/subirCancion"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/editProfile"
-                    android:layout_alignTop="@id/profileImage"
-                    android:layout_alignEnd="@id/profileImage"
-                    android:layout_marginTop="39dp"
-                    android:layout_marginEnd="-138dp"
-                    android:background="@android:color/transparent"
-                    android:text="Subir cancioón"
-                    android:textColor="#1DB954"
-                    android:textSize="14sp" />
+                    android:layout_height="37dp"
+                    android:text="Subir Canción"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/rounded_button"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="3dp"/>
+            </LinearLayout>
 
-                <!-- Nombre de usuario -->
-                <TextView
-                    android:id="@+id/username"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="#000003"
-                    android:layout_below="@id/profileImage"
-                    android:layout_centerHorizontal="true"
-                    android:paddingTop="8dp"/>
-
-                <!-- Seguidores y Seguidos -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_below="@id/username"
-                    android:layout_centerHorizontal="true"
-                    android:paddingTop="8dp">
-
-                    <TextView
-                        android:id="@+id/followers"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:textColor="#000003"
-                        android:paddingEnd="16dp"/>
-
-                    <TextView
-                        android:id="@+id/following"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:textColor="#000003"/>
-                </LinearLayout>
-            </RelativeLayout>
-
-            <!-- Botones de Borrar Cuenta y Logout -->
-            <LinearLayout
+            <TextView
+                android:id="@+id/textViewHeadersAlbums"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="16dp"
-                android:layout_gravity="center_horizontal">
+                android:text="Tus álbumes"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#000E3B"
+                android:fontFamily="@font/poppins_bold"
+                android:layout_gravity="start"
+                android:paddingTop="16dp"/>
 
-                <Button
-                    android:id="@+id/botonDeleteAccount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#D32F2F"
-                    android:text="Borrar Cuenta"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginEnd="8dp"/>
-
-                <Button
-                    android:id="@+id/botonLogout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#1976D2"
-                    android:text="Log Out"
-                    android:textColor="#FFFFFF"/>
-            </LinearLayout>
-            <!-- Sección de Mis Albums -->
-            <LinearLayout
-                android:id="@+id/sectionAlbums"
+            <!-- RecyclerView para Playlists -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewAlbums"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerViewHeadersAlbums"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:scrollbars="none" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerViewAlbums"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal"
-                    android:scrollbars="horizontal"/>
-            </LinearLayout>
-
+                tools:ignore="NotSibling" />
         </LinearLayout>
     </ScrollView>
 
@@ -262,47 +358,140 @@
     <LinearLayout
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="65dp"
         android:background="#000e3b"
         android:orientation="horizontal"
-        android:padding="10dp"
+        android:padding="7dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:gravity="center">
 
-        <!-- Botón Home -->
-        <ImageButton
-            android:id="@+id/nav_home"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_home"
-            android:background="@android:color/transparent"
-            android:contentDescription="Home"
+        <LinearLayout
+            android:id="@+id/home_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            app:tint="#FFFFFF" />
+            android:background="#000e3b"
+            android:orientation="vertical"
+            android:gravity="center">
 
-        <!-- Botón Buscar -->
-        <ImageButton
-            android:id="@+id/nav_search"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_search"
-            android:background="@android:color/transparent"
-            android:contentDescription="Buscar"
-            android:layout_weight="1"
-            app:tint="#FFFFFF" />
+            <!-- Botón Home -->
+            <ImageButton
+                android:id="@+id/nav_home"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_home"
+                android:background="@android:color/transparent"
+                android:contentDescription="Home"
+                android:layout_weight="1"
+                app:tint="#FFFFFF" />
 
-        <!-- Botón Crear -->
-        <ImageButton
-            android:id="@+id/nav_create"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_add"
-            android:background="@android:color/transparent"
-            android:contentDescription="Crear"
+            <TextView
+                android:id="@+id/homeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Home"
+                android:textColor="#B3B3B3"
+                android:textSize="14sp"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/search_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            app:tint="#FFFFFF" />
+            android:background="#000e3b"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <!-- Botón Buscar -->
+            <ImageButton
+                android:id="@+id/nav_search"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_search"
+                android:background="@android:color/transparent"
+                android:contentDescription="Buscar"
+                android:layout_weight="1"
+                app:tint="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/searchText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Buscar"
+                android:textColor="#B3B3B3"
+                android:textSize="14sp"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/create_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#000e3b"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <!-- Botón Crear -->
+            <ImageButton
+                android:id="@+id/nav_create"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_add"
+                android:background="@android:color/transparent"
+                android:contentDescription="Crear"
+                android:layout_weight="1"
+                app:tint="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/createText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Crear Playlist"
+                android:textColor="#B3B3B3"
+                android:textSize="14sp"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/noizzys_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#000e3b"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <!-- Botón Home -->
+            <ImageButton
+                android:id="@+id/nav_noizzys"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/noizzy"
+                android:background="@android:color/transparent"
+                android:contentDescription="Noizzys"
+                android:layout_weight="1"
+                app:tint="#FFFFFF"
+                android:scaleType="fitCenter"/>
+
+            <TextView
+                android:id="@+id/noizzysText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mis Noizzys"
+                android:textColor="#B3B3B3"
+                android:textSize="14sp"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+        </LinearLayout>
+
 
     </LinearLayout>
 
