@@ -162,7 +162,13 @@ class Buscador : AppCompatActivity() {
         }
         recyclerViewPlaylist.adapter = playlistAdapter
 
-        perfilAdapter = PerfilAdapter(mutableListOf())
+        perfilAdapter = PerfilAdapter(mutableListOf()){perfil ->
+            val intent = Intent(this, OtroOyente::class.java)
+            intent.putExtra("nombre", perfil.nombreUsuario)
+            intent.putExtra("imagen", perfil.fotoPerfil)
+            Log.d("Perfil", "Buscador -> Perfil")
+            startActivity(intent)
+        }
         recyclerViewPerfil.adapter = perfilAdapter
 
         searchEditText.addTextChangedListener(object : TextWatcher {

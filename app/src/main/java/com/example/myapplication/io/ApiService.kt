@@ -20,6 +20,7 @@ import com.example.myapplication.io.request.CambiarPass3Request
 import com.example.myapplication.io.request.CrearAlbumRequest
 import com.example.myapplication.io.request.CrearCancionRequest
 import com.example.myapplication.io.request.ChangeFollowRequest
+import com.example.myapplication.io.request.CreatePlaylistRequest
 import com.example.myapplication.io.request.DeleteAccountRequest
 import com.example.myapplication.io.request.PlaylistRequest
 import com.example.myapplication.io.request.EditarPerfilRequest
@@ -34,8 +35,12 @@ import com.example.myapplication.io.response.BuscadorResponse
 import com.example.myapplication.io.response.CrearAlbumResponse
 import com.example.myapplication.io.response.DeleteAccountResponse
 import com.example.myapplication.io.response.EditarPerfilResponse
+
 import com.example.myapplication.io.response.EstadisticasAlbumResponse
 import com.example.myapplication.io.response.GetEtiquetasResponse
+
+import com.example.myapplication.io.response.GetDatosOyenteResponse
+
 import com.example.myapplication.io.response.GetMisAlbumesResponse
 import com.example.myapplication.io.response.GetSignatureResponse
 import com.example.myapplication.io.response.HistorialArtistasResponse
@@ -233,6 +238,18 @@ interface ApiService {
     fun getMisAlbumes(
         @Header("Authorization") token: String
     ): Call<GetMisAlbumesResponse>
+
+    @GET("/get-datos-oyente")
+    fun getDatosOyente(
+        @Header("Authorization") token: String,
+        @Query("nombreUsuario") nombreUsuario: String
+    ): Call<GetDatosOyenteResponse>
+
+    @POST("/create-playlist")
+    fun crearPlaylist(
+        @Header("Authorization") token: String,
+        @Body request: CreatePlaylistRequest
+    ): Call<Void>
 
 
     companion object Factory {

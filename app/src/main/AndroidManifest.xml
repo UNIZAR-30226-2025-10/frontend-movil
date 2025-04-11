@@ -134,6 +134,7 @@
             android:theme="@style/Theme.MyApplication"/>
 
 
+
         <activity android:name=".activities.Seguidos"
             android:exported="false"
             android:theme="@style/Theme.MyApplication"/>
@@ -142,9 +143,17 @@
             android:exported="false"
             android:theme="@style/Theme.MyApplication"/>
 
-        <activity android:name=".activities.EstadisticasAlbum"
+
+        <activity android:name=".activities.EstadisticasAlbum"></activity>
+
+        <activity android:name=".activities.OtroOyente"
             android:exported="false"
             android:theme="@style/Theme.MyApplication"/>
+
+        <activity android:name=".activities.CrearPlaylist"
+            android:exported="false"
+            android:theme="@style/Theme.MyApplication"/>
+
 
 
     </application>

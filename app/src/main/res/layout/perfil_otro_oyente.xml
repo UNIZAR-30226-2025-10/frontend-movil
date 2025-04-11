@@ -8,7 +8,6 @@
     tools:context=".activities.OtroOyente">
 
     <!-- Toolbar -->
-    <!-- Barra de herramientas con imagen de perfil alineada a la derecha -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -83,6 +82,35 @@
                     android:layout_centerHorizontal="true"
                     android:paddingTop="8dp" />
 
+                <!-- Contadores en una sola fila -->
+                <LinearLayout
+                    android:id="@+id/followCounters"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_below="@id/username"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/followers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="#000003"
+                        android:paddingEnd="16dp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/following"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="#000003"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
                 <!-- Botón de seguir -->
                 <Button
                     android:id="@+id/btnFollow"
@@ -91,11 +119,11 @@
                     android:textSize="12sp"
                     android:background="@drawable/btn_follow_selector"
                     android:paddingHorizontal="16dp"
-                    android:layout_below="@id/username"
+                    android:layout_below="@id/followCounters"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="8dp" />
 
-                <!-- Último mensaje (visible solo si ya sigues) -->
+                <!-- Último mensaje -->
                 <TextView
                     android:id="@+id/lastMessage"
                     android:layout_width="wrap_content"
@@ -109,7 +137,7 @@
                     android:visibility="gone" />
             </RelativeLayout>
 
-            <!-- Sección de Playlists del oyente -->
+            <!-- Sección de Playlists -->
             <LinearLayout
                 android:id="@+id/sectionPlaylists"
                 android:layout_width="match_parent"
@@ -144,7 +172,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Mini reproductor de música -->
+    <!-- Mini reproductor -->
     <LinearLayout
         android:id="@+id/miniPlayer"
         android:layout_width="match_parent"

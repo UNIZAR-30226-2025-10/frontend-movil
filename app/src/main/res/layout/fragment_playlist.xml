@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#A9A9A9">
+    android:background="@color/white">
 
     <!-- Imagen de la playlist -->
     <ImageView
@@ -12,6 +12,7 @@
         android:layout_height="150dp"
         android:layout_marginTop="40dp"
         android:scaleType="centerCrop"
+        android:background="@drawable/rounded_edittext"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -59,7 +60,7 @@
             android:layout_height="50dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_pause"
-            app:tint="@android:color/white" />
+             />
 
         <ImageButton
             android:id="@+id/btnAddUser"
@@ -67,7 +68,7 @@
             android:layout_height="50dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_add_user"
-            app:tint="@android:color/white" />
+             />
 
         <ImageButton
             android:id="@+id/btnMoreOptions"
@@ -75,7 +76,7 @@
             android:layout_height="50dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_more_options"
-            app:tint="@android:color/white" />
+             />
 
         <ImageButton
             android:id="@+id/btnAnadirCancion"
@@ -83,7 +84,7 @@
             android:layout_height="50dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_mas_canciones"
-            app:tint="@android:color/white" />
+             />
     </LinearLayout>
 
     <!-- Sección scrolleable con todos los RecyclerView -->

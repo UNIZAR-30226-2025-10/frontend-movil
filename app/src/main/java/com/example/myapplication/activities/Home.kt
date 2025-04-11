@@ -424,7 +424,7 @@ class Home : AppCompatActivity() {
         }
 
         buttonCrear.setOnClickListener {
-            startActivity(Intent(this, Perfil::class.java))
+            startActivity(Intent(this, CrearPlaylist::class.java))
         }
     }
 

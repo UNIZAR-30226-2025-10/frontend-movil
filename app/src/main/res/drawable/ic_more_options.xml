@@ -7,16 +7,16 @@
 
     <!-- Primer círculo (más pequeño) -->
     <path
-        android:fillColor="#FFFFFF"
+        android:fillColor="@color/blueNuestro"
         android:pathData="M8,8a3,3 0 1,1 -0.01,0z" />
 
     <!-- Segundo círculo (más pequeño) -->
     <path
-        android:fillColor="#FFFFFF"
+        android:fillColor="@color/blueNuestro"
         android:pathData="M24,8a3,3 0 1,1 -0.01,0z" />
 
     <!-- Tercer círculo (más pequeño) -->
     <path
-        android:fillColor="#FFFFFF"
+        android:fillColor="@color/blueNuestro"
         android:pathData="M40,8a3,3 0 1,1 -0.01,0z" />
 </vector>
