@@ -21,6 +21,7 @@ import com.example.myapplication.io.request.CrearAlbumRequest
 import com.example.myapplication.io.request.CrearCancionRequest
 import com.example.myapplication.io.request.ChangeFollowRequest
 import com.example.myapplication.io.request.DeleteAccountRequest
+import com.example.myapplication.io.request.EditarAlbumRequest
 import com.example.myapplication.io.request.PlaylistRequest
 import com.example.myapplication.io.request.EditarPerfilRequest
 import com.example.myapplication.io.request.PlayPauseRequest
@@ -33,8 +34,11 @@ import com.example.myapplication.io.response.AudioResponse
 import com.example.myapplication.io.response.BuscadorResponse
 import com.example.myapplication.io.response.CrearAlbumResponse
 import com.example.myapplication.io.response.DeleteAccountResponse
+import com.example.myapplication.io.response.DeleteAlbumResponse
 import com.example.myapplication.io.response.EditarPerfilResponse
 import com.example.myapplication.io.response.EstadisticasAlbumResponse
+import com.example.myapplication.io.response.GetEstadisticasFavsResponse
+import com.example.myapplication.io.response.GetEstadisticasPlaylistResponse
 import com.example.myapplication.io.response.GetEtiquetasResponse
 import com.example.myapplication.io.response.GetMisAlbumesResponse
 import com.example.myapplication.io.response.GetSignatureResponse
@@ -61,6 +65,7 @@ import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.GET
 import retrofit2.http.HTTP
+import retrofit2.http.PATCH
 import retrofit2.http.PUT
 import retrofit2.http.Query
 import java.util.concurrent.TimeUnit
@@ -233,6 +238,39 @@ interface ApiService {
     fun getMisAlbumes(
         @Header("Authorization") token: String
     ): Call<GetMisAlbumesResponse>
+
+    @DELETE("/delete-album")
+    fun deleteAlbum(
+        @Header("Authorization") token: String,
+        @Query("id") id: String
+    ): Call<DeleteAlbumResponse>
+
+    @PATCH("/change-album")
+    fun changeAlbum(
+        @Header("Authorization") token: String,
+        @Query("id") id: String,
+        @Body request: EditarAlbumRequest
+    ): Call<DeleteAlbumResponse>
+
+    @GET("/get-estadisticas-favs")
+    fun getEstadisticasFavs(
+        @Header("Authorization") token: String,
+        @Query("id") id: String
+    ): Call<GetEstadisticasFavsResponse>
+
+    @GET("/get-estadisticas-playlists")
+    fun getEstadisticasPlaylists(
+        @Header("Authorization") token: String,
+        @Query("id") id: String
+    ): Call<GetEstadisticasPlaylistResponse>
+
+    @DELETE("/delete-cancion")
+    fun deleteCancion(
+        @Header("Authorization") token: String,
+        @Query("id") id: String
+    ): Call<Void>
+
+
 
 
     companion object Factory {

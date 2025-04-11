@@ -28,6 +28,18 @@
         android:textSize="12sp"
         android:maxLines="1"
         android:ellipsize="end" />
+
+    <TextView
+        android:id="@+id/usuarioPlaylist"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:text="Nombre del dueño de la playlist"
+        android:textColor="#000E3B"
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="10sp"
+        android:maxLines="1"
+        android:ellipsize="end" />
     
 </LinearLayout>
 
