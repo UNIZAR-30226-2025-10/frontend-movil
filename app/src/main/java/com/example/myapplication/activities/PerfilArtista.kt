@@ -39,6 +39,7 @@ class PerfilArtista : AppCompatActivity() {
     private lateinit var recyclerViewAlbums: RecyclerView
     private lateinit var albumAdapter: AlbumsAdapter
     private lateinit var usernameTextView: TextView
+    private lateinit var artisticnameTextView: TextView
     private lateinit var profileImageView: ImageView
     private lateinit var profileImageButton: ImageView
     private var imageUri: Uri? = null
@@ -61,6 +62,7 @@ class PerfilArtista : AppCompatActivity() {
 
         // Inicializar vistas
         usernameTextView = findViewById(R.id.username)
+        artisticnameTextView = findViewById(R.id.artisticname)
         profileImageButton = findViewById(R.id.profileImageButton)
         profileImageView = findViewById(R.id.profileImage)
 
@@ -163,6 +165,7 @@ class PerfilArtista : AppCompatActivity() {
                     response.body()?.let {
                         if (it.respuestaHTTP == 0) {
                             usernameTextView.text = it.nombreUsuario
+                            artisticnameTextView.text = it.nombreArtistico
                             findViewById<TextView>(R.id.followers).text = "${it.numSeguidores} Seguidores"
                             findViewById<TextView>(R.id.following).text = "${it.numSeguidos} Seguidos"
                         } else {
@@ -192,9 +195,6 @@ class PerfilArtista : AppCompatActivity() {
 
         val editPassword = dialog.findViewById<EditText>(R.id.editPassword)
         val btnConfirm = dialog.findViewById<Button>(R.id.btnConfirm)
-        val btnCancel = dialog.findViewById<Button>(R.id.btnCancel)
-
-        btnCancel.setOnClickListener { dialog.dismiss() }
 
         btnConfirm.setOnClickListener {
             val password = editPassword.text.toString().trim()
