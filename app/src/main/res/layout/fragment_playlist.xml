@@ -85,6 +85,14 @@
             android:background="@android:color/transparent"
             android:src="@drawable/ic_mas_canciones"
              />
+
+        <ImageButton
+            android:id="@+id/aleatorio"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/shuffle_24px"
+            />
     </LinearLayout>
 
     <!-- Sección scrolleable con todos los RecyclerView -->

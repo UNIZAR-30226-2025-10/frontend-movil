@@ -1,6 +1,7 @@
 package com.example.myapplication.io
 
 import com.example.myapplication.io.request.ActualizarFavoritoRequest
+import com.example.myapplication.io.request.AddToPlaylistRequest
 import com.example.myapplication.io.request.AudioRequest
 import com.example.myapplication.io.response.LoginResponse
 import com.example.myapplication.io.request.LoginRequest
@@ -54,6 +55,7 @@ import com.example.myapplication.io.response.InfoSeguidoresResponse
 import com.example.myapplication.io.response.MisAlbumesResponse
 import com.example.myapplication.io.response.PendientesResponse
 import com.example.myapplication.io.response.PlaylistResponse
+import com.example.myapplication.io.response.SearchPlaylistResponse
 import com.example.myapplication.io.response.SeguidoresResponse
 import com.example.myapplication.io.response.SeguidosResponse
 import okhttp3.OkHttpClient
@@ -250,6 +252,21 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body request: CreatePlaylistRequest
     ): Call<Void>
+
+    @GET("/search-for-playlist")
+    fun searchForSongs(
+        @Header("Authorization") token: String,
+        @Query("termino") termino: String,
+        @Query("playlist") playlistId: String
+    ): Call<SearchPlaylistResponse>
+
+    @POST("add-to-playlist")
+    fun addSongToPlaylist(
+        @Header("Authorization") token: String,
+        @Body request: AddToPlaylistRequest
+    ): Call<Void>
+
+
 
 
     companion object Factory {
