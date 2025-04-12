@@ -16,6 +16,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -243,6 +244,49 @@ class Home : AppCompatActivity() {
                     Log.d("MiniReproductor", "Canción reanudada")
                 }
             }
+        }
+
+        // Añadir un OnTouchListener al ProgressBar para actualizar el progreso
+        // Añadir el performClick dentro del OnTouchListener
+        progressBar.setOnTouchListener { _, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    updateProgressFromTouch(event.x, progressBar)
+                    progressBar.performClick()  // Agregar esta línea
+                    true
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    updateProgressFromTouch(event.x, progressBar)
+                    progressBar.performClick()  // Agregar esta línea
+                    true
+                }
+                MotionEvent.ACTION_UP -> {
+                    updateProgressFromTouch(event.x, progressBar)
+                    progressBar.performClick()  // Agregar esta línea
+                    true
+                }
+                else -> false
+            }
+        }
+
+    }
+
+    private fun updateProgressFromTouch(x: Float, progressBar: ProgressBar) {
+        // Obtener el ancho del ProgressBar
+        val width = progressBar.width - progressBar.paddingLeft - progressBar.paddingRight
+        // Calcular el progreso basado en la posición del toque (x)
+        val progress = ((x / width) * 100).toInt()
+
+        // Actualizar el ProgressBar
+        progressBar.progress = progress
+
+        // Actualizar el progreso en el servicio de música
+        musicService?.let { service ->
+            val duration = service.getDuration()
+            val newProgress = (progress * duration) / 100
+            service.seekTo(newProgress)  // Mover la canción al nuevo progreso
+            Preferencias.guardarValorEntero("progresoCancionActual", newProgress)
+            Log.d("MiniReproductor", "Nuevo progreso: $newProgress ms")
         }
     }
 
