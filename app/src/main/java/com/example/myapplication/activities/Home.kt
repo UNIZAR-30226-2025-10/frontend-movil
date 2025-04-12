@@ -2,9 +2,15 @@ package com.example.myapplication.activities
 
 
 import android.annotation.SuppressLint
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
+import android.os.IBinder
+import android.os.Looper
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
@@ -12,6 +18,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -39,6 +47,8 @@ import com.example.myapplication.Adapters.Home.RecomendacionesAdapter
 import com.example.myapplication.io.response.HArtistas
 import com.example.myapplication.io.response.HRecientes
 import com.example.myapplication.io.response.HistorialArtistasResponse
+import com.example.myapplication.services.MusicPlayerService
+
 
 class Home : AppCompatActivity() {
 
@@ -66,6 +76,31 @@ class Home : AppCompatActivity() {
 
     private val listaRecientes = mutableListOf<HRecientes>()
     private val listaArtistas = mutableListOf<HArtistas>()
+
+    private lateinit var progressBar: ProgressBar
+    private var musicService: MusicPlayerService? = null
+    private var serviceBound = false
+    private val handler = Handler(Looper.getMainLooper())
+    private val updateRunnable = object : Runnable {
+        override fun run() {
+            updateProgressBar()
+            handler.postDelayed(this, 1000) // cada segundo
+        }
+    }
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as MusicPlayerService.MusicBinder
+            musicService = binder.getService()
+            serviceBound = true
+            handler.post(updateRunnable) // Empieza a actualizar
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            serviceBound = false
+            handler.removeCallbacks(updateRunnable)
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,7 +130,7 @@ class Home : AppCompatActivity() {
                 .error(R.drawable.ic_profile) // Imagen si hay error
                 .into(profileImageButton)
         }
-
+        
         /*
         // Configurar RecyclerView para los encabezados
         val headersRecientes = listOf("Escuchado recientemente")
@@ -184,8 +219,81 @@ class Home : AppCompatActivity() {
         // Cargar datos al iniciar
         loadHomeData()
 
+        // Actualizar la información del mini reproductor
+        updateMiniPlayer()
+
         // Configurar botones de navegación
         setupNavigation()
+    }
+
+    private fun updateMiniPlayer() {
+        val songImage = findViewById<ImageView>(R.id.songImage)
+        val songTitle = findViewById<TextView>(R.id.songTitle)
+        val songArtist = findViewById<TextView>(R.id.songArtist)
+        val progressBar = findViewById<ProgressBar>(R.id.progressBar)
+        val stopButton = findViewById<ImageButton>(R.id.stopButton)
+
+        // Obtener la información del mini reproductor desde SharedPreferences
+        val songImageUrl = Preferencias.obtenerValorString("fotoPortadaActual", "")
+        val songTitleText = Preferencias.obtenerValorString("nombreCancionActual", "Nombre de la canción")
+        val songArtistText = Preferencias.obtenerValorString("nombreArtisticoActual", "Artista")
+        val songProgress = Preferencias.obtenerValorEntero("progresoCancionActual", 0)
+
+        // Cargar la imagen de la canción
+        if (songImageUrl.isNullOrEmpty()) {
+            songImage.setImageResource(R.drawable.ic_default_song)
+        } else {
+            Glide.with(this)
+                .load(songImageUrl)
+                .centerCrop()
+                .placeholder(R.drawable.ic_default_song)
+                .error(R.drawable.ic_default_song)
+                .into(songImage)
+        }
+
+        // Actualizar título y artista
+        songTitle.text = songTitleText
+        songArtist.text = songArtistText
+
+        // Actualizar barra de progreso
+        progressBar.progress = songProgress
+
+        // Configurar botón de stop (detener)
+        stopButton.setOnClickListener {
+            // Lógica para detener la canción
+            Log.d("MiniPlayer", "Canción detenida")
+            Preferencias.guardarValorEntero("songProgress", 0)
+            progressBar.progress = 0
+        }
+    }
+
+    private fun updateProgressBar() {
+        musicService?.let { service ->
+            if (service.isPlaying()) {
+                val current = service.getProgress()
+                val duration = service.getDuration()
+
+                if (duration > 0) {
+                    val progress = (current * 100) / duration
+                    progressBar.progress = progress
+                }
+            }
+        }
+    }
+
+
+    override fun onStart() {
+        super.onStart()
+        val intent = Intent(this, MusicPlayerService::class.java)
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (serviceBound) {
+            unbindService(serviceConnection)
+            serviceBound = false
+        }
     }
 
     private fun loadHomeData() {
