@@ -62,12 +62,6 @@ class Home : AppCompatActivity() {
     private lateinit var escuchasAdapter: EscuchasAdapter
     private lateinit var playlistsAdapter: PlaylistsAdapter
     private lateinit var recomendacionesAdapter: RecomendacionesAdapter
-    /*
-    private lateinit var headerRecientesTextView: RecyclerView
-    private lateinit var headerEscuchasTextView: RecyclerView
-    private lateinit var headerPlaylistsTextView: RecyclerView
-    private lateinit var headerRecomendacionesTextView: RecyclerView
-    */
 
     private lateinit var headerRecientesTextView: TextView
     private lateinit var headerEscuchasTextView: TextView
@@ -92,7 +86,9 @@ class Home : AppCompatActivity() {
             val binder = service as MusicPlayerService.MusicBinder
             musicService = binder.getService()
             serviceBound = true
-            handler.post(updateRunnable) // Empieza a actualizar
+            handler.post(updateRunnable)
+            // El servicio ya está listo, ahora actualiza el mini reproductor
+            updateMiniReproductor()
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -101,6 +97,7 @@ class Home : AppCompatActivity() {
         }
     }
 
+    private var isDataLoaded = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -130,49 +127,17 @@ class Home : AppCompatActivity() {
                 .error(R.drawable.ic_profile) // Imagen si hay error
                 .into(profileImageButton)
         }
-        
-        /*
-        // Configurar RecyclerView para los encabezados
-        val headersRecientes = listOf("Escuchado recientemente")
-        val headerRecientesAdapter = HeaderAdapter(headersRecientes)
-        headerRecientesTextView = findViewById(R.id.recyclerViewHeadersRecientes)
-        headerRecientesTextView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        headerRecientesTextView.adapter = headerRecientesAdapter
-        headerRecientesTextView.visibility = View.INVISIBLE
-
-        val headersEscuchas = listOf("Úiltimas escuchas")
-        val headerEscuchasAdapter = HeaderAdapter(headersEscuchas)
-        headerEscuchasTextView = findViewById(R.id.recyclerViewHeadersEscuchas)
-        headerEscuchasTextView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        headerEscuchasTextView.adapter = headerEscuchasAdapter
-        headerEscuchasTextView.visibility = View.INVISIBLE
-
-
-        val headersPlaylists = listOf("Mis playlists")
-        val headerPlaylistsAdapter = HeaderAdapter(headersPlaylists)
-        headerPlaylistsTextView = findViewById(R.id.recyclerViewHeadersPlaylists)
-        headerPlaylistsTextView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        headerPlaylistsTextView.adapter = headerPlaylistsAdapter
-        headerPlaylistsTextView.visibility = View.INVISIBLE
-
-        val headersRecomendaciones = listOf("Recomendaciones")
-        val headerRecomendacionesAdapter = HeaderAdapter(headersRecomendaciones)
-        headerRecomendacionesTextView = findViewById(R.id.recyclerViewHeadersRecomendaciones)
-        headerRecomendacionesTextView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        headerRecomendacionesTextView.adapter = headerRecomendacionesAdapter
-        headerRecomendacionesTextView.visibility = View.INVISIBLE
-        */
 
         // Configurar TextView para los encabezados
         headerRecientesTextView = findViewById(R.id.textViewHeadersRecientes)
         headerRecientesTextView.visibility = View.INVISIBLE
-        
+
         headerEscuchasTextView = findViewById(R.id.textViewHeadersEscuchas)
         headerEscuchasTextView.visibility = View.INVISIBLE
-        
+
         headerPlaylistsTextView = findViewById(R.id.textViewHeadersPlaylists)
         headerPlaylistsTextView.visibility = View.INVISIBLE
-        
+
         headerRecomendacionesTextView = findViewById(R.id.textViewHeadersRecomendaciones)
         headerRecomendacionesTextView.visibility = View.INVISIBLE
 
@@ -198,7 +163,7 @@ class Home : AppCompatActivity() {
             intent.putExtra("nombre", escucha.nombre)
             intent.putExtra("imagen", escucha.fotoPortada)
             intent.putExtra("id", escucha.id)
-            Log.d("Escuchaas", "Home ->Escucha")
+            Log.d("Escuchas", "Home ->Escucha")
             startActivity(intent)
         }
         recyclerViewEscuchas.adapter = escuchasAdapter
@@ -216,30 +181,30 @@ class Home : AppCompatActivity() {
         recomendacionesAdapter = RecomendacionesAdapter(mutableListOf())
         recyclerViewRecomendaciones.adapter = recomendacionesAdapter
 
+
+        progressBar = findViewById(R.id.progressBar)
+        // Actualizar la información del mini reproductor
+        //updateMiniReproductor()
+
         // Cargar datos al iniciar
         loadHomeData()
-
-        // Actualizar la información del mini reproductor
-        updateMiniPlayer()
 
         // Configurar botones de navegación
         setupNavigation()
     }
 
-    private fun updateMiniPlayer() {
+    private fun updateMiniReproductor() {
         val songImage = findViewById<ImageView>(R.id.songImage)
         val songTitle = findViewById<TextView>(R.id.songTitle)
         val songArtist = findViewById<TextView>(R.id.songArtist)
-        val progressBar = findViewById<ProgressBar>(R.id.progressBar)
         val stopButton = findViewById<ImageButton>(R.id.stopButton)
 
-        // Obtener la información del mini reproductor desde SharedPreferences
         val songImageUrl = Preferencias.obtenerValorString("fotoPortadaActual", "")
         val songTitleText = Preferencias.obtenerValorString("nombreCancionActual", "Nombre de la canción")
         val songArtistText = Preferencias.obtenerValorString("nombreArtisticoActual", "Artista")
         val songProgress = Preferencias.obtenerValorEntero("progresoCancionActual", 0)
 
-        // Cargar la imagen de la canción
+        // Imagen
         if (songImageUrl.isNullOrEmpty()) {
             songImage.setImageResource(R.drawable.ic_default_song)
         } else {
@@ -251,19 +216,33 @@ class Home : AppCompatActivity() {
                 .into(songImage)
         }
 
-        // Actualizar título y artista
         songTitle.text = songTitleText
         songArtist.text = songArtistText
-
-        // Actualizar barra de progreso
         progressBar.progress = songProgress
 
-        // Configurar botón de stop (detener)
+        // Configurar botón de play/pause
         stopButton.setOnClickListener {
-            // Lógica para detener la canción
-            Log.d("MiniPlayer", "Canción detenida")
-            Preferencias.guardarValorEntero("songProgress", 0)
-            progressBar.progress = 0
+            Log.d("MiniReproductor", "Botón presionado")
+            if (musicService == null) {
+                Log.w("MiniReproductor", "musicService es null")
+                return@setOnClickListener
+            }
+
+            musicService?.let { service ->
+                Log.d("MiniReproductor", "isPlaying: ${service.isPlaying()}")
+                if (service.isPlaying()) {
+                    val progreso = service.getProgress()
+                    Preferencias.guardarValorEntero("progresoCancionActual", progreso)
+                    service.pause()
+                    stopButton.setImageResource(R.drawable.ic_pause)
+                    Log.d("MiniReproductor", "Canción pausada en $progreso ms")
+                } else {
+                    Log.d("MiniReproductor", "Intentando reanudar la canción...")
+                    service.resume()
+                    stopButton.setImageResource(R.drawable.ic_play)
+                    Log.d("MiniReproductor", "Canción reanudada")
+                }
+            }
         }
     }
 
@@ -281,6 +260,24 @@ class Home : AppCompatActivity() {
         }
     }
 
+    private fun onDataLoaded() {
+        // Solo iniciar el servicio una vez los datos estén listos
+        if (isDataLoaded) {
+            val urlCancion = Preferencias.obtenerValorString("audioCancionActual", "")
+            val progreso = Preferencias.obtenerValorEntero("progresoCancionActual", 0)
+
+            Log.d("MiniReproductor", "onStart - URL: $urlCancion, Progreso: $progreso")
+
+            if (!urlCancion.isNullOrEmpty()) {
+                val startIntent = Intent(this, MusicPlayerService::class.java).apply {
+                    action = "PLAY1"
+                    putExtra("url", urlCancion)
+                    putExtra("progreso", progreso)
+                }
+                startService(startIntent)
+            }
+        }
+    }
 
     override fun onStart() {
         super.onStart()
@@ -295,6 +292,7 @@ class Home : AppCompatActivity() {
             serviceBound = false
         }
     }
+
 
     private fun loadHomeData() {
         getRecientes()
@@ -453,6 +451,11 @@ class Home : AppCompatActivity() {
                                 headerPlaylistsTextView.visibility = View.GONE
                                 showToast("No hay playlists")
                             }
+
+                            updateMiniReproductor()
+                            isDataLoaded = true // Los datos ya están listos
+                            // Ahora que los datos están listos, puedes iniciar el servicio si es necesario
+                            onDataLoaded()
 
                         } else {
                             handleErrorCode(it.respuestaHTTP)
