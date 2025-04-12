@@ -25,6 +25,7 @@ import com.example.myapplication.io.response.ActualizarFavoritoResponse
 import com.example.myapplication.io.response.AddReproduccionResponse
 import com.example.myapplication.io.response.AudioResponse
 import com.example.myapplication.io.response.BuscadorResponse
+import com.example.myapplication.io.response.CancionActualResponse
 import com.example.myapplication.io.response.DeleteAccountResponse
 import com.example.myapplication.io.response.EditarPerfilResponse
 import com.example.myapplication.io.response.HistorialRecientesResponse
@@ -115,6 +116,8 @@ interface ApiService {
         @Header("Authorization") token: String,
     ): Call<AddReproduccionResponse>
 
+    @GET("/get-cancion-actual")
+    fun getCancionActual(@Header("Authorization") token: String): Call<CancionActualResponse>
 
     @PUT("/play-pause")
     fun playPause(

@@ -12,6 +12,7 @@ import com.example.myapplication.databinding.LoginBinding
 import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.response.LoginResponse
 import com.example.myapplication.io.request.LoginRequest
+import com.example.myapplication.io.response.CancionActualResponse
 import com.example.myapplication.utils.Preferencias
 import retrofit2.Call
 import retrofit2.Callback
@@ -152,6 +153,8 @@ class Login : AppCompatActivity() {
         Preferencias.guardarValorEntero("volumen", loginResponse.usuario?.volumen ?: 0)
         Log.d("guardarDatosOyente", "Volumen: ${loginResponse.usuario?.volumen ?: 0}")
 
+        getMiniReproductor()
+
         // Conectar el WebSocket después de guardar los datos del usuario
         val token = loginResponse.token ?: ""
         val webSocketManager = WebSocketManager.getInstance()
@@ -162,6 +165,79 @@ class Login : AppCompatActivity() {
         )
 
     }
+
+    private fun getMiniReproductor() {
+        val token = Preferencias.obtenerValorString("token", "")
+        apiService.getCancionActual("Bearer $token").enqueue(object : Callback<CancionActualResponse> {
+            override fun onResponse(call: Call<CancionActualResponse>, response: Response<CancionActualResponse>) {
+                Log.d("Reproductor", "entra en on response MiniRepoductor")
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        if (it.respuestaHTTP == 0) {
+                            Log.d("Reproductor", "Peticion valida reproductor")
+
+                            // Guardar los datos en Preferencias de forma segura
+                            it.cancion?.let { cancion ->
+                                Preferencias.guardarValorString("cancionActualId", cancion.id ?: "")
+                                Log.d("MiniReproductor", "ID canción guardado: ${cancion.id ?: "null"}")
+
+                                Preferencias.guardarValorString("audioCancionActual", cancion.audio ?: "")
+                                Log.d("MiniReproductor", "Audio canción guardado: ${cancion.audio ?: "null"}")
+
+                                Preferencias.guardarValorString("nombreCancionActual", cancion.nombre ?: "")
+                                Log.d("MiniReproductor", "Nombre canción guardado: ${cancion.nombre ?: "null"}")
+
+                                Preferencias.guardarValorString("nombreArtisticoActual", cancion.nombreArtisticoArtista ?: "")
+                                Log.d("MiniReproductor", "Nombre artístico guardado: ${cancion.nombreArtisticoArtista ?: "null"}")
+
+                                Preferencias.guardarValorString("nombreUsuarioArtistaActual", cancion.nombreUsuarioArtista ?: "")
+                                Log.d("MiniReproductor", "Nombre usuario artista guardado: ${cancion.nombreUsuarioArtista ?: "null"}")
+
+                                Preferencias.guardarValorEntero("progresoCancionActual", cancion.progreso ?: 0)
+                                Log.d("MiniReproductor", "Progreso canción guardado: ${cancion.progreso ?: 0}")
+
+                                Preferencias.guardarValorString("featuringsActual", cancion.featuring?.joinToString(",") ?: "")
+                                Log.d("MiniReproductor", "Featurings guardados: ${cancion.featuring?.joinToString(",") ?: "null"}")
+
+                                Preferencias.guardarValorBooleano("favoritoActual", cancion.fav ?: false)
+                                Log.d("MiniReproductor", "Favorito guardado: ${cancion.fav}")
+
+                                Preferencias.guardarValorString("fotoPortadaActual", cancion.fotoPortada ?: "")
+                                Log.d("MiniReproductor", "Foto portada guardada: ${cancion.fotoPortada ?: "null"}")
+                            }
+
+                            // Guardar datos de la colección (si hay)
+                            it.coleccion?.let { coleccion ->
+                                Preferencias.guardarValorString("coleccionActualId", coleccion.id ?: "")
+                                Log.d("MiniReproductor", "ID colección guardado: ${coleccion.id ?: "null"}")
+
+                                Preferencias.guardarValorString("ordenColeccionActual", coleccion.orden?.joinToString(",") ?: "")
+                                Log.d("MiniReproductor", "Orden colección guardado: ${coleccion.orden?.joinToString(",") ?: "null"}")
+
+                                Preferencias.guardarValorString("ordenNaturalColeccionActual", coleccion.ordenNatural?.joinToString(",") ?: "")
+                                Log.d("MiniReproductor", "Orden natural colección guardado: ${coleccion.ordenNatural?.joinToString(",") ?: "null"}")
+
+                                Preferencias.guardarValorEntero("indexColeccionActual", coleccion.index ?: 0)
+                                Log.d("MiniReproductor", "Índice colección guardado: ${coleccion.index ?: 0}")
+
+                                Preferencias.guardarValorString("modoColeccionActual", coleccion.modo ?: "")
+                                Log.d("MiniReproductor", "Modo colección guardado: ${coleccion.modo ?: "null"}")
+                            }
+                        } else {
+                            handleErrorCode(it.respuestaHTTP)
+                        }
+                    } ?: Log.d("MiniReproductor", "Busqueda datos coleccion fallida")
+                } else {
+                    Log.d("MiniReproductor","Error en la búsqueda: Código ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<CancionActualResponse>, t: Throwable) {
+                showToast("Error en la solicitud: ${t.message}")
+            }
+        })
+    }
+
 
     private fun navigate(loginResponse: LoginResponse) {
         if(loginResponse.tipo == "pendiente"){
