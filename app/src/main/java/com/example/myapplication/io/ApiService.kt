@@ -23,6 +23,7 @@ import com.example.myapplication.io.request.CrearCancionRequest
 import com.example.myapplication.io.request.ChangeFollowRequest
 import com.example.myapplication.io.request.CreatePlaylistRequest
 import com.example.myapplication.io.request.DeleteAccountRequest
+import com.example.myapplication.io.request.DeletePlaylistRequest
 import com.example.myapplication.io.request.PlaylistRequest
 import com.example.myapplication.io.request.EditarPerfilRequest
 import com.example.myapplication.io.request.PlayPauseRequest
@@ -274,6 +275,13 @@ interface ApiService {
     fun updatePlaylist(
         @Header("Authorization") token: String,
         @Body request: UpdatePlaylistRequest
+    ): Call<Void>
+
+
+    @HTTP(method = "DELETE", path = "/delete-playlist", hasBody = true)
+    fun deletePlaylist(
+        @Header("Authorization") token: String,
+        @Body request: DeletePlaylistRequest
     ): Call<Void>
 
 

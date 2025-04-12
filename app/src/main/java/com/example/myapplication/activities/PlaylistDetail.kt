@@ -31,6 +31,7 @@ import com.example.myapplication.Adapters.Playlist.SongPlaylistSearchAdapter
 import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.CloudinaryApiService
 import com.example.myapplication.io.request.AddToPlaylistRequest
+import com.example.myapplication.io.request.DeletePlaylistRequest
 import com.example.myapplication.io.request.UpdatePlaylistRequest
 import com.example.myapplication.io.response.Cancion
 import com.example.myapplication.io.response.CloudinaryResponse
@@ -550,7 +551,52 @@ class PlaylistDetail : AppCompatActivity() {
     }
 
     private fun showConfirmDeleteDialog() {
-        // Confirmación tipo: ¿Estás seguro de que quieres eliminar la lista?
+        // Crear el AlertDialog.Builder
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Eliminar Playlist")
+        builder.setMessage("¿Estás seguro de que quieres eliminar esta playlist? Esta acción no se puede deshacer.")
+
+        // Botón "Aceptar"
+        builder.setPositiveButton("Aceptar") { _, _ ->
+            // Lógica para eliminar la playlist
+            deletePlaylist()  // Aquí llamas a la función que elimina la playlist
+            showToast("Playlist eliminada con éxito")
+        }
+
+        // Botón "Cancelar"
+        builder.setNegativeButton("Cancelar") { dialog, _ ->
+            dialog.dismiss()  // Cerrar el diálogo sin hacer nada
+        }
+
+        // Crear y mostrar el diálogo
+        val dialog = builder.create()
+        dialog.show()
+    }
+
+    private fun deletePlaylist() {
+        Log.d("deletePlaylist", "1")
+        val playlistId = intent.getStringExtra("id") ?: ""
+        val request = DeletePlaylistRequest(playlistId)
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+        apiService.deletePlaylist(authHeader, request).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Log.d("deletePlaylist", "1")
+                    navigateInicio()
+                    showToast("playlist delete")
+                } else {
+                    Log.d("deletePlaylist", "Error en la solicitud ${response.code()}")
+                    showToast("Error al delete playlist")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.d("updateUserProfile", "Error en la solicitud2")
+                showToast("Error en la solicitud: ${t.message}")
+            }
+        })
+
     }
 
     private fun makePlaylistPrivate() {
@@ -559,5 +605,12 @@ class PlaylistDetail : AppCompatActivity() {
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun navigateInicio() {
+        Log.d("Delete", "Navegando a la pantalla de inicio")
+        val intent = Intent(this, Home::class.java)
+        startActivity(intent)
+        finish()
     }
 }
