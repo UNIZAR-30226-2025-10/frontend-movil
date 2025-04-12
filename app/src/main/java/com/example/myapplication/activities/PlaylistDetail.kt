@@ -1,11 +1,12 @@
 package com.example.myapplication.activities
 
 import android.annotation.SuppressLint
-import android.app.ActivityOptions
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
@@ -13,11 +14,13 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,13 +29,19 @@ import com.example.myapplication.R
 import com.example.myapplication.Adapters.Playlist.CancionPAdapter
 import com.example.myapplication.Adapters.Playlist.SongPlaylistSearchAdapter
 import com.example.myapplication.io.ApiService
+import com.example.myapplication.io.CloudinaryApiService
 import com.example.myapplication.io.request.AddToPlaylistRequest
-import com.example.myapplication.io.request.PlaylistRequest
+import com.example.myapplication.io.request.UpdatePlaylistRequest
 import com.example.myapplication.io.response.Cancion
-import com.example.myapplication.io.response.CancionP
+import com.example.myapplication.io.response.CloudinaryResponse
+import com.example.myapplication.io.response.GetSignatureResponse
+import com.example.myapplication.io.response.PlaylistP
 import com.example.myapplication.io.response.PlaylistResponse
 import com.example.myapplication.io.response.SearchPlaylistResponse
 import com.example.myapplication.utils.Preferencias
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -40,8 +49,22 @@ import retrofit2.Response
 class PlaylistDetail : AppCompatActivity() {
 
     private lateinit var apiService: ApiService
+    private lateinit var apiServiceCloud: CloudinaryApiService
     private lateinit var recyclerViewCanciones: RecyclerView
     private lateinit var cancionPAdapter: CancionPAdapter
+    private lateinit var playlistTextView: TextView
+    private lateinit var playlistImageView: ImageView
+    private lateinit var playlistImageButton: ImageView
+    private var currentPlaylist: PlaylistP? = null
+    private var imageUri: Uri? = null
+    private var playlistImageViewDialog: ImageView? = null
+    private val openGalleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let {
+            imageUri = it
+            playlistImageViewDialog?.setImageURI(imageUri)  // Set the selected image in the dialog ImageView
+        }
+    }
+    var playlistId: String? = null
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,14 +74,20 @@ class PlaylistDetail : AppCompatActivity() {
         Log.d("Playlist", "Entra en la playlist")
 
         apiService = ApiService.create()
+        apiServiceCloud = CloudinaryApiService.create()
 
-        val playlistId = intent.getStringExtra("id")
+        playlistId = intent.getStringExtra("id")
         val nombrePlaylist = intent.getStringExtra("nombre")
         val imagenUrl = intent.getStringExtra("imagen")
 
         val textViewNombre = findViewById<TextView>(R.id.textViewNombrePlaylist)
         val textViewNumCanciones = findViewById<TextView>(R.id.textViewNumCanciones)
         val imageViewPlaylist = findViewById<ImageView>(R.id.imageViewPlaylist)
+
+        playlistTextView = findViewById(R.id.textViewNombrePlaylist)
+
+        playlistImageButton = findViewById(R.id.imageViewPlaylist)
+
 
         // Configuración del RecyclerView
         recyclerViewCanciones = findViewById(R.id.recyclerViewCanciones)
@@ -82,6 +111,10 @@ class PlaylistDetail : AppCompatActivity() {
         }
 
         // Agregar funcionalidad al botón de añadir canción
+        val btnMoreOptions: ImageButton = findViewById(R.id.btnMoreOptions)
+        btnMoreOptions.setOnClickListener {
+                showMoreOptionsDialog()
+        }
         val btnAnadirCancion: ImageButton = findViewById(R.id.btnAnadirCancion)
         btnAnadirCancion.setOnClickListener {
             showSearchSongDialog()
@@ -119,11 +152,14 @@ class PlaylistDetail : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val playlist = response.body()?.playlist
                     val canciones = response.body()?.canciones
+                    currentPlaylist = playlist
 
                     // Actualizar la UI con los datos de la playlist
                     playlist?.let {
                         textViewNombre.text = it.nombrePlaylist
-                        textViewNumCanciones.text = "${canciones?.size ?: 0} Canciones"
+                        Log.d("MiAppPlaylist", "Nombre${textViewNombre.text}")
+                        val numCanciones = canciones?.size ?: 0
+                        textViewNumCanciones.text = "$numCanciones ${if (numCanciones == 1) "Canción" else "Canciones"}"
                         Glide.with(this@PlaylistDetail).load(it.fotoPortada).into(imageViewPlaylist)
                     }
 
@@ -288,5 +324,240 @@ class PlaylistDetail : AppCompatActivity() {
                 ).show()
             }
         })
+    }
+
+
+    private fun showMoreOptionsDialog() {
+        Log.d("MiAppPlaylist", "Abrir diálogo de Mas opciones playlist")
+
+        val options = arrayOf("Editar lista", "Eliminar lista", "Hacer privada")
+
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Más opciones")
+        builder.setItems(options) { _, which ->
+            when (which) {
+                0 -> showEditPlaylistDialog()     // Acción para editar
+                1 -> showConfirmDeleteDialog()    // Acción para eliminar
+                2 -> makePlaylistPrivate()        // Acción para hacer privada
+            }
+        }
+
+        val dialog = builder.create()
+        dialog.show()
+    }
+
+    private fun showEditPlaylistDialog() {
+        // Log para depuración
+        Log.d("MiAppPlaylist", "Mostrar diálogo de edición de lista")
+
+        // Crear el diálogo
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.dialog_edit_playlist)
+
+        // Configuración de la ventana del diálogo
+        val window: Window? = dialog.window
+        window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        // Configurar el comportamiento del diálogo
+        dialog.setCancelable(true)
+
+        // Buscar los elementos del diálogo
+        val editUsername = dialog.findViewById<EditText>(R.id.editPlaylistName)
+        playlistImageViewDialog = dialog.findViewById(R.id.profileImageDialog) // Usar la referencia de ImageView
+        val btnSelectImage = dialog.findViewById<Button>(R.id.btnSelectImage)
+        val btnSave = dialog.findViewById<Button>(R.id.btnSave)
+
+        // Rellenar el EditText con el nombre actual
+        editUsername.setText(playlistTextView.text.toString())
+
+        // Cargar la imagen de portada de la playlist al ImageView dentro del diálogo
+        Glide.with(this)
+            .load(currentPlaylist?.fotoPortada) // Usar la misma fuente de la foto
+            .placeholder(R.drawable.no_cancion) // Imágen por defecto si no hay imagen
+            .error(R.drawable.no_cancion) // Imágen de error si no se puede cargar
+            .into(playlistImageViewDialog!!) // Colocar la imagen en el ImageView del diálogo
+
+        // Seleccionar una nueva imagen desde la galería
+        btnSelectImage.setOnClickListener {
+            openGalleryLauncher.launch("image/*")
+        }
+
+        // Guardar los cambios
+        btnSave.setOnClickListener {
+            val newUsername = editUsername.text.toString()
+            Log.d("updatePlaylist", "name ${newUsername} 1")
+            if (imageUri != null) {
+                // Si hay una nueva imagen, se sube a Cloudinary
+                imageUri?.let { uri -> getSignatureCloudinary(uri, newUsername) }
+            } else {
+                // Si no hay imagen nueva, simplemente actualizar el nombre
+                currentPlaylist?.let { it1 -> updatePlaylist(newUsername, it1.fotoPortada) }
+            }
+
+
+            dialog.dismiss() // Cerrar el diálogo después de guardar
+        }
+
+        dialog.show()
+    }
+
+    private fun getSignatureCloudinary(imagenURI: Uri, newUsername: String){
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+        val folder = "playlist"
+
+        Log.d("Signature", "Signature 1")
+        Log.d("Signature", "Signature 1 token: {$authHeader}")
+        Log.d("Signature", "Signature 1 folder {$folder}")
+        apiService.getSignature(authHeader, folder).enqueue(object : Callback<GetSignatureResponse> {
+            override fun onResponse(call: Call<GetSignatureResponse>, response: Response<GetSignatureResponse>) {
+                Log.d("Signature", "Signature 2")
+                if (response.isSuccessful) {
+                    val signatureResponse = response.body()
+                    signatureResponse?.let {
+                        // Acceder a los datos de la respuesta
+                        val signature = it.signature
+                        val apiKey = it.apiKey
+                        val timestamp = it.timestamp
+                        val cloudName = it.cloudName
+
+
+                        Log.d("Signature", "Signature: $signature")
+                        Log.d("Signature", "API Key: $apiKey")
+                        Log.d("Signature", "Timestamp: $timestamp")
+                        Log.d("Signature", "Cloud Name: $cloudName")
+
+
+
+                        uploadImageToCloudinary(it, imagenURI, folder, newUsername)
+                    }
+                    showToast("Get signature correcto")
+                } else {
+                    Log.d("Signature", "Signature 2")
+                    showToast("Error al Get signature")
+                }
+            }
+
+            override fun onFailure(call: Call<GetSignatureResponse>, t: Throwable) {
+                Log.d("Signature", "Error en la solicitud: ${t.message}")
+                showToast("Error en la solicitud: ${t.message}")
+            }
+        })
+        Log.d("Signature", "Signature FUERA")
+    }
+
+    private fun uploadImageToCloudinary(
+        signatureData: GetSignatureResponse,
+        imagenURI: Uri,
+        folder: String,
+        newUsername: String
+    ) {
+        try {
+
+            Log.d("uploadImageToCloudinary", "uploadImageToCloudinary 1")
+            // Obtener el stream del archivo a partir del URI
+            val inputStream = contentResolver.openInputStream(imagenURI) ?: run {
+                showToast("Error al abrir la imagen")
+                return
+            }
+
+            Log.d("uploadImageToCloudinary", "uploadImageToCloudinary 2")
+
+            val byteArray = inputStream.readBytes()
+            inputStream.close()
+
+            Log.d("uploadImageToCloudinary", "uploadImageToCloudinary 3")
+            val requestFile = RequestBody.create(MediaType.parse("image/*"), byteArray)
+            val filePart = MultipartBody.Part.createFormData("file", "image.jpg", requestFile)
+
+            // Crear request bodies para los parámetros
+            val apiKey = RequestBody.create(MediaType.parse("text/plain"), signatureData.apiKey)
+            val timestamp = RequestBody.create(MediaType.parse("text/plain"), signatureData.timestamp.toString())
+            val signature = RequestBody.create(MediaType.parse("text/plain"), signatureData.signature)
+            val folderPart = RequestBody.create(MediaType.parse("text/plain"), folder)
+
+            // Llamada a la API de Cloudinary
+            apiServiceCloud.uploadImage(
+                signatureData.cloudName,
+                filePart,
+                apiKey,
+                timestamp,
+                signature,
+                folderPart
+            ).enqueue(object : Callback<CloudinaryResponse> {
+                override fun onResponse(call: Call<CloudinaryResponse>, response: Response<CloudinaryResponse>) {
+                    if (response.isSuccessful) {
+                        response.body()?.let {
+                            val imageUrl = it.secure_url
+                            Log.d("Cloudinary Upload", "Imagen subida correctamente: $imageUrl")
+
+                            // Cargar la imagen desde la URL con Glide
+                            Glide.with(applicationContext)
+                                .load(imageUrl)
+                                .circleCrop()
+                                .placeholder(R.drawable.ic_profile) // Imagen por defecto mientras carga
+                                .error(R.drawable.ic_profile) // Imagen si hay error
+                                .into(playlistImageButton!!)
+
+                            Log.d("updatePlaylist", "name ${newUsername} 2")
+                            updatePlaylist(newUsername, imageUrl)
+
+                            showToast("Imagen subida con éxito")
+                        } ?: showToast("Error: Respuesta vacía de Cloudinary")
+                    } else {
+                        Log.d("uploadImageToCloudinary", "ERROR 3 ${response.errorBody()?.string()}")
+                        showToast("Error al subir la imagen: ${response.errorBody()?.string()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<CloudinaryResponse>, t: Throwable) {
+                    Log.d("uploadImageToCloudinary", "ERROR 3 ${t.message}")
+                    showToast("Error en la subida: ${t.message}")
+                }
+            })
+        } catch (e: Exception) {
+            Log.d("uploadImageToCloudinary", "ERROR 4 ${e.message}")
+            showToast("Error al procesar la imagen: ${e.message}")
+        }
+    }
+
+    private fun updatePlaylist(newPlaylistName: String, imageUrl: String, ) {
+        Log.d("updatePlaylist", "1")
+        val playlistId = intent.getStringExtra("id") ?: ""
+        val request = UpdatePlaylistRequest(playlistId, imageUrl,newPlaylistName)
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+        Log.d("updatePlaylist", "name ${newPlaylistName} 3")
+
+        apiService.updatePlaylist(authHeader, request).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    playlistTextView.text = newPlaylistName
+                    showToast("playlist actualizado")
+                } else {
+                    Log.d("updatePlaylist", "Error en la solicitud ${response.code()}")
+                    showToast("Error al actualizar playlist")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.d("updateUserProfile", "Error en la solicitud2")
+                showToast("Error en la solicitud: ${t.message}")
+            }
+        })
+
+    }
+
+    private fun showConfirmDeleteDialog() {
+        // Confirmación tipo: ¿Estás seguro de que quieres eliminar la lista?
+    }
+
+    private fun makePlaylistPrivate() {
+        // Lógica para marcar la lista como privada
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

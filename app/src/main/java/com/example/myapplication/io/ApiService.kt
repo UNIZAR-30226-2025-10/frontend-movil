@@ -27,6 +27,7 @@ import com.example.myapplication.io.request.PlaylistRequest
 import com.example.myapplication.io.request.EditarPerfilRequest
 import com.example.myapplication.io.request.PlayPauseRequest
 import com.example.myapplication.io.request.PlayPauseResponse
+import com.example.myapplication.io.request.UpdatePlaylistRequest
 import com.example.myapplication.io.request.ValidarArtistaRequest
 import com.example.myapplication.io.request.ValidarArtistaResponse
 import com.example.myapplication.io.response.ActualizarFavoritoResponse
@@ -267,6 +268,12 @@ interface ApiService {
     fun addSongToPlaylist(
         @Header("Authorization") token: String,
         @Body request: AddToPlaylistRequest
+    ): Call<Void>
+
+    @PUT("change-playlist")
+    fun updatePlaylist(
+        @Header("Authorization") token: String,
+        @Body request: UpdatePlaylistRequest
     ): Call<Void>
 
 
