@@ -90,6 +90,7 @@ class Home : AppCompatActivity() {
             handler.post(updateRunnable)
             // El servicio ya está listo, ahora actualiza el mini reproductor
             updateMiniReproductor()
+            actualizarIconoPlayPause()
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -185,7 +186,7 @@ class Home : AppCompatActivity() {
 
         progressBar = findViewById(R.id.progressBar)
         // Actualizar la información del mini reproductor
-        //updateMiniReproductor()
+        updateMiniReproductor()
 
         // Cargar datos al iniciar
         loadHomeData()
@@ -496,11 +497,14 @@ class Home : AppCompatActivity() {
                                 showToast("No hay playlists")
                             }
 
-                            updateMiniReproductor()
-                            isDataLoaded = true // Los datos ya están listos
-                            // Ahora que los datos están listos, puedes iniciar el servicio si es necesario
-                            onDataLoaded()
-
+                            val primerinicio = Preferencias.obtenerValorBooleano("primerinicio", false)
+                            if(primerinicio == false) {
+                                updateMiniReproductor()
+                                isDataLoaded = true // Los datos ya están listos
+                                // Ahora que los datos están listos, puedes iniciar el servicio si es necesario
+                                onDataLoaded()
+                                Preferencias.guardarValorBooleano("primerinicio", true)
+                            }
                         } else {
                             handleErrorCode(it.respuestaHTTP)
                         }
@@ -550,6 +554,13 @@ class Home : AppCompatActivity() {
                 showToast("Error en la solicitud: ${t.message}")
             }
         })
+    }
+
+    private fun actualizarIconoPlayPause() {
+        if (serviceBound && musicService != null) {
+            val estaReproduciendo = musicService!!.isPlaying()
+            val icono = if (estaReproduciendo) R.drawable.ic_play else R.drawable.ic_pause
+        }
     }
 
     private fun setupNavigation() {
