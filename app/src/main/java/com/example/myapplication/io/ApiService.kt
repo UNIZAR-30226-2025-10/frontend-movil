@@ -279,6 +279,7 @@ interface ApiService {
     fun deleteCancion(
         @Header("Authorization") token: String,
         @Query("id") id: String
+    ): Call<Void>
 
     @GET("/get-datos-oyente")
     fun getDatosOyente(
