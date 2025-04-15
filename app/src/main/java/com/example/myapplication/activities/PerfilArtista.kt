@@ -3,17 +3,23 @@ package com.example.myapplication.activities
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
+import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.TypefaceSpan
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -48,7 +54,13 @@ class PerfilArtista : AppCompatActivity() {
     private val openGalleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
             imageUri = it
-            profileImageViewDialog?.setImageURI(imageUri)
+            // Actualizar el ImageView del diálogo con Glide y circleCrop
+            Glide.with(this)
+                .load(it)
+                .circleCrop()
+                .placeholder(R.drawable.ic_profile)
+                .error(R.drawable.ic_profile)
+                .into(profileImageViewDialog!!)
         }
     }
 
@@ -82,15 +94,46 @@ class PerfilArtista : AppCompatActivity() {
         loadArtistAlbums()
 
         // Configurar listeners
-        findViewById<Button>(R.id.editProfile).setOnClickListener { showEditProfileDialog() }
         findViewById<Button>(R.id.subirCancion).setOnClickListener {
             startActivity(Intent(this, SubirCancion::class.java))
         }
-        findViewById<Button>(R.id.botonLogout).setOnClickListener {
-            startActivity(Intent(this, Logout::class.java))
-        }
-        findViewById<Button>(R.id.botonDeleteAccount).setOnClickListener {
-            showDeleteAccountDialog()
+
+        val moreOptionsButton = findViewById<ImageButton>(R.id.options)
+
+        moreOptionsButton.setOnClickListener {
+            val popupMenu = PopupMenu(this, moreOptionsButton, Gravity.END, 0, R.style.PopupMenuStyle)
+            popupMenu.menuInflater.inflate(R.menu.profile_options, popupMenu.menu)
+
+            popupMenu.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.menu_edit_profile -> {
+                        showEditProfileDialog()
+                        true
+                    }
+                    R.id.menu_logout -> {
+                        startActivity(Intent(this, Logout::class.java))
+                        true
+                    }
+                    R.id.menu_delete_account -> {
+                        showDeleteAccountDialog()
+                        true
+                    }
+                    else -> false
+                }
+            }
+
+            for (i in 0 until popupMenu.menu.size()) {
+                val item = popupMenu.menu.getItem(i)
+                val spanString = SpannableString(item.title)
+                spanString.setSpan(
+                    TypefaceSpan(ResourcesCompat.getFont(this, R.font.poppins_regular)!!),
+                    0, spanString.length,
+                    Spannable.SPAN_INCLUSIVE_INCLUSIVE
+                )
+                item.title = spanString
+            }
+
+            popupMenu.show()
         }
 
         setupNavigation()
@@ -164,7 +207,7 @@ class PerfilArtista : AppCompatActivity() {
                 if (response.isSuccessful) {
                     response.body()?.let {
                         if (it.respuestaHTTP == 0) {
-                            usernameTextView.text = it.nombreUsuario
+                            usernameTextView.text = it.nombre
                             artisticnameTextView.text = it.nombreArtistico
                             findViewById<TextView>(R.id.followers).text = "${it.numSeguidores} Seguidores"
                             findViewById<TextView>(R.id.following).text = "${it.numSeguidos} Seguidos"
@@ -188,7 +231,7 @@ class PerfilArtista : AppCompatActivity() {
         dialog.setContentView(R.layout.dialog_delete_account)
 
         val window: Window? = dialog.window
-        window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        window?.setLayout((Resources.getSystem().displayMetrics.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dialog.setCancelable(true)
@@ -216,7 +259,7 @@ class PerfilArtista : AppCompatActivity() {
         dialog.setContentView(R.layout.dialog_edit_profile)
 
         val window: Window? = dialog.window
-        window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        window?.setLayout((Resources.getSystem().displayMetrics.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dialog.setCancelable(true)
@@ -229,6 +272,7 @@ class PerfilArtista : AppCompatActivity() {
         editUsername.setText(usernameTextView.text.toString())
         Glide.with(this)
             .load(Preferencias.obtenerValorString("fotoPerfil", "DEFAULT"))
+            .circleCrop()
             .placeholder(R.drawable.ic_profile)
             .error(R.drawable.ic_profile)
             .into(profileImageViewDialog!!)

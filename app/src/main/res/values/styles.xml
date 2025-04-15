@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="PopupMenuStyle" parent="Widget.AppCompat.PopupMenu.Overflow">
-        <item name="android:popupBackground">@drawable/popup_background</item>
+        <item name="android:popupBackground">@drawable/bg_edittext</item>
+        <item name="android:itemTextAppearance">@style/TextAppearance.PopupMenuItem</item>
+        <item name="android:listPreferredItemHeightSmall">32dp</item>
+    </style>
+    <style name="TextAppearance.PopupMenuItem" parent="TextAppearance.AppCompat.Body1">
+        <item name="fontFamily">@font/poppins_regular</item>
+        <item name="android:textSize">12sp</item>
     </style>
 </resources>

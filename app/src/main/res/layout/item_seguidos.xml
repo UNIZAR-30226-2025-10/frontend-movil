@@ -7,65 +7,70 @@
     android:background="?attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
-    android:padding="12dp">
+>
 
-    <!-- Imagen de perfil -->
-    <ImageView
-        android:id="@+id/ivProfile"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/ic_profile"
-        android:contentDescription="Foto de perfil"
-        android:scaleType="centerCrop"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/circle_background"/>
-
-    <!-- Nombre y seguidores -->
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintStart_toEndOf="@id/ivProfile"
-        app:layout_constraintEnd_toStartOf="@id/btnFollow"
-        app:layout_constraintTop_toTopOf="@id/ivProfile"
-        app:layout_constraintBottom_toBottomOf="@id/ivProfile">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingVertical="12dp"
+        android:paddingHorizontal="16dp">
 
-        <TextView
-            android:id="@+id/tvName"
-            android:layout_width="match_parent"
+        <!-- Imagen de perfil -->
+        <ImageView
+            android:id="@+id/ivProfile"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_profile"
+            android:contentDescription="Foto de perfil"
+            android:scaleType="centerCrop"
+            android:background="@drawable/circle_background" />
+
+        <!-- Nombre y seguidores -->
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical">
 
-            android:textSize="16sp"
-            android:textColor="@android:color/black"
-            android:textStyle="bold"
-            android:ellipsize="end"
-            android:maxLines="1"/>
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_bold"
+                android:textColor="#000E3B"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Nombre de usuario" />
+            <!--
+            <TextView
+                android:id="@+id/tvFollowerCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="#666666"
+                android:fontFamily="@font/poppins_regular"
+                android:text="seguidores" />
+              -->
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvFollowerCount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:textSize="14sp"
-            android:textColor="#666666"
-            android:layout_marginTop="4dp"/>
+        <!-- Botón de seguir -->
+        <Button
+            android:id="@+id/btnFollow"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:text="Dejar de seguir"
+            android:textSize="12sp"
+            android:background="@drawable/btn_follow_selector"
+            android:paddingHorizontal="12dp"
+            android:layout_marginLeft="10dp"
+            android:fontFamily="@font/poppins_bold"
+            android:textColor="#FFFFFF"/>
     </LinearLayout>
-
-    <!-- Botón de seguir -->
-    <Button
-        android:id="@+id/btnFollow"
-        android:layout_width="wrap_content"
-        android:layout_height="32dp"
-        android:text="Dejar de seguir"
-        android:textSize="12sp"
-        android:background="@drawable/btn_follow_selector"
-        android:paddingHorizontal="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <!-- Divider -->
     <View

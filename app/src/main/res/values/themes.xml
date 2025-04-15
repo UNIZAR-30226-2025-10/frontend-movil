@@ -2,12 +2,12 @@
 <resources>
 
     <style name="Theme.MyApplication" parent="Theme.AppCompat.Light.NoActionBar">
-
+        <item name="popupMenuStyle">@style/PopupMenuStyle</item>
     </style>
 
     <style name="Theme.APISplashScreen" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/fondo</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/logo</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>
         <item name="windowSplashScreenAnimationDuration">300</item>
         <item name="postSplashScreenTheme">@style/Theme.MyApplication</item>
     </style>

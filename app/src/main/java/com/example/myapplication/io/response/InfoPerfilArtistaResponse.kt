@@ -2,7 +2,7 @@ package com.example.myapplication.io.response
 
 data class InfoPerfilArtistaResponse (
     val respuestaHTTP: Int,
-    val nombreUsuario : String,
+    val nombre : String,
     val nombreArtistico : String,
     val numSeguidos : Int,
     val numSeguidores : Int,

@@ -72,8 +72,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:background="#F4F4F4">
@@ -101,102 +101,55 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:orientation="vertical"
-                android:paddingLeft="8dp">
+                android:paddingLeft="16dp">
                 <!-- Nombre de usuario -->
                 <TextView
                     android:id="@+id/username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="user_name"
                     android:textSize="18sp"
                     android:fontFamily="@font/poppins_bold"
                     android:textColor="#000E3B"
                     android:layout_marginTop="4dp"/>
 
-                <!-- Seguidores -->
-                <TextView
-                    android:id="@+id/followers"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins_regular"
-                    android:text="Seguidores"
-                    android:textSize="14sp"
-                    android:textColor="#000E3B"
-                    android:layout_marginTop="2dp"/>
+                    android:layout_gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                <!-- Seguidos -->
-                <TextView
-                    android:id="@+id/following"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Seguidos"
-                    android:fontFamily="@font/poppins_regular"
-                    android:textSize="14sp"
-                    android:textColor="#000E3B"
-                    android:layout_marginTop="3dp"/>
+                    <!-- Seguidores -->
+                    <TextView
+                        android:id="@+id/followers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_regular"
+                        android:text="0 Seguidores"
+                        android:textSize="14sp"
+                        android:textColor="#000E3B"
+                        android:layout_marginRight="12dp"/>
+
+                    <!-- Seguidos -->
+                    <TextView
+                        android:id="@+id/following"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0 Seguidos"
+                        android:fontFamily="@font/poppins_regular"
+                        android:textSize="14sp"
+                        android:textColor="#000E3B"/>
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Parte derecha: botones -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="end">
-
-            <!-- Editar perfil (texto superior derecho) -->
-            <!-- Botón Editar Perfil -->
-            <Button
-                android:id="@+id/editProfile"
-                android:layout_width="wrap_content"
-                android:layout_height="25dp"
-                android:text="Editar perfil"
-                android:fontFamily="@font/poppins_regular"
-                android:background="@android:color/transparent"
-                android:textSize="12sp"
-                android:textColor="#000E3B"/>
-
-            <!-- Botón Editar Perfil -->
-            <Button
-                android:id="@+id/changePassword"
-                android:layout_width="wrap_content"
-                android:layout_height="25dp"
-                android:text="Cambiar contraseña"
-                android:fontFamily="@font/poppins_regular"
-                android:background="@android:color/transparent"
-                android:textSize="12sp"
-                android:textColor="#000E3B"/>
-
-            <!-- Botón: Cerrar sesión -->
-            <Button
-                android:id="@+id/botonLogout"
-                android:layout_width="wrap_content"
-                android:layout_height="37dp"
-                android:textSize="12sp"
-                android:text="Cerrar Sesión"
-                android:fontFamily="@font/poppins_bold"
-                android:textColor="#FFFFFF"
-                android:background="@drawable/rounded_button"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:layout_marginTop="3dp"
-                android:layout_marginBottom="3dp"/>
-
-            <!-- Botón: Eliminar cuenta -->
-            <Button
-                android:id="@+id/botonDeleteAccount"
-                android:layout_width="wrap_content"
-                android:layout_height="37dp"
-                android:text="Eliminar Cuenta"
-                android:textSize="12sp"
-                android:fontFamily="@font/poppins_bold"
-                android:textColor="#FFFFFF"
-                android:background="@drawable/rounded_button"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:layout_marginTop="3dp"
-                android:layout_marginBottom="3dp"/>
-        </LinearLayout>
+        <ImageButton
+            android:id="@+id/options"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_more_vert"
+            android:contentDescription="Opciones perfil"
+            android:layout_marginStart="8dp"/>
     </LinearLayout>
 
     <ScrollView

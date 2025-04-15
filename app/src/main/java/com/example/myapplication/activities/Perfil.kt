@@ -6,6 +6,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
@@ -14,7 +15,11 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.provider.MediaStore
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.TypefaceSpan
 import android.util.Log
+import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +27,7 @@ import android.view.Window
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -60,7 +66,13 @@ class Perfil : AppCompatActivity() {
     private val openGalleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
             imageUri = it
-            profileImageViewDialog?.setImageURI(imageUri)  // Set the selected image in the dialog ImageView
+            // Actualizar el ImageView del diálogo con Glide y circleCrop
+            Glide.with(this)
+                .load(it)
+                .circleCrop()
+                .placeholder(R.drawable.ic_profile)
+                .error(R.drawable.ic_profile)
+                .into(profileImageViewDialog!!)
         }
     }
 
@@ -153,13 +165,42 @@ class Perfil : AppCompatActivity() {
 
         Log.d("MiAppPerfil", "PERFIL 1.4")
 
-        findViewById<Button>(R.id.editProfile).setOnClickListener { showEditProfileDialog() }
-        findViewById<Button>(R.id.botonLogout).setOnClickListener { startActivity(Intent(this, Logout::class.java)) }
+        val moreOptionsButton = findViewById<ImageButton>(R.id.options)
 
-        val buttonDeleteAccount: Button = findViewById(R.id.botonDeleteAccount)
-        // Mostrar diálogo para eliminar cuenta
-        buttonDeleteAccount.setOnClickListener {
-            showDeleteAccountDialog()
+        moreOptionsButton.setOnClickListener {
+            val popupMenu = PopupMenu(this, moreOptionsButton, Gravity.END, 0, R.style.PopupMenuStyle)
+            popupMenu.menuInflater.inflate(R.menu.profile_options, popupMenu.menu)
+
+            popupMenu.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.menu_edit_profile -> {
+                        showEditProfileDialog()
+                        true
+                    }
+                    R.id.menu_logout -> {
+                        startActivity(Intent(this, Logout::class.java))
+                        true
+                    }
+                    R.id.menu_delete_account -> {
+                        showDeleteAccountDialog()
+                        true
+                    }
+                    else -> false
+                }
+            }
+
+            for (i in 0 until popupMenu.menu.size()) {
+                val item = popupMenu.menu.getItem(i)
+                val spanString = SpannableString(item.title)
+                spanString.setSpan(
+                    TypefaceSpan(ResourcesCompat.getFont(this, R.font.poppins_regular)!!),
+                    0, spanString.length,
+                    Spannable.SPAN_INCLUSIVE_INCLUSIVE
+                )
+                item.title = spanString
+            }
+
+            popupMenu.show()
         }
 
         val followers: TextView = findViewById(R.id.followers)
@@ -190,7 +231,7 @@ class Perfil : AppCompatActivity() {
         dialog.setContentView(R.layout.dialog_delete_account)
 
         val window: Window? = dialog.window
-        window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        window?.setLayout((Resources.getSystem().displayMetrics.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dialog.setCancelable(true)
@@ -220,7 +261,7 @@ class Perfil : AppCompatActivity() {
 
         val window: Window? = dialog.window
         if (window != null) {
-            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            window.setLayout((Resources.getSystem().displayMetrics.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
             window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
 
@@ -238,6 +279,7 @@ class Perfil : AppCompatActivity() {
         Glide.with(this)
             .load(Preferencias.obtenerValorString("fotoPerfil", "DEFAULT"))
             .placeholder(R.drawable.ic_profile)
+            .circleCrop()
             .error(R.drawable.ic_profile)
             .into(profileImageViewDialog!!)
 

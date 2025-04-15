@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_edit_profile"
+        android:title="Editar perfil" />
+    <item
+        android:id="@+id/menu_change_password"
+        android:title="Cambiar contraseña" />
+    <item
+        android:id="@+id/menu_logout"
+        android:title="Cerrar sesión" />
+    <item
+        android:id="@+id/menu_delete_account"
+        android:title="Eliminar cuenta" />
+</menu>
