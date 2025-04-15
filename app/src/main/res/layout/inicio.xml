@@ -13,14 +13,12 @@
         android:id="@+id/bgImageView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="30dp"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.9"
-        app:srcCompat="@drawable/collage"
+        app:srcCompat="@drawable/inicio"
         tools:ignore="ContentDescription" />
 
     <!-- Logo encima de la imagen -->
@@ -29,8 +27,7 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:contentDescription="@string/logo"
-        android:elevation="10dp"
-        android:translationY="-70dp"
+        android:translationY="-55dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -38,20 +35,31 @@
         app:srcCompat="@drawable/logo"
         app:tint="#FFFFFF" />
 
-    <!-- Texto debajo del logo (slogan) -->
-    <!-- Lo sube un poco más -->
+    <!-- Texto debajo del logo -->
 
-    <!-- Contenedor de botones -->
+    <TextView
+        android:id="@+id/nameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="NOIZZ"
+        android:textAlignment="center"
+        android:fontFamily="@font/poppins_bold"
+        android:textColor="@android:color/white"
+        android:textSize="45sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/titleTextView" />
+
 
     <TextView
         android:id="@+id/titleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:text="@string/logInTitle"
         android:textAlignment="center"
-        android:textAppearance="?attr/textAppearanceHeadlineMedium"
-        android:textColor="@android:color/white"
+        android:fontFamily="@font/poppins_regular"
+        android:textColor="#C8C8C8C8"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -65,7 +73,7 @@
         android:gravity="center"
         android:orientation="vertical"
         android:padding="16dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/titleTextView"
@@ -73,22 +81,25 @@
 
         <Button
             android:id="@+id/signInButton"
-            android:layout_width="match_parent"
+            android:layout_width="340dp"
             android:layout_height="wrap_content"
+            android:background="@drawable/rounded_button"
             android:backgroundTint="@color/blueNuestro"
+            android:fontFamily="@font/poppins_bold"
             android:text="@string/log_in_btn"
             android:textAppearance="?attr/textAppearanceBodyLarge"
-            android:textSize="12sp" />
+            android:textSize="20sp" />
 
         <Button
             android:id="@+id/logInButton"
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
+            android:textSize="20sp"
             android:text="@string/sign_up_btn"
             android:textAppearance="?attr/textAppearanceBodyLarge"
             android:textColor="@color/white"
+            android:layout_marginTop="10dp"
            />
 
 
