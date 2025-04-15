@@ -50,7 +50,7 @@ class Perfil : AppCompatActivity() {
     private lateinit var apiService: ApiService
     private lateinit var apiServiceCloud: CloudinaryApiService
     private lateinit var recyclerViewPlaylists: RecyclerView
-    private lateinit var headerPlaylistsRecyclerView: RecyclerView
+    private lateinit var headerPlaylistsTextView: TextView
     private lateinit var playlistsAdapter: PlaylistsAdapter
     private lateinit var usernameTextView: TextView
     private lateinit var profileImageView: ImageView
@@ -134,14 +134,9 @@ class Perfil : AppCompatActivity() {
                 .error(R.drawable.ic_profile) // Imagen si hay error
                 .into(profileImageView)
         }
-
-
-        val headersPlaylists = listOf("Mis playlists")
-        val headerPlaylistsAdapter = HeaderAdapter(headersPlaylists)
-        headerPlaylistsRecyclerView = findViewById(R.id.recyclerViewHeadersPlaylistsP)
-        headerPlaylistsRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        headerPlaylistsRecyclerView.adapter = headerPlaylistsAdapter
-        headerPlaylistsRecyclerView.visibility = View.INVISIBLE
+        
+        headerPlaylistsTextView = findViewById(R.id.textViewHeadersPlaylistsP)
+        headerPlaylistsTextView.visibility = View.INVISIBLE
 
         Log.d("MiAppPerfil", "PERFIL 1.3")
 
@@ -202,9 +197,6 @@ class Perfil : AppCompatActivity() {
 
         val editPassword = dialog.findViewById<EditText>(R.id.editPassword)
         val btnConfirm = dialog.findViewById<Button>(R.id.btnConfirm)
-        val btnCancel = dialog.findViewById<Button>(R.id.btnCancel)
-
-        btnCancel.setOnClickListener { dialog.dismiss() }
 
         btnConfirm.setOnClickListener {
             val password = editPassword.text.toString().trim()
@@ -487,10 +479,10 @@ class Perfil : AppCompatActivity() {
                             if (misPlaylists.isNotEmpty()) {
                                 playlistsAdapter.updateDataMisPlaylists(misPlaylists)
                                 recyclerViewPlaylists.visibility = View.VISIBLE
-                                headerPlaylistsRecyclerView.visibility = View.VISIBLE
+                                headerPlaylistsTextView.visibility = View.VISIBLE
                             } else {
                                 recyclerViewPlaylists.visibility = View.GONE
-                                headerPlaylistsRecyclerView.visibility = View.GONE
+                                headerPlaylistsTextView.visibility = View.GONE
                                 showToast("No hay playlists")
                             }
 

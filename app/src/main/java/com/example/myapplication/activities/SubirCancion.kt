@@ -344,12 +344,16 @@ class SubirCancion : AppCompatActivity() {
         val token = Preferencias.obtenerValorString("token", "")
         val authHeader = "Bearer $token"
 
+        Log.d("Crear album", "En crear album")
+
         val request = CrearAlbumRequest(nombreAlbum, imageUrl)
         apiService.crearAlbum(authHeader, request).enqueue(object : Callback<CrearAlbumResponse> {
             override fun onResponse(call: Call<CrearAlbumResponse>, response: Response<CrearAlbumResponse>) {
                 if (response.isSuccessful) {
                     Log.d("Crear album", "Album creado con éxito")
                     obtenerAlbumsActualizado(nombreAlbum, nombreCancion, audioUrl, feats)
+                } else {
+                    Log.d("Crear album", "Error en crear album")
                 }
             }
             override fun onFailure(call: Call<CrearAlbumResponse>, t: Throwable) {
@@ -518,20 +522,6 @@ class SubirCancion : AppCompatActivity() {
         }
     }
 
-    /*private fun obtenerDuracionAudio(uri: Uri): Long {
-        val retriever = MediaMetadataRetriever()
-        try {
-            retriever.setDataSource(applicationContext, uri)
-            val durationStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-            return durationStr?.toLong() ?: 0L // Devuelve la duración en milisegundos
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return 0L // Si ocurre algún error, retornamos 0
-        } finally {
-            retriever.release()
-        }
-    }*/
-
     private fun uploadAudioToCloudinary(signatureData: GetSignatureResponse, audioURI: Uri?, folder: String, nombreCancion: String, feats:List<String>) {
         try {
             if (audioURI != null) {
@@ -601,6 +591,8 @@ class SubirCancion : AppCompatActivity() {
         val token = Preferencias.obtenerValorString("token", "")
         val authHeader = "Bearer $token"
 
+        Log.d("Crear canción", "En crear cancion")
+
         val listaEtiquetas: List<String> = etiquetasSeleccionadas.toList()
         val durationEntera = duracionGlobal.toInt()
 
@@ -614,6 +606,7 @@ class SubirCancion : AppCompatActivity() {
                     if (response.isSuccessful) {
                         Log.d("Crear cancion", "Cancion creada con éxito")
                         Toast.makeText(this@SubirCancion, "Canción subida con éxito", Toast.LENGTH_SHORT).show()
+                        finish()
                     }
                 }
                 override fun onFailure(call: Call<Void>, t: Throwable) {

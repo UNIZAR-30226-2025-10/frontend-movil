@@ -151,6 +151,10 @@
             android:exported="false"
             android:theme="@style/Theme.MyApplication"/>
 
+        <activity android:name=".activities.EstadisticasCancion"
+            android:exported="false"
+            android:theme="@style/Theme.MyApplication"/>
+
         <service android:name=".services.MusicPlayerService" />
 
         
