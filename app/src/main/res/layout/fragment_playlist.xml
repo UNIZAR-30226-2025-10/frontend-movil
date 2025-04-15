@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#A9A9A9">
+    android:background="@color/white">
 
     <!-- Imagen de la playlist -->
     <ImageView
@@ -12,6 +12,7 @@
         android:layout_height="150dp"
         android:layout_marginTop="40dp"
         android:scaleType="centerCrop"
+        android:background="@drawable/rounded_edittext"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -23,7 +24,7 @@
         android:layout_height="wrap_content"
         android:textSize="22sp"
         android:textStyle="bold"
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/black"
         android:layout_marginTop="16dp"
         app:layout_constraintTop_toBottomOf="@id/imageViewPlaylist"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/black"
         android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@id/textViewNombrePlaylist"
         app:layout_constraintStart_toStartOf="parent"
@@ -44,46 +45,80 @@
     <!-- Botones de acción -->
     <LinearLayout
         android:id="@+id/linearLayout2"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="-160dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginHorizontal="16dp"
         android:orientation="horizontal"
+        android:gravity="center"
+        android:weightSum="5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewNumCanciones">
 
+        <!-- Botón Play/Pause -->
         <ImageButton
             android:id="@+id/btnPlay"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@android:color/transparent"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_pause"
-            app:tint="@android:color/white" />
+            android:contentDescription="Reproducir"
+            android:padding="12dp"
+            app:tint="@color/blueNuestro"/>
 
+        <!-- Botón Añadir Usuario -->
         <ImageButton
             android:id="@+id/btnAddUser"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@android:color/transparent"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_add_user"
-            app:tint="@android:color/white" />
+            android:contentDescription="Añadir usuario"
+            android:padding="10dp"
+            android:layout_marginHorizontal="4dp"
+            />
 
+        <!-- Botón Más Opciones -->
         <ImageButton
             android:id="@+id/btnMoreOptions"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@android:color/transparent"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_more_options"
-            app:tint="@android:color/white" />
+            android:contentDescription="Más opciones"
+            android:padding="10dp"
+            android:layout_marginHorizontal="4dp"
+            />
 
+        <!-- Botón Añadir Canción -->
         <ImageButton
             android:id="@+id/btnAnadirCancion"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@android:color/transparent"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_mas_canciones"
-            app:tint="@android:color/white" />
+            android:contentDescription="Añadir canción"
+            android:padding="10dp"
+            android:layout_marginHorizontal="4dp"
+            />
+
+        <!-- Botón Aleatorio -->
+        <ImageButton
+            android:id="@+id/aleatorio"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/shuffle_24px"
+            android:contentDescription="Modo aleatorio"
+            android:padding="10dp"
+            android:layout_marginHorizontal="4dp"
+            />
     </LinearLayout>
 
     <!-- Sección scrolleable con todos los RecyclerView -->

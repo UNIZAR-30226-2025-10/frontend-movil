@@ -2,16 +2,25 @@ package com.example.myapplication.activities
 
 
 import android.annotation.SuppressLint
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
+import android.os.IBinder
+import android.os.Looper
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -39,6 +48,8 @@ import com.example.myapplication.Adapters.Home.RecomendacionesAdapter
 import com.example.myapplication.io.response.HArtistas
 import com.example.myapplication.io.response.HRecientes
 import com.example.myapplication.io.response.HistorialArtistasResponse
+import com.example.myapplication.services.MusicPlayerService
+
 
 class Home : AppCompatActivity() {
 
@@ -52,12 +63,6 @@ class Home : AppCompatActivity() {
     private lateinit var escuchasAdapter: EscuchasAdapter
     private lateinit var playlistsAdapter: PlaylistsAdapter
     private lateinit var recomendacionesAdapter: RecomendacionesAdapter
-    /*
-    private lateinit var headerRecientesTextView: RecyclerView
-    private lateinit var headerEscuchasTextView: RecyclerView
-    private lateinit var headerPlaylistsTextView: RecyclerView
-    private lateinit var headerRecomendacionesTextView: RecyclerView
-    */
 
     private lateinit var headerRecientesTextView: TextView
     private lateinit var headerEscuchasTextView: TextView
@@ -66,6 +71,35 @@ class Home : AppCompatActivity() {
 
     private val listaRecientes = mutableListOf<HRecientes>()
     private val listaArtistas = mutableListOf<HArtistas>()
+
+    private lateinit var progressBar: ProgressBar
+    private var musicService: MusicPlayerService? = null
+    private var serviceBound = false
+    private val handler = Handler(Looper.getMainLooper())
+    private val updateRunnable = object : Runnable {
+        override fun run() {
+            updateProgressBar()
+            handler.postDelayed(this, 1000) // cada segundo
+        }
+    }
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as MusicPlayerService.MusicBinder
+            musicService = binder.getService()
+            serviceBound = true
+            handler.post(updateRunnable)
+            // El servicio ya está listo, ahora actualiza el mini reproductor
+            updateMiniReproductor()
+            actualizarIconoPlayPause()
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            serviceBound = false
+            handler.removeCallbacks(updateRunnable)
+        }
+    }
+
+    private var isDataLoaded = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,48 +130,16 @@ class Home : AppCompatActivity() {
                 .into(profileImageButton)
         }
 
-        /*
-        // Configurar RecyclerView para los encabezados
-        val headersRecientes = listOf("Escuchado recientemente")
-        val headerRecientesAdapter = HeaderAdapter(headersRecientes)
-        headerRecientesTextView = findViewById(R.id.recyclerViewHeadersRecientes)
-        headerRecientesTextView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        headerRecientesTextView.adapter = headerRecientesAdapter
-        headerRecientesTextView.visibility = View.INVISIBLE
-
-        val headersEscuchas = listOf("Úiltimas escuchas")
-        val headerEscuchasAdapter = HeaderAdapter(headersEscuchas)
-        headerEscuchasTextView = findViewById(R.id.recyclerViewHeadersEscuchas)
-        headerEscuchasTextView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        headerEscuchasTextView.adapter = headerEscuchasAdapter
-        headerEscuchasTextView.visibility = View.INVISIBLE
-
-
-        val headersPlaylists = listOf("Mis playlists")
-        val headerPlaylistsAdapter = HeaderAdapter(headersPlaylists)
-        headerPlaylistsTextView = findViewById(R.id.recyclerViewHeadersPlaylists)
-        headerPlaylistsTextView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        headerPlaylistsTextView.adapter = headerPlaylistsAdapter
-        headerPlaylistsTextView.visibility = View.INVISIBLE
-
-        val headersRecomendaciones = listOf("Recomendaciones")
-        val headerRecomendacionesAdapter = HeaderAdapter(headersRecomendaciones)
-        headerRecomendacionesTextView = findViewById(R.id.recyclerViewHeadersRecomendaciones)
-        headerRecomendacionesTextView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        headerRecomendacionesTextView.adapter = headerRecomendacionesAdapter
-        headerRecomendacionesTextView.visibility = View.INVISIBLE
-        */
-
         // Configurar TextView para los encabezados
         headerRecientesTextView = findViewById(R.id.textViewHeadersRecientes)
         headerRecientesTextView.visibility = View.INVISIBLE
-        
+
         headerEscuchasTextView = findViewById(R.id.textViewHeadersEscuchas)
         headerEscuchasTextView.visibility = View.INVISIBLE
-        
+
         headerPlaylistsTextView = findViewById(R.id.textViewHeadersPlaylists)
         headerPlaylistsTextView.visibility = View.INVISIBLE
-        
+
         headerRecomendacionesTextView = findViewById(R.id.textViewHeadersRecomendaciones)
         headerRecomendacionesTextView.visibility = View.INVISIBLE
 
@@ -163,7 +165,7 @@ class Home : AppCompatActivity() {
             intent.putExtra("nombre", escucha.nombre)
             intent.putExtra("imagen", escucha.fotoPortada)
             intent.putExtra("id", escucha.id)
-            Log.d("Escuchaas", "Home ->Escucha")
+            Log.d("Escuchas", "Home ->Escucha")
             startActivity(intent)
         }
         recyclerViewEscuchas.adapter = escuchasAdapter
@@ -181,12 +183,161 @@ class Home : AppCompatActivity() {
         recomendacionesAdapter = RecomendacionesAdapter(mutableListOf())
         recyclerViewRecomendaciones.adapter = recomendacionesAdapter
 
+
+        progressBar = findViewById(R.id.progressBar)
+        // Actualizar la información del mini reproductor
+        updateMiniReproductor()
+
         // Cargar datos al iniciar
         loadHomeData()
 
         // Configurar botones de navegación
         setupNavigation()
     }
+
+    private fun updateMiniReproductor() {
+        val songImage = findViewById<ImageView>(R.id.songImage)
+        val songTitle = findViewById<TextView>(R.id.songTitle)
+        val songArtist = findViewById<TextView>(R.id.songArtist)
+        val stopButton = findViewById<ImageButton>(R.id.stopButton)
+
+        val songImageUrl = Preferencias.obtenerValorString("fotoPortadaActual", "")
+        val songTitleText = Preferencias.obtenerValorString("nombreCancionActual", "Nombre de la canción")
+        val songArtistText = Preferencias.obtenerValorString("nombreArtisticoActual", "Artista")
+        val songProgress = Preferencias.obtenerValorEntero("progresoCancionActual", 0)
+
+        // Imagen
+        if (songImageUrl.isNullOrEmpty()) {
+            songImage.setImageResource(R.drawable.ic_default_song)
+        } else {
+            Glide.with(this)
+                .load(songImageUrl)
+                .centerCrop()
+                .placeholder(R.drawable.ic_default_song)
+                .error(R.drawable.ic_default_song)
+                .into(songImage)
+        }
+
+        songTitle.text = songTitleText
+        songArtist.text = songArtistText
+        progressBar.progress = songProgress
+
+        // Configurar botón de play/pause
+        stopButton.setOnClickListener {
+            Log.d("MiniReproductor", "Botón presionado")
+            if (musicService == null) {
+                Log.w("MiniReproductor", "musicService es null")
+                return@setOnClickListener
+            }
+
+            musicService?.let { service ->
+                Log.d("MiniReproductor", "isPlaying: ${service.isPlaying()}")
+                if (service.isPlaying()) {
+                    val progreso = service.getProgress()
+                    Preferencias.guardarValorEntero("progresoCancionActual", progreso)
+                    service.pause()
+                    stopButton.setImageResource(R.drawable.ic_pause)
+                    Log.d("MiniReproductor", "Canción pausada en $progreso ms")
+                } else {
+                    Log.d("MiniReproductor", "Intentando reanudar la canción...")
+                    service.resume()
+                    stopButton.setImageResource(R.drawable.ic_play)
+                    Log.d("MiniReproductor", "Canción reanudada")
+                }
+            }
+        }
+
+        // Añadir un OnTouchListener al ProgressBar para actualizar el progreso
+        // Añadir el performClick dentro del OnTouchListener
+        progressBar.setOnTouchListener { _, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    updateProgressFromTouch(event.x, progressBar)
+                    progressBar.performClick()  // Agregar esta línea
+                    true
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    updateProgressFromTouch(event.x, progressBar)
+                    progressBar.performClick()  // Agregar esta línea
+                    true
+                }
+                MotionEvent.ACTION_UP -> {
+                    updateProgressFromTouch(event.x, progressBar)
+                    progressBar.performClick()  // Agregar esta línea
+                    true
+                }
+                else -> false
+            }
+        }
+
+    }
+
+    private fun updateProgressFromTouch(x: Float, progressBar: ProgressBar) {
+        // Obtener el ancho del ProgressBar
+        val width = progressBar.width - progressBar.paddingLeft - progressBar.paddingRight
+        // Calcular el progreso basado en la posición del toque (x)
+        val progress = ((x / width) * 100).toInt()
+
+        // Actualizar el ProgressBar
+        progressBar.progress = progress
+
+        // Actualizar el progreso en el servicio de música
+        musicService?.let { service ->
+            val duration = service.getDuration()
+            val newProgress = (progress * duration) / 100
+            service.seekTo(newProgress)  // Mover la canción al nuevo progreso
+            Preferencias.guardarValorEntero("progresoCancionActual", newProgress)
+            Log.d("MiniReproductor", "Nuevo progreso: $newProgress ms")
+        }
+    }
+
+    private fun updateProgressBar() {
+        musicService?.let { service ->
+            if (service.isPlaying()) {
+                val current = service.getProgress()
+                val duration = service.getDuration()
+
+                if (duration > 0) {
+                    val progress = (current * 100) / duration
+                    progressBar.progress = progress
+                }
+            }
+        }
+    }
+
+    private fun onDataLoaded() {
+        // Solo iniciar el servicio una vez los datos estén listos
+        if (isDataLoaded) {
+            val urlCancion = Preferencias.obtenerValorString("audioCancionActual", "")
+            val progreso = Preferencias.obtenerValorEntero("progresoCancionActual", 0)
+
+            Log.d("MiniReproductor", "onStart - URL: $urlCancion, Progreso: $progreso")
+
+            if (!urlCancion.isNullOrEmpty()) {
+                val startIntent = Intent(this, MusicPlayerService::class.java).apply {
+                    action = "PLAY1"
+                    putExtra("url", urlCancion)
+                    putExtra("progreso", progreso)
+                }
+                startService(startIntent)
+            }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val intent = Intent(this, MusicPlayerService::class.java)
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (serviceBound) {
+            unbindService(serviceConnection)
+            serviceBound = false
+        }
+    }
+
 
     private fun loadHomeData() {
         getRecientes()
@@ -346,6 +497,14 @@ class Home : AppCompatActivity() {
                                 showToast("No hay playlists")
                             }
 
+                            val primerinicio = Preferencias.obtenerValorBooleano("primerinicio", false)
+                            if(primerinicio == false) {
+                                updateMiniReproductor()
+                                isDataLoaded = true // Los datos ya están listos
+                                // Ahora que los datos están listos, puedes iniciar el servicio si es necesario
+                                onDataLoaded()
+                                Preferencias.guardarValorBooleano("primerinicio", true)
+                            }
                         } else {
                             handleErrorCode(it.respuestaHTTP)
                         }
@@ -397,6 +556,13 @@ class Home : AppCompatActivity() {
         })
     }
 
+    private fun actualizarIconoPlayPause() {
+        if (serviceBound && musicService != null) {
+            val estaReproduciendo = musicService!!.isPlaying()
+            val icono = if (estaReproduciendo) R.drawable.ic_play else R.drawable.ic_pause
+        }
+    }
+
     private fun setupNavigation() {
         val buttonPerfil: ImageButton = findViewById(R.id.profileImageButton)
         val buttonHome: ImageButton = findViewById(R.id.nav_home)
@@ -424,7 +590,7 @@ class Home : AppCompatActivity() {
         }
 
         buttonCrear.setOnClickListener {
-            startActivity(Intent(this, Perfil::class.java))
+            startActivity(Intent(this, CrearPlaylist::class.java))
         }
     }
 

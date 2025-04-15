@@ -10,7 +10,9 @@ import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.io.response.*
 
-class PerfilAdapter(private var listaPerfiles: List<Perfil>) : RecyclerView.Adapter<PerfilAdapter.PerfilViewHolder>() {
+class PerfilAdapter(private var listaPerfiles: List<Perfil>,
+                    private val clickListener: (Perfil) -> Unit
+) : RecyclerView.Adapter<PerfilAdapter.PerfilViewHolder>() {
 
     // Cambia el método para actualizar la lista
     fun updateDataPerfiles(searchResponse: List<Perfil>) {
@@ -29,6 +31,8 @@ class PerfilAdapter(private var listaPerfiles: List<Perfil>) : RecyclerView.Adap
         Glide.with(holder.itemView.context)
             .load(perfil.fotoPerfil)
             .into(holder.imagenPerfil)
+
+        holder.itemView.setOnClickListener { clickListener(perfil) }
     }
 
     override fun getItemCount(): Int {

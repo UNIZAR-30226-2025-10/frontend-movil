@@ -1,6 +1,7 @@
 package com.example.myapplication.io
 
 import com.example.myapplication.io.request.ActualizarFavoritoRequest
+import com.example.myapplication.io.request.AddToPlaylistRequest
 import com.example.myapplication.io.request.AudioRequest
 import com.example.myapplication.io.response.LoginResponse
 import com.example.myapplication.io.request.LoginRequest
@@ -16,16 +17,18 @@ import com.example.myapplication.io.response.VerifyArtistResponse
 import com.example.myapplication.io.request.CambiarPass1Request
 import com.example.myapplication.io.request.CambiarPass2Request
 import com.example.myapplication.io.request.CambiarPass3Request
-
 import com.example.myapplication.io.request.CrearAlbumRequest
 import com.example.myapplication.io.request.CrearCancionRequest
 import com.example.myapplication.io.request.ChangeFollowRequest
+import com.example.myapplication.io.request.CreatePlaylistRequest
 import com.example.myapplication.io.request.DeleteAccountRequest
 import com.example.myapplication.io.request.EditarAlbumRequest
+import com.example.myapplication.io.request.DeletePlaylistRequest
 import com.example.myapplication.io.request.PlaylistRequest
 import com.example.myapplication.io.request.EditarPerfilRequest
 import com.example.myapplication.io.request.PlayPauseRequest
 import com.example.myapplication.io.request.PlayPauseResponse
+import com.example.myapplication.io.request.UpdatePlaylistRequest
 import com.example.myapplication.io.request.ValidarArtistaRequest
 import com.example.myapplication.io.request.ValidarArtistaResponse
 import com.example.myapplication.io.response.ActualizarFavoritoResponse
@@ -33,13 +36,18 @@ import com.example.myapplication.io.response.AddReproduccionResponse
 import com.example.myapplication.io.response.AudioResponse
 import com.example.myapplication.io.response.BuscadorResponse
 import com.example.myapplication.io.response.CrearAlbumResponse
+import com.example.myapplication.io.response.CancionActualResponse
 import com.example.myapplication.io.response.DeleteAccountResponse
 import com.example.myapplication.io.response.DeleteAlbumResponse
 import com.example.myapplication.io.response.EditarPerfilResponse
+
 import com.example.myapplication.io.response.EstadisticasAlbumResponse
 import com.example.myapplication.io.response.GetEstadisticasFavsResponse
 import com.example.myapplication.io.response.GetEstadisticasPlaylistResponse
 import com.example.myapplication.io.response.GetEtiquetasResponse
+
+import com.example.myapplication.io.response.GetDatosOyenteResponse
+
 import com.example.myapplication.io.response.GetMisAlbumesResponse
 import com.example.myapplication.io.response.GetSignatureResponse
 import com.example.myapplication.io.response.HistorialArtistasResponse
@@ -53,6 +61,7 @@ import com.example.myapplication.io.response.InfoSeguidoresResponse
 import com.example.myapplication.io.response.MisAlbumesResponse
 import com.example.myapplication.io.response.PendientesResponse
 import com.example.myapplication.io.response.PlaylistResponse
+import com.example.myapplication.io.response.SearchPlaylistResponse
 import com.example.myapplication.io.response.SeguidoresResponse
 import com.example.myapplication.io.response.SeguidosResponse
 import okhttp3.OkHttpClient
@@ -138,6 +147,8 @@ interface ApiService {
         @Header("Authorization") token: String,
     ): Call<AddReproduccionResponse>
 
+    @GET("/get-cancion-actual")
+    fun getCancionActual(@Header("Authorization") token: String): Call<CancionActualResponse>
 
     @PUT("/play-pause")
     fun playPause(
@@ -268,6 +279,43 @@ interface ApiService {
     fun deleteCancion(
         @Header("Authorization") token: String,
         @Query("id") id: String
+
+    @GET("/get-datos-oyente")
+    fun getDatosOyente(
+        @Header("Authorization") token: String,
+        @Query("nombreUsuario") nombreUsuario: String
+    ): Call<GetDatosOyenteResponse>
+
+    @POST("/create-playlist")
+    fun crearPlaylist(
+        @Header("Authorization") token: String,
+        @Body request: CreatePlaylistRequest
+    ): Call<Void>
+
+    @GET("/search-for-playlist")
+    fun searchForSongs(
+        @Header("Authorization") token: String,
+        @Query("termino") termino: String,
+        @Query("playlist") playlistId: String
+    ): Call<SearchPlaylistResponse>
+
+    @POST("add-to-playlist")
+    fun addSongToPlaylist(
+        @Header("Authorization") token: String,
+        @Body request: AddToPlaylistRequest
+    ): Call<Void>
+
+    @PUT("change-playlist")
+    fun updatePlaylist(
+        @Header("Authorization") token: String,
+        @Body request: UpdatePlaylistRequest
+    ): Call<Void>
+
+
+    @HTTP(method = "DELETE", path = "/delete-playlist", hasBody = true)
+    fun deletePlaylist(
+        @Header("Authorization") token: String,
+        @Body request: DeletePlaylistRequest
     ): Call<Void>
 
 

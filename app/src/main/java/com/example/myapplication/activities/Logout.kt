@@ -53,6 +53,7 @@ class Logout : AppCompatActivity() {
                     Log.d("LOGOUT", "Logout exitoso. Borrando datos de usuario...")
                     Preferencias.borrarDatosUsuario()
                     showToast("Logout exitoso")
+                    Preferencias.guardarValorBooleano("primerinicio", false)
                     navigateInicio()
                 } else {
                     Log.e("LOGOUT", "Error en el logout. Código HTTP: ${response.code()}")

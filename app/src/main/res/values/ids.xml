@@ -8,4 +8,5 @@
     <item name="tv_song_duration" type="id" />
     <item name="guideline3" type="id" />
     <item name="iv_play_pause_detail" type="id" />
+    <item name="followCounters" type="id" />
 </resources>
