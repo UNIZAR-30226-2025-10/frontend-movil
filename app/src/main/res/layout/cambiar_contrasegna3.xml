@@ -7,48 +7,109 @@
     android:background="@color/fondo"
     android:gravity="center">
 
-    <!-- Círculo con número dentro -->
-    <RelativeLayout
-        android:layout_width="wrap_content"
+    <!-- Circulos -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="120dp">
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
 
         <TextView
-            android:id="@+id/circleText"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:id="@+id/circle2Text"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_centerInParent="true"
+            android:background="@drawable/circle2_drawable"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"/>
+        <TextView
+            android:id="@+id/circle3Text"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/circle2_drawable"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:layout_marginHorizontal="20dp"/>
+        <TextView
+            android:id="@+id/circle1Text"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
             android:background="@drawable/circle_drawable"
+            android:paddingTop="7dp"
             android:gravity="center"
             android:text="3"
             android:textColor="@android:color/white"
-            android:textSize="24sp" />
-    </RelativeLayout>
+            android:textSize="24sp"
+            android:fontFamily="@font/poppins_bold"/>
+    </LinearLayout>
 
+    <TextView
+        android:id="@+id/tv_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_bold"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:text="Recuperación de contraseña"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        android:textStyle="bold"/>
 
     <!-- Entrada para la nueva contraseña -->
     <EditText
         android:id="@+id/newPass"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Introducir nueva contraseña"
+        android:hint="Introduce la nueva contraseña"
         android:textColorHint="#B3B3B3"
+        android:fontFamily="@font/poppins_regular"
         android:textColor="#FFFFFF"
         android:background="@drawable/borde_azul_redondo"
         android:padding="16dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp" />
+        android:layout_marginVertical="20dp"
+        android:layout_marginHorizontal="32dp"/>
+
+    <TextView
+        android:id="@+id/infoContraseña"
+        android:layout_gravity="start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_regular"
+        android:text="La contraseña debe contener mínimo: "
+        android:textColor="#B3B3B3"
+        android:background="@android:color/transparent"
+        android:textAllCaps="false"
+        android:layout_marginTop="10dp"
+        android:paddingHorizontal="14dp"/>
+
+    <TextView
+        android:id="@+id/infoContraseña2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:fontFamily="@font/poppins_regular"
+        android:text="8 caracteres\n1 letra\n1 carácter especial"
+        android:textColor="#B3B3B3"
+        android:background="@android:color/transparent"
+        android:textAllCaps="false"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="34dp"/>
 
     <!-- Botón de establecer contraseña -->
     <Button
         android:id="@+id/nextButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Establecer contraseña"
-        android:textColor="#FFFFFF"
-        android:backgroundTint="@color/blueNuestro"
-        android:layout_marginTop="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp" />
+        android:text="Establecer Contraseña"
+        android:textColor="@color/fondo"
+        android:background="@drawable/rounded_button"
+        android:textSize="18sp"
+        android:layout_marginHorizontal="32dp"
+        android:fontFamily="@font/poppins_bold"
+        android:textAllCaps="false"
+        android:layout_marginVertical="25dp"
+        />
 </LinearLayout>
