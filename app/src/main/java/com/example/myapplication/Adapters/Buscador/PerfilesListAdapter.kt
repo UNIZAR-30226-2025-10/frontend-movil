@@ -30,6 +30,7 @@ class PerfilAdapter(private var listaPerfiles: List<Perfil>,
         holder.nombrePerfil.text = perfil.nombreUsuario
         Glide.with(holder.itemView.context)
             .load(perfil.fotoPerfil)
+            .circleCrop()
             .into(holder.imagenPerfil)
 
         holder.itemView.setOnClickListener { clickListener(perfil) }

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/fondo"
-    tools:context=".activities.RegisterArtist">
+    tools:context=".activities.RegisterUser">
 
     <ImageView
         android:id="@+id/logoImageView"
@@ -143,6 +143,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="25dp"/>
+        android:layout_marginBottom="35dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

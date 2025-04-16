@@ -23,6 +23,7 @@ class SolicitudAdapter(
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val tvSolicitud: TextView = itemView.findViewById(R.id.tvSolicitud)
         val tvNombre: TextView = itemView.findViewById(R.id.tvNombre)
         val btnRechazar: Button = itemView.findViewById(R.id.btnRechazar)
         val btnAceptar: Button = itemView.findViewById(R.id.btnAceptar)
@@ -35,6 +36,7 @@ class SolicitudAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val solicitud = solicitudes[position]
+        holder.tvSolicitud.text = "Solicitud ${position + 1}"
         holder.tvNombre.text = solicitud.nombreArtistico
         holder.btnAceptar.setOnClickListener { onAceptarClick(solicitud) }
         holder.btnRechazar.setOnClickListener { onRechazarClick(solicitud) }
