@@ -157,6 +157,10 @@
 
         <service android:name=".services.MusicPlayerService" />
 
+        <activity android:name=".activities.Notificaciones"
+            android:exported="false"
+            android:theme="@style/Theme.MyApplication"/>
+
         
     </application>
 

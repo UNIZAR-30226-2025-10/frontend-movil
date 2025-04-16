@@ -45,10 +45,14 @@ import com.example.myapplication.Adapters.Home.EscuchasAdapter
 import com.example.myapplication.Adapters.Home.HeaderAdapter
 import com.example.myapplication.Adapters.Home.PlaylistsAdapter
 import com.example.myapplication.Adapters.Home.RecomendacionesAdapter
+import com.example.myapplication.Adapters.Notificaciones.InvitacionesAdapter
+import com.example.myapplication.io.response.GetInvitacionesResponse
 import com.example.myapplication.io.response.HArtistas
 import com.example.myapplication.io.response.HRecientes
+import com.example.myapplication.io.response.HayNotificacionesResponse
 import com.example.myapplication.io.response.HistorialArtistasResponse
 import com.example.myapplication.services.MusicPlayerService
+import org.json.JSONObject
 
 
 class Home : AppCompatActivity() {
@@ -71,6 +75,8 @@ class Home : AppCompatActivity() {
 
     private val listaRecientes = mutableListOf<HRecientes>()
     private val listaArtistas = mutableListOf<HArtistas>()
+
+    private lateinit var dot: View
 
     private lateinit var progressBar: ProgressBar
     private var musicService: MusicPlayerService? = null
@@ -107,6 +113,7 @@ class Home : AppCompatActivity() {
 
         // Inicializar API Service
         apiService = ApiService.create()
+        dot = findViewById<View>(R.id.notificationDot)
 
         val profileImageButton = findViewById<ImageButton>(R.id.profileImageButton)
 
@@ -128,6 +135,40 @@ class Home : AppCompatActivity() {
                 .placeholder(R.drawable.ic_profile) // Imagen por defecto mientras carga
                 .error(R.drawable.ic_profile) // Imagen si hay error
                 .into(profileImageButton)
+        }
+
+        //PARA EL CIRCULITO ROJO DE NOTIFICACIONES
+        if (Preferencias.obtenerValorBooleano("hay_notificaciones",false) == true) {
+            dot.visibility = View.VISIBLE
+        } else {
+            dot.visibility = View.GONE
+        }
+
+        //Para actualizar el punto rojo en tiempo real
+        val webSocketManager = WebSocketManager.getInstance()
+        webSocketManager.listenToEvent("novedad-musical-ws") { args ->
+            runOnUiThread {
+                dot.visibility = View.VISIBLE
+                Preferencias.guardarValorBooleano("hay_notificaciones", true)
+            }
+        }
+        webSocketManager.listenToEvent("invite-to-playlist-ws") { args ->
+            runOnUiThread {
+                dot.visibility = View.VISIBLE
+                Preferencias.guardarValorBooleano("hay_notificaciones", true)
+            }
+        }
+        webSocketManager.listenToEvent("nueva-interaccion-ws") { args ->
+            runOnUiThread {
+                dot.visibility = View.VISIBLE
+                Preferencias.guardarValorBooleano("hay_notificaciones", true)
+            }
+        }
+        webSocketManager.listenToEvent("nuevo-seguidor-ws") { args ->
+            runOnUiThread {
+                dot.visibility = View.VISIBLE
+                Preferencias.guardarValorBooleano("hay_notificaciones", true)
+            }
         }
 
         // Configurar TextView para los encabezados
@@ -565,6 +606,7 @@ class Home : AppCompatActivity() {
 
     private fun setupNavigation() {
         val buttonPerfil: ImageButton = findViewById(R.id.profileImageButton)
+        val buttonNotis: ImageButton = findViewById(R.id.notificationImageButton)
         val buttonHome: ImageButton = findViewById(R.id.nav_home)
         val buttonSearch: ImageButton = findViewById(R.id.nav_search)
         val buttonCrear: ImageButton = findViewById(R.id.nav_create)
@@ -578,7 +620,10 @@ class Home : AppCompatActivity() {
                 Log.d("Login", "El usuario NO es un oyente")
                 startActivity(Intent(this, PerfilArtista::class.java))
             }
+        }
 
+        buttonNotis.setOnClickListener {
+            startActivity(Intent(this, Notificaciones::class.java))
         }
 
         buttonHome.setOnClickListener {

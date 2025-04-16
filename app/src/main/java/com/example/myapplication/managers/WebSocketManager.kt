@@ -77,4 +77,10 @@ class WebSocketManager {
         sid = null
         Log.d("WebSocket", "Desconectado web socket")
     }
+
+    fun listenToEvent(eventName: String, listener: (Array<Any>) -> Unit) {
+        socket?.on(eventName) { args ->
+            listener(args)
+        }
+    }
 }

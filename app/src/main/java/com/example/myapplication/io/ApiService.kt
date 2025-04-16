@@ -1,5 +1,6 @@
 package com.example.myapplication.io
 
+import com.example.myapplication.io.request.AceptarInvitacionRequest
 import com.example.myapplication.io.request.ActualizarFavoritoRequest
 import com.example.myapplication.io.request.AddToPlaylistRequest
 import com.example.myapplication.io.request.AudioRequest
@@ -23,17 +24,21 @@ import com.example.myapplication.io.request.CrearCancionRequest
 import com.example.myapplication.io.request.ChangeFollowRequest
 import com.example.myapplication.io.request.CreatePlaylistRequest
 import com.example.myapplication.io.request.DeleteAccountRequest
+import com.example.myapplication.io.request.DeleteNotiAlbumRequest
+import com.example.myapplication.io.request.DeleteNotiCancionRequest
 import com.example.myapplication.io.request.EditarAlbumRequest
 import com.example.myapplication.io.request.DeleteFromPlaylistRequest
 import com.example.myapplication.io.request.DeletePlaylistRequest
 import com.example.myapplication.io.request.PlaylistRequest
 import com.example.myapplication.io.request.EditarPerfilRequest
 import com.example.myapplication.io.request.InvitarPlaylistRequest
+import com.example.myapplication.io.request.LeerNotiSeguidorRequest
 import com.example.myapplication.io.request.PlayPauseRequest
 import com.example.myapplication.io.request.PlayPauseResponse
 import com.example.myapplication.io.request.UpdatePlaylistRequest
 import com.example.myapplication.io.request.ValidarArtistaRequest
 import com.example.myapplication.io.request.ValidarArtistaResponse
+import com.example.myapplication.io.request.VerInteraccionRequest
 import com.example.myapplication.io.response.ActualizarFavoritoResponse
 import com.example.myapplication.io.response.AddReproduccionResponse
 import com.example.myapplication.io.response.AudioResponse
@@ -50,9 +55,14 @@ import com.example.myapplication.io.response.GetEstadisticasPlaylistResponse
 import com.example.myapplication.io.response.GetEtiquetasResponse
 
 import com.example.myapplication.io.response.GetDatosOyenteResponse
+import com.example.myapplication.io.response.GetInteraccionesResponse
+import com.example.myapplication.io.response.GetInvitacionesResponse
 
 import com.example.myapplication.io.response.GetMisAlbumesResponse
+import com.example.myapplication.io.response.GetNovedadesResponse
+import com.example.myapplication.io.response.GetNuevosSeguidoresResponse
 import com.example.myapplication.io.response.GetSignatureResponse
+import com.example.myapplication.io.response.HayNotificacionesResponse
 import com.example.myapplication.io.response.HistorialArtistasResponse
 import com.example.myapplication.io.response.HistorialRecientesResponse
 import com.example.myapplication.io.response.LogOutResponse
@@ -61,6 +71,7 @@ import com.example.myapplication.io.response.InfoPerfilArtistaResponse
 import com.example.myapplication.io.response.PlaylistsResponse
 import com.example.myapplication.io.response.RecomendacionesResponse
 import com.example.myapplication.io.response.InfoSeguidoresResponse
+import com.example.myapplication.io.response.Interaccion
 import com.example.myapplication.io.response.MisAlbumesResponse
 import com.example.myapplication.io.response.PendientesResponse
 import com.example.myapplication.io.response.PlaylistResponse
@@ -315,7 +326,6 @@ interface ApiService {
         @Body request: UpdatePlaylistRequest
     ): Call<Void>
 
-
     @HTTP(method = "DELETE", path = "/delete-playlist", hasBody = true)
     fun deletePlaylist(
         @Header("Authorization") token: String,
@@ -326,6 +336,67 @@ interface ApiService {
     fun changePlaylistPrivacy(
         @Header("Authorization") token: String,
         @Body request: CambiarPrivacidadPlaylistRequest
+    ): Call<Void>
+
+    @GET("/get-invitaciones")
+    fun getInvitaciones(
+        @Header("Authorization") token: String
+    ): Call<GetInvitacionesResponse>
+
+    @GET("/get-novedades-musicales")
+    fun getNovedades(
+        @Header("Authorization") token: String
+    ): Call<GetNovedadesResponse>
+
+    @GET("/get-interacciones")
+    fun getInteracciones(
+        @Header("Authorization") token: String
+    ): Call<GetInteraccionesResponse>
+
+    @GET("/get-nuevos-seguidores")
+    fun getNuevosSeguidores(
+        @Header("Authorization") token: String
+    ): Call<GetNuevosSeguidoresResponse>
+
+    @GET("/has-notificaciones")
+    fun hayNotificaciones(
+        @Header("Authorization") token: String
+    ): Call<HayNotificacionesResponse>
+
+    @POST("/accept-invitacion")
+    fun aceptarInvitacionPlaylist(
+        @Header("Authorization") authHeader: String,
+        @Body request: AceptarInvitacionRequest
+    ): Call<Void>
+
+    @HTTP(method = "DELETE", path = "/delete-invitacion", hasBody = true)
+    fun rechazarInvitacionPlaylist(
+        @Header("Authorization") authHeader: String,
+        @Body request: AceptarInvitacionRequest
+    ): Call<Void>
+
+    @PATCH("/read-interacciones")
+    fun verInteraccion(
+        @Header("Authorization") authHeader: String,
+        @Body request: VerInteraccionRequest
+    ): Call<Void>
+
+    @HTTP(method = "DELETE", path = "/delete-notificacion-cancion", hasBody = true)
+    fun deleteNotificacionCancion(
+        @Header("Authorization") authHeader: String,
+        @Body request: DeleteNotiCancionRequest
+    ): Call<Void>
+
+    @HTTP(method = "DELETE", path = "/delete-notificacion-album", hasBody = true)
+    fun deleteNotificacionAlbum(
+        @Header("Authorization") authHeader: String,
+        @Body request: DeleteNotiAlbumRequest
+    ): Call<Void>
+
+    @PATCH("/read-nuevo-seguidor")
+    fun leerNotificacionSeguidor(
+        @Header("Authorization") authHeader: String,
+        @Body request: LeerNotiSeguidorRequest
     ): Call<Void>
 
     @POST("invite-to-playlist")

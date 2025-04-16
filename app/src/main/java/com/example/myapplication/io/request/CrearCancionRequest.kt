@@ -6,5 +6,6 @@ data class CrearCancionRequest (
     val audio_url: String,
     val album_id: String?,
     val tags: List<String>,
-    val artistasFt: List<String>
+    val artistasFt: List<String>,
+    val notificar: Boolean
 )

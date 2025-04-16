@@ -3,6 +3,7 @@ package com.example.myapplication.activities
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -13,6 +14,7 @@ import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.response.LoginResponse
 import com.example.myapplication.io.request.LoginRequest
 import com.example.myapplication.io.response.CancionActualResponse
+import com.example.myapplication.io.response.HayNotificacionesResponse
 import com.example.myapplication.utils.Preferencias
 import retrofit2.Call
 import retrofit2.Callback
@@ -86,7 +88,6 @@ class Login : AppCompatActivity() {
                         if(loginResponse.respuestaHTTP == 0){
                             showToast("Login existoso")
                             guardarDatosUsuario(loginResponse)
-                            navigate(loginResponse)
                         } else{
                             handleErrorCode(loginResponse.respuestaHTTP)
                         }
@@ -111,12 +112,12 @@ class Login : AppCompatActivity() {
                         }
                     }
                     showToast("Error en el login: Código ${response.code()}")
+                    Log.e("MiApp", "Error 503: ${response.body()}")
                 }
             }
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                 showToast("Error en la solicitud: ${t.message}")
-                Log.e("MiApp", "Error en la solicitud: ${t.message}")
             }
         })
     }
@@ -163,6 +164,10 @@ class Login : AppCompatActivity() {
             { message -> Log.d("WebSocket", "Mensaje recibido: $message") },
             { error -> Log.e("WebSocket", "Error de conexión: $error") }
         )
+
+        comprobarSiHayNotificaciones {
+            navigate(loginResponse)
+        }
 
     }
 
@@ -260,6 +265,51 @@ class Login : AppCompatActivity() {
             finish()
         }
 
+    }
+
+    private fun comprobarSiHayNotificaciones(onComplete: () -> Unit) {
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+
+        apiService.hayNotificaciones(authHeader).enqueue(object :
+            Callback<HayNotificacionesResponse> {
+            override fun onResponse(call: Call<HayNotificacionesResponse>, response: Response<HayNotificacionesResponse>) {
+                if (response.isSuccessful) {
+                    val respuesta = response.body()
+                    respuesta?.let {
+                        if (respuesta.invitaciones || respuesta.novedadesMusicales || respuesta.interacciones || respuesta.seguidores) {
+                            Log.d("MiApp", "dentro if grande")
+                            Preferencias.guardarValorBooleano("hay_notificaciones", true)
+                            Log.d("MiApp", "${Preferencias.obtenerValorBooleano("hay_notificaciones", false)}")
+                            if (respuesta.invitaciones) {
+                                Preferencias.guardarValorBooleano("hay_notificaciones_invitaciones", true)
+                            }
+                            if (respuesta.novedadesMusicales) {
+                                Preferencias.guardarValorBooleano("hay_notificaciones_novedades", true)
+                            }
+                            if (respuesta.interacciones) {
+                                Preferencias.guardarValorBooleano("hay_notificaciones_interacciones", true)
+                            }
+                            if (respuesta.seguidores) {
+                                Preferencias.guardarValorBooleano("hay_notificaciones_seguidores", true)
+                            }
+
+                        } else {
+                            Preferencias.guardarValorBooleano("hay_notificaciones", false)
+                            Preferencias.guardarValorBooleano("hay_notificaciones_invitaciones", false)
+                            Preferencias.guardarValorBooleano("hay_notificaciones_novedades", false)
+                            Preferencias.guardarValorBooleano("hay_notificaciones_interacciones", false)
+                            Preferencias.guardarValorBooleano("hay_notificaciones_seguidores", false)
+                        }
+                        onComplete()
+                    }
+                }
+            }
+            override fun onFailure(call: Call<HayNotificacionesResponse>, t: Throwable) {
+                Log.d("Hay Notificaciones", "Error en la solicitud: ${t.message}")
+                onComplete()
+            }
+        })
     }
 
     private fun showToast(message: String) {

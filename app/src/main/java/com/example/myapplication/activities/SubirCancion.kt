@@ -346,7 +346,7 @@ class SubirCancion : AppCompatActivity() {
 
         Log.d("Crear album", "En crear album")
 
-        val request = CrearAlbumRequest(nombreAlbum, imageUrl)
+        val request = CrearAlbumRequest(nombreAlbum, imageUrl, false)
         apiService.crearAlbum(authHeader, request).enqueue(object : Callback<CrearAlbumResponse> {
             override fun onResponse(call: Call<CrearAlbumResponse>, response: Response<CrearAlbumResponse>) {
                 if (response.isSuccessful) {
@@ -599,7 +599,7 @@ class SubirCancion : AppCompatActivity() {
         if (albumSeleccionado is MiAlbum) {
             Log.d("Crear canción", "Dentro if")
             val album = albumSeleccionado as MiAlbum
-            val request = CrearCancionRequest(nombreCancion, durationEntera, audioUrl, album.id, listaEtiquetas, feats)
+            val request = CrearCancionRequest(nombreCancion, durationEntera, audioUrl, album.id, listaEtiquetas, feats, true)
             Log.d("Crear cancion", album.id)
             apiService.crearCancion(authHeader, request).enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
