@@ -17,16 +17,18 @@ import com.example.myapplication.io.response.VerifyArtistResponse
 import com.example.myapplication.io.request.CambiarPass1Request
 import com.example.myapplication.io.request.CambiarPass2Request
 import com.example.myapplication.io.request.CambiarPass3Request
-
+import com.example.myapplication.io.request.CambiarPrivacidadPlaylistRequest
 import com.example.myapplication.io.request.CrearAlbumRequest
 import com.example.myapplication.io.request.CrearCancionRequest
 import com.example.myapplication.io.request.ChangeFollowRequest
 import com.example.myapplication.io.request.CreatePlaylistRequest
 import com.example.myapplication.io.request.DeleteAccountRequest
 import com.example.myapplication.io.request.EditarAlbumRequest
+import com.example.myapplication.io.request.DeleteFromPlaylistRequest
 import com.example.myapplication.io.request.DeletePlaylistRequest
 import com.example.myapplication.io.request.PlaylistRequest
 import com.example.myapplication.io.request.EditarPerfilRequest
+import com.example.myapplication.io.request.InvitarPlaylistRequest
 import com.example.myapplication.io.request.PlayPauseRequest
 import com.example.myapplication.io.request.PlayPauseResponse
 import com.example.myapplication.io.request.UpdatePlaylistRequest
@@ -141,7 +143,7 @@ interface ApiService {
     fun actualizarFavorito(
         @Header("Authorization") token: String,
         @Body request: ActualizarFavoritoRequest
-    ): Call<ActualizarFavoritoResponse>
+    ): Call<Void>
 
     @PUT("/add-reproduccion")
     fun addReproduccion(
@@ -320,7 +322,23 @@ interface ApiService {
         @Body request: DeletePlaylistRequest
     ): Call<Void>
 
+    @PATCH("change-privacidad")
+    fun changePlaylistPrivacy(
+        @Header("Authorization") token: String,
+        @Body request: CambiarPrivacidadPlaylistRequest
+    ): Call<Void>
 
+    @POST("invite-to-playlist")
+    fun invitePlaylist(
+        @Header("Authorization") token: String,
+        @Body request: InvitarPlaylistRequest
+    ): Call<Void>
+
+    @HTTP(method = "DELETE", path = "/delete-from-playlist", hasBody = true)
+    fun removeSongFromPlaylist(
+        @Header("Authorization") token: String,
+        @Body request: DeleteFromPlaylistRequest
+    ): Call<Void>
 
 
     companion object Factory {

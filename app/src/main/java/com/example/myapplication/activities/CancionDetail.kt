@@ -135,8 +135,8 @@ class CancionDetail : AppCompatActivity() {
         val authHeader = "Bearer $token"
 
         // Llamar al servicio API para actualizar el estado del favorito
-        apiService.actualizarFavorito(authHeader, request).enqueue(object : Callback<ActualizarFavoritoResponse> {
-            override fun onResponse(call: Call<ActualizarFavoritoResponse>, response: Response<ActualizarFavoritoResponse>) {
+        apiService.actualizarFavorito(authHeader, request).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     Toast.makeText(this@CancionDetail, "Estado de favorito actualizado", Toast.LENGTH_SHORT).show()
                     // Regresar a la pantalla anterior
@@ -149,7 +149,7 @@ class CancionDetail : AppCompatActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<ActualizarFavoritoResponse>, t: Throwable) {
+            override fun onFailure(call: Call<Void>, t: Throwable) {
                 Toast.makeText(this@CancionDetail, "Error de conexión", Toast.LENGTH_SHORT).show()
             }
         })

@@ -20,11 +20,14 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.ListView
 import android.widget.ProgressBar
+import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -37,15 +40,23 @@ import com.example.myapplication.Adapters.Playlist.CancionPAdapter
 import com.example.myapplication.Adapters.Playlist.SongPlaylistSearchAdapter
 import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.CloudinaryApiService
+import com.example.myapplication.io.request.ActualizarFavoritoRequest
 import com.example.myapplication.io.request.AddToPlaylistRequest
+import com.example.myapplication.io.request.CambiarPrivacidadPlaylistRequest
+import com.example.myapplication.io.request.DeleteFromPlaylistRequest
 import com.example.myapplication.io.request.DeletePlaylistRequest
+import com.example.myapplication.io.request.InvitarPlaylistRequest
 import com.example.myapplication.io.request.UpdatePlaylistRequest
+import com.example.myapplication.io.response.ActualizarFavoritoResponse
 import com.example.myapplication.io.response.Cancion
+import com.example.myapplication.io.response.CancionP
 import com.example.myapplication.io.response.CloudinaryResponse
 import com.example.myapplication.io.response.GetSignatureResponse
 import com.example.myapplication.io.response.PlaylistP
 import com.example.myapplication.io.response.PlaylistResponse
 import com.example.myapplication.io.response.SearchPlaylistResponse
+import com.example.myapplication.io.response.SeguidoresResponse
+import com.example.myapplication.io.response.Usuario
 import com.example.myapplication.services.MusicPlayerService
 import com.example.myapplication.utils.Preferencias
 import okhttp3.MediaType
@@ -74,6 +85,7 @@ class PlaylistDetail : AppCompatActivity() {
         }
     }
     var playlistId: String? = null
+    private var isFavorito = false
 
     private lateinit var progressBar: ProgressBar
     private var musicService: MusicPlayerService? = null
@@ -126,14 +138,24 @@ class PlaylistDetail : AppCompatActivity() {
         // Configuración del RecyclerView
         recyclerViewCanciones = findViewById(R.id.recyclerViewCanciones)
         recyclerViewCanciones.layoutManager = LinearLayoutManager(this)
-        cancionPAdapter = CancionPAdapter(listOf()) { cancion ->
-            val intent = Intent(this, CancionDetail::class.java)
-            intent.putExtra("nombre", cancion.nombre)
-            intent.putExtra("artista", cancion.nombreArtisticoArtista)
-            intent.putExtra("imagen", cancion.fotoPortada)
-            intent.putExtra("id", cancion.id)
-            startActivity(intent)
-        }
+        cancionPAdapter = CancionPAdapter(listOf(),
+            // Click normal en la canción
+            { cancion ->
+                val intent = Intent(this, CancionDetail::class.java)
+                intent.putExtra("nombre", cancion.nombre)
+                intent.putExtra("artista", cancion.nombreArtisticoArtista)
+                intent.putExtra("imagen", cancion.fotoPortada)
+                intent.putExtra("id", cancion.id)
+                startActivity(intent)
+            },
+            // Click en los 3 puntos (opciones)
+            { cancion ->
+                showSongOptionsDialog(cancion)
+            },
+            { cancion, isFavorite ->
+                actualizarFavorito(cancion.id, isFavorite)
+            }
+        )
         recyclerViewCanciones.adapter = cancionPAdapter
 
         textViewNombre.text = nombrePlaylist
@@ -156,6 +178,14 @@ class PlaylistDetail : AppCompatActivity() {
         btnAnadirCancion.setOnClickListener {
             showSearchSongDialog()
         }
+        val btnAddUser: ImageButton = findViewById(R.id.btnAddUser)
+        btnAddUser.setOnClickListener {
+            showInvitarUsuarioDialog()
+        }
+
+
+
+
 
         // Botones de navegación
         val buttonHome: ImageButton = findViewById(R.id.nav_home)
@@ -213,6 +243,7 @@ class PlaylistDetail : AppCompatActivity() {
 
             override fun onFailure(call: Call<PlaylistResponse>, t: Throwable) {
                 // Manejo de error si ocurre un fallo en la conexión
+                Log.e("MiAppPlaylist", "Error de conexión al obtener la playlist", t)
                 Toast.makeText(this@PlaylistDetail, "Error de conexión: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
@@ -367,18 +398,20 @@ class PlaylistDetail : AppCompatActivity() {
     private fun showMoreOptionsDialog() {
         Log.d("MiAppPlaylist", "Abrir diálogo de Mas opciones playlist")
 
-        val options = arrayOf("Editar lista", "Eliminar lista", "Hacer privada")
+        val privacyOption = if (currentPlaylist?.privacidad == true) "Hacer pública" else "Hacer privada"
+
+
+        val options = arrayOf("Editar lista", "Eliminar lista", privacyOption)
 
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Más opciones")
         builder.setItems(options) { _, which ->
             when (which) {
-                0 -> showEditPlaylistDialog()     // Acción para editar
-                1 -> showConfirmDeleteDialog()    // Acción para eliminar
-                2 -> makePlaylistPrivate()        // Acción para hacer privada
+                0 -> showEditPlaylistDialog()
+                1 -> showConfirmDeleteDialog()
+                2 -> changePrivacyPlaylist()
             }
         }
-
         val dialog = builder.create()
         dialog.show()
     }
@@ -635,9 +668,241 @@ class PlaylistDetail : AppCompatActivity() {
 
     }
 
-    private fun makePlaylistPrivate() {
-        // Lógica para marcar la lista como privada
+    private fun changePrivacyPlaylist() {
+        Log.d("changePrivacyPlaylist", "1")
+        val playlistId = intent.getStringExtra("id") ?: ""
+
+        val privacidadNueva = !(currentPlaylist?.privacidad ?: false)
+        val request = CambiarPrivacidadPlaylistRequest(playlistId,privacidadNueva)
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+        apiService.changePlaylistPrivacy(authHeader, request).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Log.d("changePrivacyPlaylist", "1")
+                    navigateInicio()
+                    showToast("playlist privacy cambiada")
+                } else {
+                    Log.d("changePrivacyPlaylist", "Error en la solicitud ${response.code()}")
+                    showToast("Error al cambiar privacy playlist")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.d("changePrivacyPlaylist", "Error en la solicitud2")
+                showToast("Error en la solicitud: ${t.message}")
+            }
+        })
     }
+
+    private fun showInvitarUsuarioDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_invitacion, null)
+        val searchView = dialogView.findViewById<SearchView>(R.id.searchViewSeguidores)
+        val listView = dialogView.findViewById<ListView>(R.id.listViewSeguidores)
+
+        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mutableListOf())
+        listView.adapter = adapter
+
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Invitar usuario")
+            .setView(dialogView)
+            .setNegativeButton("Cancelar", null)
+            .create()
+
+        val token = Preferencias.obtenerValorString("token", "") ?: ""
+        val authHeader = "Bearer $token"
+
+        // Llamar a la API para obtener seguidores
+        apiService.getSeguidores(authHeader).enqueue(object : Callback<SeguidoresResponse> {
+            override fun onResponse(call: Call<SeguidoresResponse>, response: Response<SeguidoresResponse>) {
+                if (response.isSuccessful) {
+                    val seguidoresResponse = response.body()
+                    val seguidores = seguidoresResponse?.seguidores ?: emptyList()
+                    val nombres = seguidores.map { it.nombreUsuario}
+
+                    adapter.clear()
+                    adapter.addAll(nombres)
+
+                    // Filtro con SearchView
+                    searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                        override fun onQueryTextSubmit(query: String?) = false
+                        override fun onQueryTextChange(newText: String?): Boolean {
+                            adapter.filter.filter(newText)
+                            return true
+                        }
+                    })
+
+                    listView.setOnItemClickListener { _, _, position, _ ->
+                        val seleccionado = adapter.getItem(position)
+                        showToast("Invitado: $seleccionado")
+                        // Aquí puedes hacer la petición para invitar
+                        if (seleccionado != null) {
+                            mandarInvitacion(seleccionado)
+                        }
+                        dialog.dismiss()
+                    }
+
+                    dialog.show()
+                } else {
+                    showToast("Error al obtener seguidores")
+                }
+            }
+
+            override fun onFailure(call: Call<SeguidoresResponse>, t: Throwable) {
+                showToast("Fallo en conexión")
+            }
+        })
+    }
+
+    private fun mandarInvitacion(usuario: String){
+        val token = Preferencias.obtenerValorString("token", "") ?: ""
+        val authHeader = "Bearer $token"
+
+        val request = InvitarPlaylistRequest(currentPlaylist,usuario)
+
+        // Llamar a la API para obtener seguidores
+        apiService.invitePlaylist(authHeader, request).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    showToast("Se ha enviado la invitacion")
+
+                } else {
+                    Log.d("changePrivacyPlaylist", "Error en la solicitud ${response.code()}")
+                    showToast("Error al enviar invitacion")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                showToast("Fallo en conexión")
+            }
+        })
+    }
+
+    private fun showSongOptionsDialog(cancion: CancionP) {
+        val options = arrayOf(
+            "Añadir a playlist",
+            "Eliminar de esta playlist",
+            "Ir al álbum",
+            "Ir al artista"
+        )
+
+        AlertDialog.Builder(this)
+            .setTitle(cancion.nombre)
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> addToPlaylist(cancion)
+                    1 -> removeFromPlaylist(cancion)
+                    2 -> goToAlbum(cancion)
+                    3 -> goToArtist(cancion)
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
+    private fun addToPlaylist(cancion: CancionP) {}
+
+
+    private fun showPlaylistSelectionDialog(cancion: CancionP, playlists: List<PlaylistP>) {}
+
+
+
+
+    private fun addSongToSelectedPlaylist(cancion: CancionP, playlistId: String) {}
+
+
+
+
+    private fun removeFromPlaylist(cancion: CancionP) {
+        AlertDialog.Builder(this)
+            .setTitle("Eliminar canción")
+            .setMessage("¿Estás seguro de que quieres eliminar '${cancion.nombre}' de esta playlist?")
+            .setPositiveButton("Eliminar") { _, _ ->
+                currentPlaylist?.let { playlistId?.let { it1 ->
+                    performRemoveFromPlaylist(cancion.id,
+                        it1
+                    )
+                } }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
+
+
+
+    private fun performRemoveFromPlaylist(cancion: String, playlist: String) {
+        val token = Preferencias.obtenerValorString("token", "") ?: ""
+        val authHeader = "Bearer $token"
+        val request = DeleteFromPlaylistRequest(cancion, playlist)
+
+        apiService.removeSongFromPlaylist(authHeader, request).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    showToast("Canción eliminada")
+                    // Actualizar la lista
+                    playlistId?.let {
+                        loadPlaylistData(
+                            it,
+                            findViewById(R.id.textViewNombrePlaylist),
+                            findViewById(R.id.textViewNumCanciones),
+                            findViewById(R.id.imageViewPlaylist))
+                    }
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "sin detalles"
+                    Log.e("PlaylistDetail", "Error en la respuesta: $errorBody")
+                    Log.e("PlaylistDetail", "Error en la respuesta: ${response.code()}")
+                    showToast("Error al eliminar canción")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                showToast("Error de conexión")
+            }
+        })
+    }
+
+
+
+    private fun goToAlbum(cancion: CancionP) {}
+
+
+
+
+    private fun goToArtist(cancion: CancionP) {}
+
+
+
+    private fun actualizarFavorito(id: String, fav: Boolean) {
+        val request = ActualizarFavoritoRequest(id, fav)
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+
+        // Llamar al servicio API para actualizar el estado del favorito
+        apiService.actualizarFavorito(authHeader, request).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    showToast("Estado de favorito actualizado")
+                    // Regresar a la pantalla anterior
+                    val resultIntent = Intent()
+                    resultIntent.putExtra("es_favorito", fav) // Devolver el nuevo estado del favorito
+                    setResult(RESULT_OK, resultIntent)
+                    finish()
+                } else {
+                    showToast( "Error al actualizar el estado")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                showToast("Error de conexión")
+                showToast("Error en la solicitud: ${t.message}")
+                Log.e("Favoritos", "Error al actualizar favorito", t)
+            }
+        })
+    }
+
+
+
 
     private fun updateMiniReproductor() {
         val songImage = findViewById<ImageView>(R.id.songImage)
@@ -652,13 +917,13 @@ class PlaylistDetail : AppCompatActivity() {
 
         // Imagen
         if (songImageUrl.isNullOrEmpty()) {
-            songImage.setImageResource(R.drawable.ic_default_song)
+            songImage.setImageResource(R.drawable.no_cancion)
         } else {
             Glide.with(this)
                 .load(songImageUrl)
                 .centerCrop()
-                .placeholder(R.drawable.ic_default_song)
-                .error(R.drawable.ic_default_song)
+                .placeholder(R.drawable.no_cancion)
+                .error(R.drawable.no_cancion)
                 .into(songImage)
         }
 
@@ -781,3 +1046,5 @@ class PlaylistDetail : AppCompatActivity() {
         finish()
     }
 }
+
+

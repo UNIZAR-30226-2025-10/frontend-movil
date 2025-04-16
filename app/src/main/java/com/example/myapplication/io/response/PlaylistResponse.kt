@@ -14,7 +14,7 @@ data class PlaylistP(
     val duracion: Int,
     val creador: String,
     val colaboradores: List<String>,
-    val privacidad: String
+    val privacidad: Boolean
 )
 
 data class CancionP(
@@ -24,7 +24,7 @@ data class CancionP(
     val featuring: List<String>,
     val reproducciones: Int,
     val duracion: Int,
-    val fav: Boolean,
+    var fav: Boolean,
     val nombreUsuarioArtista: String,
     val fotoPortada: String,
     val fecha: String
