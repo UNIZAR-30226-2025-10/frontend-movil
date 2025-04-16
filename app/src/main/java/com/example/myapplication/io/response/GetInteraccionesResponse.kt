@@ -7,6 +7,7 @@ data class GetInteraccionesResponse (
 data class Interaccion(
     val nombreUsuario: String,
     val noizzy: String,
+    val noizzito: String?,
     val texto: String,
     val tipo: String
 )

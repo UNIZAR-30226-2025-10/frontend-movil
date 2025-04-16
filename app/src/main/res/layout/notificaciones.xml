@@ -252,6 +252,63 @@
         </FrameLayout>
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/noHayInvitaciones"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No hay nuevas invitaciones"
+        android:textColor="#000e3b"
+        android:textSize="12sp"
+        android:fontFamily="@font/poppins_regular"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/botonera"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/noHayNovedades"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No hay novedades musicales"
+        android:textColor="#000e3b"
+        android:textSize="12sp"
+        android:fontFamily="@font/poppins_regular"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/botonera"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/noHayInteracciones"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No hay nuevas interacciones"
+        android:textColor="#000e3b"
+        android:textSize="12sp"
+        android:fontFamily="@font/poppins_regular"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/botonera"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/noHaySeguidores"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No hay nuevos seguidores"
+        android:textColor="#000e3b"
+        android:textSize="12sp"
+        android:fontFamily="@font/poppins_regular"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/botonera"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+
     <!-- RecyclerView 1 -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewInvitaciones"

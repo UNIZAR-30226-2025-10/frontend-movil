@@ -158,6 +158,7 @@ class Login : AppCompatActivity() {
 
         // Conectar el WebSocket después de guardar los datos del usuario
         val token = loginResponse.token ?: ""
+        Log.d("WebSocket", "Token: ${token}")
         val webSocketManager = WebSocketManager.getInstance()
 
         webSocketManager.connectWebSocket(token,
@@ -168,7 +169,6 @@ class Login : AppCompatActivity() {
         comprobarSiHayNotificaciones {
             navigate(loginResponse)
         }
-
     }
 
     private fun getMiniReproductor() {

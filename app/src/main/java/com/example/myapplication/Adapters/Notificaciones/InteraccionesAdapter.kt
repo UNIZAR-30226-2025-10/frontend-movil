@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
@@ -14,12 +15,14 @@ import com.example.myapplication.io.response.Novedad
 class InteraccionesAdapter(
     private val lista:  MutableList<Interaccion>,
     private val onAceptarClick: (Interaccion) -> Unit,
+    private val onCerrarClick: (Interaccion) -> Unit
 ) : RecyclerView.Adapter<InteraccionesAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvTitulo: TextView = view.findViewById(R.id.tvTitulo)
         val tvDescripcion: TextView = view.findViewById(R.id.tvDescripcion)
         val btnAceptar: Button = view.findViewById(R.id.btnAceptar)
+        val btnCerrar: ImageButton = view.findViewById(R.id.btnCerrar)
     }
 
     fun agregarInteraccion(interaccion: Interaccion) {
@@ -27,7 +30,7 @@ class InteraccionesAdapter(
         notifyItemInserted(lista.size - 1)
     }
 
-    fun eliminarInteraccion(interaccion: Interaccion) {
+    fun eliminarVariasInteraccion(interaccion: Interaccion) {
         val iterator = lista.iterator()
         while (iterator.hasNext()) {
             if (iterator.next().noizzy == interaccion.noizzy) {
@@ -35,6 +38,14 @@ class InteraccionesAdapter(
             }
         }
         notifyDataSetChanged()
+    }
+
+    fun eliminarInteraccion(interaccion: Interaccion) {
+        val index = lista.indexOf(interaccion)
+        if (index != -1) {
+            lista.removeAt(index)
+            notifyItemRemoved(index)
+        }
     }
 
 
@@ -58,6 +69,10 @@ class InteraccionesAdapter(
 
         holder.btnAceptar.setOnClickListener {
             onAceptarClick(notificacion)
+        }
+
+        holder.btnCerrar.setOnClickListener {
+            onCerrarClick(notificacion)
         }
 
     }

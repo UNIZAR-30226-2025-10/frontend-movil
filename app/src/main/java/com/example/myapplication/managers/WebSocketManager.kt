@@ -1,4 +1,5 @@
 import android.util.Log
+import com.example.myapplication.services.WebSocketEventHandler
 import com.example.myapplication.utils.Preferencias
 import io.socket.client.IO
 import io.socket.client.Socket
@@ -34,13 +35,15 @@ class WebSocketManager {
             options.extraHeaders = mapOf("Authorization" to listOf("Bearer $token"))
 
             //socket = IO.socket("http://172.20.10.4:5000", options)
-            socket = IO.socket("http://api-noizz.onrender.com", options)
+            socket = IO.socket("https://api-noizz.onrender.com", options)
+            //socket = IO.socket("http://192.168.0.62:5000", options)
             //socket = IO.socket("http://192.1.65.102:5000", options)
 
             // Evento de conexión
             socket?.on(Socket.EVENT_CONNECT) {
                 sid = socket?.id() // Guardamos el SID
                 Preferencias.guardarValorString("sid", sid ?: "")
+                WebSocketEventHandler.init()
                 Log.d("WebSocket", "Conectado al servidor con SID: $sid")
             }
 

@@ -32,6 +32,8 @@ import com.example.myapplication.io.request.DeletePlaylistRequest
 import com.example.myapplication.io.request.PlaylistRequest
 import com.example.myapplication.io.request.EditarPerfilRequest
 import com.example.myapplication.io.request.InvitarPlaylistRequest
+import com.example.myapplication.io.request.LeerNotiLikeRequest
+import com.example.myapplication.io.request.LeerNotiNoizzitoRequest
 import com.example.myapplication.io.request.LeerNotiSeguidorRequest
 import com.example.myapplication.io.request.PlayPauseRequest
 import com.example.myapplication.io.request.PlayPauseResponse
@@ -409,6 +411,18 @@ interface ApiService {
     fun removeSongFromPlaylist(
         @Header("Authorization") token: String,
         @Body request: DeleteFromPlaylistRequest
+    ): Call<Void>
+
+    @PATCH("/read-like")
+    fun leerNotificacionLike(
+        @Header("Authorization") authHeader: String,
+        @Body request: LeerNotiLikeRequest
+    ): Call<Void>
+
+    @PATCH("/read-noizzito")
+    fun leerNotificacionNoizzito(
+        @Header("Authorization") authHeader: String,
+        @Body request: LeerNotiNoizzitoRequest
     ): Call<Void>
 
 

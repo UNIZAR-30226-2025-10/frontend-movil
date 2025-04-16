@@ -51,7 +51,12 @@ import com.example.myapplication.io.response.HArtistas
 import com.example.myapplication.io.response.HRecientes
 import com.example.myapplication.io.response.HayNotificacionesResponse
 import com.example.myapplication.io.response.HistorialArtistasResponse
+import com.example.myapplication.io.response.Interaccion
+import com.example.myapplication.io.response.InvitacionPlaylist
+import com.example.myapplication.io.response.Novedad
+import com.example.myapplication.io.response.Seguidor
 import com.example.myapplication.services.MusicPlayerService
+import com.example.myapplication.services.WebSocketEventHandler
 import org.json.JSONObject
 
 
@@ -107,6 +112,33 @@ class Home : AppCompatActivity() {
 
     private var isDataLoaded = false
 
+    //EVENTOS PARA LAS NOTIFICACIONES
+    private val listenerNovedad: (Novedad) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
+    private val listenerSeguidor: (Seguidor) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
+    private val listenerInvitacion: (InvitacionPlaylist) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
+    private val listenerInteraccion: (Interaccion) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_bueno)
@@ -144,32 +176,12 @@ class Home : AppCompatActivity() {
             dot.visibility = View.GONE
         }
 
-        //Para actualizar el punto rojo en tiempo real
-        val webSocketManager = WebSocketManager.getInstance()
-        webSocketManager.listenToEvent("novedad-musical-ws") { args ->
-            runOnUiThread {
-                dot.visibility = View.VISIBLE
-                Preferencias.guardarValorBooleano("hay_notificaciones", true)
-            }
-        }
-        webSocketManager.listenToEvent("invite-to-playlist-ws") { args ->
-            runOnUiThread {
-                dot.visibility = View.VISIBLE
-                Preferencias.guardarValorBooleano("hay_notificaciones", true)
-            }
-        }
-        webSocketManager.listenToEvent("nueva-interaccion-ws") { args ->
-            runOnUiThread {
-                dot.visibility = View.VISIBLE
-                Preferencias.guardarValorBooleano("hay_notificaciones", true)
-            }
-        }
-        webSocketManager.listenToEvent("nuevo-seguidor-ws") { args ->
-            runOnUiThread {
-                dot.visibility = View.VISIBLE
-                Preferencias.guardarValorBooleano("hay_notificaciones", true)
-            }
-        }
+        //Para actualizar el punto rojo en tiempo real, suscripcion a los eventos
+        WebSocketEventHandler.registrarListenerNovedad(listenerNovedad)
+        WebSocketEventHandler.registrarListenerSeguidor(listenerSeguidor)
+        WebSocketEventHandler.registrarListenerInvitacion(listenerInvitacion)
+        WebSocketEventHandler.registrarListenerInteraccion(listenerInteraccion)
+
 
         // Configurar TextView para los encabezados
         headerRecientesTextView = findViewById(R.id.textViewHeadersRecientes)
@@ -650,6 +662,14 @@ class Home : AppCompatActivity() {
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        WebSocketEventHandler.eliminarListenerNovedad(listenerNovedad)
+        WebSocketEventHandler.eliminarListenerSeguidor(listenerSeguidor)
+        WebSocketEventHandler.eliminarListenerInvitacion(listenerInvitacion)
+        WebSocketEventHandler.eliminarListenerInteraccion(listenerInteraccion)
     }
 
 }
