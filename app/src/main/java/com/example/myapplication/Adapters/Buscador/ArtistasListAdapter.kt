@@ -28,6 +28,7 @@ class ArtistaAdapter(private var listaArtistas: List<Artista>) : RecyclerView.Ad
         holder.nombreArtista.text = artista.nombreArtistico
         Glide.with(holder.itemView.context)
             .load(artista.fotoPerfil)
+            .circleCrop()
             .into(holder.imagenArtista)
     }
 

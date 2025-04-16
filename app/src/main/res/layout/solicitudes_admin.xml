@@ -14,23 +14,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Solicitudes en Revisión"
-            android:textSize="22sp"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="30sp"
             android:textStyle="bold"
-            android:gravity="center"
             android:textColor="@color/fondo"
             android:layout_centerHorizontal="true"
-            android:paddingBottom="16dp"
-            android:layout_marginTop="52dp"/>
+            android:paddingBottom="10dp"
+            android:layout_marginTop="65dp"/>
 
         <Button
             android:id="@+id/btnLogout"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="45dp"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="-12dp"
             android:backgroundTint="@color/fondo"
-            android:text="Logout"
-            android:textColor="@color/white" />
+            android:paddingHorizontal="15dp"
+            android:text="Cerrar Sesión"
+            android:textAllCaps="false"
+            android:background="@drawable/rounded_button"
+            android:textColor="@color/white"
+            android:layout_margin="10dp"/>
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView

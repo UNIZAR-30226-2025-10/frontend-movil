@@ -1,6 +1,7 @@
 package com.example.myapplication.Adapters.Buscador
 
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.myapplication.R
 import com.example.myapplication.io.response.*
 
@@ -33,6 +35,16 @@ class CancionAdapter(
         Log.d("MiApp", "Cancion detalle id: ${cancion.id}")
         Glide.with(holder.itemView.context)
             .load(cancion.fotoPortada)
+            .centerCrop()
+            .transform(
+                RoundedCorners(
+                TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    12f,
+                    holder.itemView.context.resources.displayMetrics
+                ).toInt()
+            )
+            )
             .into(holder.imagenCancion)
 
         // Corrección: Se pasa una lambda en lugar de ejecutar la función

@@ -20,6 +20,8 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -48,22 +50,24 @@ class Buscador : AppCompatActivity() {
     private lateinit var recyclerViewAlbum: RecyclerView
     private lateinit var recyclerViewPlaylist: RecyclerView
     private lateinit var recyclerViewPerfil: RecyclerView
-    private lateinit var headerCancionesRecyclerView: RecyclerView
-    private lateinit var headerArtistasRecyclerView: RecyclerView
-    private lateinit var headerAlbumesRecyclerView: RecyclerView
-    private lateinit var headerPlaylistsRecyclerView: RecyclerView
-    private lateinit var headerPerfilesRecyclerView: RecyclerView
+    private lateinit var headerCancionesTextView: TextView
+    private lateinit var headerArtistasTextView: TextView
+    private lateinit var headerAlbumesTextView: TextView
+    private lateinit var headerPlaylistsTextView: TextView
+    private lateinit var headerPerfilesTextView: TextView
     private lateinit var cancionAdapter: CancionAdapter
     private lateinit var artistaAdapter: ArtistaAdapter
     private lateinit var albumAdapter: AlbumAdapter
     private lateinit var playlistAdapter: PlaylistAdapter
     private lateinit var perfilAdapter: PerfilAdapter
     private lateinit var apiService: ApiService
-    private lateinit var checkCanciones: CheckBox
-    private lateinit var checkArtistas: CheckBox
-    private lateinit var checkAlbumes: CheckBox
-    private lateinit var checkPlaylists: CheckBox
-    private lateinit var checkPerfiles: CheckBox
+    private lateinit var radioOptions: RadioGroup
+    private lateinit var radioTodos: RadioButton
+    private lateinit var radioCanciones: RadioButton
+    private lateinit var radioArtistas: RadioButton
+    private lateinit var radioAlbumes: RadioButton
+    private lateinit var radioPlaylists: RadioButton
+    private lateinit var radioPerfiles: RadioButton
 
     private lateinit var progressBar: ProgressBar
     private var musicService: MusicPlayerService? = null
@@ -120,40 +124,20 @@ class Buscador : AppCompatActivity() {
         }
 
         // Configurar RecyclerView para los encabezados
-        val headersCanciones = listOf("Canciones")
-        val headerCancionesAdapter = HeaderAdapter(headersCanciones)
-        headerCancionesRecyclerView = findViewById(R.id.recyclerViewHeadersCanciones)
-        headerCancionesRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        headerCancionesRecyclerView.adapter = headerCancionesAdapter
-        headerCancionesRecyclerView.visibility = View.INVISIBLE
+        headerCancionesTextView = findViewById(R.id.textViewHeaderCanciones)
+        headerCancionesTextView.visibility = View.INVISIBLE
 
-        val headersAlbumes = listOf("Álbumes")
-        val headeAlbumesAdapter = HeaderAdapter(headersAlbumes)
-        headerAlbumesRecyclerView = findViewById(R.id.recyclerViewHeadersÁlbumes)
-        headerAlbumesRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        headerAlbumesRecyclerView.adapter = headeAlbumesAdapter
-        headerAlbumesRecyclerView.visibility = View.INVISIBLE
+        headerAlbumesTextView = findViewById(R.id.textViewHeaderAlbumes)
+        headerAlbumesTextView.visibility = View.INVISIBLE
 
-        val headersArtistas = listOf("Artistas")
-        val headerArtistasAdapter = HeaderAdapter(headersArtistas)
-        headerArtistasRecyclerView = findViewById(R.id.recyclerViewHeadersArtistas)
-        headerArtistasRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        headerArtistasRecyclerView.adapter = headerArtistasAdapter
-        headerArtistasRecyclerView.visibility = View.INVISIBLE
+        headerArtistasTextView = findViewById(R.id.textViewHeaderArtistas)
+        headerArtistasTextView.visibility = View.INVISIBLE
 
-        val headersPlaylists = listOf("Playlists")
-        val headerPlaylistsAdapter = HeaderAdapter(headersPlaylists)
-        headerPlaylistsRecyclerView = findViewById(R.id.recyclerViewHeadersPlaylists)
-        headerPlaylistsRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        headerPlaylistsRecyclerView.adapter = headerPlaylistsAdapter
-        headerPlaylistsRecyclerView.visibility = View.INVISIBLE
+        headerPlaylistsTextView = findViewById(R.id.textViewHeaderPlaylists)
+        headerPlaylistsTextView.visibility = View.INVISIBLE
 
-        val headersPerfiles = listOf("Perfiles")
-        val headerPerfilesAdapter = HeaderAdapter(headersPerfiles)
-        headerPerfilesRecyclerView = findViewById(R.id.recyclerViewHeadersPerfiles)
-        headerPerfilesRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        headerPerfilesRecyclerView.adapter = headerPerfilesAdapter
-        headerPerfilesRecyclerView.visibility = View.INVISIBLE
+        headerPerfilesTextView = findViewById(R.id.textViewHeaderPerfiles)
+        headerPerfilesTextView.visibility = View.INVISIBLE
 
         searchEditText = findViewById(R.id.searchInput)
         recyclerViewCancion = findViewById(R.id.recyclerViewCanciones)
@@ -217,22 +201,22 @@ class Buscador : AppCompatActivity() {
             override fun afterTextChanged(editable: Editable?) {}
         })
 
-        checkCanciones = findViewById(R.id.checkCanciones)
-        checkArtistas = findViewById(R.id.checkArtistas)
-        checkAlbumes = findViewById(R.id.checkAlbumes)
-        checkPlaylists = findViewById(R.id.checkPlaylists)
-        checkPerfiles = findViewById(R.id.checkPerfiles)
+        radioOptions = findViewById(R.id.radioGroupFiltros)
+        radioTodos = findViewById(R.id.radioTodo)
+        radioCanciones = findViewById(R.id.radioCanciones)
+        radioArtistas = findViewById(R.id.radioArtistas)
+        radioAlbumes = findViewById(R.id.radioAlbumes)
+        radioPlaylists = findViewById(R.id.radioPlaylists)
+        radioPerfiles = findViewById(R.id.radioPerfiles)
 
         progressBar = findViewById(R.id.progressBar)
         setupNavigation()
         updateMiniReproductor()
 
-        // Configurar eventos de cambio en los CheckBox para actualizar la vista
-        val checkBoxes = listOf(checkCanciones, checkArtistas, checkAlbumes, checkPlaylists, checkPerfiles)
-        for (checkBox in checkBoxes) {
-            checkBox.setOnCheckedChangeListener { _, _ ->
-                aplicarFiltros()
-            }
+        // Configurar eventos de cambio en el radioGroup para actualizar la vista
+        radioOptions.setOnCheckedChangeListener { _, _ ->
+            // Llamas a tu función que actualiza la vista
+            aplicarFiltros()
         }
     }
 
@@ -267,24 +251,16 @@ class Buscador : AppCompatActivity() {
     }
 
     private fun aplicarFiltros() {
-        val todosDesmarcados = !(checkCanciones.isChecked || checkArtistas.isChecked ||
-                checkAlbumes.isChecked || checkPlaylists.isChecked || checkPerfiles.isChecked)
-
-        // Si todos están desmarcados, mostrar todas las categorías
-        recyclerViewCancion.visibility = if (todosDesmarcados || checkCanciones.isChecked) View.VISIBLE else View.GONE
-        headerCancionesRecyclerView.visibility = if (todosDesmarcados || checkCanciones.isChecked) View.VISIBLE else View.GONE
-
-        recyclerViewArtista.visibility = if (todosDesmarcados || checkArtistas.isChecked) View.VISIBLE else View.GONE
-        headerArtistasRecyclerView.visibility = if (todosDesmarcados || checkArtistas.isChecked) View.VISIBLE else View.GONE
-
-        recyclerViewAlbum.visibility = if (todosDesmarcados || checkAlbumes.isChecked) View.VISIBLE else View.GONE
-        headerAlbumesRecyclerView.visibility = if (todosDesmarcados || checkAlbumes.isChecked) View.VISIBLE else View.GONE
-
-        recyclerViewPlaylist.visibility = if (todosDesmarcados || checkPlaylists.isChecked) View.VISIBLE else View.GONE
-        headerPlaylistsRecyclerView.visibility = if (todosDesmarcados || checkPlaylists.isChecked) View.VISIBLE else View.GONE
-
-        recyclerViewPerfil.visibility = if (todosDesmarcados || checkPerfiles.isChecked) View.VISIBLE else View.GONE
-        headerPerfilesRecyclerView.visibility = if (todosDesmarcados || checkPerfiles.isChecked) View.VISIBLE else View.GONE
+        recyclerViewCancion.visibility = if ((radioTodos.isChecked || radioCanciones.isChecked) && cancionAdapter.itemCount > 0) View.VISIBLE else View.GONE
+        recyclerViewArtista.visibility = if ((radioTodos.isChecked || radioArtistas.isChecked) && artistaAdapter.itemCount > 0) View.VISIBLE else View.GONE
+        recyclerViewAlbum.visibility = if ((radioTodos.isChecked || radioAlbumes.isChecked) && albumAdapter.itemCount > 0) View.VISIBLE else View.GONE
+        recyclerViewPlaylist.visibility = if ((radioTodos.isChecked || radioPlaylists.isChecked) && playlistAdapter.itemCount > 0) View.VISIBLE else View.GONE
+        recyclerViewPerfil.visibility = if ((radioTodos.isChecked || radioPerfiles.isChecked) && perfilAdapter.itemCount > 0) View.VISIBLE else View.GONE
+        headerCancionesTextView.visibility = if ((radioTodos.isChecked || radioCanciones.isChecked) && cancionAdapter.itemCount > 0) View.VISIBLE else View.GONE
+        headerArtistasTextView.visibility = if ((radioTodos.isChecked || radioArtistas.isChecked) && artistaAdapter.itemCount > 0) View.VISIBLE else View.GONE
+        headerAlbumesTextView.visibility = if ((radioTodos.isChecked || radioAlbumes.isChecked) && albumAdapter.itemCount > 0) View.VISIBLE else View.GONE
+        headerPlaylistsTextView.visibility = if ((radioTodos.isChecked || radioPlaylists.isChecked) && playlistAdapter.itemCount > 0) View.VISIBLE else View.GONE
+        headerPerfilesTextView.visibility = if ((radioTodos.isChecked || radioPerfiles.isChecked) && perfilAdapter.itemCount > 0) View.VISIBLE else View.GONE
     }
 
     private fun setupNavigation() {
