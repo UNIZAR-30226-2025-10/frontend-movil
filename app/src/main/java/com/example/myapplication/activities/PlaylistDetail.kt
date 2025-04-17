@@ -37,6 +37,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.Adapters.Playlist.CancionPAdapter
+import com.example.myapplication.Adapters.Playlist.PlaylistSelectionAdapter
 import com.example.myapplication.Adapters.Playlist.SongPlaylistSearchAdapter
 import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.CloudinaryApiService
@@ -52,8 +53,10 @@ import com.example.myapplication.io.response.Cancion
 import com.example.myapplication.io.response.CancionP
 import com.example.myapplication.io.response.CloudinaryResponse
 import com.example.myapplication.io.response.GetSignatureResponse
+import com.example.myapplication.io.response.MisPlaylist
 import com.example.myapplication.io.response.PlaylistP
 import com.example.myapplication.io.response.PlaylistResponse
+import com.example.myapplication.io.response.PlaylistsResponse
 import com.example.myapplication.io.response.SearchPlaylistResponse
 import com.example.myapplication.io.response.SeguidoresResponse
 import com.example.myapplication.io.response.Usuario
@@ -139,7 +142,6 @@ class PlaylistDetail : AppCompatActivity() {
         recyclerViewCanciones = findViewById(R.id.recyclerViewCanciones)
         recyclerViewCanciones.layoutManager = LinearLayoutManager(this)
         cancionPAdapter = CancionPAdapter(listOf(),
-            // Click normal en la canción
             { cancion ->
                 val intent = Intent(this, CancionDetail::class.java)
                 intent.putExtra("nombre", cancion.nombre)
@@ -148,7 +150,6 @@ class PlaylistDetail : AppCompatActivity() {
                 intent.putExtra("id", cancion.id)
                 startActivity(intent)
             },
-            // Click en los 3 puntos (opciones)
             { cancion ->
                 showSongOptionsDialog(cancion)
             },
@@ -800,17 +801,99 @@ class PlaylistDetail : AppCompatActivity() {
             .show()
     }
 
-    private fun addToPlaylist(cancion: CancionP) {}
+    private fun addToPlaylist(cancion: CancionP) {
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+
+        apiService.getMisPlaylists(authHeader).enqueue(object : Callback<PlaylistsResponse> {
+            override fun onResponse(call: Call<PlaylistsResponse>, response: Response<PlaylistsResponse>) {
+                if (response.isSuccessful) {
+                    val playlists = response.body()
+                    // Filtrar la playlist actual para no mostrarla
+                    val filteredPlaylists = playlists?.playlists?.filter { it.id != playlistId }
+                    if (filteredPlaylists != null) {
+                        showPlaylistSelectionDialog(cancion, filteredPlaylists)
+                    }
+                } else {
+                    showToast("Error al obtener tus playlists")
+                }
+            }
+
+            override fun onFailure(call: Call<PlaylistsResponse>, t: Throwable) {
+                showToast("Error de conexión: ${t.message}")
+            }
+        })
+    }
 
 
-    private fun showPlaylistSelectionDialog(cancion: CancionP, playlists: List<PlaylistP>) {}
+    private fun showPlaylistSelectionDialog(cancion: CancionP, playlists: List<MisPlaylist>) {
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.dialog_select_playlist)
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val searchView = dialog.findViewById<SearchView>(R.id.searchViewPlaylists)
+        val recyclerView = dialog.findViewById<RecyclerView>(R.id.recyclerViewPlaylists)
+        val btnCancel = dialog.findViewById<Button>(R.id.btnCancel)
+
+        // Configurar el adaptador
+        val adapter = PlaylistSelectionAdapter(playlists) { selectedPlaylist ->
+            addSongToSelectedPlaylist(cancion, selectedPlaylist.id)
+            dialog.dismiss()
+        }
+
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = adapter
+
+        // Configurar el buscador
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = false
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                adapter.filter.filter(newText)
+                return true
+            }
+        })
+
+        btnCancel.setOnClickListener { dialog.dismiss() }
+
+        dialog.show()
+    }
 
 
 
 
-    private fun addSongToSelectedPlaylist(cancion: CancionP, playlistId: String) {}
+    private fun addSongToSelectedPlaylist(cancion: CancionP, playlistId: String) {
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+        val request = AddToPlaylistRequest(cancion.id, playlistId)
 
+        apiService.addSongToPlaylist(authHeader, request).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                when {
+                    response.isSuccessful -> {
+                        showToast("Canción añadida a la playlist")
+                    }
+                    response.code() == 403 -> {
+                        showToast("No tienes permiso para añadir canciones a esta playlist")
+                    }
+                    response.code() == 404 -> {
+                        showToast("La playlist no existe")
+                    }
+                    response.code() == 409 -> {
+                        showToast("Esta canción ya está en la playlist")
+                    }
+                    else -> {
+                        showToast("Error al añadir canción")
+                    }
+                }
+            }
 
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                showToast("Error de conexión: ${t.message}")
+            }
+        })
+    }
 
 
     private fun removeFromPlaylist(cancion: CancionP) {
@@ -869,7 +952,12 @@ class PlaylistDetail : AppCompatActivity() {
 
 
 
-    private fun goToArtist(cancion: CancionP) {}
+    private fun goToArtist(cancion: CancionP) {
+        val intent = Intent(this, OtroArtista::class.java)
+        Log.d("GoToArtist", "Navegando al artista con nombre de usuario: ${cancion.nombreUsuarioArtista}")
+        intent.putExtra("nombreUsuario", cancion.nombreUsuarioArtista)
+        startActivity(intent)
+    }
 
 
 

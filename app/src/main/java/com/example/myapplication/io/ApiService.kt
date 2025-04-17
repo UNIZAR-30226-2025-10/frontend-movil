@@ -52,8 +52,11 @@ import com.example.myapplication.io.response.BuscadorResponse
 import com.example.myapplication.io.response.CrearAlbumResponse
 import com.example.myapplication.io.response.CancionActualResponse
 import com.example.myapplication.io.response.CancionInfoResponse
+import com.example.myapplication.io.response.CancionesArtistaResponse
+import com.example.myapplication.io.response.DatosArtistaResponse
 import com.example.myapplication.io.response.DeleteAccountResponse
 import com.example.myapplication.io.response.DeleteAlbumResponse
+import com.example.myapplication.io.response.DiscografiaAlbumArtistaResponse
 import com.example.myapplication.io.response.EditarPerfilResponse
 
 import com.example.myapplication.io.response.EstadisticasAlbumResponse
@@ -81,8 +84,10 @@ import com.example.myapplication.io.response.InfoSeguidoresResponse
 import com.example.myapplication.io.response.Interaccion
 import com.example.myapplication.io.response.MisAlbumesResponse
 import com.example.myapplication.io.response.MisNoizzysResponse
+import com.example.myapplication.io.response.NumFavoritasArtistaResponse
 import com.example.myapplication.io.response.PendientesResponse
 import com.example.myapplication.io.response.PlaylistResponse
+import com.example.myapplication.io.response.PopularesArtistaResponse
 import com.example.myapplication.io.response.SearchPlaylistResponse
 import com.example.myapplication.io.response.SeguidoresResponse
 import com.example.myapplication.io.response.SeguidosResponse
@@ -467,8 +472,37 @@ interface ApiService {
     ): Call<Void>
 
 
+    @GET("/get-datos-artista")
+    fun getDatosArtista(
+        @Header("Authorization") token: String,
+        @Query("nombreUsuario") nombreUsuario: String
+    ): Call<DatosArtistaResponse>
 
+    @GET("/get-canciones-populares")
+    fun getCancionesPopulares(
+        @Header("Authorization") token: String,
+        @Query("nombreUsuario") nombreUsuario: String
+    ): Call<PopularesArtistaResponse>
 
+    @GET("get-numero-canciones-favoritas")
+    fun getNumeroCancionesFavoritas(
+        @Header("Authorization") token: String,
+        @Query("nombreUsuario") nombreUsuario: String
+    ): Call<NumFavoritasArtistaResponse>
+
+    @GET("get-albumes")
+    fun albumesArtista(
+        @Header("Authorization") token: String,
+        @Query("nombreUsuario") nombreUsuario: String
+    ): Call<DiscografiaAlbumArtistaResponse>
+
+    @GET("get-canciones")
+    fun cancionesArtista(
+        @Header("Authorization") token: String,
+        @Query("nombreUsuario") nombreUsuario: String
+    ): Call<CancionesArtistaResponse>
+
+    
     companion object Factory {
         private const val BASE_URL = "https://api-noizz.onrender.com" // URL de la API
         //private const val BASE_URL = "http://192.168.0.62:5000"

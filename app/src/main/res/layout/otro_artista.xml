@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#DDDCDC"
+    android:fillViewport="true"
+    tools:context=".activities.OtroArtista">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- Toolbar -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:background="#000e3b"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/toolbar_logo"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/logo"
+                    android:src="@drawable/logo" />
+
+                <ImageButton
+                    android:id="@+id/notificationImageButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="92dp"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="Notificaciones"
+                    android:padding="4dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/notification" />
+
+                <ImageButton
+                    android:id="@+id/profileImageButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="21dp"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="Perfil"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_profile" />
+            </RelativeLayout>
+        </androidx.appcompat.widget.Toolbar>
+
+        <!-- ScrollView -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/toolbar"
+            android:background="#DDDCDC"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Profile Section -->
+                <LinearLayout
+                    android:id="@+id/profileSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#F4F4F4"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/profileImage"
+                            android:layout_width="90dp"
+                            android:layout_height="90dp"
+                            android:background="@drawable/circle_background"
+                            android:contentDescription="Foto de perfil"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_profile" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingLeft="16dp">
+
+                            <TextView
+                                android:id="@+id/artisticname"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:fontFamily="@font/poppins_bold"
+                                android:textColor="#000E3B"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/biografia"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/poppins_regular"
+                                android:textColor="#000E3B"
+                                android:textSize="18sp" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/followers"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginRight="12dp"
+                                    android:fontFamily="@font/poppins_regular"
+                                    android:text="0 seguidores"
+                                    android:textColor="#000E3B"
+                                    android:textSize="14sp" />
+
+                                <Button
+                                    android:id="@+id/seguir"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="30dp"
+                                    android:background="@drawable/rounded_button"
+                                    android:fontFamily="@font/poppins_bold"
+                                    android:paddingStart="10dp"
+                                    android:paddingEnd="10dp"
+                                    android:text="Seguir"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="12sp" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Botón "Ver Noizzys" -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <Button
+                        android:id="@+id/noizzys"
+                        android:layout_width="wrap_content"
+                        android:layout_height="37dp"
+                        android:background="@drawable/rounded_button"
+                        android:fontFamily="@font/poppins_bold"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:layout_marginEnd="12dp"
+                        android:text="Ver Noizzys"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <!-- Título "Populares" -->
+                <TextView
+                    android:id="@+id/textViewHeadersAlbums"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_bold"
+                    android:paddingStart="16dp"
+                    android:paddingTop="16dp"
+                    android:text="Populares"
+                    android:textColor="#000E3B"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <!-- RecyclerView para álbumes -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewPopulares"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    tools:ignore="NotSibling" />
+
+                <TextView
+                    android:id="@+id/cancionesLike"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_bold"
+                    android:paddingStart="16dp"
+                    android:paddingTop="16dp"
+                    android:text="Canciones que te gustan"
+                    android:textColor="#000E3B"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/likeSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <ImageButton
+                            android:id="@+id/profileImage2"
+                            android:layout_width="90dp"
+                            android:layout_height="90dp"
+                            android:background="@drawable/circle_background"
+                            android:contentDescription="Foto de perfil"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_profile" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingLeft="16dp">
+
+                            <TextView
+                                android:id="@+id/numCanciones"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:textColor="#000E3B"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/artistaLike"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/poppins_bold"
+                                android:textColor="#000E3B"
+                                android:textSize="18sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/discografia"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_bold"
+                    android:paddingStart="16dp"
+                    android:paddingTop="16dp"
+                    android:text="Discografía"
+                    android:textColor="#000E3B"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <!-- Grupo de botones -->
+                <RadioGroup
+                    android:id="@+id/radioGroupDiscografia"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="16dp">
+
+                    <RadioButton
+                        android:id="@+id/cancionesArtista"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/radio_selector"
+                        android:button="@null"
+                        android:checked="true"
+                        android:fontFamily="@font/poppins_regular"
+                        android:gravity="center_vertical"
+                        android:paddingHorizontal="12dp"
+                        android:text="Canciones"
+                        android:textColor="@color/radio_text_selector" />
+
+                    <RadioButton
+                        android:id="@+id/discosEPs"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/radio_selector"
+                        android:button="@null"
+                        android:checked="false"
+                        android:fontFamily="@font/poppins_regular"
+                        android:gravity="center_vertical"
+                        android:paddingHorizontal="12dp"
+                        android:text="Discos y EPs"
+                        android:textColor="@color/radio_text_selector" />
+                </RadioGroup>
+
+                <!-- RecyclerView horizontal para Discografía -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewDiscografia"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    tools:ignore="NotSibling" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewCanciones"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    tools:ignore="NotSibling" />
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <!-- Mini Player -->
+    <LinearLayout
+        android:id="@+id/miniPlayer"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_above="@id/bottomNavigation"
+        android:background="@color/blueNuestro"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <!-- Imagen de la canción -->
+        <ImageView
+            android:id="@+id/songImage"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:contentDescription="Portada de la canción"
+            android:scaleType="centerCrop" />
+
+        <!-- Información de la canción -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingStart="8dp">
+
+            <TextView
+                android:id="@+id/songTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Nombre de la Canción"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/songArtist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Artista"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp" />
+
+            <!-- Barra de progreso de reproducción -->
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:backgroundTint="#555555"
+                android:progress="40"
+                android:progressTint="#1DB954" />
+        </LinearLayout>
+
+        <!-- Botón de stop -->
+        <ImageButton
+            android:id="@+id/stopButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Detener"
+            android:src="@android:drawable/ic_media_play"
+            app:tint="#FFFFFF" />
+    </LinearLayout>
+
+    <!-- Navigation Bar en la parte inferior -->
+    <LinearLayout
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:layout_alignParentBottom="true"
+        android:background="#000e3b"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="7dp">
+
+        <LinearLayout
+            android:id="@+id/home_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#000e3b"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <!-- Botón Home -->
+            <ImageButton
+                android:id="@+id/nav_home"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:contentDescription="Home"
+                android:src="@drawable/ic_home"
+                app:tint="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/homeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Home"
+                android:textColor="#B3B3B3"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/search_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#000e3b"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <!-- Botón Buscar -->
+            <ImageButton
+                android:id="@+id/nav_search"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:contentDescription="Buscar"
+                android:src="@drawable/ic_search"
+                app:tint="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/searchText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Buscar"
+                android:textColor="#B3B3B3"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/create_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#000e3b"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <!-- Botón Crear -->
+            <ImageButton
+                android:id="@+id/nav_create"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:contentDescription="Crear"
+                android:src="@drawable/ic_add"
+                app:tint="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/createText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Crear Playlist"
+                android:textColor="#B3B3B3"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/noizzys_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#000e3b"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <!-- Botón Noizzys -->
+            <ImageButton
+                android:id="@+id/nav_noizzys"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:contentDescription="Noizzys"
+                android:scaleType="fitCenter"
+                android:src="@drawable/noizzy"
+                app:tint="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/noizzysText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Mis Noizzys"
+                android:textColor="#B3B3B3"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

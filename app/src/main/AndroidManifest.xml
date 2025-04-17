@@ -170,7 +170,10 @@
             android:exported="false"
             android:theme="@style/Theme.MyApplication"/>
 
-        <activity android:name=".activities.MisNoizzys"
+
+        <activity android:name=".activities.MisNoizzys"></activity>
+
+        <activity android:name=".activities.OtroArtista"
             android:exported="false"
             android:theme="@style/Theme.MyApplication"/>
 

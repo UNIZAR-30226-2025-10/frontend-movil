@@ -46,31 +46,39 @@ class CancionPAdapter(
 
         fun bind(cancion: CancionP) {
             nombreCancion.text = cancion.nombre
-            artistaCancion.text = cancion.nombreArtisticoArtista
-            Log.d("MiApp", "Cancion detalle id: ${cancion.id}")
+            val featuringText = if (cancion.featuring.isNotEmpty()) {
+                " ft. ${cancion.featuring.joinToString(", ")}"
+            } else {
+                ""
+            }
+            artistaCancion.text = cancion.nombreArtisticoArtista + featuringText
 
             Glide.with(itemView.context)
                 .load(cancion.fotoPortada)
                 .into(imagenCancion)
 
+            // Mostrar el estado actual de favorito
+            btnFavorite.setImageResource(
+                if (cancion.fav) R.drawable.ic_heart_lleno
+                else R.drawable.ic_heart_vacio
+            )
+
             itemView.setOnClickListener { clickListener(cancion) }
 
-            // Configurar el clic en el botón de opciones
             btnOptions.setOnClickListener {
                 onOptionsClick(cancion)
             }
 
             btnFavorite.setOnClickListener {
-                cancion.fav = !cancion.fav
+                // Cambiar el estado inmediatamente para feedback visual
+                val newFavState = !cancion.fav
                 btnFavorite.setImageResource(
-                    if (cancion.fav) R.drawable.ic_heart_lleno
+                    if (newFavState) R.drawable.ic_heart_lleno
                     else R.drawable.ic_heart_vacio
                 )
-
                 // Notificar al activity/fragment
-                onFavoriteClick(cancion, cancion.fav)
+                onFavoriteClick(cancion, newFavState)
             }
-
         }
     }
 }
