@@ -9,7 +9,7 @@ data class DatosArtista(
     val nombreArtistico: String,
     val biografia: String,
     val numSeguidos: Int,
-    val numSeguidores: Int,
+    var numSeguidores: Int,
     val siguiendo: Boolean,
     val fotoPerfil: String
 )

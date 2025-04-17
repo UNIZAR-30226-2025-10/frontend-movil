@@ -34,18 +34,38 @@
                     android:contentDescription="@string/logo"
                     android:src="@drawable/logo" />
 
-                <ImageButton
-                    android:id="@+id/notificationImageButton"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                <FrameLayout
+                    android:id="@+id/notificationButtonContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginEnd="92dp"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="Notificaciones"
-                    android:padding="4dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/notification" />
+                    android:layout_marginEnd="92dp">
+
+                    <!-- Imagen de notificaciones como botón -->
+                    <ImageButton
+                        android:id="@+id/notificationImageButton"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:padding="4dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/notification"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="Imagen de notificaciones"
+                        android:clickable="true"
+                        android:focusable="true"/>
+
+                    <!-- Circulito rojo -->
+                    <View
+                        android:id="@+id/notificationDot"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_gravity="top|end"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:background="@drawable/dot_notificacion"
+                        android:visibility="gone"/>
+                </FrameLayout>
 
                 <ImageButton
                     android:id="@+id/profileImageButton"
@@ -66,6 +86,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/toolbar"
+            android:paddingBottom="130dp"
             android:background="#DDDCDC"
             android:fillViewport="true">
 

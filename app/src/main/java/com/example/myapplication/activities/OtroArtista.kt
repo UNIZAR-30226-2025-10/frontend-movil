@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.RadioGroup
@@ -20,11 +21,19 @@ import com.example.myapplication.Adapters.OtroArtista.CancionesPopularesAdapter
 import com.example.myapplication.Adapters.OtroArtista.DiscografiaDiscosAdapter
 import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.request.ActualizarFavoritoRequest
+import com.example.myapplication.io.request.ChangeFollowRequest
+import com.example.myapplication.io.response.Artista
 import com.example.myapplication.io.response.CancionesArtistaResponse
+import com.example.myapplication.io.response.DatosArtista
 import com.example.myapplication.io.response.DatosArtistaResponse
 import com.example.myapplication.io.response.DiscografiaAlbumArtistaResponse
+import com.example.myapplication.io.response.Interaccion
+import com.example.myapplication.io.response.InvitacionPlaylist
+import com.example.myapplication.io.response.Novedad
 import com.example.myapplication.io.response.NumFavoritasArtistaResponse
 import com.example.myapplication.io.response.PopularesArtistaResponse
+import com.example.myapplication.io.response.Seguidor
+import com.example.myapplication.services.WebSocketEventHandler
 import com.example.myapplication.utils.Preferencias
 import retrofit2.Call
 import retrofit2.Callback
@@ -46,6 +55,37 @@ class OtroArtista : AppCompatActivity() {
     private lateinit var cancionesAdapter: CancionesPopularesAdapter
     private lateinit var albumesAdapter: DiscografiaDiscosAdapter
     private lateinit var cancionesArtistaAdapter: CancionesArtistaAdapter
+    private lateinit var btnFollow: Button
+    private var artista:  DatosArtista? = null
+    private lateinit var dot: View
+
+    private var isFollowing = false
+
+    //EVENTOS PARA LAS NOTIFICACIONES
+    private val listenerNovedad: (Novedad) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
+    private val listenerSeguidor: (Seguidor) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
+    private val listenerInvitacion: (InvitacionPlaylist) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
+    private val listenerInteraccion: (Interaccion) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,6 +105,10 @@ class OtroArtista : AppCompatActivity() {
         recyclerViewAlbumes = findViewById(R.id.recyclerViewDiscografia)
         numCanciones = findViewById(R.id.numCanciones)
         artistaLike = findViewById(R.id.artistaLike)
+        btnFollow = findViewById(R.id.seguir)
+        dot = findViewById<View>(R.id.notificationDot)
+
+
 
         val profileImageButton = findViewById<ImageButton>(R.id.profileImageButton)
         val profileImageUrl = Preferencias.obtenerValorString("fotoPerfil", "")
@@ -80,6 +124,21 @@ class OtroArtista : AppCompatActivity() {
                 .error(R.drawable.ic_profile) // Imagen si hay error
                 .into(profileImageButton)
         }
+
+        //PARA EL CIRCULITO ROJO DE NOTIFICACIONES
+        if (Preferencias.obtenerValorBooleano("hay_notificaciones",false) == true) {
+            dot.visibility = View.VISIBLE
+        } else {
+            dot.visibility = View.GONE
+        }
+
+        //Para actualizar el punto rojo en tiempo real, suscripcion a los eventos
+        WebSocketEventHandler.registrarListenerNovedad(listenerNovedad)
+        WebSocketEventHandler.registrarListenerSeguidor(listenerSeguidor)
+        WebSocketEventHandler.registrarListenerInvitacion(listenerInvitacion)
+        WebSocketEventHandler.registrarListenerInteraccion(listenerInteraccion)
+
+
 
         // Obtener el nombre de usuario del intent
         val nombreUsuario = intent.getStringExtra("nombreUsuario") ?: ""
@@ -99,6 +158,37 @@ class OtroArtista : AppCompatActivity() {
 
         recyclerViewCanciones.adapter = cancionesArtistaAdapter
         recyclerViewAlbumes.adapter = albumesAdapter
+
+        fotoPerfilFavoritos.setOnClickListener {
+            val nombreArtista = nombreArtistico.text.toString()
+            val nombreUsuario = intent.getStringExtra("nombreUsuario") ?: ""
+
+            val intent = Intent(this, CancionesFavoritasArtista::class.java).apply {
+                putExtra("nombreArtista", nombreArtista)
+                putExtra("nombreUsuario", nombreUsuario)
+            }
+            startActivity(intent)
+        }
+
+        btnFollow.setOnClickListener {
+            // Cambiar el estado de seguir/no seguir
+            isFollowing = !isFollowing
+            updateFollowButtonState()
+            // Aquí puedes añadir la lógica para realizar una acción, como seguir al oyente en la base de datos
+            if (isFollowing) {
+                if (nombreUsuario != null) {
+                    artista?.numSeguidores = (artista?.numSeguidores ?: 0) + 1
+                    onFollowStatusChanged(nombreUsuario,true)
+                }
+
+            } else {
+                if (nombreUsuario != null) {
+                    artista?.numSeguidores = maxOf(0, (artista?.numSeguidores ?: 1) - 1)
+                    onFollowStatusChanged(nombreUsuario,false)
+                }
+            }
+            seguidores.text = "Seguidores: ${artista?.numSeguidores}"
+        }
 
 
 
@@ -142,13 +232,19 @@ class OtroArtista : AppCompatActivity() {
                 response: Response<DatosArtistaResponse>
             ) {
                 if (response.isSuccessful && response.body() != null) {
-                    val artista = response.body()?.artista
+                    artista = response.body()?.artista
+                    val siguiendo = artista?.siguiendo
 
                     // Mostrar la información en los TextViews
                     nombreArtistico.text = artista?.nombreArtistico
                     artistaLike.text = " De ${artista?.nombreArtistico}"
                     biografia.text = artista?.biografia
                     seguidores.text = "Seguidores: ${artista?.numSeguidores}"
+
+                    if (siguiendo != null) {
+                        isFollowing = siguiendo
+                    }
+                    updateFollowButtonState()
 
                     // Cargar la imagen usando Glide
                     val foto = artista?.fotoPerfil
@@ -174,6 +270,7 @@ class OtroArtista : AppCompatActivity() {
                         cancionesArtistaAdapter.actualizarNombreArtista(nombreArtista)
                         cancionesAdapter.actualizarNombreArtista(nombreArtista)
                     }
+
                 } else {
                     Toast.makeText(this@OtroArtista, "Error al obtener los datos del artista", Toast.LENGTH_SHORT).show()
                 }
@@ -303,6 +400,35 @@ class OtroArtista : AppCompatActivity() {
         })
     }
 
+    fun onFollowStatusChanged(userId: String, isFollowing: Boolean) {
+        val token = Preferencias.obtenerValorString("token", "") ?: ""
+        val authHeader = "Bearer $token"
+        val request = ChangeFollowRequest(isFollowing, userId)
+
+        apiService.changeFollow(authHeader, request).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    val message = if (isFollowing) "Ahora sigues a este usuario" else "Dejaste de seguir al usuario"
+                } else {
+                    // Revertir el cambio si falla la API
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                // Revertir el cambio si falla la conexión
+                Log.e("API Error", "Error en change-follow", t)
+            }
+        })
+    }
+
+    private fun updateFollowButtonState() {
+        if (isFollowing) {
+            btnFollow.text = "Dejar de seguir"
+        } else {
+            btnFollow.text = "Seguir"
+        }
+    }
+
     private fun setupNavigation() {
         val buttonPerfil: ImageButton = findViewById(R.id.profileImageButton)
         val buttonNotis: ImageButton = findViewById(R.id.notificationImageButton)
@@ -336,6 +462,14 @@ class OtroArtista : AppCompatActivity() {
         buttonCrear.setOnClickListener {
             startActivity(Intent(this, CrearPlaylist::class.java))
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        WebSocketEventHandler.eliminarListenerNovedad(listenerNovedad)
+        WebSocketEventHandler.eliminarListenerSeguidor(listenerSeguidor)
+        WebSocketEventHandler.eliminarListenerInvitacion(listenerInvitacion)
+        WebSocketEventHandler.eliminarListenerInteraccion(listenerInteraccion)
     }
 
 }
