@@ -929,7 +929,11 @@ class PlaylistDetail : AppCompatActivity() {
 
         songTitle.text = songTitleText
         songArtist.text = songArtistText
-        progressBar.progress = songProgress
+        progressBar.progress = songProgress/1749
+
+        songImage.setOnClickListener {
+            startActivity(Intent(this, CancionReproductorDetail::class.java))
+        }
 
         // Configurar botón de play/pause
         stopButton.setOnClickListener {
@@ -1018,6 +1022,8 @@ class PlaylistDetail : AppCompatActivity() {
         if (serviceBound && musicService != null) {
             val estaReproduciendo = musicService!!.isPlaying()
             val icono = if (estaReproduciendo) R.drawable.ic_play else R.drawable.ic_pause
+            val stopButton = findViewById<ImageButton>(R.id.stopButton)
+            stopButton.setImageResource(icono)
         }
     }
 

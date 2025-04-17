@@ -10,9 +10,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.myapplication.R
+import com.example.myapplication.io.response.HCancion
 import com.example.myapplication.io.response.Recomendaciones
 
-class RecomendacionesAdapter (private var listaRecomendaciones: MutableList<Recomendaciones>) : RecyclerView.Adapter<RecomendacionesAdapter.RecomendacionViewHolder>() {
+class RecomendacionesAdapter (
+    private var listaRecomendaciones: MutableList<Recomendaciones>,
+    private val clickListener: (Recomendaciones) -> Unit
+) : RecyclerView.Adapter<RecomendacionesAdapter.RecomendacionViewHolder>() {
     // Cambia el método para actualizar la lista
     fun updateDataRecomendacion(searchResponse: List<Recomendaciones>) {
         listaRecomendaciones.clear()
@@ -47,6 +51,8 @@ class RecomendacionesAdapter (private var listaRecomendaciones: MutableList<Reco
                 )
             )
             .into(holder.imagenCancion)
+
+        holder.itemView.setOnClickListener { clickListener(recomendacion) }
     }
 
     override fun getItemCount(): Int {

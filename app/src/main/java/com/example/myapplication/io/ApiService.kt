@@ -19,6 +19,7 @@ import com.example.myapplication.io.request.CambiarPass1Request
 import com.example.myapplication.io.request.CambiarPass2Request
 import com.example.myapplication.io.request.CambiarPass3Request
 import com.example.myapplication.io.request.CambiarPrivacidadPlaylistRequest
+import com.example.myapplication.io.request.CancionInfoRequest
 import com.example.myapplication.io.request.CrearAlbumRequest
 import com.example.myapplication.io.request.CrearCancionRequest
 import com.example.myapplication.io.request.ChangeFollowRequest
@@ -47,6 +48,7 @@ import com.example.myapplication.io.response.AudioResponse
 import com.example.myapplication.io.response.BuscadorResponse
 import com.example.myapplication.io.response.CrearAlbumResponse
 import com.example.myapplication.io.response.CancionActualResponse
+import com.example.myapplication.io.response.CancionInfoResponse
 import com.example.myapplication.io.response.DeleteAccountResponse
 import com.example.myapplication.io.response.DeleteAlbumResponse
 import com.example.myapplication.io.response.EditarPerfilResponse
@@ -138,6 +140,12 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Query("termino") termino: String
     ): Call<BuscadorResponse>
+
+    @GET("/get-data-cancion")
+    fun getInfoCancion(
+        @Header("Authorization") token: String,
+        @Query ("id") cancionId: String
+    ): Call<CancionInfoResponse>
 
     @PUT("/put-cancion-sola")
     fun reproducirCancion(

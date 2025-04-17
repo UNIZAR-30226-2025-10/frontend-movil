@@ -38,6 +38,10 @@ import com.example.myapplication.utils.Preferencias
 import com.example.myapplication.Adapters.Buscador.CancionAdapter
 import com.example.myapplication.Adapters.Buscador.PerfilAdapter
 import com.example.myapplication.Adapters.Buscador.PlaylistAdapter
+import com.example.myapplication.io.request.AudioRequest
+import com.example.myapplication.io.response.AddReproduccionResponse
+import com.example.myapplication.io.response.AudioResponse
+import com.example.myapplication.io.response.CancionInfoResponse
 import com.example.myapplication.services.MusicPlayerService
 import retrofit2.Call
 import retrofit2.Callback
@@ -157,12 +161,7 @@ class Buscador : AppCompatActivity() {
 
         // Inicia los adaptadores
         cancionAdapter = CancionAdapter(mutableListOf()) { cancion ->
-            val intent = Intent(this, CancionDetail::class.java)
-            intent.putExtra("nombre", cancion.nombre)
-            intent.putExtra("artista", cancion.nombreArtisticoArtista)
-            intent.putExtra("imagen", cancion.fotoPortada)
-            intent.putExtra("id", cancion.id)
-            startActivity(intent)
+            reproducir(cancion.id)
         }
         recyclerViewCancion.adapter = cancionAdapter
 
@@ -311,7 +310,11 @@ class Buscador : AppCompatActivity() {
 
         songTitle.text = songTitleText
         songArtist.text = songArtistText
-        progressBar.progress = songProgress
+        progressBar.progress = songProgress/1749
+
+        songImage.setOnClickListener {
+            startActivity(Intent(this, CancionReproductorDetail::class.java))
+        }
 
         // Configurar botón de play/pause
         stopButton.setOnClickListener {
@@ -400,9 +403,146 @@ class Buscador : AppCompatActivity() {
         if (serviceBound && musicService != null) {
             val estaReproduciendo = musicService!!.isPlaying()
             val icono = if (estaReproduciendo) R.drawable.ic_play else R.drawable.ic_pause
+            val stopButton = findViewById<ImageButton>(R.id.stopButton)
+            stopButton.setImageResource(icono)
         }
     }
 
+    private fun reproducir(id: String) {
+        val request = AudioRequest(id)
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+        val sid = WebSocketManager.getInstance().getSid()
+        Log.d("WebSocket", "El SID actual es: $sid")
+
+        if (sid == null) {
+            Log.e("MiApp", "No se ha generado un sid para el WebSocket")
+            return
+        }
+
+        // Llamada a la API con el sid en los headers
+        apiService.reproducirCancion(authHeader, sid, request).enqueue(object : Callback<AudioResponse> {
+            override fun onResponse(call: Call<AudioResponse>, response: Response<AudioResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { audioResponse ->
+                        val respuestaTexto = "Audio: ${audioResponse.audio}, Favorito: ${audioResponse.fav}"
+
+                        // Mostrar en Logcat
+                        Log.d("API_RESPONSE", "Respuesta exitosa: $respuestaTexto")
+
+                        // Mostrar en Toast
+                        Toast.makeText(this@Buscador, respuestaTexto, Toast.LENGTH_LONG).show()
+
+                        reproducirAudio(audioResponse.audio)
+                        notificarReproduccion()
+
+                        Preferencias.guardarValorString("audioCancionActual", audioResponse.audio)
+                        guardarDatoscCancion(id)
+                    }
+                } else {
+                    val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
+
+                    // Mostrar en Logcat
+                    Log.e("API_RESPONSE", "Error en la respuesta: Código ${response.code()} - $errorMensaje")
+
+                    // Mostrar en Toast
+                    Toast.makeText(this@Buscador, "Error: $errorMensaje", Toast.LENGTH_LONG).show()
+                }
+            }
+
+            override fun onFailure(call: Call<AudioResponse>, t: Throwable) {
+                // Mostrar en Logcat
+                Log.e("API_RESPONSE", "Error de conexión: ${t.message}", t)
+
+                // Mostrar en Toast
+                Toast.makeText(this@Buscador, "Error de conexión: ${t.message}", Toast.LENGTH_LONG).show()
+            }
+        })
+    }
+
+    private fun reproducirAudio(audioUrl: String, progreso: Int = 0) {
+        try {
+            Preferencias.guardarValorEntero("progresoCancionActual", progreso)
+            val startIntent = Intent(this, MusicPlayerService::class.java).apply {
+                action = "PLAY"
+                putExtra("url", audioUrl)
+                putExtra("progreso", progreso)
+            }
+            startService(startIntent)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Error al reproducir el audio", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun notificarReproduccion() {
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+
+        apiService.addReproduccion(authHeader).enqueue(object : Callback<AddReproduccionResponse> {
+            override fun onResponse(call: Call<AddReproduccionResponse>, response: Response<AddReproduccionResponse>) {
+                if (response.isSuccessful) {
+                    Log.d("MiApp", "Reproducción registrada exitosamente")
+                } else {
+                    Log.e("MiApp", "Error al registrar la reproducción")
+                }
+            }
+
+            override fun onFailure(call: Call<AddReproduccionResponse>, t: Throwable) {
+                Log.e("MiApp", "Error de conexión al registrar reproducción")
+            }
+        })
+    }
+
+    private fun guardarDatoscCancion(id: String) {
+        Preferencias.guardarValorString("cancionActualId", id)
+
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+
+        // Llamada a la API con el sid en los headers
+        apiService.getInfoCancion(authHeader, id).enqueue(object : Callback<CancionInfoResponse> {
+            override fun onResponse(call: Call<CancionInfoResponse>, response: Response<CancionInfoResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { cancionResponse ->
+                        val foto = cancionResponse.fotoPortada
+                        val nombre = cancionResponse.nombre
+                        val artista = cancionResponse.nombreArtisticoArtista
+
+                        // Mostrar en Logcat
+                        Log.d("CancionInfo", "Respuesta exitosa Canción")
+                        Log.d("CancionInfo", "Canción: $nombre")
+                        Log.d("CancionInfo", "Artista: $artista")
+                        Log.d("CancionInfo", "Foto: $foto")
+
+                        Preferencias.guardarValorString("nombreCancionActual", nombre)
+                        Preferencias.guardarValorString("nombreArtisticoActual", artista)
+                        Preferencias.guardarValorString("fotoPortadaActual", foto)
+
+                        updateMiniReproductor()
+                        actualizarIconoPlayPause()
+                    }
+                } else {
+                    val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
+
+                    // Mostrar en Logcat
+                    Log.e("API_RESPONSE", "Error en la respuesta: Código ${response.code()} - $errorMensaje")
+
+                    // Mostrar en Toast
+                    Toast.makeText(this@Buscador, "Error: $errorMensaje", Toast.LENGTH_LONG).show()
+                }
+            }
+
+            override fun onFailure(call: Call<CancionInfoResponse>, t: Throwable) {
+                // Mostrar en Logcat
+                Log.e("API_RESPONSE", "Error de conexión: ${t.message}", t)
+
+                // Mostrar en Toast
+                Toast.makeText(this@Buscador, "Error de conexión: ${t.message}", Toast.LENGTH_LONG).show()
+            }
+        })
+    }
+    
     override fun onStart() {
         super.onStart()
         val intent = Intent(this, MusicPlayerService::class.java)
@@ -416,7 +556,7 @@ class Buscador : AppCompatActivity() {
             serviceBound = false
         }
     }
-
+    
     private fun handleErrorCode(statusCode: Int) {
         val message = when (statusCode) {
             400 -> "Error: Correo o usuario en uso"
