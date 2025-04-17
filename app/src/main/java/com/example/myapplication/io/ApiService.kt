@@ -24,6 +24,7 @@ import com.example.myapplication.io.request.CrearAlbumRequest
 import com.example.myapplication.io.request.CrearCancionRequest
 import com.example.myapplication.io.request.ChangeFollowRequest
 import com.example.myapplication.io.request.CreatePlaylistRequest
+import com.example.myapplication.io.request.DarLikeNoizzyRequest
 import com.example.myapplication.io.request.DeleteAccountRequest
 import com.example.myapplication.io.request.DeleteNotiAlbumRequest
 import com.example.myapplication.io.request.DeleteNotiCancionRequest
@@ -38,6 +39,8 @@ import com.example.myapplication.io.request.LeerNotiNoizzitoRequest
 import com.example.myapplication.io.request.LeerNotiSeguidorRequest
 import com.example.myapplication.io.request.PlayPauseRequest
 import com.example.myapplication.io.request.PlayPauseResponse
+import com.example.myapplication.io.request.PostNoizzitoRequest
+import com.example.myapplication.io.request.PostNoizzyRequest
 import com.example.myapplication.io.request.UpdatePlaylistRequest
 import com.example.myapplication.io.request.ValidarArtistaRequest
 import com.example.myapplication.io.request.ValidarArtistaResponse
@@ -77,6 +80,7 @@ import com.example.myapplication.io.response.RecomendacionesResponse
 import com.example.myapplication.io.response.InfoSeguidoresResponse
 import com.example.myapplication.io.response.Interaccion
 import com.example.myapplication.io.response.MisAlbumesResponse
+import com.example.myapplication.io.response.MisNoizzysResponse
 import com.example.myapplication.io.response.PendientesResponse
 import com.example.myapplication.io.response.PlaylistResponse
 import com.example.myapplication.io.response.SearchPlaylistResponse
@@ -432,6 +436,37 @@ interface ApiService {
         @Header("Authorization") authHeader: String,
         @Body request: LeerNotiNoizzitoRequest
     ): Call<Void>
+
+    @GET("/get-mis-noizzys")
+    fun getMisNoizzys(
+        @Header("Authorization") token: String
+    ): Call<MisNoizzysResponse>
+
+    @GET("/search-for-noizzy")
+    fun searchForSongsNoizzy(
+        @Header("Authorization") token: String,
+        @Query("termino") termino: String
+    ): Call<SearchPlaylistResponse>
+
+    @POST("post-noizzy")
+    fun postNoizzy(
+        @Header("Authorization") token: String,
+        @Body request: PostNoizzyRequest
+    ): Call<Void>
+
+    @PUT("change-like")
+    fun darLikeNoizzy(
+        @Header("Authorization") token: String,
+        @Body request: DarLikeNoizzyRequest
+    ): Call<Void>
+
+    @POST("post-noizzito")
+    fun postNoizzito(
+        @Header("Authorization") token: String,
+        @Body request: PostNoizzitoRequest
+    ): Call<Void>
+
+
 
 
     companion object Factory {

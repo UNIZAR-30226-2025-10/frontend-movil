@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:padding="16dp"
+    android:layout_margin="24dp"
+    android:elevation="4dp">
+
+    <!-- Botón de cerrar (cruz) -->
+    <ImageButton
+        android:id="@+id/closeButton"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:background="@android:color/transparent"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        android:contentDescription="Cerrar" />
+
+    <LinearLayout
+        android:id="@+id/contentLayout"
+        android:layout_below="@id/closeButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="0dp">
+
+        <!-- Parte superior: imagen redonda + campo texto -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/popupProfileImage"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_profile"
+                android:background="@drawable/circle_background"
+                android:scaleType="centerCrop"
+                android:layout_marginEnd="12dp" />
+
+            <EditText
+                android:id="@+id/popupEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Escribe algo..."
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="#000000"
+                android:textSize="16sp"
+                android:padding="8dp"/>
+        </LinearLayout>
+
+        <!-- Botón para añadir canción (subrayado y sin fondo) -->
+        <TextView
+            android:id="@+id/popupAddSongButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Añadir una canción"
+            android:fontFamily="@font/poppins_regular"
+            android:textSize="12sp"
+            android:visibility="visible"
+            android:layout_marginTop="24dp"/>
+
+        <LinearLayout
+            android:id="@+id/buscador"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/edit_text_background"
+            android:padding="8dp"
+            android:visibility="gone"
+            android:layout_marginTop="18dp">
+
+            <EditText
+                android:id="@+id/searchSongEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Buscar canción..."
+                android:fontFamily="@font/poppins_regular"
+                android:textSize="14sp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/songResultsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/cancionNoizzy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp"
+            android:padding="0dp"
+            android:visibility="gone"
+            android:background="@drawable/noizzy_item_background"
+            android:gravity="center_vertical">
+
+            <!-- Foto a la izquierda -->
+            <ImageView
+                android:id="@+id/recuerdoImage"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:src="@drawable/no_cancion"
+                android:scaleType="centerCrop"
+                android:background="@drawable/borde_cancion_noizzy"
+                android:clipToOutline="true"
+                android:layout_marginEnd="12dp" />
+
+            <!-- Textos debajo del otro -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/recuerdoText1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Texto 1"
+                    android:textColor="#000e3b"
+                    android:textSize="14sp"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/poppins_regular" />
+
+                <TextView
+                    android:id="@+id/recuerdoText2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Texto 2"
+                    android:textColor="#666666"
+                    android:textSize="12sp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="4dp"
+                    android:fontFamily="@font/poppins_regular" />
+            </LinearLayout>
+
+            <!-- Cruz en la parte derecha -->
+            <ImageButton
+                android:id="@+id/quitarCancion"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:background="@android:color/transparent"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:contentDescription="Cerrar"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true" />
+
+        </LinearLayout>
+
+        <!-- Botón de publicar alineado a la derecha -->
+        <Button
+            android:id="@+id/popupPublishButton"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:text="Publicar"
+            android:layout_gravity="end"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/button_rounded"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+
+</RelativeLayout>

@@ -170,6 +170,10 @@
             android:exported="false"
             android:theme="@style/Theme.MyApplication"/>
 
+        <activity android:name=".activities.MisNoizzys"
+            android:exported="false"
+            android:theme="@style/Theme.MyApplication"/>
+
         
     </application>
 

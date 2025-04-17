@@ -1,0 +1,69 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:paddingTop="6dp"
+    android:paddingLeft="6dp"
+    android:paddingRight="6dp"
+    android:paddingBottom="6dp"
+    android:gravity="center_vertical">
+
+    <!-- Foto de la canción -->
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/no_cancion"
+        android:background="@drawable/rounded_edittext"
+        android:clipToOutline="true"
+        android:outlineProvider="background" />
+
+    <!-- Contenedor vertical para los textos (canción y artista) -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp">
+
+        <!-- Nombre de la canción -->
+        <TextView
+            android:id="@+id/songName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Texto 1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textSize="14sp"
+            android:textColor="#000e3b"
+            android:fontFamily="@font/poppins_regular"/>
+
+        <TextView
+            android:id="@+id/artistName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Texto 2"
+            android:textSize="12sp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="#666666"
+            android:fontFamily="@font/poppins_regular"/>
+    </LinearLayout>
+
+    <!-- Botón para añadir canción -->
+    <Button
+        android:id="@+id/btnAddSong"
+        android:layout_width="42dp"
+        android:layout_height="32dp"
+        android:background="@drawable/btn_follow_selector"
+        android:paddingHorizontal="16dp"
+        android:text="+"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</LinearLayout>

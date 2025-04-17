@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:layout_marginBottom="12dp"
+    android:layout_marginHorizontal="8dp"
+    android:backgroundTint="@android:color/white"
+    android:elevation="2dp"
+    android:background="@drawable/noizzy_item_background">
+
+    <!-- Parte superior: foto + texto al lado -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/noizzyProfileImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_profile"
+            android:scaleType="centerCrop"
+            android:background="@drawable/circle_background" />
+
+        <TextView
+            android:id="@+id/noizzyUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="Usuario"
+            android:textColor="#000e3b"
+            android:fontFamily="@font/poppins_regular"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <!-- Texto central -->
+    <TextView
+        android:id="@+id/noizzyContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Este es el contenido del Noizzy"
+        android:fontFamily="@font/poppins_regular"
+        android:textColor="#333333"
+        android:textSize="15sp" />
+
+    <LinearLayout
+        android:id="@+id/cancionNoizzy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:padding="0dp"
+        android:visibility="visible"
+        android:background="@drawable/noizzy_item_background"
+        android:gravity="center_vertical">
+
+        <!-- Foto a la izquierda -->
+        <ImageView
+            android:id="@+id/recuerdoImage"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:src="@drawable/no_cancion"
+            android:scaleType="centerCrop"
+            android:background="@drawable/borde_cancion_noizzy"
+            android:clipToOutline="true"
+            android:layout_marginEnd="12dp" />
+
+        <!-- Textos debajo del otro -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="start">
+
+            <TextView
+                android:id="@+id/recuerdoText1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Texto 1"
+                android:textColor="#000e3b"
+                android:textSize="14sp"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/poppins_regular" />
+
+            <TextView
+                android:id="@+id/recuerdoText2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Texto 2"
+                android:textColor="#666666"
+                android:textSize="12sp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="@font/poppins_regular" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Botones debajo del texto -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="start"
+        android:layout_marginTop="12dp">
+
+        <!-- Botón de like con texto -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageButton
+                android:id="@+id/likeButton"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="Me gusta"
+                android:scaleType="fitCenter"
+                android:src="@drawable/like_noizzy" />
+
+            <TextView
+                android:id="@+id/likeCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="0"
+                android:textColor="#000e3b"
+                android:textSize="14sp"
+                android:gravity="center_vertical" />
+        </LinearLayout>
+
+        <!-- Botón de comentario con texto -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="16dp">
+
+            <ImageButton
+                android:id="@+id/commentButton"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@android:color/transparent"
+                android:scaleType="fitCenter"
+                android:src="@drawable/comment_noizzy"
+                android:contentDescription="Comentar" />
+
+            <TextView
+                android:id="@+id/commentCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="0"
+                android:textColor="#000e3b"
+                android:textSize="14sp"
+                android:gravity="center_vertical" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

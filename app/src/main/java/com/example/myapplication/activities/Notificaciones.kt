@@ -128,12 +128,6 @@ class Notificaciones : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.notificaciones)
 
-        //PARA ACTUALIZAR EL PUNTITO ROJO EN TIEMPO REAL
-        //WebSocketEventHandler.registrarListenerSeguidor(listenerSeguidor)
-        //WebSocketEventHandler.registrarListenerNovedad(listenerNovedad)
-        //WebSocketEventHandler.registrarListenerInteraccion(listenerInteraccion)
-        //WebSocketEventHandler.registrarListenerInvitacion(listenerInvitacion)
-
         apiService = ApiService.create()
 
         val btnInvitaciones = findViewById<LinearLayout>(R.id.btnInvitaciones)
