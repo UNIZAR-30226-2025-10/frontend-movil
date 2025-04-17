@@ -8,6 +8,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
+import androidx.transition.Visibility
 import com.bumptech.glide.Glide
 import com.example.myapplication.Adapters.Buscador.PerfilAdapter
 import com.example.myapplication.Adapters.Seguidores.SeguidoresAdapter
@@ -26,8 +28,8 @@ class OtroOyente : AppCompatActivity() {
     private lateinit var apiService: ApiService
     private lateinit var btnFollow: Button
     private lateinit var usernameText: TextView
-    private lateinit var lastMessageText: TextView
     private lateinit var profileImage: ImageView
+    private lateinit var cvLastNoizzy: CardView
 
     private var isFollowing = false
 
@@ -43,11 +45,8 @@ class OtroOyente : AppCompatActivity() {
         // Inicialización de vistas
         btnFollow = findViewById(R.id.btnFollow)
         usernameText = findViewById(R.id.username)
-        lastMessageText = findViewById(R.id.lastMessage)
+        cvLastNoizzy = findViewById(R.id.lastMessage)
         profileImage = findViewById(R.id.profileImage)
-
-
-
 
         // Evento de clic para el botón de seguir
         btnFollow.setOnClickListener {
@@ -59,14 +58,10 @@ class OtroOyente : AppCompatActivity() {
                 if (nombreUser != null) {
                     onFollowStatusChanged(nombreUser,true)
                 }
-                // Lógica para seguir al oyente
-                lastMessageText.visibility = View.VISIBLE // Mostrar el último mensaje
             } else {
                 if (nombreUser != null) {
                     onFollowStatusChanged(nombreUser,false)
                 }
-                // Lógica para dejar de seguir al oyente
-                lastMessageText.visibility = View.GONE // Ocultar el último mensaje
             }
         }
 
@@ -87,8 +82,16 @@ class OtroOyente : AppCompatActivity() {
                             val nombreperfil = it.oyente.nombreUsuario
                             val seguidores = it.oyente.numSeguidores
                             val seguidos = it.oyente.numSeguidos
-                            val foto = it.oyente.fotoPerfil
+
+                            var foto: Any
+                            if (it.oyente.fotoPerfil == "DEFAULT" || it.oyente.fotoPerfil.isNullOrEmpty()) {
+                                foto = R.drawable.ic_profile
+                            } else {
+                                foto = it.oyente.fotoPerfil
+                            }
+
                             val siguiendo = it.oyente.siguiendo
+                            val lastNoizzy = it.ultimoNoizzy
 
                             Log.d("OtroOyente", "ha tomado info: $nombreperfil")
                             Log.d("OtroOyente", "ha tomado info: $seguidores")
@@ -107,14 +110,12 @@ class OtroOyente : AppCompatActivity() {
                             followingTextView.text = "$seguidos Seguidos"
 
                             // Cargar la imagen con Glide
-                            if (!foto.isNullOrEmpty()) {
-                                Glide.with(this@OtroOyente)
-                                    .load(foto)
-                                    .placeholder(R.drawable.ic_profile) // Imagen por defecto mientras carga
-                                    .error(R.drawable.ic_profile) // Imagen por defecto si hay error
-                                    .circleCrop() // Para que la imagen sea circular
-                                    .into(fotoImageView)
-                            }
+                            Glide.with(this@OtroOyente)
+                                .load(foto)
+                                .placeholder(R.drawable.ic_profile) // Imagen por defecto mientras carga
+                                .error(R.drawable.ic_profile) // Imagen por defecto si hay error
+                                .circleCrop() // Para que la imagen sea circular
+                                .into(fotoImageView)
 
                         } else {
                             handleErrorCode(it.respuestaHTTP)

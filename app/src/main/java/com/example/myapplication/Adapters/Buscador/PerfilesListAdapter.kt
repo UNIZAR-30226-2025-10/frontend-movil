@@ -28,8 +28,16 @@ class PerfilAdapter(private var listaPerfiles: List<Perfil>,
     override fun onBindViewHolder(holder: PerfilViewHolder, position: Int) {
         val perfil = listaPerfiles[position]
         holder.nombrePerfil.text = perfil.nombreUsuario
+
+        var foto: Any
+        if (perfil.fotoPerfil == "DEFAULT") {
+            foto = R.drawable.ic_profile
+        } else {
+            foto = perfil.fotoPerfil
+        }
+
         Glide.with(holder.itemView.context)
-            .load(perfil.fotoPerfil)
+            .load(foto)
             .circleCrop()
             .into(holder.imagenPerfil)
 

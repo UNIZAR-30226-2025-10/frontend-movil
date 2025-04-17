@@ -3,7 +3,7 @@ package com.example.myapplication.io.response
 data class GetDatosOyenteResponse (
     val respuestaHTTP: Int,
     val oyente : OtroPerfil,
-    val ultimoNoizzy : Noizzi,
+    val ultimoNoizzy : LastNoizzy,
 )
 
 data class OtroPerfil(
@@ -14,7 +14,19 @@ data class OtroPerfil(
     val fotoPerfil: String,
 )
 
-data class Noizzi(
-    val fotoPerfil: String,
-    val nombreUsuario: String
+data class LastNoizzy (
+    val fecha: String,
+    val id: Int,
+    val texto: String,
+    var like: Boolean,
+    val cancion: CancionLastNoizzy?,
+    var num_likes: Int,
+    var num_comentarios: Int
+)
+
+data class CancionLastNoizzy (
+    val id: Int,
+    val nombre: String,
+    val fotoPortada: String,
+    val nombreArtisticoArtista: String
 )

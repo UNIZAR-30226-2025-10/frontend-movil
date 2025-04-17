@@ -31,8 +31,15 @@ class PlaylistAdapter(
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
         val playlist = listaPLaylists[position]
         holder.nombrePlaylist.text = playlist.nombre
+
+        var foto: Any
+        if (playlist.fotoPortada == "DEFAULT") {
+            foto = R.drawable.no_cancion
+        } else {
+            foto = playlist.fotoPortada
+        }
         Glide.with(holder.itemView.context)
-            .load(playlist.fotoPortada)
+            .load(foto)
             .centerCrop()
             .transform(
                 RoundedCorners(

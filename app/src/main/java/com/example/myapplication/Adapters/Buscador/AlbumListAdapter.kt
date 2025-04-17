@@ -31,8 +31,16 @@ class AlbumAdapter(
         val album = listaAlbumes[position]
         holder.nombreAlbum.text = album.nombre
         holder.artistaAlbum.text = album.nombreArtisticoArtista
+
+        var foto: Any
+        if (album.fotoPortada == "DEFAULT") {
+            foto = R.drawable.no_cancion
+        } else {
+            foto = album.fotoPortada
+        }
+
         Glide.with(holder.itemView.context)
-            .load(album.fotoPortada)
+            .load(foto)
             .centerCrop()
             .transform(
                 RoundedCorners(

@@ -397,7 +397,6 @@
                 android:ellipsize="end"/>
         </LinearLayout>
 
-
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

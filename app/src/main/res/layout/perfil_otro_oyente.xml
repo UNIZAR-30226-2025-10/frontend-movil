@@ -7,11 +7,11 @@
     android:background="#F5F5F5"
     tools:context=".activities.OtroOyente">
 
-    <!-- Toolbar -->
+    <!-- Barra de herramientas con imagen de perfil alineada a la derecha -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="65dp"
         android:background="#000e3b"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
@@ -20,15 +20,40 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="8dp">
+            android:orientation="horizontal">
 
+            <ImageView
+                android:id="@+id/toolbar_logo"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:src="@drawable/logo"
+                android:layout_centerVertical="true"
+                android:contentDescription="@string/logo"/>
+
+            <!-- Imagen de notificaciones como botón -->
+            <ImageButton
+                android:id="@+id/notificationImageButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:padding="4dp"
+                android:layout_marginEnd="92dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/notification"
+                android:background="@android:color/transparent"
+                android:contentDescription="Imagen de notificaciones"
+                android:clickable="true"
+                android:focusable="true"/>
+
+            <!-- Imagen de perfil como botón -->
             <ImageButton
                 android:id="@+id/profileImageButton"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="21dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_profile"
                 android:background="@android:color/transparent"
@@ -38,11 +63,120 @@
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 
+    <!-- Sección de perfil con estructura horizontal -->
+    <LinearLayout
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        android:id="@+id/profileSection"
+        android:backgroundTint="#E9E6E6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:background="#F4F4F4">
+
+        <!-- Parte izquierda: perfil y datos -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <!-- Imagen de perfil -->
+            <ImageView
+                android:id="@+id/profileImage"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_profile"
+                android:background="@drawable/circle_background"
+                android:contentDescription="Foto de perfil" />
+
+            <!-- Parte izquierda: perfil y datos -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingLeft="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <!-- Nombre de usuario -->
+                    <TextView
+                        android:id="@+id/username"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:layout_weight="1"
+                        android:textColor="#000E3B"
+                        android:layout_marginTop="4dp"/>
+
+                    <Button
+                        android:id="@+id/btnFollow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:background="@drawable/rounded_button"
+                        android:fontFamily="@font/poppins_bold"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:text="Seguir"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/followCounters"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <!-- Seguidores -->
+                    <TextView
+                        android:id="@+id/followers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_regular"
+                        android:text="0 Seguidores"
+                        android:textSize="14sp"
+                        android:textColor="#000E3B"
+                        android:layout_marginRight="12dp"/>
+
+                    <!-- Seguidos -->
+                    <TextView
+                        android:id="@+id/following"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0 Seguidos"
+                        android:fontFamily="@font/poppins_regular"
+                        android:textSize="14sp"
+                        android:textColor="#000E3B"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/publicPlaylists"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0 playlists públicas"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="14sp"
+                    android:textColor="#000E3B"/>
+
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
     <!-- Contenido desplazable -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintTop_toBottomOf="@id/profileSection"
         app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -53,89 +187,190 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Sección de perfil -->
-            <RelativeLayout
-                android:id="@+id/profileSection"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/lastMessage"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="3dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
 
-                <!-- Foto de perfil -->
-                <ImageView
-                    android:id="@+id/profileImage"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:scaleType="centerCrop"
-                    android:background="@drawable/circle_background"
-                    android:src="@drawable/ic_profile"
-                    android:contentDescription="Foto de perfil"
-                    android:layout_centerHorizontal="true" />
-
-                <!-- Nombre de usuario -->
-                <TextView
-                    android:id="@+id/username"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="#000003"
-                    android:layout_below="@id/profileImage"
-                    android:layout_centerHorizontal="true"
-                    android:paddingTop="8dp" />
-
-                <!-- Contadores en una sola fila -->
                 <LinearLayout
-                    android:id="@+id/followCounters"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_below="@id/username"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center">
+                    android:orientation="vertical"
+                    android:padding="14dp"
+                    android:backgroundTint="@android:color/white"
+                    android:background="@drawable/noizzy_item_background">
 
-                    <TextView
-                        android:id="@+id/followers"
-                        android:layout_width="wrap_content"
+                    <!-- Parte superior: foto + texto al lado -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:textColor="#000003"
-                        android:paddingEnd="16dp"
-                        android:textStyle="bold" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
 
+                        <ImageView
+                            android:id="@+id/noizzyProfileImage"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/ic_profile"
+                            android:scaleType="centerCrop"
+                            android:background="@drawable/circle_background" />
+
+                        <TextView
+                            android:id="@+id/noizzyUserName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:text="Usuario"
+                            android:layout_weight="1"
+                            android:textColor="#000e3b"
+                            android:fontFamily="@font/poppins_regular"
+                            android:textSize="16sp" />
+
+                        <Button
+                            android:id="@+id/allNoizzys"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:background="@drawable/rounded_button"
+                            android:fontFamily="@font/poppins_bold"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:text="Ver Noizzys"
+                            android:textColor="#FFFFFF"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!-- Texto central -->
                     <TextView
-                        android:id="@+id/following"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/noizzyContent"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:textColor="#000003"
-                        android:textStyle="bold" />
+                        android:layout_marginTop="8dp"
+                        android:text="Este es el contenido del Noizzy"
+                        android:fontFamily="@font/poppins_regular"
+                        android:textColor="#333333"
+                        android:textSize="15sp" />
+
+                    <LinearLayout
+                        android:id="@+id/cancionNoizzy"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="10dp"
+                        android:padding="0dp"
+                        android:visibility="visible"
+                        android:background="@drawable/noizzy_item_background"
+                        android:gravity="center_vertical">
+
+                        <!-- Foto a la izquierda -->
+                        <ImageView
+                            android:id="@+id/recuerdoImage"
+                            android:layout_width="55dp"
+                            android:layout_height="55dp"
+                            android:src="@drawable/no_cancion"
+                            android:scaleType="centerCrop"
+                            android:background="@drawable/borde_cancion_noizzy"
+                            android:clipToOutline="true"
+                            android:layout_marginEnd="12dp" />
+
+                        <!-- Textos debajo del otro -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="start">
+
+                            <TextView
+                                android:id="@+id/recuerdoText1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Texto 1"
+                                android:textColor="#000e3b"
+                                android:textSize="14sp"
+                                android:layout_marginTop="4dp"
+                                android:fontFamily="@font/poppins_regular" />
+
+                            <TextView
+                                android:id="@+id/recuerdoText2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Texto 2"
+                                android:textColor="#666666"
+                                android:textSize="12sp"
+                                android:layout_marginTop="0dp"
+                                android:layout_marginBottom="4dp"
+                                android:fontFamily="@font/poppins_regular" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Botones debajo del texto -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="start"
+                        android:layout_marginTop="12dp">
+
+                        <!-- Botón de like con texto -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <ImageButton
+                                android:id="@+id/likeButton"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:background="@android:color/transparent"
+                                android:contentDescription="Me gusta"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/like_noizzy" />
+
+                            <TextView
+                                android:id="@+id/likeCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:text="0"
+                                android:textColor="#000e3b"
+                                android:textSize="14sp"
+                                android:gravity="center_vertical" />
+                        </LinearLayout>
+
+                        <!-- Botón de comentario con texto -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginStart="16dp">
+
+                            <ImageButton
+                                android:id="@+id/commentButton"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:background="@android:color/transparent"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/comment_noizzy"
+                                android:contentDescription="Comentar" />
+
+                            <TextView
+                                android:id="@+id/commentCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:text="0"
+                                android:textColor="#000e3b"
+                                android:textSize="14sp"
+                                android:gravity="center_vertical" />
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-                <!-- Botón de seguir -->
-                <Button
-                    android:id="@+id/btnFollow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    android:textSize="12sp"
-                    android:background="@drawable/btn_follow_selector"
-                    android:paddingHorizontal="16dp"
-                    android:layout_below="@id/followCounters"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="8dp" />
-
-                <!-- Último mensaje -->
-                <TextView
-                    android:id="@+id/lastMessage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Último mensaje de este oyente..."
-                    android:textColor="#555555"
-                    android:textStyle="italic"
-                    android:layout_below="@id/btnFollow"
-                    android:layout_centerHorizontal="true"
-                    android:paddingTop="12dp"
-                    android:visibility="gone" />
-            </RelativeLayout>
 
             <!-- Sección de Playlists -->
             <LinearLayout
@@ -143,16 +378,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="24dp">
+                android:layout_marginTop="20dp">
 
                 <TextView
+                    android:id="@+id/textViewHeadersPlaylistsP"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Playlists públicas"
-                    android:textSize="18sp"
+                    android:text="Playlists Públicas"
+                    android:textSize="24sp"
                     android:textStyle="bold"
-                    android:textColor="#000003"
-                    android:layout_marginBottom="8dp" />
+                    android:textColor="#000E3B"
+                    android:fontFamily="@font/poppins_bold"
+                    android:layout_gravity="start"/>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerViewHeadersPlaylistsP"
@@ -240,47 +477,142 @@
             app:tint="#FFFFFF" />
     </LinearLayout>
 
-    <!-- Bottom Navigation -->
+    <!-- Navigation Bar en la parte inferior -->
     <LinearLayout
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="65dp"
         android:background="#000e3b"
         android:orientation="horizontal"
-        android:padding="10dp"
+        android:padding="7dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:gravity="center">
 
-        <ImageButton
-            android:id="@+id/nav_home"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_home"
-            android:background="@android:color/transparent"
-            android:contentDescription="Home"
+        <LinearLayout
+            android:id="@+id/home_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            app:tint="#FFFFFF" />
+            android:background="#000e3b"
+            android:orientation="vertical"
+            android:gravity="center">
 
-        <ImageButton
-            android:id="@+id/nav_search"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_search"
-            android:background="@android:color/transparent"
-            android:contentDescription="Buscar"
-            android:layout_weight="1"
-            app:tint="#FFFFFF" />
+            <!-- Botón Home -->
+            <ImageButton
+                android:id="@+id/nav_home"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_home"
+                android:background="@android:color/transparent"
+                android:contentDescription="Home"
+                android:layout_weight="1"
+                app:tint="#FFFFFF" />
 
-        <ImageButton
-            android:id="@+id/nav_create"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_add"
-            android:background="@android:color/transparent"
-            android:contentDescription="Crear"
+            <TextView
+                android:id="@+id/homeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Home"
+                android:textColor="#B3B3B3"
+                android:textSize="14sp"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/search_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            app:tint="#FFFFFF" />
+            android:background="#000e3b"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <!-- Botón Buscar -->
+            <ImageButton
+                android:id="@+id/nav_search"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_search"
+                android:background="@android:color/transparent"
+                android:contentDescription="Buscar"
+                android:layout_weight="1"
+                app:tint="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/searchText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Buscar"
+                android:textColor="#B3B3B3"
+                android:textSize="14sp"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/create_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#000e3b"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <!-- Botón Crear -->
+            <ImageButton
+                android:id="@+id/nav_create"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_add"
+                android:background="@android:color/transparent"
+                android:contentDescription="Crear"
+                android:layout_weight="1"
+                app:tint="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/createText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Crear Playlist"
+                android:textColor="#B3B3B3"
+                android:textSize="14sp"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/noizzys_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#000e3b"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <!-- Botón Home -->
+            <ImageButton
+                android:id="@+id/nav_noizzys"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:src="@drawable/noizzy"
+                android:background="@android:color/transparent"
+                android:contentDescription="Noizzys"
+                android:layout_weight="1"
+                app:tint="#FFFFFF"
+                android:scaleType="fitCenter"/>
+
+            <TextView
+                android:id="@+id/noizzysText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mis Noizzys"
+                android:textColor="#B3B3B3"
+                android:textSize="14sp"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+        </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -26,8 +26,16 @@ class ArtistaAdapter(private var listaArtistas: List<Artista>) : RecyclerView.Ad
     override fun onBindViewHolder(holder: ArtistaAdapter.ArtistaViewHolder, position: Int) {
         val artista = listaArtistas[position]
         holder.nombreArtista.text = artista.nombreArtistico
+
+        var foto: Any
+        if (artista.fotoPerfil == "DEFAULT") {
+            foto = R.drawable.ic_profile
+        } else {
+            foto = artista.fotoPerfil
+        }
+
         Glide.with(holder.itemView.context)
-            .load(artista.fotoPerfil)
+            .load(foto)
             .circleCrop()
             .into(holder.imagenArtista)
     }
