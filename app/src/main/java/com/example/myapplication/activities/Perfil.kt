@@ -178,10 +178,12 @@ class Perfil : AppCompatActivity() {
                         true
                     }
                     R.id.menu_logout -> {
+                        musicService?.pause()
                         startActivity(Intent(this, Logout::class.java))
                         true
                     }
                     R.id.menu_delete_account -> {
+                        musicService?.pause()
                         showDeleteAccountDialog()
                         true
                     }

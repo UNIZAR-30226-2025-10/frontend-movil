@@ -17,6 +17,14 @@ object Preferencias {
         return sharedPreferences.getString(key, defaultValue) ?: defaultValue
     }
 
+    fun guardarValorSetString(key: String, value: Set<String>) {
+        sharedPreferences.edit().putStringSet(key, value).apply()
+    }
+
+    fun obtenerValorSetString(key: String, defaultValue: Set<String>): Set<String> {
+        return sharedPreferences.getStringSet(key, defaultValue) ?: defaultValue
+    }
+
     fun guardarValorBooleano(key: String, value: Boolean) {
         sharedPreferences.edit().putBoolean(key, value).apply()
     }

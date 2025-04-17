@@ -27,5 +27,6 @@ data class CancionP(
     var fav: Boolean,
     val nombreUsuarioArtista: String,
     val fotoPortada: String,
-    val fecha: String
+    val fecha: String,
+    val album: String
 )

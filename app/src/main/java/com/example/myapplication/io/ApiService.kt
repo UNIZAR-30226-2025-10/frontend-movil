@@ -3,6 +3,7 @@ package com.example.myapplication.io
 import com.example.myapplication.io.request.AceptarInvitacionRequest
 import com.example.myapplication.io.request.ActualizarFavoritoRequest
 import com.example.myapplication.io.request.AddToPlaylistRequest
+import com.example.myapplication.io.request.AudioColeccionRequest
 import com.example.myapplication.io.request.AudioRequest
 import com.example.myapplication.io.response.LoginResponse
 import com.example.myapplication.io.request.LoginRequest
@@ -162,6 +163,13 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Header("sid") sid: String,
         @Body request: AudioRequest
+    ): Call<AudioResponse>
+
+    @PUT("/put-cancion-coleccion")
+    fun reproducirColeccion(
+        @Header("Authorization") token: String,
+        @Header("sid") sid: String,
+        @Body request: AudioColeccionRequest
     ): Call<AudioResponse>
 
     @GET("/get-datos-playlist")

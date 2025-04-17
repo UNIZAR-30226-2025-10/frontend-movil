@@ -10,6 +10,14 @@ import com.example.myapplication.utils.Preferencias
 
 class MusicPlayerService : Service() {
 
+    companion object {
+        private var completionListener: (() -> Unit)? = null
+
+        fun setOnCompletionListener(listener: () -> Unit) {
+            completionListener = listener
+        }
+    }
+
     private lateinit var mediaPlayer: MediaPlayer
     private val binder = MusicBinder()
 
@@ -97,6 +105,10 @@ class MusicPlayerService : Service() {
                 it.start()  // Iniciar la reproducción
                 Log.d("MiniReproductor", "Reproducción iniciada")
             }
+            mediaPlayer.setOnCompletionListener {
+                Log.d("MiniReproductor", "Canción finalizada")
+                completionListener?.invoke()
+            }
         } catch (e: Exception) {
             Log.e("MiniReproductor", "Error al configurar MediaPlayer: ${e.message}")
         }
@@ -125,6 +137,10 @@ class MusicPlayerService : Service() {
                     }
                 }
                 Log.d("MiniReproductor", "Reproducción iniciada")
+            }
+            mediaPlayer.setOnCompletionListener {
+                Log.d("MiniReproductor", "Canción finalizada")
+                completionListener?.invoke()
             }
         } catch (e: Exception) {
             Log.e("MiniReproductor", "Error al configurar MediaPlayer: ${e.message}")
@@ -156,6 +172,9 @@ class MusicPlayerService : Service() {
     fun isPlaying(): Boolean {
         return ::mediaPlayer.isInitialized && mediaPlayer.isPlaying
     }
+
+
+
 
     override fun onDestroy() {
         if (::mediaPlayer.isInitialized) {

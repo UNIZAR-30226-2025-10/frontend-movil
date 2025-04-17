@@ -43,13 +43,18 @@ import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.CloudinaryApiService
 import com.example.myapplication.io.request.ActualizarFavoritoRequest
 import com.example.myapplication.io.request.AddToPlaylistRequest
+import com.example.myapplication.io.request.AudioColeccionRequest
+import com.example.myapplication.io.request.AudioRequest
 import com.example.myapplication.io.request.CambiarPrivacidadPlaylistRequest
 import com.example.myapplication.io.request.DeleteFromPlaylistRequest
 import com.example.myapplication.io.request.DeletePlaylistRequest
 import com.example.myapplication.io.request.InvitarPlaylistRequest
 import com.example.myapplication.io.request.UpdatePlaylistRequest
 import com.example.myapplication.io.response.ActualizarFavoritoResponse
+import com.example.myapplication.io.response.AddReproduccionResponse
+import com.example.myapplication.io.response.AudioResponse
 import com.example.myapplication.io.response.Cancion
+import com.example.myapplication.io.response.CancionInfoResponse
 import com.example.myapplication.io.response.CancionP
 import com.example.myapplication.io.response.CloudinaryResponse
 import com.example.myapplication.io.response.GetSignatureResponse
@@ -90,6 +95,13 @@ class PlaylistDetail : AppCompatActivity() {
     var playlistId: String? = null
     private var isFavorito = false
 
+    private var aleatorio = false
+    private var modo = "enOrden"
+
+    private var orden: List<String> = listOf()
+    private var indexActual: Int = 0
+    private var playlistIdActual: String? = null
+
     private lateinit var progressBar: ProgressBar
     private var musicService: MusicPlayerService? = null
     private var serviceBound = false
@@ -101,6 +113,14 @@ class PlaylistDetail : AppCompatActivity() {
             serviceBound = true
             handler.post(updateRunnable)
             actualizarIconoPlayPause()
+            MusicPlayerService.setOnCompletionListener {
+                runOnUiThread {
+                    Log.d("Reproducción", "Canción finalizada, pasando a la siguiente")
+                    indexActual++
+                    Preferencias.guardarValorEntero("progresoCancionActual", 0)
+                    reproducirColeccion()
+                }
+            }
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -137,18 +157,12 @@ class PlaylistDetail : AppCompatActivity() {
 
         playlistImageButton = findViewById(R.id.imageViewPlaylist)
 
-
         // Configuración del RecyclerView
         recyclerViewCanciones = findViewById(R.id.recyclerViewCanciones)
         recyclerViewCanciones.layoutManager = LinearLayoutManager(this)
         cancionPAdapter = CancionPAdapter(listOf(),
             { cancion ->
-                val intent = Intent(this, CancionDetail::class.java)
-                intent.putExtra("nombre", cancion.nombre)
-                intent.putExtra("artista", cancion.nombreArtisticoArtista)
-                intent.putExtra("imagen", cancion.fotoPortada)
-                intent.putExtra("id", cancion.id)
-                startActivity(intent)
+                reproducir(cancion.id)
             },
             { cancion ->
                 showSongOptionsDialog(cancion)
@@ -164,6 +178,7 @@ class PlaylistDetail : AppCompatActivity() {
 
         // Llamada a la API para obtener los datos de la playlist
         playlistId?.let {
+            //Preferencias.guardarValorString("coleccionActualId", it)
             loadPlaylistData(it, textViewNombre, textViewNumCanciones, imageViewPlaylist)
         }
 
@@ -171,6 +186,21 @@ class PlaylistDetail : AppCompatActivity() {
         updateMiniReproductor()
 
         // Agregar funcionalidad al botón de añadir canción
+        val btnPlayPausePlaylist: ImageButton = findViewById(R.id.btnPlay)
+        btnPlayPausePlaylist.setOnClickListener {
+            playlistId?.let {
+                playlistIdActual = it
+                orden = Preferencias.obtenerValorString("ordenNaturalColeccionActual", "")
+                    .split(",")
+                    .filter { id -> id.isNotEmpty() }
+
+                if (indexActual == -1 || indexActual >= orden.size) {
+                    indexActual = 0
+                }
+                reproducirColeccion()
+            }
+        }
+
         val btnMoreOptions: ImageButton = findViewById(R.id.btnMoreOptions)
         btnMoreOptions.setOnClickListener {
                 showMoreOptionsDialog()
@@ -184,9 +214,21 @@ class PlaylistDetail : AppCompatActivity() {
             showInvitarUsuarioDialog()
         }
 
-
-
-
+        val btnAleatorio: ImageButton = findViewById(R.id.aleatorio)
+        btnAleatorio.setOnClickListener {
+            if (aleatorio == true){
+                Preferencias.guardarValorString("modoColeccionActual", "enOrden")
+                btnAleatorio.setImageResource(R.drawable.shuffle_24px)
+                aleatorio = false
+                modo = "enOrden"
+            }
+            else{
+                Preferencias.guardarValorString("modoColeccionActual", "aleatorio")
+                btnAleatorio.setImageResource(R.drawable.shuffle_24px_act)
+                aleatorio = true
+                modo = "aleatorio"
+            }
+        }
 
         // Botones de navegación
         val buttonHome: ImageButton = findViewById(R.id.nav_home)
@@ -234,6 +276,12 @@ class PlaylistDetail : AppCompatActivity() {
                     // Actualizar RecyclerView con la lista de canciones
                     canciones?.let {
                         cancionPAdapter.updateData(it)
+                    }
+
+                    val ids: List<String>? = canciones?.map { it.id }
+                    ids?.let {
+                        Log.d("ReproducirPlaylist", "IDs extraídos: ${it.joinToString(",")}")
+                        Preferencias.guardarValorString("ordenNaturalColeccionActual", ids.joinToString(","))
                     }
 
                 } else {
@@ -1113,6 +1161,191 @@ class PlaylistDetail : AppCompatActivity() {
             val stopButton = findViewById<ImageButton>(R.id.stopButton)
             stopButton.setImageResource(icono)
         }
+    }
+
+    private fun reproducir(id: String) {
+        val request = AudioRequest(id)
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+        val sid = WebSocketManager.getInstance().getSid()
+        Log.d("WebSocket", "El SID actual es: $sid")
+
+        if (sid == null) {
+            Log.e("MiApp", "No se ha generado un sid para el WebSocket")
+            return
+        }
+
+        // Llamada a la API con el sid en los headers
+        apiService.reproducirCancion(authHeader, sid, request).enqueue(object : Callback<AudioResponse> {
+            override fun onResponse(call: Call<AudioResponse>, response: Response<AudioResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { audioResponse ->
+                        val respuestaTexto = "Audio: ${audioResponse.audio}, Favorito: ${audioResponse.fav}"
+
+                        // Mostrar en Logcat
+                        Log.d("API_RESPONSE", "Respuesta exitosa: $respuestaTexto")
+
+                        // Mostrar en Toast
+                        //Toast.makeText(this@PlaylistDetail, respuestaTexto, Toast.LENGTH_LONG).show()
+
+                        reproducirAudio(audioResponse.audio)
+                        notificarReproduccion()
+
+                        Preferencias.guardarValorString("audioCancionActual", audioResponse.audio)
+                        guardarDatoscCancion(id)
+                    }
+                } else {
+                    val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
+
+                    // Mostrar en Logcat
+                    Log.e("API_RESPONSE", "Error en la respuesta: Código ${response.code()} - $errorMensaje")
+
+                    // Mostrar en Toast
+                    Toast.makeText(this@PlaylistDetail, "Error: $errorMensaje", Toast.LENGTH_LONG).show()
+                }
+            }
+
+            override fun onFailure(call: Call<AudioResponse>, t: Throwable) {
+                // Mostrar en Logcat
+                Log.e("API_RESPONSE", "Error de conexión: ${t.message}", t)
+
+                // Mostrar en Toast
+                Toast.makeText(this@PlaylistDetail, "Error de conexión: ${t.message}", Toast.LENGTH_LONG).show()
+            }
+        })
+    }
+
+    private fun reproducirColeccion() {
+
+        if (indexActual >= orden.size) {
+            Log.d("Reproducción", "Fin de la playlist")
+            return
+        }
+
+        val request = AudioColeccionRequest(playlistIdActual!!, modo, orden, indexActual)
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+        val sid = WebSocketManager.getInstance().getSid() ?: run {
+            Log.e("WebSocket", "SID no disponible")
+            return
+        }
+
+        apiService.reproducirColeccion(authHeader, sid, request).enqueue(object : Callback<AudioResponse> {
+            override fun onResponse(call: Call<AudioResponse>, response: Response<AudioResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { audioResponse ->
+                        reproducirAudioColeccion(audioResponse.audio) // No enviar progreso
+                        notificarReproduccion()
+                        guardarDatoscCancion(orden[indexActual])
+                    }
+                } else {
+                    Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<AudioResponse>, t: Throwable) {
+                Log.e("API", "Fallo: ${t.message}")
+            }
+        })
+    }
+
+    private fun reproducirAudio(audioUrl: String, progreso: Int = 0) {
+        try {
+            Preferencias.guardarValorEntero("progresoCancionActual", progreso)
+            val startIntent = Intent(this, MusicPlayerService::class.java).apply {
+                action = "PLAY"
+                putExtra("url", audioUrl)
+                putExtra("progreso", progreso)
+            }
+            startService(startIntent)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Error al reproducir el audio", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun reproducirAudioColeccion(audioUrl: String, progreso: Int = 0) {
+        try {
+            Preferencias.guardarValorEntero("progresoCancionActual", progreso)
+            val intent = Intent(this, MusicPlayerService::class.java).apply {
+                action = "PLAY"
+                putExtra("url", audioUrl)
+                putExtra("progreso", progreso)
+            }
+            startService(intent)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Error al reproducir el audio", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun notificarReproduccion() {
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+
+        apiService.addReproduccion(authHeader).enqueue(object : Callback<AddReproduccionResponse> {
+            override fun onResponse(call: Call<AddReproduccionResponse>, response: Response<AddReproduccionResponse>) {
+                if (response.isSuccessful) {
+                    Log.d("MiApp", "Reproducción registrada exitosamente")
+                } else {
+                    Log.e("MiApp", "Error al registrar la reproducción")
+                }
+            }
+
+            override fun onFailure(call: Call<AddReproduccionResponse>, t: Throwable) {
+                Log.e("MiApp", "Error de conexión al registrar reproducción")
+            }
+        })
+    }
+
+    private fun guardarDatoscCancion(id: String) {
+        Preferencias.guardarValorString("cancionActualId", id)
+
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+
+        // Llamada a la API con el sid en los headers
+        apiService.getInfoCancion(authHeader, id).enqueue(object : Callback<CancionInfoResponse> {
+            override fun onResponse(call: Call<CancionInfoResponse>, response: Response<CancionInfoResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { cancionResponse ->
+                        val foto = cancionResponse.fotoPortada
+                        val nombre = cancionResponse.nombre
+                        val artista = cancionResponse.nombreArtisticoArtista
+
+                        // Mostrar en Logcat
+                        Log.d("CancionInfo", "Respuesta exitosa Canción")
+                        Log.d("CancionInfo", "Canción: $nombre")
+                        Log.d("CancionInfo", "Artista: $artista")
+                        Log.d("CancionInfo", "Foto: $foto")
+
+                        Preferencias.guardarValorString("nombreCancionActual", nombre)
+                        Preferencias.guardarValorString("nombreArtisticoActual", artista)
+                        Preferencias.guardarValorString("fotoPortadaActual", foto)
+
+                        updateMiniReproductor()
+                        actualizarIconoPlayPause()
+                    }
+                } else {
+                    val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
+
+                    // Mostrar en Logcat
+                    Log.e("API_RESPONSE", "Error en la respuesta: Código ${response.code()} - $errorMensaje")
+
+                    // Mostrar en Toast
+                    Toast.makeText(this@PlaylistDetail, "Error: $errorMensaje", Toast.LENGTH_LONG).show()
+                }
+            }
+
+            override fun onFailure(call: Call<CancionInfoResponse>, t: Throwable) {
+                // Mostrar en Logcat
+                Log.e("API_RESPONSE", "Error de conexión: ${t.message}", t)
+
+                // Mostrar en Toast
+                Toast.makeText(this@PlaylistDetail, "Error de conexión: ${t.message}", Toast.LENGTH_LONG).show()
+            }
+        })
     }
 
     override fun onStart() {
