@@ -1,6 +1,7 @@
 package com.example.myapplication.activities
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myapplication.Adapters.Album.CancionesAlbumAdapter
+import com.example.myapplication.Adapters.Album.CancionesAlbumAdapter.Companion.REQUEST_CREATE_PLAYLIST
 import com.example.myapplication.R
 import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.request.AddToPlaylistRequest
@@ -43,6 +45,7 @@ class AlbumDetail : AppCompatActivity() {
     private lateinit var cancionesAdapter: CancionesAlbumAdapter
     private lateinit var dot: View
     private var album:  DatosAlbumResponse? = null
+    var selectedCancionParaAñadir: CancionesAlbum? = null
     var albumId: String? = null
 
     //EVENTOS PARA LAS NOTIFICACIONES
@@ -270,6 +273,22 @@ class AlbumDetail : AppCompatActivity() {
 
         buttonCrear.setOnClickListener {
             startActivity(Intent(this, CrearPlaylist::class.java))
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == CancionesAlbumAdapter.REQUEST_CREATE_PLAYLIST && resultCode == RESULT_OK) {
+            val nuevaPlaylistId = data?.getStringExtra("playlist_id")  // Este dato lo tiene que devolver la actividad CrearPlaylist
+            val cancion = selectedCancionParaAñadir
+
+            if (nuevaPlaylistId != null && cancion != null) {
+                // Llama al método de añadir
+                cancionesAdapter.onAddToPlaylist?.invoke(cancion, nuevaPlaylistId)
+                Toast.makeText(this, "Canción añadida a la nueva playlist", Toast.LENGTH_SHORT).show()
+                selectedCancionParaAñadir = null
+            }
         }
     }
 

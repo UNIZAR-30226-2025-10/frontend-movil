@@ -55,6 +55,7 @@ import com.example.myapplication.io.response.CancionActualResponse
 import com.example.myapplication.io.response.CancionInfoResponse
 import com.example.myapplication.io.response.CancionesArtistaResponse
 import com.example.myapplication.io.response.CancionesFavsArtistaResponse
+import com.example.myapplication.io.response.CrearPlaylistResponse
 import com.example.myapplication.io.response.DatosAlbumResponse
 import com.example.myapplication.io.response.DatosArtistaResponse
 import com.example.myapplication.io.response.DeleteAccountResponse
@@ -334,7 +335,7 @@ interface ApiService {
     fun crearPlaylist(
         @Header("Authorization") token: String,
         @Body request: CreatePlaylistRequest
-    ): Call<Void>
+    ): Call<CrearPlaylistResponse>
 
     @GET("/search-for-playlist")
     fun searchForSongs(

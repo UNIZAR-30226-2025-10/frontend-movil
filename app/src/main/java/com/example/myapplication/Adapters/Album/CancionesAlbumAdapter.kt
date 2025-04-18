@@ -1,6 +1,7 @@
 package com.example.myapplication.Adapters.Album
 
 import android.app.Dialog
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.util.Log
@@ -14,10 +15,13 @@ import android.widget.PopupMenu
 import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myapplication.R
+import com.example.myapplication.activities.AlbumDetail
+import com.example.myapplication.activities.CrearPlaylist
 import com.example.myapplication.io.response.CancionesAlbum
 import com.example.myapplication.io.response.MisPlaylist
 
@@ -49,11 +53,6 @@ class CancionesAlbumAdapter(
         canciones = nuevasCanciones
         this.nombreArtista = nombreArtista
         notifyDataSetChanged()
-    }
-
-    fun submitList(nuevasCanciones: List<CancionesAlbum>) {
-        canciones = nuevasCanciones
-        notifyDataSetChanged() // Notifica al adaptador para que actualice la UI
     }
 
     inner class CancionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -94,7 +93,8 @@ class CancionesAlbumAdapter(
             popup.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.action_add_to_playlist -> {
-                        val playlists = onGetPlaylists?.invoke { playlists ->
+                        // Obtener las playlists
+                        onGetPlaylists?.invoke { playlists ->
                             Log.d("Playlist", "Playlists obtenidas: $playlists")
                             showPlaylistSelectionDialog(cancion, playlists)
                         }
@@ -106,7 +106,7 @@ class CancionesAlbumAdapter(
             popup.show()
         }
 
-        private fun showPlaylistSelectionDialog(cancion: CancionesAlbum, playlists: Any) {
+        private fun showPlaylistSelectionDialog(cancion: CancionesAlbum, playlists: List<MisPlaylist>) {
             val context = itemView.context
             val dialog = Dialog(context)
             dialog.setContentView(R.layout.dialog_select_playlist_album)
@@ -116,12 +116,10 @@ class CancionesAlbumAdapter(
             val searchView = dialog.findViewById<SearchView>(R.id.searchViewPlaylists)
             val recyclerView = dialog.findViewById<RecyclerView>(R.id.recyclerViewPlaylists)
             val btnCancel = dialog.findViewById<Button>(R.id.btnCancel)
+            val btnCreatePlaylist = dialog.findViewById<Button>(R.id.btnCreatePlaylist)
 
-            // Casteamos playlists a List<MisPlaylist> de manera segura
-            val playlistList = playlists as? List<MisPlaylist> ?: emptyList()
-
-            // Configurar el adaptador
-            val adapter = PlaylistSelectorAdapter(playlistList) { selectedPlaylist ->
+            // Configurar el adaptador con las playlists obtenidas
+            val adapter = PlaylistSelectorAdapter(playlists) { selectedPlaylist ->
                 onAddToPlaylist?.invoke(cancion, selectedPlaylist.id)
                 dialog.dismiss()
                 Toast.makeText(context, "Añadido a ${selectedPlaylist.nombre}", Toast.LENGTH_SHORT).show()
@@ -141,7 +139,20 @@ class CancionesAlbumAdapter(
             })
 
             btnCancel.setOnClickListener { dialog.dismiss() }
+
+            // Cuando se crea una nueva playlist
+            btnCreatePlaylist.setOnClickListener {
+                val intent = Intent(context, CrearPlaylist::class.java)
+                (context as? AlbumDetail)?.selectedCancionParaAñadir = cancion  // PASO IMPORTANTE
+                (context as? AlbumDetail)?.startActivityForResult(intent, REQUEST_CREATE_PLAYLIST)
+                dialog.dismiss()
+            }
+
             dialog.show()
         }
+    }
+
+    companion object {
+        const val REQUEST_CREATE_PLAYLIST = 1
     }
 }

@@ -1,5 +1,6 @@
 package com.example.myapplication.activities
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +15,7 @@ import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.CloudinaryApiService
 import com.example.myapplication.io.request.CreatePlaylistRequest
 import com.example.myapplication.io.response.CloudinaryResponse
+import com.example.myapplication.io.response.CrearPlaylistResponse
 import com.example.myapplication.io.response.GetSignatureResponse
 import com.example.myapplication.utils.Preferencias
 import okhttp3.MediaType
@@ -141,10 +143,15 @@ class CrearPlaylist : AppCompatActivity() {
 
         val request = CreatePlaylistRequest(nombre, imageUrl)
 
-        apiService.crearPlaylist(authHeader, request).enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+        apiService.crearPlaylist(authHeader, request).enqueue(object : Callback<CrearPlaylistResponse> {
+            override fun onResponse(call: Call<CrearPlaylistResponse>, response: Response<CrearPlaylistResponse>) {
                 if (response.isSuccessful) {
+                    val playlistId = response.body()?.id
                     Toast.makeText(this@CrearPlaylist, "Playlist creada correctamente", Toast.LENGTH_SHORT).show()
+                    val intent = Intent()
+                    intent.putExtra("playlist_id", playlistId)  // Usa el ID real aquí
+                    setResult(RESULT_OK, intent)
+                    finish()
                     finish() // opcional: vuelve a la pantalla anterior
                 } else {
                     Toast.makeText(this@CrearPlaylist, "Error al crear la playlist", Toast.LENGTH_SHORT).show()
@@ -152,7 +159,7 @@ class CrearPlaylist : AppCompatActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<Void>, t: Throwable) {
+            override fun onFailure(call: Call<CrearPlaylistResponse>, t: Throwable) {
                 Toast.makeText(this@CrearPlaylist, "Fallo en la conexión: ${t.message}", Toast.LENGTH_SHORT).show()
                 Log.e("CrearPlaylist", "Fallo al crear playlist", t)
             }

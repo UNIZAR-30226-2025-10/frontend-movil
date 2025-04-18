@@ -22,6 +22,13 @@
         android:maxHeight="400dp"/>
 
     <Button
+        android:id="@+id/btnCreatePlaylist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Crear Playlist"
+        android:layout_marginTop="8dp"/>
+
+    <Button
         android:id="@+id/btnCancel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
