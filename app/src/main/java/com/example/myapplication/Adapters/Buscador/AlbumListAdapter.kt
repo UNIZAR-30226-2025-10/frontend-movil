@@ -14,6 +14,7 @@ import com.example.myapplication.io.response.*
 
 class AlbumAdapter(
     private var listaAlbumes: List<Album>,
+    private val clickListener: (Album) -> Unit
 ) : RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
 
     // Cambia el método para actualizar la lista
@@ -53,6 +54,7 @@ class AlbumAdapter(
             )
             .into(holder.imagenAlbum)
 
+        holder.itemView.setOnClickListener { clickListener(album) }
     }
 
     override fun getItemCount(): Int {

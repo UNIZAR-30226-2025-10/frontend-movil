@@ -181,6 +181,10 @@
             android:exported="false"
             android:theme="@style/Theme.MyApplication"/>
 
+        <activity android:name=".activities.AlbumDetail"
+            android:exported="false"
+            android:theme="@style/Theme.MyApplication"/>
+
     </application>
 
 </manifest>

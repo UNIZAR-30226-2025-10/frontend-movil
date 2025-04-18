@@ -55,6 +55,7 @@ import com.example.myapplication.io.response.CancionActualResponse
 import com.example.myapplication.io.response.CancionInfoResponse
 import com.example.myapplication.io.response.CancionesArtistaResponse
 import com.example.myapplication.io.response.CancionesFavsArtistaResponse
+import com.example.myapplication.io.response.DatosAlbumResponse
 import com.example.myapplication.io.response.DatosArtistaResponse
 import com.example.myapplication.io.response.DeleteAccountResponse
 import com.example.myapplication.io.response.DeleteAlbumResponse
@@ -516,6 +517,12 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Query("nombreUsuario") nombreUsuario: String
     ): Call<CancionesFavsArtistaResponse>
+
+    @GET("get-datos-album")
+    fun getDatosAlbum(
+        @Header("Authorization") token: String,
+        @Query("id") id: String
+    ): Call<DatosAlbumResponse>
 
     
     companion object Factory {
