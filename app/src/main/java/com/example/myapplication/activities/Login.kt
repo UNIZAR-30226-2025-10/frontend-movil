@@ -221,6 +221,7 @@ class Login : AppCompatActivity() {
 
                                 Preferencias.guardarValorString("ordenNaturalColeccionActual", coleccion.ordenNatural?.joinToString(",") ?: "")
                                 Log.d("MiniReproductor", "Orden natural colección guardado: ${coleccion.ordenNatural?.joinToString(",") ?: "null"}")
+
                                 Preferencias.guardarValorEntero("indexColeccionActual", coleccion.index ?: 0)
                                 Log.d("MiniReproductor", "Índice colección guardado: ${coleccion.index ?: 0}")
 
