@@ -207,15 +207,22 @@ class PlaylistDetail : AppCompatActivity() {
                     .filter { id -> id.isNotEmpty() }
                 modo = Preferencias.obtenerValorString("modoColeccionMirada", "enOrden")
 
-                Preferencias.guardarValorString("ordenColeccionActual", orden.joinToString(","))
+                if (indexActual <= -1 || indexActual >= orden.size) {
+                    indexActual = 0
+                }
+
                 Preferencias.guardarValorString("ordenNaturalColeccionActual", ordenNatural.joinToString(","))
                 Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
                 Preferencias.guardarValorString("modoColeccionActual", modo)
 
-
-                if (indexActual == -1 || indexActual >= orden.size) {
-                    indexActual = 0
+                if(modo == "enOrden"){
+                    Preferencias.guardarValorString("ordenColeccionActual", ordenNatural.joinToString(","))
                 }
+                else{
+                    Preferencias.guardarValorString("ordenColeccionActual", orden.joinToString(","))
+                }
+
+
                 reproducirColeccion()
             }
         }
@@ -1230,6 +1237,7 @@ class PlaylistDetail : AppCompatActivity() {
                     response.body()?.let { audioResponse ->
                         val respuestaTexto = "Audio: ${audioResponse.audio}, Favorito: ${audioResponse.fav}"
 
+                        Preferencias.guardarValorString("coleccionActualId", "")
                         // Mostrar en Logcat
                         Log.d("API_RESPONSE", "Respuesta exitosa: $respuestaTexto")
 
@@ -1271,11 +1279,6 @@ class PlaylistDetail : AppCompatActivity() {
         val modoColeccion =  Preferencias.obtenerValorString("modoColeccionActual", "")
 
         val indice = Preferencias.obtenerValorEntero("indexColeccionActual", 0)
-
-        if (indice >= ordenColeccion.size) {
-            Log.d("Reproducción", "Fin de la playlist")
-            return
-        }
 
         val idcoleccion = Preferencias.obtenerValorString("coleccionActualId", "")
 

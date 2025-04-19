@@ -46,6 +46,7 @@ import com.example.myapplication.Adapters.Home.HeaderAdapter
 import com.example.myapplication.Adapters.Home.PlaylistsAdapter
 import com.example.myapplication.Adapters.Home.RecomendacionesAdapter
 import com.example.myapplication.Adapters.Notificaciones.InvitacionesAdapter
+import com.example.myapplication.io.request.AudioColeccionRequest
 import com.example.myapplication.io.request.AudioRequest
 import com.example.myapplication.io.response.AddReproduccionResponse
 import com.example.myapplication.io.response.AudioResponse
@@ -97,6 +98,7 @@ class Home : AppCompatActivity() {
             handler.postDelayed(this, 1000) // cada segundo
         }
     }
+    private var indexActual = 0
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             val binder = service as MusicPlayerService.MusicBinder
@@ -106,7 +108,24 @@ class Home : AppCompatActivity() {
             // El servicio ya está listo, ahora actualiza el mini reproductor
             updateMiniReproductor()
             actualizarIconoPlayPause()
+            MusicPlayerService.setOnCompletionListener {
+                runOnUiThread {
+                    val idcoleccion = Preferencias.obtenerValorString("coleccionActualId", "")
+                    if(idcoleccion == ""){
+                        Preferencias.guardarValorEntero("progresoCancionActual", 0)
+                        musicService?.resume()
+                    }
+                    else {
+                        Log.d("Reproducción", "Canción finalizada, pasando a la siguiente")
+                        indexActual++
+                        Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
+                        Preferencias.guardarValorEntero("progresoCancionActual", 0)
+                        reproducirColeccion()
+                    }
+                }
+            }
         }
+
 
         override fun onServiceDisconnected(name: ComponentName?) {
             serviceBound = false
@@ -179,6 +198,8 @@ class Home : AppCompatActivity() {
         } else {
             dot.visibility = View.GONE
         }
+
+        indexActual = Preferencias.obtenerValorEntero("indexColeccionActual", 0)
 
         //Para actualizar el punto rojo en tiempo real, suscripcion a los eventos
         WebSocketEventHandler.registrarListenerNovedad(listenerNovedad)
@@ -713,6 +734,7 @@ class Home : AppCompatActivity() {
                     response.body()?.let { audioResponse ->
                         val respuestaTexto = "Audio: ${audioResponse.audio}, Favorito: ${audioResponse.fav}"
 
+                        Preferencias.guardarValorString("coleccionActualId", "")
                         // Mostrar en Logcat
                         Log.d("API_RESPONSE", "Respuesta exitosa: $respuestaTexto")
 
@@ -746,6 +768,59 @@ class Home : AppCompatActivity() {
         })
     }
 
+    private fun reproducirColeccion() {
+        val ordenColeccion = Preferencias.obtenerValorString("ordenColeccionActual", "")
+            .split(",")
+            .filter { id -> id.isNotEmpty() }
+
+        val modoColeccion =  Preferencias.obtenerValorString("modoColeccionActual", "")
+
+        val indice = Preferencias.obtenerValorEntero("indexColeccionActual", 0)
+
+        if (indice >= ordenColeccion.size) {
+            Log.d("Reproducción", "Fin de la playlist")
+            return
+        }
+
+        val idcoleccion = Preferencias.obtenerValorString("coleccionActualId", "")
+
+        val listaNatural = Preferencias.obtenerValorString("ordenNaturalColeccionActual", "")
+            .split(",")
+            .filter { id -> id.isNotEmpty() }
+
+        Log.d("ReproducirPlaylist", "Lista natural ids: ${listaNatural.joinToString(",")}")
+        Log.d("ReproducirPlaylist", "Lista ids reproduccion: ${ordenColeccion.joinToString(",")}")
+        Log.d("ReproducirPlaylist", "Indice: $indice")
+        Log.d("ReproducirPlaylist", "Modo: $modoColeccion")
+        Log.d("ReproducirPlaylist", "Id coleccion: $idcoleccion")
+
+        val request = AudioColeccionRequest(idcoleccion, modoColeccion, ordenColeccion, indice)
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+        val sid = WebSocketManager.getInstance().getSid() ?: run {
+            Log.e("WebSocket", "SID no disponible")
+            return
+        }
+
+        apiService.reproducirColeccion(authHeader, sid, request).enqueue(object : Callback<AudioResponse> {
+            override fun onResponse(call: Call<AudioResponse>, response: Response<AudioResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { audioResponse ->
+                        reproducirAudioColeccion(audioResponse.audio) // No enviar progreso
+                        notificarReproduccion()
+                        guardarDatoscCancion(ordenColeccion[indice])
+                    }
+                } else {
+                    Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<AudioResponse>, t: Throwable) {
+                Log.e("API", "Fallo: ${t.message}")
+            }
+        })
+    }
+
     private fun reproducirAudio(audioUrl: String, progreso: Int = 0) {
         try {
             Preferencias.guardarValorEntero("progresoCancionActual", progreso)
@@ -755,6 +830,22 @@ class Home : AppCompatActivity() {
                 putExtra("progreso", progreso)
             }
             startService(startIntent)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Error al reproducir el audio", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun reproducirAudioColeccion(audioUrl: String, progreso: Int = 0) {
+        try {
+            Preferencias.guardarValorEntero("progresoCancionActual", progreso)
+            val intent = Intent(this, MusicPlayerService::class.java).apply {
+                action = "PLAY"
+                putExtra("url", audioUrl)
+                putExtra("progreso", progreso)
+            }
+            startService(intent)
+
         } catch (e: Exception) {
             e.printStackTrace()
             Toast.makeText(this, "Error al reproducir el audio", Toast.LENGTH_SHORT).show()
