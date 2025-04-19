@@ -10,7 +10,8 @@ import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.io.response.*
 
-class ArtistaAdapter(private var listaArtistas: List<Artista>) : RecyclerView.Adapter<ArtistaAdapter.ArtistaViewHolder>() {
+class ArtistaAdapter(private var listaArtistas: List<Artista>,
+                     private val clickListener: (Artista) -> Unit) : RecyclerView.Adapter<ArtistaAdapter.ArtistaViewHolder>() {
 
     // Cambia el método para actualizar la lista
     fun updateDataArtista(searchResponse: List<Artista>) {
@@ -38,6 +39,8 @@ class ArtistaAdapter(private var listaArtistas: List<Artista>) : RecyclerView.Ad
             .load(foto)
             .circleCrop()
             .into(holder.imagenArtista)
+
+        holder.itemView.setOnClickListener { clickListener(artista) }
     }
 
     override fun getItemCount(): Int {

@@ -214,7 +214,36 @@ class Home : AppCompatActivity() {
         recyclerViewRecomendaciones.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
         // Inicia los adaptadores
-        RecientesAdapter = RecientesYArtistasAdapter(mutableListOf())
+        RecientesAdapter = RecientesYArtistasAdapter(mutableListOf()) { item ->
+            when (item) {
+                is HRecientes -> {
+                    if (item.tipo == "playlist") {
+                        val intent = Intent(this, PlaylistDetail::class.java)
+                        intent.putExtra("nombre", item.nombre)
+                        intent.putExtra("imagen", item.fotoPortada)
+                        intent.putExtra("id", item.id)
+                        Log.d("Playlist", "Home ->Playlist")
+                        startActivity(intent)
+                    } else if (item.tipo == "album") {
+                        val intent = Intent(this, AlbumDetail::class.java)
+                        intent.putExtra("nombre", item.nombre)
+                        intent.putExtra("nombreArtista", item.autor)
+                        intent.putExtra("imagen", item.fotoPortada)
+                        intent.putExtra("id", item.id)
+                        Log.d("Cancion", "Home -> Cancion")
+                        startActivity(intent)
+                    }
+
+                }
+                is HArtistas -> {
+                    val intent = Intent(this, OtroArtista::class.java)
+                    intent.putExtra("nombreUsuario", item.nombreUsuario)
+                    intent.putExtra("nombreArtistico", item.nombreArtistico)
+                    Log.d("Album", "Buscador -> OtroArtista")
+                    startActivity(intent)
+                }
+            }
+        }
         recyclerViewRecientes.adapter = RecientesAdapter
 
         escuchasAdapter = EscuchasAdapter(mutableListOf()) { escucha ->

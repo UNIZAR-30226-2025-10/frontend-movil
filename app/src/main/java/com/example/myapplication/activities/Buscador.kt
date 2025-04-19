@@ -165,7 +165,13 @@ class Buscador : AppCompatActivity() {
         }
         recyclerViewCancion.adapter = cancionAdapter
 
-        artistaAdapter = ArtistaAdapter(mutableListOf())
+        artistaAdapter = ArtistaAdapter(mutableListOf()){ artista ->
+            val intent = Intent(this, OtroArtista::class.java)
+            intent.putExtra("nombreUsuario", artista.nombreUsuario)
+            intent.putExtra("nombreArtistico", artista.nombreArtistico)
+            Log.d("Album", "Buscador -> OtroArtista")
+            startActivity(intent)
+        }
         recyclerViewArtista.adapter = artistaAdapter
 
         albumAdapter = AlbumAdapter(mutableListOf()){ album ->

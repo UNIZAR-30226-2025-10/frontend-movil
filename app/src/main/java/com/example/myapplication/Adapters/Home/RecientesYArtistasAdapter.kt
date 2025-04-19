@@ -12,7 +12,8 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.myapplication.R
 import com.example.myapplication.io.response.*
 
-class RecientesYArtistasAdapter(private var items: MutableList<Any>) :
+class RecientesYArtistasAdapter(private var items: MutableList<Any>,
+                                private val clickListener: (Any) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -48,6 +49,7 @@ class RecientesYArtistasAdapter(private var items: MutableList<Any>) :
             is RecienteViewHolder -> holder.bind(items[position] as HRecientes)
             is ArtistaViewHolder -> holder.bind(items[position] as HArtistas)
         }
+        holder.itemView.setOnClickListener { clickListener(items[position]) }
     }
 
     override fun getItemCount(): Int = items.size

@@ -14,7 +14,8 @@ data class HRecientes(
     val id: String,
     val nombre: String,
     val fotoPortada: String,
-    val autor: String
+    val autor: String,
+    val tipo: String
 )
 
     data class HArtistas(
