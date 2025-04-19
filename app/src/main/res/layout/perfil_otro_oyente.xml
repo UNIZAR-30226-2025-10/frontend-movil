@@ -14,39 +14,53 @@
         android:layout_height="65dp"
         android:background="#000e3b"
         android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:layout_constraintTop_toTopOf="parent">
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_height="match_parent">
 
             <ImageView
                 android:id="@+id/toolbar_logo"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
-                android:src="@drawable/logo"
                 android:layout_centerVertical="true"
-                android:contentDescription="@string/logo"/>
+                android:contentDescription="@string/logo"
+                android:src="@drawable/logo" />
 
-            <!-- Imagen de notificaciones como botón -->
-            <ImageButton
-                android:id="@+id/notificationImageButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+            <FrameLayout
+                android:id="@+id/notificationButtonContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:padding="4dp"
-                android:layout_marginEnd="92dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/notification"
-                android:background="@android:color/transparent"
-                android:contentDescription="Imagen de notificaciones"
-                android:clickable="true"
-                android:focusable="true"/>
+                android:layout_marginEnd="92dp">
 
-            <!-- Imagen de perfil como botón -->
+                <!-- Imagen de notificaciones como botón -->
+                <ImageButton
+                    android:id="@+id/notificationImageButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:padding="4dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/notification"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="Imagen de notificaciones"
+                    android:clickable="true"
+                    android:focusable="true"/>
+
+                <!-- Circulito rojo -->
+                <View
+                    android:id="@+id/notificationDot"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:background="@drawable/dot_notificacion"
+                    android:visibility="gone"/>
+            </FrameLayout>
+
             <ImageButton
                 android:id="@+id/profileImageButton"
                 android:layout_width="40dp"
@@ -54,12 +68,10 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="21dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_profile"
                 android:background="@android:color/transparent"
-                android:contentDescription="Imagen de perfil"
-                android:clickable="true"
-                android:focusable="true"/>
+                android:contentDescription="Perfil"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_profile" />
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 

@@ -75,6 +75,7 @@ import com.example.myapplication.io.response.GetInvitacionesResponse
 import com.example.myapplication.io.response.GetMisAlbumesResponse
 import com.example.myapplication.io.response.GetNovedadesResponse
 import com.example.myapplication.io.response.GetNuevosSeguidoresResponse
+import com.example.myapplication.io.response.GetPlaylistOyenteResponse
 import com.example.myapplication.io.response.GetSignatureResponse
 import com.example.myapplication.io.response.HayNotificacionesResponse
 import com.example.myapplication.io.response.HistorialArtistasResponse
@@ -524,6 +525,12 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Query("id") id: String
     ): Call<DatosAlbumResponse>
+
+    @GET("/get-playlists")
+    fun getPlaylistOyente(
+        @Header("Authorization") token: String,
+        @Query("nombreUsuario") nombreUsuario: String
+    ): Call<GetPlaylistOyenteResponse>
 
     
     companion object Factory {
