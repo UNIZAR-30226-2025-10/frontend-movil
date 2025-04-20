@@ -17,7 +17,6 @@ class CancionPAdapter(
     private var listaCanciones: List<CancionP>,
     private val clickListener: (CancionP) -> Unit,
     private val onOptionsClick: (CancionP) -> Unit,
-    private val onFavoriteClick: (CancionP, isFavorite: Boolean) -> Unit
 ) : RecyclerView.Adapter<CancionPAdapter.CancionPViewHolder>() {
 
     fun updateData(searchResponse: List<CancionP>) {
@@ -38,13 +37,15 @@ class CancionPAdapter(
     override fun getItemCount(): Int = listaCanciones.size
 
     inner class CancionPViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val numero: TextView = itemView.findViewById(R.id.numero)
         private val nombreCancion: TextView = itemView.findViewById(R.id.textView)
         private val artistaCancion: TextView = itemView.findViewById(R.id.textViewArtist)
         private val imagenCancion: ImageView = itemView.findViewById(R.id.imageView)
         private val btnOptions: ImageButton = itemView.findViewById(R.id.btnMoreOptions)
-        private val btnFavorite: ImageButton = itemView.findViewById(R.id.btn_favorito)
+        private val duracion: TextView = itemView.findViewById(R.id.duracion)
 
         fun bind(cancion: CancionP) {
+            numero.text = (position + 1).toString()
             nombreCancion.text = cancion.nombre
             val featuringText = if (cancion.featuring.isNotEmpty()) {
                 " ft. ${cancion.featuring.joinToString(", ")}"
@@ -53,15 +54,16 @@ class CancionPAdapter(
             }
             artistaCancion.text = cancion.nombreArtisticoArtista + featuringText
 
+            // Procesar duración
+            val segundos = cancion.duracion
+            val minutos = segundos / 60
+            val restoSegundos = segundos % 60
+            duracion.text = String.format("%d:%02d", minutos, restoSegundos)
+
             Glide.with(itemView.context)
                 .load(cancion.fotoPortada)
                 .into(imagenCancion)
 
-            // Mostrar el estado actual de favorito
-            btnFavorite.setImageResource(
-                if (cancion.fav) R.drawable.ic_heart_lleno
-                else R.drawable.ic_heart_vacio
-            )
 
             itemView.setOnClickListener { clickListener(cancion) }
 
@@ -69,16 +71,7 @@ class CancionPAdapter(
                 onOptionsClick(cancion)
             }
 
-            btnFavorite.setOnClickListener {
-                // Cambiar el estado inmediatamente para feedback visual
-                val newFavState = !cancion.fav
-                btnFavorite.setImageResource(
-                    if (newFavState) R.drawable.ic_heart_lleno
-                    else R.drawable.ic_heart_vacio
-                )
-                // Notificar al activity/fragment
-                onFavoriteClick(cancion, newFavState)
-            }
+
         }
     }
 }

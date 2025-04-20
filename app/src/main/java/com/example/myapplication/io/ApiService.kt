@@ -35,6 +35,7 @@ import com.example.myapplication.io.request.DeletePlaylistRequest
 import com.example.myapplication.io.request.PlaylistRequest
 import com.example.myapplication.io.request.EditarPerfilRequest
 import com.example.myapplication.io.request.InvitarPlaylistRequest
+import com.example.myapplication.io.request.LeavePlaylistRequest
 import com.example.myapplication.io.request.LeerNotiLikeRequest
 import com.example.myapplication.io.request.LeerNotiNoizzitoRequest
 import com.example.myapplication.io.request.LeerNotiSeguidorRequest
@@ -531,6 +532,14 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Query("nombreUsuario") nombreUsuario: String
     ): Call<GetPlaylistOyenteResponse>
+
+    @HTTP(method = "DELETE", path = "/leave-playlist", hasBody = true)
+    fun leavePlaylist(
+        @Header("Authorization") token: String,
+        @Body request: LeavePlaylistRequest
+    ): Call<Void>
+
+
 
     
     companion object Factory {

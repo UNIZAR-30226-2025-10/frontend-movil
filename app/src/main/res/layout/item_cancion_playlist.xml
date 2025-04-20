@@ -1,79 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:paddingVertical="12dp"
-    android:paddingHorizontal="16dp"
-    android:background="?attr/selectableItemBackground"
-    android:gravity="center_vertical">
+    android:padding="8dp">
 
-    <!-- Imagen de la canción con sombra -->
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/no_cancion"
-        android:background="@drawable/rounded_edittext"
-        android:clipToOutline="true"
-        android:elevation="2dp"
-        android:outlineProvider="background" />
+    <!-- Número -->
+    <TextView
+        android:id="@+id/numero"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:fontFamily="@font/poppins_bold"
+        android:textColor="#000e3b"
+        android:textSize="14sp"
+        android:layout_marginEnd="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-    <!-- Contenedor de texto -->
+    <!-- Info canción (imagen + texto) -->
     <LinearLayout
+        android:id="@+id/infoCancion"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center_vertical"
-        android:paddingStart="16dp"
-        android:paddingEnd="8dp">
+        android:orientation="horizontal"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintStart_toEndOf="@id/numero"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/duracion">
 
-        <!-- Nombre de la canción -->
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:fontFamily="sans-serif-medium" />
+        <!-- Imagen de portada -->
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginEnd="12dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/no_cancion"
+            android:background="@drawable/rounded_edittext"
+            android:clipToOutline="true"
+            android:elevation="2dp"
+            android:outlineProvider="background" />
 
-        <!-- Nombre del artista -->
-        <TextView
-            android:id="@+id/textViewArtist"
-            android:layout_width="match_parent"
+        <!-- Textos de nombre y artista -->
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textColor="#808080"
-            android:textSize="14sp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:fontFamily="sans-serif" />
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nombre de canción"
+                android:textColor="#000e3b"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_bold" />
+
+            <TextView
+                android:id="@+id/textViewArtist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Artista"
+                android:textColor="#000e3b"
+                android:fontFamily="@font/poppins_regular"
+                android:textSize="12sp"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
     </LinearLayout>
 
-    <!-- Botón de favorito -->
-    <ImageButton
-        android:id="@+id/btn_favorito"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginEnd="8dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:padding="12dp"
-        android:src="@drawable/ic_heart_vacio"
-      />
+    <!-- Duración -->
+    <TextView
+        android:id="@+id/duracion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="3:15"
+        android:fontFamily="@font/poppins_regular"
+        android:textSize="12sp"
+        android:layout_marginEnd="40dp"
+        app:layout_constraintEnd_toStartOf="@id/btnMoreOptions"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-    <!-- Botón de más opciones -->
+    <!-- Botón de opciones -->
     <ImageButton
         android:id="@+id/btnMoreOptions"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:padding="12dp"
-        android:src="@drawable/ic_more_options"
-       />
-</LinearLayout>
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="8dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_more_vert"
+        android:contentDescription="Opciones perfil"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

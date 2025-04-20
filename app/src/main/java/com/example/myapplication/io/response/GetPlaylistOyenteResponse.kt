@@ -6,7 +6,7 @@ data class GetPlaylistOyenteResponse(
 )
 
 data class PlaylistOyente(
-    val id: Int,
+    val id: String,
     val fotoPortada: String?,
     val nombre: String
 )

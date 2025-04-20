@@ -73,7 +73,12 @@ class CancionesAlbumAdapter(
             val restoSegundos = segundos % 60
             duracion.text = String.format("%d:%02d", minutos, restoSegundos)
 
-            artista.text = nombreArtista
+            val featuringText = if (cancion.featuring.isNotEmpty()) {
+                " ft. ${cancion.featuring.joinToString(", ")}"
+            } else {
+                ""
+            }
+            artista.text = nombreArtista + featuringText
 
             Glide.with(itemView.context)
                 .load(cancion.fotoPortada)

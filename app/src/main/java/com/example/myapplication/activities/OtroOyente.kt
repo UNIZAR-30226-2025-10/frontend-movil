@@ -126,6 +126,7 @@ class OtroOyente : AppCompatActivity() {
             intent.putExtra("nombre", playlist.nombre)
             intent.putExtra("imagen", playlist.fotoPortada)
             intent.putExtra("id", playlist.id)
+            Log.d("MiAppPlaylist", "id mando ${playlist.id}")
             Log.d("Playlist", "Buscador -> Playlist")
             startActivity(intent)
         }

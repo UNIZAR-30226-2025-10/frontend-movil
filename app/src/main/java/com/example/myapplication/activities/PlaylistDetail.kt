@@ -18,6 +18,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.ArrayAdapter
@@ -49,6 +50,7 @@ import com.example.myapplication.io.request.CambiarPrivacidadPlaylistRequest
 import com.example.myapplication.io.request.DeleteFromPlaylistRequest
 import com.example.myapplication.io.request.DeletePlaylistRequest
 import com.example.myapplication.io.request.InvitarPlaylistRequest
+import com.example.myapplication.io.request.LeavePlaylistRequest
 import com.example.myapplication.io.request.UpdatePlaylistRequest
 import com.example.myapplication.io.response.ActualizarFavoritoResponse
 import com.example.myapplication.io.response.AddReproduccionResponse
@@ -58,14 +60,19 @@ import com.example.myapplication.io.response.CancionInfoResponse
 import com.example.myapplication.io.response.CancionP
 import com.example.myapplication.io.response.CloudinaryResponse
 import com.example.myapplication.io.response.GetSignatureResponse
+import com.example.myapplication.io.response.Interaccion
+import com.example.myapplication.io.response.InvitacionPlaylist
 import com.example.myapplication.io.response.MisPlaylist
+import com.example.myapplication.io.response.Novedad
 import com.example.myapplication.io.response.PlaylistP
 import com.example.myapplication.io.response.PlaylistResponse
 import com.example.myapplication.io.response.PlaylistsResponse
 import com.example.myapplication.io.response.SearchPlaylistResponse
+import com.example.myapplication.io.response.Seguidor
 import com.example.myapplication.io.response.SeguidoresResponse
 import com.example.myapplication.io.response.Usuario
 import com.example.myapplication.services.MusicPlayerService
+import com.example.myapplication.services.WebSocketEventHandler
 import com.example.myapplication.utils.Preferencias
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -83,6 +90,8 @@ class PlaylistDetail : AppCompatActivity() {
     private lateinit var playlistTextView: TextView
     private lateinit var playlistImageView: ImageView
     private lateinit var playlistImageButton: ImageView
+    private lateinit var duracion: TextView
+    private lateinit var dot: View
     private var currentPlaylist: PlaylistP? = null
     private var imageUri: Uri? = null
     private var playlistImageViewDialog: ImageView? = null
@@ -94,6 +103,8 @@ class PlaylistDetail : AppCompatActivity() {
     }
     var playlistId: String? = null
     private var isFavorito = false
+
+    private var rol: String? = null
 
     private var aleatorio = false
     private var modo = "enOrden"
@@ -136,8 +147,33 @@ class PlaylistDetail : AppCompatActivity() {
             handler.postDelayed(this, 1000) // cada segundo
         }
     }
+    //EVENTOS PARA LAS NOTIFICACIONES
+    private val listenerNovedad: (Novedad) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
+    private val listenerSeguidor: (Seguidor) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
+    private val listenerInvitacion: (InvitacionPlaylist) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
+    private val listenerInteraccion: (Interaccion) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
 
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint("MissingInflatedId", "WrongViewCast")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_playlist)
@@ -148,12 +184,16 @@ class PlaylistDetail : AppCompatActivity() {
         apiServiceCloud = CloudinaryApiService.create()
 
         playlistId = intent.getStringExtra("id")
+        Log.d("MiAppPlaylist", "id ${playlistId}")
         val nombrePlaylist = intent.getStringExtra("nombre")
+        Log.d("MiAppPlaylist", "nombre ${nombrePlaylist}")
         val imagenUrl = intent.getStringExtra("imagen")
 
         val textViewNombre = findViewById<TextView>(R.id.textViewNombrePlaylist)
         val textViewNumCanciones = findViewById<TextView>(R.id.textViewNumCanciones)
         val imageViewPlaylist = findViewById<ImageView>(R.id.imageViewPlaylist)
+        dot = findViewById<View>(R.id.notificationDot)
+        duracion = findViewById<TextView>(R.id.duracion)
 
         playlistTextView = findViewById(R.id.textViewNombrePlaylist)
 
@@ -168,9 +208,6 @@ class PlaylistDetail : AppCompatActivity() {
             },
             { cancion ->
                 showSongOptionsDialog(cancion)
-            },
-            { cancion, isFavorite ->
-                actualizarFavorito(cancion.id, isFavorite)
             }
         )
         recyclerViewCanciones.adapter = cancionPAdapter
@@ -178,7 +215,35 @@ class PlaylistDetail : AppCompatActivity() {
         textViewNombre.text = nombrePlaylist
         Glide.with(this).load(imagenUrl).into(imageViewPlaylist)
 
-        val btnPlayPausePlaylist: ImageButton = findViewById(R.id.btnPlay)
+        val profileImageButton = findViewById<ImageButton>(R.id.profileImageButton)
+        val profileImageUrl = Preferencias.obtenerValorString("fotoPerfil", "")
+        if (profileImageUrl.isNullOrEmpty() || profileImageUrl == "DEFAULT") {
+            // Cargar la imagen predeterminada
+            profileImageButton.setImageResource(R.drawable.ic_profile)
+        } else {
+            // Cargar la imagen desde la URL con Glide
+            Glide.with(this)
+                .load(profileImageUrl)
+                .placeholder(R.drawable.ic_profile) // Imagen por defecto mientras carga
+                .error(R.drawable.ic_profile) // Imagen si hay error
+                .circleCrop()
+                .into(profileImageButton)
+        }
+
+        //PARA EL CIRCULITO ROJO DE NOTIFICACIONES
+        if (Preferencias.obtenerValorBooleano("hay_notificaciones",false) == true) {
+            dot.visibility = View.VISIBLE
+        } else {
+            dot.visibility = View.GONE
+        }
+
+        //Para actualizar el punto rojo en tiempo real, suscripcion a los eventos
+        WebSocketEventHandler.registrarListenerNovedad(listenerNovedad)
+        WebSocketEventHandler.registrarListenerSeguidor(listenerSeguidor)
+        WebSocketEventHandler.registrarListenerInvitacion(listenerInvitacion)
+        WebSocketEventHandler.registrarListenerInteraccion(listenerInteraccion)
+
+        val btnPlayPausePlaylist: Button = findViewById(R.id.btnPlay)
 
         // Llamada a la API para obtener los datos de la playlist
         playlistId?.let {
@@ -285,22 +350,7 @@ class PlaylistDetail : AppCompatActivity() {
             }
         }
 
-        // Botones de navegación
-        val buttonHome: ImageButton = findViewById(R.id.nav_home)
-        val buttonSearch: ImageButton = findViewById(R.id.nav_search)
-        val buttonCrear: ImageButton = findViewById(R.id.nav_create)
-
-        buttonHome.setOnClickListener {
-            startActivity(Intent(this, Home::class.java))
-        }
-
-        buttonSearch.setOnClickListener {
-            startActivity(Intent(this, Buscador::class.java))
-        }
-
-        buttonCrear.setOnClickListener {
-            startActivity(Intent(this, Perfil::class.java))
-        }
+        setupNavigation()
     }
 
     // Función para realizar la llamada a la API y obtener los datos
@@ -311,7 +361,7 @@ class PlaylistDetail : AppCompatActivity() {
         imageViewPlaylist: ImageView
     ) {
         val token = Preferencias.obtenerValorString("token", "")
-
+        Log.d("MiAppPlaylist", "entra load datos")
         apiService.getDatosPlaylist("Bearer $token", playlistId).enqueue(object : Callback<PlaylistResponse> {
             override fun onResponse(call: Call<PlaylistResponse>, response: Response<PlaylistResponse>) {
                 if (response.isSuccessful) {
@@ -322,10 +372,19 @@ class PlaylistDetail : AppCompatActivity() {
                     // Actualizar la UI con los datos de la playlist
                     playlist?.let {
                         textViewNombre.text = it.nombrePlaylist
+                        rol = response.body()?.rol
                         Log.d("MiAppPlaylist", "Nombre${textViewNombre.text}")
                         val numCanciones = canciones?.size ?: 0
                         textViewNumCanciones.text = "$numCanciones ${if (numCanciones == 1) "Canción" else "Canciones"}"
-                        Glide.with(this@PlaylistDetail).load(it.fotoPortada).into(imageViewPlaylist)
+                        val segundos = playlist.duracion
+                        val minutos = segundos / 60
+                        val restoSegundos = segundos % 60
+                        duracion.text = String.format("%d:%02d", minutos, restoSegundos)
+                        Glide.with(this@PlaylistDetail)
+                            .load(it.fotoPortada)
+                            .placeholder(R.drawable.no_cancion)
+                            .error(R.drawable.no_cancion)
+                            .into(imageViewPlaylist)
                     }
 
                     // Actualizar RecyclerView con la lista de canciones
@@ -341,6 +400,7 @@ class PlaylistDetail : AppCompatActivity() {
 
                 } else {
                     // Manejo de error en caso de que la respuesta no sea exitosa
+                    Log.d("MiAppPlaylist", "NO EXITO")
                     Toast.makeText(this@PlaylistDetail, "Error al obtener los datos de la playlist", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -504,16 +564,31 @@ class PlaylistDetail : AppCompatActivity() {
 
         val privacyOption = if (currentPlaylist?.privacidad == true) "Hacer pública" else "Hacer privada"
 
+        val options = mutableListOf<String>()
+        when (rol?.lowercase()) {
+            "creador" -> {
+                options.add(0, "Editar lista")
+                options.add(1, "Eliminar lista")
+                options.add(2, privacyOption)
+            }
+            "participante" -> {
+                options.add(0, "Editar lista")
+                options.add(1, "Abandonar playlist")
+                options.add(2, privacyOption)
+            }
+        }
 
-        val options = arrayOf("Editar lista", "Eliminar lista", privacyOption)
+        //val options = arrayOf("Editar lista", "Eliminar lista", privacyOption)
 
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Más opciones")
-        builder.setItems(options) { _, which ->
-            when (which) {
-                0 -> showEditPlaylistDialog()
-                1 -> showConfirmDeleteDialog()
-                2 -> changePrivacyPlaylist()
+        builder.setItems(options.toTypedArray()) { _, which ->
+            when (options[which]) {
+                "Editar lista" -> showEditPlaylistDialog()
+                "Eliminar lista" -> showConfirmDeleteDialog()
+                "Abandonar playlist" -> showConfirmLeaveDialog()
+                privacyOption -> changePrivacyPlaylist()
+
             }
         }
         val dialog = builder.create()
@@ -772,6 +847,43 @@ class PlaylistDetail : AppCompatActivity() {
 
     }
 
+    private fun showConfirmLeaveDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Abandonar Playlist")
+            .setMessage("¿Estás seguro de que quieres abandonar esta playlist?")
+            .setPositiveButton("Aceptar") { _, _ ->
+                abandonarPlaylist()
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
+    private fun abandonarPlaylist() {
+        Log.d("abandonarPlaylist", "1")
+        val playlistId = intent.getStringExtra("id") ?: ""
+        val request = LeavePlaylistRequest(playlistId)
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+        apiService.leavePlaylist(authHeader, request).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Log.d("abandonarPlaylist", "1")
+                    navigateInicio()
+                    showToast("Playlist abandonada")
+                } else {
+                    Log.d("abandonarPlaylist", "Error en la solicitud ${response.code()}")
+                    showToast("Error al abandonar playlist")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.d("updateUserProfile", "Error en la solicitud2")
+                showToast("Error en la solicitud: ${t.message}")
+            }
+        })
+
+    }
+
     private fun changePrivacyPlaylist() {
         Log.d("changePrivacyPlaylist", "1")
         val playlistId = intent.getStringExtra("id") ?: ""
@@ -838,7 +950,7 @@ class PlaylistDetail : AppCompatActivity() {
 
                     listView.setOnItemClickListener { _, _, position, _ ->
                         val seleccionado = adapter.getItem(position)
-                        showToast("Invitado: $seleccionado")
+                        //showToast("Invitado: $seleccionado")
                         // Aquí puedes hacer la petición para invitar
                         if (seleccionado != null) {
                             mandarInvitacion(seleccionado)
@@ -858,30 +970,34 @@ class PlaylistDetail : AppCompatActivity() {
         })
     }
 
-    private fun mandarInvitacion(usuario: String){
+    private fun mandarInvitacion(usuario: String) {
         val token = Preferencias.obtenerValorString("token", "") ?: ""
         val authHeader = "Bearer $token"
 
-        val request = InvitarPlaylistRequest(currentPlaylist,usuario)
+        val request = InvitarPlaylistRequest(playlistId, usuario)
 
-        // Llamar a la API para obtener seguidores
+        Log.d("mandarInvitacion", "Token: $token")
+        Log.d("mandarInvitacion", "Usuario a invitar: $usuario")
+        Log.d("mandarInvitacion", "Request enviado: $request")
+
         apiService.invitePlaylist(authHeader, request).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    showToast("Se ha enviado la invitacion")
-
+                    Log.d("mandarInvitacion", "Invitación enviada con éxito")
+                    showToast("Se ha enviado la invitación")
                 } else {
-                    Log.d("changePrivacyPlaylist", "Error en la solicitud ${response.code()}")
-                    showToast("Error al enviar invitacion")
+                    Log.e("mandarInvitacion", "Error en la solicitud: Código ${response.code()}")
+                    Log.e("mandarInvitacion", "Mensaje de error: ${response.errorBody()?.string()}")
+                    showToast("Error al enviar invitación")
                 }
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("mandarInvitacion", "Fallo en la conexión: ${t.localizedMessage}", t)
                 showToast("Fallo en conexión")
             }
         })
     }
-
     private fun showSongOptionsDialog(cancion: CancionP) {
         val options = arrayOf(
             "Añadir a playlist",
@@ -933,7 +1049,7 @@ class PlaylistDetail : AppCompatActivity() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.dialog_select_playlist)
         dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
 
         val searchView = dialog.findViewById<SearchView>(R.id.searchViewPlaylists)
         val recyclerView = dialog.findViewById<RecyclerView>(R.id.recyclerViewPlaylists)
@@ -1050,7 +1166,12 @@ class PlaylistDetail : AppCompatActivity() {
 
 
 
-    private fun goToAlbum(cancion: CancionP) {}
+    private fun goToAlbum(cancion: CancionP) {
+        val intent = Intent(this, AlbumDetail::class.java)
+        Log.d("GoToAlbum", "Navegando al album de la cancion: ${cancion.nombre}")
+        intent.putExtra("id", cancion.album)
+        startActivity(intent)
+    }
 
 
 
@@ -1441,6 +1562,49 @@ class PlaylistDetail : AppCompatActivity() {
         val intent = Intent(this, Home::class.java)
         startActivity(intent)
         finish()
+    }
+
+    private fun setupNavigation() {
+        val buttonPerfil: ImageButton = findViewById(R.id.profileImageButton)
+        val buttonNotis: ImageButton = findViewById(R.id.notificationImageButton)
+        val buttonHome: ImageButton = findViewById(R.id.nav_home)
+        val buttonSearch: ImageButton = findViewById(R.id.nav_search)
+        val buttonCrear: ImageButton = findViewById(R.id.nav_create)
+
+        buttonPerfil.setOnClickListener {
+            val esOyente = Preferencias.obtenerValorString("esOyente", "")
+            if (esOyente == "oyente") {
+                Log.d("Login", "El usuario es un oyente")
+                startActivity(Intent(this, Perfil::class.java))
+            } else {
+                Log.d("Login", "El usuario NO es un oyente")
+                startActivity(Intent(this, PerfilArtista::class.java))
+            }
+        }
+
+        buttonNotis.setOnClickListener {
+            startActivity(Intent(this, Notificaciones::class.java))
+        }
+
+        buttonHome.setOnClickListener {
+            startActivity(Intent(this, Home::class.java))
+        }
+
+        buttonSearch.setOnClickListener {
+            startActivity(Intent(this, Buscador::class.java))
+        }
+
+        buttonCrear.setOnClickListener {
+            startActivity(Intent(this, CrearPlaylist::class.java))
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        WebSocketEventHandler.eliminarListenerNovedad(listenerNovedad)
+        WebSocketEventHandler.eliminarListenerSeguidor(listenerSeguidor)
+        WebSocketEventHandler.eliminarListenerInvitacion(listenerInvitacion)
+        WebSocketEventHandler.eliminarListenerInteraccion(listenerInteraccion)
     }
 }
 

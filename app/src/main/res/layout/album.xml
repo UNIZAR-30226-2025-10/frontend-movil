@@ -174,19 +174,17 @@
                         android:textColor="#FFFFFF"
                         android:textSize="12sp" />
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/aleatoria"
                         android:layout_width="43dp"
                         android:layout_height="37dp"
                         android:layout_marginEnd="12dp"
-                        android:drawableStart="@drawable/shuffle_24px"
-                        android:drawablePadding="8dp"
-                        android:fontFamily="@font/poppins_bold"
+                        android:background="@android:color/transparent"
                         android:paddingStart="10dp"
                         android:paddingEnd="10dp"
-                        android:background="@android:color/transparent"
-                        android:textColor="#FFFFFF"
-                        android:textSize="12sp" />
+                        android:padding="8dp"
+                        android:src="@drawable/shuffle_24px"
+                        android:contentDescription="Reproducción aleatoria" />
                 </LinearLayout>
 
                 <!-- Lista de canciones (ahora dentro del ScrollView) -->

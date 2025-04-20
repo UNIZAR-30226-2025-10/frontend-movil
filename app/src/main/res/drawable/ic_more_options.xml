@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="48dp"
+    android:width="32dp"
     android:height="16dp"
-    android:viewportWidth="48"
+    android:viewportWidth="32"
     android:viewportHeight="16">
 
-    <!-- Primer círculo (más pequeño) -->
+    <!-- Primer círculo -->
     <path
         android:fillColor="@color/blueNuestro"
         android:pathData="M8,8a3,3 0 1,1 -0.01,0z" />
 
-    <!-- Segundo círculo (más pequeño) -->
+    <!-- Segundo círculo -->
+    <path
+        android:fillColor="@color/blueNuestro"
+        android:pathData="M16,8a3,3 0 1,1 -0.01,0z" />
+
+    <!-- Tercer círculo -->
     <path
         android:fillColor="@color/blueNuestro"
         android:pathData="M24,8a3,3 0 1,1 -0.01,0z" />
-
-    <!-- Tercer círculo (más pequeño) -->
-    <path
-        android:fillColor="@color/blueNuestro"
-        android:pathData="M40,8a3,3 0 1,1 -0.01,0z" />
 </vector>
