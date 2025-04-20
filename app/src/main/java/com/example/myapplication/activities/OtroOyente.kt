@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -29,6 +30,7 @@ import com.example.myapplication.io.response.Interaccion
 import com.example.myapplication.io.response.InvitacionPlaylist
 import com.example.myapplication.io.response.Novedad
 import com.example.myapplication.io.response.Seguidor
+import com.example.myapplication.io.response.Noizzy
 import com.example.myapplication.services.WebSocketEventHandler
 import com.example.myapplication.utils.Preferencias
 import retrofit2.Call
@@ -75,19 +77,78 @@ class OtroOyente : AppCompatActivity() {
         }
     }
 
+    private lateinit var perfilNoizzy: ImageView
+    private lateinit var userNoizzy: TextView
+    private lateinit var contentNoizzy: TextView
+    private lateinit var cancionNoizzy: LinearLayout
+    private lateinit var fotoCancion: ImageView
+    private lateinit var textoCancion: TextView
+    private lateinit var textoArtista: TextView
+    private lateinit var numLikes: TextView
+    private lateinit var numComments: TextView
+    private lateinit var btnLike: ImageView
+    private lateinit var btnComment: ImageView
+    private var idLastNoizzy: Int = 0
+
+    private var nombreUser: String? = null
+
+
+    private val listenerNoizzy: (Noizzy) -> Unit = { noizzy ->
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en perfil otro")
+            if (nombreUser != null) {
+                if (noizzy.nombreUsuario == nombreUser) {
+                    idLastNoizzy = noizzy.id
+                    Glide.with(this@OtroOyente)
+                        .load(noizzy.fotoPerfil)
+                        .placeholder(R.drawable.ic_profile)
+                        .error(R.drawable.ic_profile)
+                        .circleCrop()
+                        .into(perfilNoizzy)
+
+                    userNoizzy.text = noizzy.nombreUsuario
+                    contentNoizzy.text = noizzy.texto
+
+                    if (noizzy.cancion != null) {
+                        cancionNoizzy.visibility = View.VISIBLE
+                        Glide.with(this@OtroOyente)
+                            .load(noizzy.cancion.fotoPortada)
+                            .placeholder(R.drawable.no_cancion)
+                            .error(R.drawable.no_cancion)
+                            .into(fotoCancion)
+
+                        textoCancion.text = noizzy.cancion.nombre
+                        textoArtista.text = noizzy.cancion.nombreArtisticoArtista
+                    } else {
+                        cancionNoizzy.visibility = View.GONE
+                    }
+
+                    numLikes.text = noizzy.num_likes.toString()
+                    numComments.text = noizzy.num_comentarios.toString()
+
+                    Glide.with(this@OtroOyente)
+                        .load(R.drawable.like_noizzy)
+                        .placeholder(R.drawable.no_cancion)
+                        .error(R.drawable.no_cancion)
+                        .into(btnLike)
+
+                }
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.perfil_otro_oyente)
 
         apiService = ApiService.create()
 
-        val nombreUser = intent.getStringExtra("nombre")
+        nombreUser = intent.getStringExtra("nombre")
         val imagenUrl = intent.getStringExtra("imagen")
 
         // Inicialización de vistas
         btnFollow = findViewById(R.id.btnFollow)
         usernameText = findViewById(R.id.username)
-        cvLastNoizzy = findViewById(R.id.lastMessage)
         profileImage = findViewById(R.id.profileImage)
         recyclerView = findViewById(R.id.recyclerViewHeadersPlaylistsP)
         dot = findViewById<View>(R.id.notificationDot)
@@ -131,6 +192,18 @@ class OtroOyente : AppCompatActivity() {
             startActivity(intent)
         }
         recyclerView.adapter = adapter
+        perfilNoizzy = findViewById(R.id.noizzyProfileImage)
+        userNoizzy = findViewById(R.id.noizzyUserName)
+        contentNoizzy = findViewById(R.id.noizzyContent)
+        cancionNoizzy = findViewById(R.id.cancionNoizzy)
+        fotoCancion = findViewById(R.id.recuerdoImage)
+        textoCancion = findViewById(R.id.recuerdoText1)
+        textoArtista = findViewById(R.id.recuerdoText2)
+        numLikes = findViewById(R.id.likeCount)
+        numComments = findViewById(R.id.commentCount)
+        btnLike = findViewById(R.id.likeButton)
+        btnComment = findViewById(R.id.commentButton)
+
 
         // Evento de clic para el botón de seguir
         btnFollow.setOnClickListener {
@@ -140,18 +213,18 @@ class OtroOyente : AppCompatActivity() {
             // Aquí puedes añadir la lógica para realizar una acción, como seguir al oyente en la base de datos
             if (isFollowing) {
                 if (nombreUser != null) {
-                    onFollowStatusChanged(nombreUser,true)
+                    onFollowStatusChanged(nombreUser!!,true)
                 }
             } else {
                 if (nombreUser != null) {
-                    onFollowStatusChanged(nombreUser,false)
+                    onFollowStatusChanged(nombreUser!!,false)
                 }
             }
         }
 
         if (nombreUser != null) {
-            getDatosOyente(nombreUser)
-            getPlaylistOyente(nombreUser)
+            getDatosOyente(nombreUser!!)
+            getPlaylistOyente(nombreUser!!)
         }
 
         setupNavigation()
@@ -178,7 +251,7 @@ class OtroOyente : AppCompatActivity() {
                             }
 
                             val siguiendo = it.oyente.siguiendo
-                            val lastNoizzy = it.ultimoNoizzy
+
 
                             Log.d("OtroOyente", "ha tomado info: $nombreperfil")
                             Log.d("OtroOyente", "ha tomado info: $seguidores")
@@ -204,6 +277,44 @@ class OtroOyente : AppCompatActivity() {
                                 .circleCrop() // Para que la imagen sea circular
                                 .into(fotoImageView)
 
+                            //ÚLTIMO NOIZZY
+                            idLastNoizzy = it.ultimoNoizzy.id
+                            Glide.with(this@OtroOyente)
+                                .load(it.oyente.fotoPerfil)
+                                .placeholder(R.drawable.ic_profile)
+                                .error(R.drawable.ic_profile)
+                                .circleCrop()
+                                .into(perfilNoizzy)
+
+                            userNoizzy.text = it.oyente.nombreUsuario
+                            contentNoizzy.text = it.ultimoNoizzy.texto
+
+                            if (it.ultimoNoizzy.cancion != null) {
+                                cancionNoizzy.visibility = View.VISIBLE
+                                Glide.with(this@OtroOyente)
+                                    .load(it.ultimoNoizzy.cancion.fotoPortada)
+                                    .placeholder(R.drawable.no_cancion)
+                                    .error(R.drawable.no_cancion)
+                                    .into(fotoCancion)
+
+                                textoCancion.text = it.ultimoNoizzy.cancion.nombre
+                                textoArtista.text = it.ultimoNoizzy.cancion.nombreArtisticoArtista
+                            } else {
+                                cancionNoizzy.visibility = View.GONE
+                            }
+
+                            numLikes.text = it.ultimoNoizzy.num_likes.toString()
+                            numComments.text = it.ultimoNoizzy.num_comentarios.toString()
+
+                            if (it.ultimoNoizzy.like) {
+                                Glide.with(this@OtroOyente)
+                                    .load(R.drawable.like_noizzy_selected)
+                                    .placeholder(R.drawable.no_cancion)
+                                    .error(R.drawable.no_cancion)
+                                    .into(btnLike)
+                            }
+                            btnLike.setOnClickListener { /*darLike()*/  }
+                            btnComment.setOnClickListener { /*comentar()*/ }
                         } else {
                             handleErrorCode(it.respuestaHTTP)
                         }
@@ -339,4 +450,13 @@ class OtroOyente : AppCompatActivity() {
         WebSocketEventHandler.eliminarListenerInteraccion(listenerInteraccion)
     }
 
+    override fun onStart() {
+        super.onStart()
+        WebSocketEventHandler.registrarListenerNoizzy(listenerNoizzy)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        WebSocketEventHandler.eliminarListenerNoizzy(listenerNoizzy)
+    }
 }

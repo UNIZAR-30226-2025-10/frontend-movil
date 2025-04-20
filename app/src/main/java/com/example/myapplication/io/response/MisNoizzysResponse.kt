@@ -5,7 +5,7 @@ data class MisNoizzysResponse(
 )
 
 data class Noizzy (
-    val nombreUsuario: String,
+    var nombreUsuario: String,
     val fotoPerfil: String,
     val fecha: String,
     val id: Int,

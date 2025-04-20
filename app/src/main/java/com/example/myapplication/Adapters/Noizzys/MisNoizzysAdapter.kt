@@ -11,6 +11,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
+import com.example.myapplication.io.response.InvitacionPlaylist
 
 class MisNoizzysAdapter(
     private val noizzys: MutableList<Noizzy>,
@@ -31,6 +32,11 @@ class MisNoizzysAdapter(
 
         val likeButton: ImageButton = view.findViewById(R.id.likeButton)
         val commentButton: ImageButton = view.findViewById(R.id.commentButton)
+    }
+
+    fun agregarNoizzy(noizzy: Noizzy) {
+        noizzys.add(noizzy)
+        notifyItemInserted(noizzys.size - 1)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoizzyViewHolder {

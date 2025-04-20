@@ -58,29 +58,34 @@ class MisNoizzys: AppCompatActivity() {
     //EVENTOS PARA LAS NOTIFICACIONES
     private val listenerNovedad: (Novedad) -> Unit = {
         runOnUiThread {
-            Log.d("LOGS_NOTIS", "evento en home")
             dot.visibility = View.VISIBLE
         }
     }
     private val listenerSeguidor: (Seguidor) -> Unit = {
         runOnUiThread {
-            Log.d("LOGS_NOTIS", "evento en home")
             dot.visibility = View.VISIBLE
         }
     }
     private val listenerInvitacion: (InvitacionPlaylist) -> Unit = {
         runOnUiThread {
-            Log.d("LOGS_NOTIS", "evento en home")
             dot.visibility = View.VISIBLE
         }
     }
     private val listenerInteraccion: (Interaccion) -> Unit = {
         runOnUiThread {
-            Log.d("LOGS_NOTIS", "evento en home")
             dot.visibility = View.VISIBLE
         }
     }
 
+    private val listenerNoizzy: (Noizzy) -> Unit = { noizzy ->
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en mis noizzys")
+            /*if (comprobar que noizzy.nombreUsuario soy yo) {
+                val adapter = recyclerNoizzys.adapter as? MisNoizzysAdapter
+                adapter?.agregarNoizzy(noizzy)
+            }*/
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -243,7 +248,7 @@ class MisNoizzys: AppCompatActivity() {
                     Callback<Void> {
                     override fun onResponse(call: Call<Void>, response: Response<Void>) {
                         if (response.isSuccessful) {
-                            cargarMisNoizzys()
+                            //cargarMisNoizzys()
                         }
                     }
                     override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -479,6 +484,16 @@ class MisNoizzys: AppCompatActivity() {
         }
 
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+        WebSocketEventHandler.registrarListenerNoizzy(listenerNoizzy)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        WebSocketEventHandler.eliminarListenerNoizzy(listenerNoizzy)
     }
 
     override fun onDestroy() {

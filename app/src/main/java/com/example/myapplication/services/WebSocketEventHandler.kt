@@ -1,8 +1,11 @@
 package com.example.myapplication.services
 
 import android.util.Log
+import com.example.myapplication.io.response.Cancion
+import com.example.myapplication.io.response.CancionNoizzy
 import com.example.myapplication.io.response.Interaccion
 import com.example.myapplication.io.response.InvitacionPlaylist
+import com.example.myapplication.io.response.Noizzy
 import com.example.myapplication.io.response.Novedad
 import com.example.myapplication.io.response.Seguidor
 import com.example.myapplication.utils.Preferencias
@@ -13,10 +16,47 @@ object WebSocketEventHandler {
     private val novedadesListeners = mutableListOf<(Novedad) -> Unit>()
     private val interaccionesListeners = mutableListOf<(Interaccion) -> Unit>()
     private val invitacionesListeners = mutableListOf<(InvitacionPlaylist) -> Unit>()
+    private val nuevoNoizzyListeners = mutableListOf<(Noizzy) -> Unit>()
     private val webSocketManager = WebSocketManager.getInstance()
 
     fun init() {
         Log.d("LOGS_NOTIS", "WebSocketEventHandler init llamado")
+
+        webSocketManager.listenToEvent("actualizar-noizzy-ws") { args ->
+            Log.d("LOGS_NOTIS", "nuevo noizzy")
+            val data = args[0] as JSONObject
+            val nombreUsuario = data.getString("nombreUsuario")
+            val fotoPerfil = data.getString("fotoPerfil")
+            val id = data.getInt("id")
+            val texto = data.getString("texto")
+            val fecha = data.getString("fecha")
+            val cancionJson = data.optJSONObject("cancion")
+
+            val cancion: CancionNoizzy? = cancionJson?.let {
+                CancionNoizzy(
+                    id = it.getInt("id"),
+                    nombre = it.getString("nombre"),
+                    fotoPortada = it.getString("fotoPortada"),
+                    nombreArtisticoArtista = it.getString("nombreArtisticoArtista")
+                )
+            }
+
+            var noizzy = Noizzy(
+                nombreUsuario = nombreUsuario,
+                fotoPerfil = fotoPerfil,
+                fecha = fecha,
+                id = id,
+                texto = texto,
+                like = false,
+                cancion = cancion,
+                num_likes = 0,
+                num_comentarios = 0
+            )
+
+            // Notificás a todos los que estén escuchando
+            nuevoNoizzyListeners.forEach { it(noizzy) }
+        }
+
         webSocketManager.listenToEvent("nuevo-seguidor-ws") { args ->
             Log.d("LOGS_NOTIS", "llegó nuevo-seguidor-ws")
 
@@ -150,5 +190,14 @@ object WebSocketEventHandler {
 
     fun eliminarListenerInvitacion(listener: (InvitacionPlaylist) -> Unit) {
         invitacionesListeners.remove(listener)
+    }
+
+    fun registrarListenerNoizzy(listener: (Noizzy) -> Unit) {
+        Log.d("LOGS_NOTIS", "registrado")
+        nuevoNoizzyListeners.add(listener)
+    }
+
+    fun eliminarListenerNoizzy(listener: (Noizzy) -> Unit) {
+        nuevoNoizzyListeners.remove(listener)
     }
 }
