@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.utils.Preferencias
 import com.example.myapplication.io.ApiService
+import com.example.myapplication.io.request.ProgresoRequest
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -23,7 +24,7 @@ class Logout : AppCompatActivity() {
         // Inicialización de ApiService
         apiService = ApiService.create()
 
-        logout()
+        guardarprogreso()
     }
 
     // Método para hacer logout utilizando la API
@@ -69,6 +70,40 @@ class Logout : AppCompatActivity() {
             }
         })
     }
+
+    private fun guardarprogreso(){
+        val progreso = Preferencias.obtenerValorEntero("progresoCancionActual", 0)/1000
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+
+        val request = ProgresoRequest(progreso)
+        Log.d("LOGOUT", "Iniciando guardar progreso...")
+        Log.d("LOGOUT", "Token obtenido: $token")
+
+        // Llamada a la API para hacer logout
+        apiService.change_progreso(authHeader, request).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                Log.d("LOGOUT", "Respuesta recibida del servidor. Código: ${response.code()}")
+
+                if (response.isSuccessful) {
+                    Log.d("LOGOUT", "Entra en repsonse change progreso...")
+                    Log.d("LOGOUT", "Progreso que se guarda: $progreso")
+                    logout()
+                } else {
+                    Log.e("LOGOUT", "Error en el logout. Código HTTP: ${response.code()}")
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("LOGOUT", "Cuerpo del error: $errorBody")
+                    showToast("Error en el logout: Código ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("LOGOUT", "Fallo en la solicitud: ${t.message}")
+                showToast("Error en la solicitud: ${t.message}")
+            }
+        })
+    }
+
 
     private fun navigateInicio() {
         Log.d("LOGOUT", "Redirigiendo al inicio...")

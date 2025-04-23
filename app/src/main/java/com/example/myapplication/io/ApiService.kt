@@ -43,6 +43,7 @@ import com.example.myapplication.io.request.PlayPauseRequest
 import com.example.myapplication.io.request.PlayPauseResponse
 import com.example.myapplication.io.request.PostNoizzitoRequest
 import com.example.myapplication.io.request.PostNoizzyRequest
+import com.example.myapplication.io.request.ProgresoRequest
 import com.example.myapplication.io.request.UpdatePlaylistRequest
 import com.example.myapplication.io.request.ValidarArtistaRequest
 import com.example.myapplication.io.request.ValidarArtistaResponse
@@ -148,6 +149,12 @@ interface ApiService {
     @POST("logout")  // <- Asegúrate de que esta línea esté presente
     fun logout(@Header("Authorization") authHeader: String): Call<Void>
 
+    //Nuevo método para guardar el progreso en la db
+    @PATCH("change-progreso")
+    fun change_progreso(
+        @Header("Authorization") authHeader: String,
+        @Body progreso: ProgresoRequest
+    ): Call<Void>
 
     // Nuevo método para el buscador
     @GET("/search")

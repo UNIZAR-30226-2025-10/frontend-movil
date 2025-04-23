@@ -324,6 +324,8 @@ class Home : AppCompatActivity() {
                 .into(songImage)
         }
 
+        Log.d("MiniReproductor", "SongProgress: $songProgress")
+
         songTitle.text = songTitleText
         songArtist.text = songArtistText
         progressBar.progress = songProgress/1749

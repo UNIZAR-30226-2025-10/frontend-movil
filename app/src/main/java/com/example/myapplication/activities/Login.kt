@@ -198,7 +198,8 @@ class Login : AppCompatActivity() {
                                 Preferencias.guardarValorString("nombreUsuarioArtistaActual", cancion.nombreUsuarioArtista ?: "")
                                 Log.d("MiniReproductor", "Nombre usuario artista guardado: ${cancion.nombreUsuarioArtista ?: "null"}")
 
-                                Preferencias.guardarValorEntero("progresoCancionActual", cancion.progreso ?: 0)
+                                val progresoEnApp = cancion.progreso?.times(1000)
+                                Preferencias.guardarValorEntero("progresoCancionActual", progresoEnApp ?: 0)
                                 Log.d("MiniReproductor", "Progreso canción guardado: ${cancion.progreso ?: 0}")
 
                                 Preferencias.guardarValorString("featuringsActual", cancion.featuring?.joinToString(",") ?: "")
