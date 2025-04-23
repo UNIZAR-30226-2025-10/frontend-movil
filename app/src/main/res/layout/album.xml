@@ -175,7 +175,7 @@
                         android:textSize="12sp" />
 
                     <ImageButton
-                        android:id="@+id/aleatoria"
+                        android:id="@+id/aleatorio"
                         android:layout_width="43dp"
                         android:layout_height="37dp"
                         android:layout_marginEnd="12dp"
@@ -264,13 +264,30 @@
         </LinearLayout>
 
         <ImageButton
+            android:id="@+id/btnRetroceder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Retroceder"
+            android:background="@null"
+            android:src="@android:drawable/ic_media_previous" />
+
+        <!-- Botón de stop -->
+        <ImageButton
             android:id="@+id/stopButton"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="@android:color/transparent"
-            android:contentDescription="Detener"
             android:src="@android:drawable/ic_media_play"
-            app:tint="#FFFFFF" />
+            android:contentDescription="Detener"
+            android:background="@android:color/transparent"
+            app:tint="#FFFFFF"/>
+
+        <ImageButton
+            android:id="@+id/btnAvanzar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Avanzar"
+            android:background="@null"
+            android:src="@android:drawable/ic_media_next" />
     </LinearLayout>
 
     <!-- Navigation Bar -->

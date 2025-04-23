@@ -275,6 +275,14 @@
                 android:backgroundTint="#555555"/>
         </LinearLayout>
 
+        <ImageButton
+            android:id="@+id/btnRetroceder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Retroceder"
+            android:background="@null"
+            android:src="@android:drawable/ic_media_previous" />
+
         <!-- Botón de stop -->
         <ImageButton
             android:id="@+id/stopButton"
@@ -284,6 +292,16 @@
             android:contentDescription="Detener"
             android:background="@android:color/transparent"
             app:tint="#FFFFFF"/>
+
+        <ImageButton
+            android:id="@+id/btnAvanzar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Avanzar"
+            android:background="@null"
+            android:src="@android:drawable/ic_media_next" />
+
+
     </LinearLayout>
 
 

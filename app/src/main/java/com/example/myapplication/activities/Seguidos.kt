@@ -1,11 +1,20 @@
 package com.example.myapplication.activities
 
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.Handler
+import android.os.IBinder
+import android.os.Looper
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,9 +23,15 @@ import com.bumptech.glide.Glide
 import com.example.myapplication.Adapters.Seguidos.SeguidosAdapter
 import com.example.myapplication.R
 import com.example.myapplication.io.ApiService
+import com.example.myapplication.io.request.AudioColeccionRequest
+import com.example.myapplication.io.request.AudioRequest
 import com.example.myapplication.io.request.ChangeFollowRequest
+import com.example.myapplication.io.response.AddReproduccionResponse
+import com.example.myapplication.io.response.AudioResponse
+import com.example.myapplication.io.response.CancionInfoResponse
 import com.example.myapplication.io.response.Seguidos
 import com.example.myapplication.io.response.SeguidosResponse
+import com.example.myapplication.services.MusicPlayerService
 import com.example.myapplication.utils.Preferencias
 import com.google.gson.JsonParser
 import retrofit2.Call
@@ -27,13 +42,59 @@ class Seguidos : AppCompatActivity(), SeguidosAdapter.OnUnfollowListener {
 
     private lateinit var apiService: ApiService
     private lateinit var rvFollowing: RecyclerView
-    private lateinit var progressBar: ProgressBar
     private val followingList = mutableListOf<Seguidos>()
     private lateinit var adapter: SeguidosAdapter
+
+    private lateinit var progressBar: ProgressBar
+    private var musicService: MusicPlayerService? = null
+    private var serviceBound = false
+    private val handler = Handler(Looper.getMainLooper())
+    private val updateRunnable = object : Runnable {
+        override fun run() {
+            updateProgressBar()
+            handler.postDelayed(this, 1000) // cada segundo
+        }
+    }
+    private var indexActual = 0
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as MusicPlayerService.MusicBinder
+            musicService = binder.getService()
+            serviceBound = true
+            handler.post(updateRunnable)
+            // El servicio ya está listo, ahora actualiza el mini reproductor
+            updateMiniReproductor()
+            actualizarIconoPlayPause()
+            MusicPlayerService.setOnCompletionListener {
+                runOnUiThread {
+                    val idcoleccion = Preferencias.obtenerValorString("coleccionActualId", "")
+                    if(idcoleccion == ""){
+                        Preferencias.guardarValorEntero("progresoCancionActual", 0)
+                        musicService?.resume()
+                    }
+                    else {
+                        Log.d("Reproducción", "Canción finalizada, pasando a la siguiente")
+                        indexActual++
+                        Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
+                        Preferencias.guardarValorEntero("progresoCancionActual", 0)
+                        reproducirColeccion()
+                    }
+                }
+            }
+        }
+
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            serviceBound = false
+            handler.removeCallbacks(updateRunnable)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.seguidos)
+
+        indexActual = Preferencias.obtenerValorEntero("indexColeccionActual", 0)
 
         // Initialize views
         rvFollowing = findViewById(R.id.rvFollowing)
@@ -58,6 +119,8 @@ class Seguidos : AppCompatActivity(), SeguidosAdapter.OnUnfollowListener {
         apiService = ApiService.create()
         setupRecyclerView()
         loadFollowing()
+        progressBar = findViewById(R.id.progressBar)
+        updateMiniReproductor()
         setupNavigation()
     }
 
@@ -128,6 +191,386 @@ class Seguidos : AppCompatActivity(), SeguidosAdapter.OnUnfollowListener {
                 Log.e("API Error", "Error en change-follow", t)
             }
         })
+    }
+
+    private fun updateMiniReproductor() {
+        val songImage = findViewById<ImageView>(R.id.songImage)
+        val songTitle = findViewById<TextView>(R.id.songTitle)
+        val songArtist = findViewById<TextView>(R.id.songArtist)
+        val stopButton = findViewById<ImageButton>(R.id.stopButton)
+        val btnAvanzar = findViewById<ImageButton>(R.id.btnAvanzar)
+        val btnRetroceder = findViewById<ImageButton>(R.id.btnRetroceder)
+
+        val songImageUrl = Preferencias.obtenerValorString("fotoPortadaActual", "")
+        val songTitleText = Preferencias.obtenerValorString("nombreCancionActual", "")
+        val songArtistText = Preferencias.obtenerValorString("nombreArtisticoActual", "")
+        val songProgress = Preferencias.obtenerValorEntero("progresoCancionActual", 0)
+
+        // Imagen
+        if (songImageUrl.isNullOrEmpty()) {
+            songImage.setImageResource(R.drawable.ic_default_song)
+        } else {
+            Glide.with(this)
+                .load(songImageUrl)
+                .centerCrop()
+                .placeholder(R.drawable.ic_default_song)
+                .error(R.drawable.ic_default_song)
+                .into(songImage)
+        }
+
+        songTitle.text = songTitleText
+        songArtist.text = songArtistText
+        progressBar.progress = songProgress/1749
+
+        songImage.setOnClickListener {
+            startActivity(Intent(this, CancionReproductorDetail::class.java))
+        }
+
+        // Configurar botón de play/pause
+        btnRetroceder.setOnClickListener {
+            val hayColeccion = Preferencias.obtenerValorString("coleccionActualId", "")
+            if(hayColeccion == ""){
+                val cancionActual = Preferencias.obtenerValorString("cancionActualId", "")
+                reproducir(cancionActual)
+            }
+            else{
+                indexActual--
+                val ordenColeccion = Preferencias.obtenerValorString("ordenColeccionActual", "")
+                    .split(",")
+                    .filter { id -> id.isNotEmpty() }
+                if (indexActual < 0){
+                    indexActual = ordenColeccion.size
+                }
+                Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
+                reproducirColeccion()
+            }
+        }
+        // Configurar botón de play/pause
+        btnAvanzar.setOnClickListener {
+            val hayColeccion = Preferencias.obtenerValorString("coleccionActualId", "")
+            if(hayColeccion == ""){
+                val cancionActual = Preferencias.obtenerValorString("cancionActualId", "")
+                reproducir(cancionActual)
+            }
+            else{
+                indexActual++
+                val ordenColeccion = Preferencias.obtenerValorString("ordenColeccionActual", "")
+                    .split(",")
+                    .filter { id -> id.isNotEmpty() }
+                if (indexActual > ordenColeccion.size){
+                    indexActual=0
+                }
+                Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
+                reproducirColeccion()
+            }
+        }
+        // Configurar botón de play/pause
+        stopButton.setOnClickListener {
+            Log.d("MiniReproductor", "Botón presionado")
+            if (musicService == null) {
+                Log.w("MiniReproductor", "musicService es null")
+                return@setOnClickListener
+            }
+
+            musicService?.let { service ->
+                Log.d("MiniReproductor", "isPlaying: ${service.isPlaying()}")
+                if (service.isPlaying()) {
+                    val progreso = service.getProgress()
+                    Preferencias.guardarValorEntero("progresoCancionActual", progreso)
+                    service.pause()
+                    stopButton.setImageResource(R.drawable.ic_pause)
+                    Log.d("MiniReproductor", "Canción pausada en $progreso ms")
+                } else {
+                    Log.d("MiniReproductor", "Intentando reanudar la canción...")
+                    service.resume()
+                    stopButton.setImageResource(R.drawable.ic_play)
+                    Log.d("MiniReproductor", "Canción reanudada")
+                }
+            }
+        }
+
+        // Añadir un OnTouchListener al ProgressBar para actualizar el progreso
+        // Añadir el performClick dentro del OnTouchListener
+        progressBar.setOnTouchListener { _, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    updateProgressFromTouch(event.x, progressBar)
+                    progressBar.performClick()  // Agregar esta línea
+                    true
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    updateProgressFromTouch(event.x, progressBar)
+                    progressBar.performClick()  // Agregar esta línea
+                    true
+                }
+                MotionEvent.ACTION_UP -> {
+                    updateProgressFromTouch(event.x, progressBar)
+                    progressBar.performClick()  // Agregar esta línea
+                    true
+                }
+                else -> false
+            }
+        }
+
+    }
+
+    private fun updateProgressFromTouch(x: Float, progressBar: ProgressBar) {
+        // Obtener el ancho del ProgressBar
+        val width = progressBar.width - progressBar.paddingLeft - progressBar.paddingRight
+        // Calcular el progreso basado en la posición del toque (x)
+        val progress = ((x / width) * 100).toInt()
+
+        // Actualizar el ProgressBar
+        progressBar.progress = progress
+
+        // Actualizar el progreso en el servicio de música
+        musicService?.let { service ->
+            val duration = service.getDuration()
+            val newProgress = (progress * duration) / 100
+            service.seekTo(newProgress)  // Mover la canción al nuevo progreso
+            Preferencias.guardarValorEntero("progresoCancionActual", newProgress)
+            Log.d("MiniReproductor", "Nuevo progreso: $newProgress ms")
+        }
+    }
+
+    private fun updateProgressBar() {
+        musicService?.let { service ->
+            if (service.isPlaying()) {
+                val current = service.getProgress()
+                val duration = service.getDuration()
+
+                if (duration > 0) {
+                    val progress = (current * 100) / duration
+                    progressBar.progress = progress
+                }
+            }
+        }
+    }
+
+    private fun actualizarIconoPlayPause() {
+        if (serviceBound && musicService != null) {
+            val estaReproduciendo = musicService!!.isPlaying()
+            val icono = if (estaReproduciendo) R.drawable.ic_play else R.drawable.ic_pause
+            val stopButton = findViewById<ImageButton>(R.id.stopButton)
+            stopButton.setImageResource(icono)
+        }
+    }
+
+    private fun reproducir(id: String) {
+        val request = AudioRequest(id)
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+        val sid = WebSocketManager.getInstance().getSid()
+        Log.d("WebSocket", "El SID actual es: $sid")
+
+        if (sid == null) {
+            Log.e("MiApp", "No se ha generado un sid para el WebSocket")
+            return
+        }
+
+        // Llamada a la API con el sid en los headers
+        apiService.reproducirCancion(authHeader, sid, request).enqueue(object : Callback<AudioResponse> {
+            override fun onResponse(call: Call<AudioResponse>, response: Response<AudioResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { audioResponse ->
+                        val respuestaTexto = "Audio: ${audioResponse.audio}, Favorito: ${audioResponse.fav}"
+
+                        Preferencias.guardarValorString("coleccionActualId", "")
+                        // Mostrar en Logcat
+                        Log.d("API_RESPONSE", "Respuesta exitosa: $respuestaTexto")
+
+                        // Mostrar en Toast
+                        //Toast.makeText(this@Home, respuestaTexto, Toast.LENGTH_LONG).show()
+
+                        reproducirAudio(audioResponse.audio)
+                        notificarReproduccion()
+
+                        Preferencias.guardarValorString("audioCancionActual", audioResponse.audio)
+                        guardarDatoscCancion(id)
+                        actualizarIconoPlayPause()
+                    }
+                } else {
+                    val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
+
+                    // Mostrar en Logcat
+                    Log.e("API_RESPONSE", "Error en la respuesta: Código ${response.code()} - $errorMensaje")
+
+                }
+            }
+
+            override fun onFailure(call: Call<AudioResponse>, t: Throwable) {
+                // Mostrar en Logcat
+                Log.e("API_RESPONSE", "Error de conexión: ${t.message}", t)
+
+            }
+        })
+    }
+
+    private fun reproducirColeccion() {
+        val ordenColeccion = Preferencias.obtenerValorString("ordenColeccionActual", "")
+            .split(",")
+            .filter { id -> id.isNotEmpty() }
+
+        val modoColeccion =  Preferencias.obtenerValorString("modoColeccionActual", "")
+
+        val indice = Preferencias.obtenerValorEntero("indexColeccionActual", 0)
+
+        if (indice >= ordenColeccion.size) {
+            Log.d("Reproducción", "Fin de la playlist")
+            return
+        }
+
+        val idcoleccion = Preferencias.obtenerValorString("coleccionActualId", "")
+
+        val listaNatural = Preferencias.obtenerValorString("ordenNaturalColeccionActual", "")
+            .split(",")
+            .filter { id -> id.isNotEmpty() }
+
+        Log.d("ReproducirPlaylist", "Lista natural ids: ${listaNatural.joinToString(",")}")
+        Log.d("ReproducirPlaylist", "Lista ids reproduccion: ${ordenColeccion.joinToString(",")}")
+        Log.d("ReproducirPlaylist", "Indice: $indice")
+        Log.d("ReproducirPlaylist", "Modo: $modoColeccion")
+        Log.d("ReproducirPlaylist", "Id coleccion: $idcoleccion")
+
+        val request = AudioColeccionRequest(idcoleccion, modoColeccion, ordenColeccion, indice)
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+        val sid = WebSocketManager.getInstance().getSid() ?: run {
+            Log.e("WebSocket", "SID no disponible")
+            return
+        }
+
+        apiService.reproducirColeccion(authHeader, sid, request).enqueue(object : Callback<AudioResponse> {
+            override fun onResponse(call: Call<AudioResponse>, response: Response<AudioResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { audioResponse ->
+                        reproducirAudioColeccion(audioResponse.audio) // No enviar progreso
+                        notificarReproduccion()
+                        guardarDatoscCancion(ordenColeccion[indice])
+                        actualizarIconoPlayPause()
+                    }
+                } else {
+                    Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<AudioResponse>, t: Throwable) {
+                Log.e("API", "Fallo: ${t.message}")
+            }
+        })
+    }
+
+    private fun reproducirAudio(audioUrl: String, progreso: Int = 0) {
+        try {
+            Preferencias.guardarValorEntero("progresoCancionActual", progreso)
+            val startIntent = Intent(this, MusicPlayerService::class.java).apply {
+                action = "PLAY"
+                putExtra("url", audioUrl)
+                putExtra("progreso", progreso)
+            }
+            startService(startIntent)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Error al reproducir el audio", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun reproducirAudioColeccion(audioUrl: String, progreso: Int = 0) {
+        try {
+            Preferencias.guardarValorEntero("progresoCancionActual", progreso)
+            val intent = Intent(this, MusicPlayerService::class.java).apply {
+                action = "PLAY"
+                putExtra("url", audioUrl)
+                putExtra("progreso", progreso)
+            }
+            startService(intent)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Error al reproducir el audio", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun notificarReproduccion() {
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+
+        apiService.addReproduccion(authHeader).enqueue(object : Callback<AddReproduccionResponse> {
+            override fun onResponse(call: Call<AddReproduccionResponse>, response: Response<AddReproduccionResponse>) {
+                if (response.isSuccessful) {
+                    Log.d("MiApp", "Reproducción registrada exitosamente")
+                } else {
+                    Log.e("MiApp", "Error al registrar la reproducción")
+                }
+            }
+
+            override fun onFailure(call: Call<AddReproduccionResponse>, t: Throwable) {
+                Log.e("MiApp", "Error de conexión al registrar reproducción")
+            }
+        })
+    }
+
+    private fun guardarDatoscCancion(id: String) {
+        Preferencias.guardarValorString("cancionActualId", id)
+
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+
+        // Llamada a la API con el sid en los headers
+        apiService.getInfoCancion(authHeader, id).enqueue(object : Callback<CancionInfoResponse> {
+            override fun onResponse(call: Call<CancionInfoResponse>, response: Response<CancionInfoResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { cancionResponse ->
+                        val foto = cancionResponse.fotoPortada
+                        val nombre = cancionResponse.nombre
+                        val artista = cancionResponse.nombreArtisticoArtista
+
+                        // Mostrar en Logcat
+                        Log.d("CancionInfo", "Respuesta exitosa Canción")
+                        Log.d("CancionInfo", "Canción: $nombre")
+                        Log.d("CancionInfo", "Artista: $artista")
+                        Log.d("CancionInfo", "Foto: $foto")
+
+                        Preferencias.guardarValorString("nombreCancionActual", nombre)
+                        Preferencias.guardarValorString("nombreArtisticoActual", artista)
+                        Preferencias.guardarValorString("fotoPortadaActual", foto)
+
+                        updateMiniReproductor()
+                        actualizarIconoPlayPause()
+                    }
+                } else {
+                    val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
+
+                    // Mostrar en Logcat
+                    Log.e("API_RESPONSE", "Error en la respuesta: Código ${response.code()} - $errorMensaje")
+
+                    // Mostrar en Toast
+                    Toast.makeText(this@Seguidos, "Error: $errorMensaje", Toast.LENGTH_LONG).show()
+                }
+            }
+
+            override fun onFailure(call: Call<CancionInfoResponse>, t: Throwable) {
+                // Mostrar en Logcat
+                Log.e("API_RESPONSE", "Error de conexión: ${t.message}", t)
+
+                // Mostrar en Toast
+                Toast.makeText(this@Seguidos, "Error de conexión: ${t.message}", Toast.LENGTH_LONG).show()
+            }
+        })
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val intent = Intent(this, MusicPlayerService::class.java)
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (serviceBound) {
+            unbindService(serviceConnection)
+            serviceBound = false
+        }
     }
 
     private fun setupNavigation() {

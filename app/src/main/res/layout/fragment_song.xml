@@ -62,13 +62,13 @@
         android:gravity="center"
         android:orientation="horizontal">
 
-    <!-- <ImageButton
+    <ImageButton
         android:id="@+id/btnRetroceder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="Retroceder"
         android:background="@null"
-        android:src="@android:drawable/ic_media_previous" />  -->
+        android:src="@android:drawable/ic_media_previous" />
 
     <ImageButton
         android:id="@+id/btn_PlayPause"
@@ -80,13 +80,13 @@
         android:contentDescription="Reproducir/Pausar"
         android:src="@drawable/ic_play" />
 
-<!-- <ImageButton
-    android:id="@+id/btnAvanzar"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:contentDescription="Avanzar"
-    android:background="@null"
-    android:src="@android:drawable/ic_media_next" /> -->
+    <ImageButton
+        android:id="@+id/btnAvanzar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="Avanzar"
+        android:background="@null"
+        android:src="@android:drawable/ic_media_next" />
 
 </LinearLayout>
 

@@ -304,10 +304,12 @@ class Home : AppCompatActivity() {
         val songTitle = findViewById<TextView>(R.id.songTitle)
         val songArtist = findViewById<TextView>(R.id.songArtist)
         val stopButton = findViewById<ImageButton>(R.id.stopButton)
+        val btnAvanzar = findViewById<ImageButton>(R.id.btnAvanzar)
+        val btnRetroceder = findViewById<ImageButton>(R.id.btnRetroceder)
 
         val songImageUrl = Preferencias.obtenerValorString("fotoPortadaActual", "")
-        val songTitleText = Preferencias.obtenerValorString("nombreCancionActual", "Nombre de la canción")
-        val songArtistText = Preferencias.obtenerValorString("nombreArtisticoActual", "Artista")
+        val songTitleText = Preferencias.obtenerValorString("nombreCancionActual", "")
+        val songArtistText = Preferencias.obtenerValorString("nombreArtisticoActual", "")
         val songProgress = Preferencias.obtenerValorEntero("progresoCancionActual", 0)
 
         // Imagen
@@ -330,6 +332,44 @@ class Home : AppCompatActivity() {
             startActivity(Intent(this, CancionReproductorDetail::class.java))
         }
 
+        // Configurar botón de play/pause
+        btnRetroceder.setOnClickListener {
+            val hayColeccion = Preferencias.obtenerValorString("coleccionActualId", "")
+            if(hayColeccion == ""){
+                val cancionActual = Preferencias.obtenerValorString("cancionActualId", "")
+                reproducir(cancionActual)
+            }
+            else{
+                indexActual--
+                val ordenColeccion = Preferencias.obtenerValorString("ordenColeccionActual", "")
+                    .split(",")
+                    .filter { id -> id.isNotEmpty() }
+                if (indexActual < 0){
+                    indexActual = ordenColeccion.size
+                }
+                Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
+                reproducirColeccion()
+            }
+        }
+        // Configurar botón de play/pause
+        btnAvanzar.setOnClickListener {
+            val hayColeccion = Preferencias.obtenerValorString("coleccionActualId", "")
+            if(hayColeccion == ""){
+                val cancionActual = Preferencias.obtenerValorString("cancionActualId", "")
+                reproducir(cancionActual)
+            }
+            else{
+                indexActual++
+                val ordenColeccion = Preferencias.obtenerValorString("ordenColeccionActual", "")
+                    .split(",")
+                    .filter { id -> id.isNotEmpty() }
+                if (indexActual > ordenColeccion.size){
+                    indexActual=0
+                }
+                Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
+                reproducirColeccion()
+            }
+        }
         // Configurar botón de play/pause
         stopButton.setOnClickListener {
             Log.d("MiniReproductor", "Botón presionado")
@@ -739,13 +779,14 @@ class Home : AppCompatActivity() {
                         Log.d("API_RESPONSE", "Respuesta exitosa: $respuestaTexto")
 
                         // Mostrar en Toast
-                        Toast.makeText(this@Home, respuestaTexto, Toast.LENGTH_LONG).show()
+                        //Toast.makeText(this@Home, respuestaTexto, Toast.LENGTH_LONG).show()
 
                         reproducirAudio(audioResponse.audio)
                         notificarReproduccion()
 
                         Preferencias.guardarValorString("audioCancionActual", audioResponse.audio)
                         guardarDatoscCancion(id)
+                        actualizarIconoPlayPause()
                     }
                 } else {
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
@@ -809,6 +850,7 @@ class Home : AppCompatActivity() {
                         reproducirAudioColeccion(audioResponse.audio) // No enviar progreso
                         notificarReproduccion()
                         guardarDatoscCancion(ordenColeccion[indice])
+                        actualizarIconoPlayPause()
                     }
                 } else {
                     Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")

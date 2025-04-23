@@ -183,6 +183,8 @@ class PlaylistDetail : AppCompatActivity() {
         apiService = ApiService.create()
         apiServiceCloud = CloudinaryApiService.create()
 
+        indexActual = Preferencias.obtenerValorEntero("indexColeccionActual", 0)
+
         playlistId = intent.getStringExtra("id")
         Log.d("MiAppPlaylist", "id ${playlistId}")
         val nombrePlaylist = intent.getStringExtra("nombre")
@@ -1221,21 +1223,23 @@ class PlaylistDetail : AppCompatActivity() {
         val songTitle = findViewById<TextView>(R.id.songTitle)
         val songArtist = findViewById<TextView>(R.id.songArtist)
         val stopButton = findViewById<ImageButton>(R.id.stopButton)
+        val btnAvanzar = findViewById<ImageButton>(R.id.btnAvanzar)
+        val btnRetroceder = findViewById<ImageButton>(R.id.btnRetroceder)
 
         val songImageUrl = Preferencias.obtenerValorString("fotoPortadaActual", "")
-        val songTitleText = Preferencias.obtenerValorString("nombreCancionActual", "Nombre de la canción")
-        val songArtistText = Preferencias.obtenerValorString("nombreArtisticoActual", "Artista")
+        val songTitleText = Preferencias.obtenerValorString("nombreCancionActual", "")
+        val songArtistText = Preferencias.obtenerValorString("nombreArtisticoActual", "")
         val songProgress = Preferencias.obtenerValorEntero("progresoCancionActual", 0)
 
         // Imagen
         if (songImageUrl.isNullOrEmpty()) {
-            songImage.setImageResource(R.drawable.no_cancion)
+            songImage.setImageResource(R.drawable.ic_default_song)
         } else {
             Glide.with(this)
                 .load(songImageUrl)
                 .centerCrop()
-                .placeholder(R.drawable.no_cancion)
-                .error(R.drawable.no_cancion)
+                .placeholder(R.drawable.ic_default_song)
+                .error(R.drawable.ic_default_song)
                 .into(songImage)
         }
 
@@ -1247,6 +1251,44 @@ class PlaylistDetail : AppCompatActivity() {
             startActivity(Intent(this, CancionReproductorDetail::class.java))
         }
 
+        // Configurar botón de play/pause
+        btnRetroceder.setOnClickListener {
+            val hayColeccion = Preferencias.obtenerValorString("coleccionActualId", "")
+            if(hayColeccion == ""){
+                val cancionActual = Preferencias.obtenerValorString("cancionActualId", "")
+                reproducir(cancionActual)
+            }
+            else{
+                indexActual--
+                val ordenColeccion = Preferencias.obtenerValorString("ordenColeccionActual", "")
+                    .split(",")
+                    .filter { id -> id.isNotEmpty() }
+                if (indexActual < 0){
+                    indexActual = ordenColeccion.size
+                }
+                Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
+                reproducirColeccion()
+            }
+        }
+        // Configurar botón de play/pause
+        btnAvanzar.setOnClickListener {
+            val hayColeccion = Preferencias.obtenerValorString("coleccionActualId", "")
+            if(hayColeccion == ""){
+                val cancionActual = Preferencias.obtenerValorString("cancionActualId", "")
+                reproducir(cancionActual)
+            }
+            else{
+                indexActual++
+                val ordenColeccion = Preferencias.obtenerValorString("ordenColeccionActual", "")
+                    .split(",")
+                    .filter { id -> id.isNotEmpty() }
+                if (indexActual > ordenColeccion.size){
+                    indexActual=0
+                }
+                Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
+                reproducirColeccion()
+            }
+        }
         // Configurar botón de play/pause
         stopButton.setOnClickListener {
             Log.d("MiniReproductor", "Botón presionado")
@@ -1370,6 +1412,7 @@ class PlaylistDetail : AppCompatActivity() {
 
                         Preferencias.guardarValorString("audioCancionActual", audioResponse.audio)
                         guardarDatoscCancion(id)
+                        actualizarIconoPlayPause()
                     }
                 } else {
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
@@ -1378,7 +1421,7 @@ class PlaylistDetail : AppCompatActivity() {
                     Log.e("API_RESPONSE", "Error en la respuesta: Código ${response.code()} - $errorMensaje")
 
                     // Mostrar en Toast
-                    Toast.makeText(this@PlaylistDetail, "Error: $errorMensaje", Toast.LENGTH_LONG).show()
+                    //Toast.makeText(this@PlaylistDetail, "Error: $errorMensaje", Toast.LENGTH_LONG).show()
                 }
             }
 
@@ -1428,6 +1471,7 @@ class PlaylistDetail : AppCompatActivity() {
                         reproducirAudioColeccion(audioResponse.audio) // No enviar progreso
                         notificarReproduccion()
                         guardarDatoscCancion(ordenColeccion[indice])
+                        actualizarIconoPlayPause()
                     }
                 } else {
                     Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")

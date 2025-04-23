@@ -106,10 +106,6 @@
             android:exported="false"
             android:theme="@style/Theme.MyApplication"/>
 
-        <activity android:name=".activities.CancionDetail"
-            android:windowSoftInputMode="adjustResize"
-            android:exported="false"
-            android:theme="@style/Theme.MyApplication"/>
 
         <activity android:name=".activities.CancionReproductorDetail"
             android:windowSoftInputMode="adjustResize"

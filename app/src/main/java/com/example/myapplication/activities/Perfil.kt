@@ -142,6 +142,8 @@ class Perfil : AppCompatActivity() {
         profileImageButton = findViewById(R.id.profileImageButton)
         profileImageView = findViewById(R.id.profileImage)
 
+        indexActual = Preferencias.obtenerValorEntero("indexColeccionActual", 0)
+
         Log.d("MiAppPerfil", "PERFIL 1.2")
 
         // Obtener la URL de la imagen de perfil desde SharedPreferences
@@ -576,10 +578,12 @@ class Perfil : AppCompatActivity() {
         val songTitle = findViewById<TextView>(R.id.songTitle)
         val songArtist = findViewById<TextView>(R.id.songArtist)
         val stopButton = findViewById<ImageButton>(R.id.stopButton)
+        val btnAvanzar = findViewById<ImageButton>(R.id.btnAvanzar)
+        val btnRetroceder = findViewById<ImageButton>(R.id.btnRetroceder)
 
         val songImageUrl = Preferencias.obtenerValorString("fotoPortadaActual", "")
-        val songTitleText = Preferencias.obtenerValorString("nombreCancionActual", "Nombre de la canción")
-        val songArtistText = Preferencias.obtenerValorString("nombreArtisticoActual", "Artista")
+        val songTitleText = Preferencias.obtenerValorString("nombreCancionActual", "")
+        val songArtistText = Preferencias.obtenerValorString("nombreArtisticoActual", "")
         val songProgress = Preferencias.obtenerValorEntero("progresoCancionActual", 0)
 
         // Imagen
@@ -602,6 +606,44 @@ class Perfil : AppCompatActivity() {
             startActivity(Intent(this, CancionReproductorDetail::class.java))
         }
 
+        // Configurar botón de play/pause
+        btnRetroceder.setOnClickListener {
+            val hayColeccion = Preferencias.obtenerValorString("coleccionActualId", "")
+            if(hayColeccion == ""){
+                val cancionActual = Preferencias.obtenerValorString("cancionActualId", "")
+                reproducir(cancionActual)
+            }
+            else{
+                indexActual--
+                val ordenColeccion = Preferencias.obtenerValorString("ordenColeccionActual", "")
+                    .split(",")
+                    .filter { id -> id.isNotEmpty() }
+                if (indexActual < 0){
+                    indexActual = ordenColeccion.size
+                }
+                Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
+                reproducirColeccion()
+            }
+        }
+        // Configurar botón de play/pause
+        btnAvanzar.setOnClickListener {
+            val hayColeccion = Preferencias.obtenerValorString("coleccionActualId", "")
+            if(hayColeccion == ""){
+                val cancionActual = Preferencias.obtenerValorString("cancionActualId", "")
+                reproducir(cancionActual)
+            }
+            else{
+                indexActual++
+                val ordenColeccion = Preferencias.obtenerValorString("ordenColeccionActual", "")
+                    .split(",")
+                    .filter { id -> id.isNotEmpty() }
+                if (indexActual > ordenColeccion.size){
+                    indexActual=0
+                }
+                Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
+                reproducirColeccion()
+            }
+        }
         // Configurar botón de play/pause
         stopButton.setOnClickListener {
             Log.d("MiniReproductor", "Botón presionado")
@@ -713,17 +755,19 @@ class Perfil : AppCompatActivity() {
                     response.body()?.let { audioResponse ->
                         val respuestaTexto = "Audio: ${audioResponse.audio}, Favorito: ${audioResponse.fav}"
 
+                        Preferencias.guardarValorString("coleccionActualId", "")
                         // Mostrar en Logcat
                         Log.d("API_RESPONSE", "Respuesta exitosa: $respuestaTexto")
 
                         // Mostrar en Toast
-                        Toast.makeText(this@Perfil, respuestaTexto, Toast.LENGTH_LONG).show()
+                        //Toast.makeText(this@Home, respuestaTexto, Toast.LENGTH_LONG).show()
 
                         reproducirAudio(audioResponse.audio)
                         notificarReproduccion()
 
                         Preferencias.guardarValorString("audioCancionActual", audioResponse.audio)
                         guardarDatoscCancion(id)
+                        actualizarIconoPlayPause()
                     }
                 } else {
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
@@ -731,8 +775,6 @@ class Perfil : AppCompatActivity() {
                     // Mostrar en Logcat
                     Log.e("API_RESPONSE", "Error en la respuesta: Código ${response.code()} - $errorMensaje")
 
-                    // Mostrar en Toast
-                    Toast.makeText(this@Perfil, "Error: $errorMensaje", Toast.LENGTH_LONG).show()
                 }
             }
 
@@ -740,8 +782,6 @@ class Perfil : AppCompatActivity() {
                 // Mostrar en Logcat
                 Log.e("API_RESPONSE", "Error de conexión: ${t.message}", t)
 
-                // Mostrar en Toast
-                Toast.makeText(this@Perfil, "Error de conexión: ${t.message}", Toast.LENGTH_LONG).show()
             }
         })
     }
@@ -787,6 +827,7 @@ class Perfil : AppCompatActivity() {
                         reproducirAudioColeccion(audioResponse.audio) // No enviar progreso
                         notificarReproduccion()
                         guardarDatoscCancion(ordenColeccion[indice])
+                        actualizarIconoPlayPause()
                     }
                 } else {
                     Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")

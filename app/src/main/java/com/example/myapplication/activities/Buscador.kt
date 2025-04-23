@@ -130,6 +130,7 @@ class Buscador : AppCompatActivity() {
 
         Log.d("ProfileImage", "URL de la imagen de perfil: $profileImageUrl")
 
+        indexActual = Preferencias.obtenerValorEntero("indexColeccionActual", 0)
 
         // Verificar si la API devolvió "DEFAULT" o si no hay imagen guardada
         if (profileImageUrl.isNullOrEmpty() || profileImageUrl == "DEFAULT") {
@@ -322,10 +323,12 @@ class Buscador : AppCompatActivity() {
         val songTitle = findViewById<TextView>(R.id.songTitle)
         val songArtist = findViewById<TextView>(R.id.songArtist)
         val stopButton = findViewById<ImageButton>(R.id.stopButton)
+        val btnAvanzar = findViewById<ImageButton>(R.id.btnAvanzar)
+        val btnRetroceder = findViewById<ImageButton>(R.id.btnRetroceder)
 
         val songImageUrl = Preferencias.obtenerValorString("fotoPortadaActual", "")
-        val songTitleText = Preferencias.obtenerValorString("nombreCancionActual", "Nombre de la canción")
-        val songArtistText = Preferencias.obtenerValorString("nombreArtisticoActual", "Artista")
+        val songTitleText = Preferencias.obtenerValorString("nombreCancionActual", "")
+        val songArtistText = Preferencias.obtenerValorString("nombreArtisticoActual", "")
         val songProgress = Preferencias.obtenerValorEntero("progresoCancionActual", 0)
 
         // Imagen
@@ -348,6 +351,44 @@ class Buscador : AppCompatActivity() {
             startActivity(Intent(this, CancionReproductorDetail::class.java))
         }
 
+        // Configurar botón de play/pause
+        btnRetroceder.setOnClickListener {
+            val hayColeccion = Preferencias.obtenerValorString("coleccionActualId", "")
+            if(hayColeccion == ""){
+                val cancionActual = Preferencias.obtenerValorString("cancionActualId", "")
+                reproducir(cancionActual)
+            }
+            else{
+                indexActual--
+                val ordenColeccion = Preferencias.obtenerValorString("ordenColeccionActual", "")
+                    .split(",")
+                    .filter { id -> id.isNotEmpty() }
+                if (indexActual < 0){
+                    indexActual = ordenColeccion.size
+                }
+                Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
+                reproducirColeccion()
+            }
+        }
+        // Configurar botón de play/pause
+        btnAvanzar.setOnClickListener {
+            val hayColeccion = Preferencias.obtenerValorString("coleccionActualId", "")
+            if(hayColeccion == ""){
+                val cancionActual = Preferencias.obtenerValorString("cancionActualId", "")
+                reproducir(cancionActual)
+            }
+            else{
+                indexActual++
+                val ordenColeccion = Preferencias.obtenerValorString("ordenColeccionActual", "")
+                    .split(",")
+                    .filter { id -> id.isNotEmpty() }
+                if (indexActual > ordenColeccion.size){
+                    indexActual=0
+                }
+                Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
+                reproducirColeccion()
+            }
+        }
         // Configurar botón de play/pause
         stopButton.setOnClickListener {
             Log.d("MiniReproductor", "Botón presionado")
@@ -471,6 +512,7 @@ class Buscador : AppCompatActivity() {
 
                         Preferencias.guardarValorString("audioCancionActual", audioResponse.audio)
                         guardarDatoscCancion(id)
+                        actualizarIconoPlayPause()
                     }
                 } else {
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
@@ -479,7 +521,7 @@ class Buscador : AppCompatActivity() {
                     Log.e("API_RESPONSE", "Error en la respuesta: Código ${response.code()} - $errorMensaje")
 
                     // Mostrar en Toast
-                    Toast.makeText(this@Buscador, "Error: $errorMensaje", Toast.LENGTH_LONG).show()
+                    //Toast.makeText(this@Buscador, "Error: $errorMensaje", Toast.LENGTH_LONG).show()
                 }
             }
 
@@ -534,6 +576,7 @@ class Buscador : AppCompatActivity() {
                         reproducirAudioColeccion(audioResponse.audio) // No enviar progreso
                         notificarReproduccion()
                         guardarDatoscCancion(ordenColeccion[indice])
+                        actualizarIconoPlayPause()
                     }
                 } else {
                     Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")

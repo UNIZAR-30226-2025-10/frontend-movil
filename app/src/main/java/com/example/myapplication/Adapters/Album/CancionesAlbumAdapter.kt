@@ -22,12 +22,14 @@ import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.activities.AlbumDetail
 import com.example.myapplication.activities.CrearPlaylist
+import com.example.myapplication.io.response.CancionP
 import com.example.myapplication.io.response.CancionesAlbum
 import com.example.myapplication.io.response.MisPlaylist
 
 class CancionesAlbumAdapter(
     private var canciones: List<CancionesAlbum>,
-    private var nombreArtista: String
+    private var nombreArtista: String,
+    private val clickListener: (CancionesAlbum) -> Unit
 ) : RecyclerView.Adapter<CancionesAlbumAdapter.CancionViewHolder>() {
 
     // Listener para añadir canciones a playlist
@@ -89,6 +91,9 @@ class CancionesAlbumAdapter(
             opciones.setOnClickListener {
                 showOptionsMenu(it, cancion)
             }
+
+            itemView.setOnClickListener { clickListener(cancion) }
+
         }
 
         private fun showOptionsMenu(anchorView: View, cancion: CancionesAlbum) {
