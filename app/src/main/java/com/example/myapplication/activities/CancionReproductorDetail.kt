@@ -136,7 +136,7 @@ class CancionReproductorDetail : AppCompatActivity() {
         }
         */
 
-        progressBar.progress = songProgress/1749
+        progressBar.progress = songProgress/2806
 
         btnFavorito.setOnClickListener {
             isFavorito = !isFavorito

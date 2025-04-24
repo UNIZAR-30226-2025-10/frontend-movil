@@ -470,7 +470,7 @@ class AlbumDetail : AppCompatActivity() {
 
         songTitle.text = songTitleText
         songArtist.text = songArtistText
-        progressBar.progress = songProgress/1749
+        progressBar.progress = songProgress/2806
 
         songImage.setOnClickListener {
             startActivity(Intent(this, CancionReproductorDetail::class.java))
