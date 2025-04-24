@@ -77,13 +77,13 @@ class MisNoizzys: AppCompatActivity() {
         }
     }
 
-    private val listenerNoizzy: (Noizzy) -> Unit = { noizzy ->
+    private val listenerNoizzy: (Noizzy, Boolean) -> Unit = { noizzy, mio ->
         runOnUiThread {
             Log.d("LOGS_NOTIS", "evento en mis noizzys")
-            /*if (comprobar que noizzy.nombreUsuario soy yo) {
+            if (mio) {
                 val adapter = recyclerNoizzys.adapter as? MisNoizzysAdapter
                 adapter?.agregarNoizzy(noizzy)
-            }*/
+            }
         }
     }
 

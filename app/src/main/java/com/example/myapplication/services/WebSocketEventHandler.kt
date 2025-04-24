@@ -16,7 +16,7 @@ object WebSocketEventHandler {
     private val novedadesListeners = mutableListOf<(Novedad) -> Unit>()
     private val interaccionesListeners = mutableListOf<(Interaccion) -> Unit>()
     private val invitacionesListeners = mutableListOf<(InvitacionPlaylist) -> Unit>()
-    private val nuevoNoizzyListeners = mutableListOf<(Noizzy) -> Unit>()
+    private val nuevoNoizzyListeners = mutableListOf<(Noizzy, Boolean) -> Unit>()
     private val webSocketManager = WebSocketManager.getInstance()
 
     fun init() {
@@ -26,6 +26,9 @@ object WebSocketEventHandler {
             Log.d("LOGS_NOTIS", "nuevo noizzy")
             val data = args[0] as JSONObject
             val nombreUsuario = data.getString("nombreUsuario")
+            Log.d("LOGS_NOTIS", "antes mio")
+            val mio = data.getBoolean("mio")
+            Log.d("LOGS_NOTIS", "despues mio")
             val fotoPerfil = data.getString("fotoPerfil")
             val id = data.getInt("id")
             val texto = data.getString("texto")
@@ -54,7 +57,7 @@ object WebSocketEventHandler {
             )
 
             // Notificás a todos los que estén escuchando
-            nuevoNoizzyListeners.forEach { it(noizzy) }
+            nuevoNoizzyListeners.forEach { it(noizzy, mio) }
         }
 
         webSocketManager.listenToEvent("nuevo-seguidor-ws") { args ->
@@ -192,12 +195,11 @@ object WebSocketEventHandler {
         invitacionesListeners.remove(listener)
     }
 
-    fun registrarListenerNoizzy(listener: (Noizzy) -> Unit) {
-        Log.d("LOGS_NOTIS", "registrado")
+    fun registrarListenerNoizzy(listener: (Noizzy, Boolean) -> Unit) {
         nuevoNoizzyListeners.add(listener)
     }
 
-    fun eliminarListenerNoizzy(listener: (Noizzy) -> Unit) {
+    fun eliminarListenerNoizzy(listener: (Noizzy, Boolean) -> Unit) {
         nuevoNoizzyListeners.remove(listener)
     }
 }

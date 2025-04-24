@@ -35,8 +35,8 @@ class MisNoizzysAdapter(
     }
 
     fun agregarNoizzy(noizzy: Noizzy) {
-        noizzys.add(noizzy)
-        notifyItemInserted(noizzys.size - 1)
+        noizzys.add(0, noizzy)
+        notifyItemInserted(0)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoizzyViewHolder {

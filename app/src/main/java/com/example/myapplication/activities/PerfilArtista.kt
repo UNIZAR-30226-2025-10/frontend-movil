@@ -156,6 +156,13 @@ class PerfilArtista : AppCompatActivity() {
             startActivity(Intent(this, SubirCancion::class.java))
         }
 
+        findViewById<Button>(R.id.subirAlbum).setOnClickListener {
+            val intent = Intent(this, CrearAlbum::class.java)
+            intent.putExtra("artista", artisticnameTextView.text)
+            startActivity(intent)
+        }
+
+
         val moreOptionsButton = findViewById<ImageButton>(R.id.options)
 
         moreOptionsButton.setOnClickListener {

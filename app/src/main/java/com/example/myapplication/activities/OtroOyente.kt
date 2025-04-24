@@ -107,7 +107,7 @@ class OtroOyente : AppCompatActivity() {
     private var nombreUser: String? = null
 
 
-    private val listenerNoizzy: (Noizzy) -> Unit = { noizzy ->
+    private val listenerNoizzy: (Noizzy, Boolean) -> Unit = { noizzy, mio ->
         runOnUiThread {
             Log.d("LOGS_NOTIS", "evento en perfil otro")
             if (nombreUser != null) {

@@ -61,6 +61,6 @@ class CancionEstAdapter(private val canciones: List<CancionEst>, private val nom
     fun formatearDuracion(segundos: Int): String {
         val minutos = segundos / 60
         val segundosRestantes = segundos % 60
-        return "${minutos}:${segundosRestantes}"
+        return String.format("%d:%02d", minutos, segundosRestantes)
     }
 }

@@ -44,8 +44,14 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import android.media.MediaMetadataRetriever
+import android.widget.ImageButton
 import com.example.myapplication.io.request.CrearCancionRequest
 import com.example.myapplication.io.response.CloudinaryAudioResponse
+import com.example.myapplication.io.response.Interaccion
+import com.example.myapplication.io.response.InvitacionPlaylist
+import com.example.myapplication.io.response.Novedad
+import com.example.myapplication.io.response.Seguidor
+import com.example.myapplication.services.WebSocketEventHandler
 
 
 class SubirCancion : AppCompatActivity() {
@@ -73,12 +79,36 @@ class SubirCancion : AppCompatActivity() {
     private var audioUriGlobal: Uri? = null
     private var duracionGlobal: Double = 0.0
     private var albumSeleccionado: MiAlbum? = null
+    private lateinit var dot: View
+
+    //EVENTOS PARA LAS NOTIFICACIONES
+    private val listenerNovedad: (Novedad) -> Unit = {
+        runOnUiThread {
+            dot.visibility = View.VISIBLE
+        }
+    }
+    private val listenerSeguidor: (Seguidor) -> Unit = {
+        runOnUiThread {
+            dot.visibility = View.VISIBLE
+        }
+    }
+    private val listenerInvitacion: (InvitacionPlaylist) -> Unit = {
+        runOnUiThread {
+            dot.visibility = View.VISIBLE
+        }
+    }
+    private val listenerInteraccion: (Interaccion) -> Unit = {
+        runOnUiThread {
+            dot.visibility = View.VISIBLE
+        }
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.subir_cancion)
 
+        dot = findViewById<View>(R.id.notificationDot)
         spinner = findViewById(R.id.spinnerAlbums)
         layoutCamposCancion = findViewById(R.id.layoutCamposCancion)
 
@@ -88,6 +118,33 @@ class SubirCancion : AppCompatActivity() {
         btnSeleccionarAudio = findViewById(R.id.btnSeleccionarAudio)
         btnSubirCancion = findViewById(R.id.btnSubirCancion)
 
+        val profileImageButton = findViewById<ImageButton>(R.id.profileImageButton)
+        val profileImageUrl = Preferencias.obtenerValorString("fotoPerfil", "")
+
+        if (profileImageUrl.isNullOrEmpty() || profileImageUrl == "DEFAULT") {
+            profileImageButton.setImageResource(R.drawable.ic_profile)
+        } else {
+            Glide.with(this)
+                .load(profileImageUrl)
+                .circleCrop()
+                .placeholder(R.drawable.ic_profile) // Imagen por defecto mientras carga
+                .error(R.drawable.ic_profile) // Imagen si hay error
+                .into(profileImageButton)
+        }
+
+        //PARA EL CIRCULITO ROJO DE NOTIFICACIONES
+        if (Preferencias.obtenerValorBooleano("hay_notificaciones",false) == true) {
+            dot.visibility = View.VISIBLE
+        } else {
+            dot.visibility = View.GONE
+        }
+
+        //Para actualizar el punto rojo en tiempo real, suscripcion a los eventos
+        WebSocketEventHandler.registrarListenerNovedad(listenerNovedad)
+        WebSocketEventHandler.registrarListenerSeguidor(listenerSeguidor)
+        WebSocketEventHandler.registrarListenerInvitacion(listenerInvitacion)
+        WebSocketEventHandler.registrarListenerInteraccion(listenerInteraccion)
+
         val btnSeleccionarEtiquetas = findViewById<Button>(R.id.btnSeleccionarEtiquetas)
         btnSeleccionarEtiquetas.setOnClickListener {
             mostrarSeleccionMultipleEtiquetas(etiquetasDisponibles)
@@ -95,6 +152,7 @@ class SubirCancion : AppCompatActivity() {
 
         apiService = ApiService.create()
         apiServiceCloud = CloudinaryApiService.create()
+        setupNavigation()
         obtenerAlbums()
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -642,5 +700,53 @@ class SubirCancion : AppCompatActivity() {
                 Toast.makeText(this@SubirCancion, "Error en la solicitud: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun setupNavigation() {
+        val buttonPerfil: ImageButton = findViewById(R.id.profileImageButton)
+        val buttonNotis: ImageButton = findViewById(R.id.notificationImageButton)
+        val buttonHome: ImageButton = findViewById(R.id.nav_home)
+        val buttonSearch: ImageButton = findViewById(R.id.nav_search)
+        val buttonCrear: ImageButton = findViewById(R.id.nav_create)
+        val buttonNoizzys: ImageButton = findViewById(R.id.nav_noizzys)
+
+        buttonPerfil.setOnClickListener {
+            val esOyente = Preferencias.obtenerValorString("esOyente", "")
+            if (esOyente == "oyente") {
+                Log.d("Login", "El usuario es un oyente")
+                startActivity(Intent(this, Perfil::class.java))
+            } else {
+                Log.d("Login", "El usuario NO es un oyente")
+                startActivity(Intent(this, PerfilArtista::class.java))
+            }
+        }
+
+        buttonNotis.setOnClickListener {
+            startActivity(Intent(this, Notificaciones::class.java))
+        }
+
+        buttonHome.setOnClickListener {
+            startActivity(Intent(this, Home::class.java))
+        }
+
+        buttonSearch.setOnClickListener {
+            startActivity(Intent(this, Buscador::class.java))
+        }
+
+        buttonCrear.setOnClickListener {
+            startActivity(Intent(this, CrearPlaylist::class.java))
+        }
+
+        buttonNoizzys.setOnClickListener {
+            startActivity(Intent(this, MisNoizzys::class.java))
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        WebSocketEventHandler.eliminarListenerNovedad(listenerNovedad)
+        WebSocketEventHandler.eliminarListenerSeguidor(listenerSeguidor)
+        WebSocketEventHandler.eliminarListenerInvitacion(listenerInvitacion)
+        WebSocketEventHandler.eliminarListenerInteraccion(listenerInteraccion)
     }
 }

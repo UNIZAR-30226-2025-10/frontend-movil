@@ -553,11 +553,10 @@ class Notificaciones : AppCompatActivity() {
                             noHayNovedades.visibility = View.VISIBLE
                         }
 
-                        /*val intent = Intent(this@Notificaciones, AlbumDetail::class.java).apply {
-                            //MANDAR ID DEL ALBUM DE LA CANCION
-                            //putExtra("id", novedad.id)
+                        val intent = Intent(this@Notificaciones, AlbumDetail::class.java).apply {
+                            putExtra("id", novedad.id)
                         }
-                        startActivity(intent)*/
+                        startActivity(intent)
                     }
                 }
 
@@ -578,10 +577,10 @@ class Notificaciones : AppCompatActivity() {
                             noHayNovedades.visibility = View.VISIBLE
                         }
 
-                        /*val intent = Intent(this@Notificaciones, AlbumDetail::class.java).apply {
-                            //putExtra("id", novedad.id)
+                        val intent = Intent(this@Notificaciones, AlbumDetail::class.java).apply {
+                            putExtra("id", novedad.id)
                         }
-                        startActivity(intent)*/
+                        startActivity(intent)
                     }
                 }
 
@@ -651,16 +650,18 @@ class Notificaciones : AppCompatActivity() {
                         noHaySeguidores.visibility = View.VISIBLE
                     }
 
-                    /*if (seguidor.tipo == "oyente") {
-                        val intent = Intent(this@Notificaciones, PerfilOtro::class.java).apply {
-                            putExtra("nombreUsuario", seguidor.nombreUsuario)
+                    if (seguidor.tipo == "oyente") {
+                        val intent = Intent(this@Notificaciones, OtroOyente::class.java).apply {
+                            putExtra("nombre", seguidor.nombreUsuario)
                         }
+                        startActivity(intent)
                     } else {
-                        val intent = Intent(this@Notificaciones, PerfilArtistaOtro::class.java).apply {
-                            putExtra("nombreUsuario", seguidor.nombreUsuario)
+                        val intent = Intent(this@Notificaciones, OtroArtista::class.java).apply {
+                            putExtra("nombre", seguidor.nombreUsuario)
                         }
+                        startActivity(intent)
                     }
-                    startActivity(intent)*/
+
                 }
             }
 
@@ -696,7 +697,6 @@ class Notificaciones : AppCompatActivity() {
 
     private fun setupNavigation() {
         val buttonPerfil: ImageButton = findViewById(R.id.profileImageButton)
-        val buttonNotis: ImageButton = findViewById(R.id.notificationImageButton)
         val buttonHome: ImageButton = findViewById(R.id.nav_home)
         val buttonSearch: ImageButton = findViewById(R.id.nav_search)
         val buttonCrear: ImageButton = findViewById(R.id.nav_create)
@@ -711,10 +711,6 @@ class Notificaciones : AppCompatActivity() {
                 startActivity(Intent(this, PerfilArtista::class.java))
             }
         }
-
-        /*buttonNotis.setOnClickListener {
-            startActivity(Intent(this, Notificaciones::class.java))
-        }*/
 
         buttonHome.setOnClickListener {
             startActivity(Intent(this, Home::class.java))
