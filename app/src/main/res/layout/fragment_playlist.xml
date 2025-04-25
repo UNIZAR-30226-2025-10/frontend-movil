@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#DDDCDC"
     android:fillViewport="true"
-    tools:context=".activities.AlbumDetail">
+    tools:context=".activities.PlaylistDetail">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -65,6 +65,17 @@
                         android:visibility="gone"/>
                 </FrameLayout>
 
+                <!-- Switch de modo -->
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@id/notificationButtonContainer"
+                    android:layout_marginEnd="16dp"
+                    android:thumb="@drawable/thumb"
+                    app:track="@drawable/track" />
+
                 <ImageButton
                     android:id="@+id/profileImageButton"
                     android:layout_width="40dp"
@@ -84,7 +95,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="#DDDCDC"
+            style="@style/TextColor"
             android:fillViewport="true">
 
             <LinearLayout
@@ -98,7 +109,7 @@
                     android:id="@+id/profileSection"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="#F4F4F4"
+                    style="@style/TextColor"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="16dp">
@@ -130,7 +141,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
                                 android:fontFamily="@font/poppins_bold"
-                                android:textColor="#000E3B"
+                                style="@style/TextColor"
                                 android:textSize="18sp" />
 
                             <TextView
@@ -138,8 +149,18 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/poppins_regular"
-                                android:textColor="#000E3B"
+                                style="@style/TextColor"
                                 android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/participantes"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                style="@style/TextColor"
+                                android:textSize="14sp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:clickable="true"
+                                android:focusable="true" />
 
                             <TextView
                                 android:id="@+id/duracion"
@@ -147,7 +168,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginRight="12dp"
                                 android:fontFamily="@font/poppins_regular"
-                                android:textColor="#000E3B"
+                                style="@style/TextColor"
                                 android:textSize="14sp" />
                         </LinearLayout>
                     </LinearLayout>
@@ -171,7 +192,7 @@
                         android:fontFamily="@font/poppins_bold"
                         android:paddingStart="10dp"
                         android:paddingEnd="10dp"
-                        android:textColor="#FFFFFF"
+                        style="@style/TextColor"
                         android:textSize="12sp" />
 
                     <ImageButton

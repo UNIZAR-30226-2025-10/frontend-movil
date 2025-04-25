@@ -41,5 +41,6 @@ data class MisPlaylist(
 data class Recomendaciones(
     val id: String,
     val fotoPortada: String,
-    val nombre: String
+    val nombre: String,
+    val nombreArtisticoArtista: String
 )

@@ -11,17 +11,17 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:scaleType="centerCrop"
-        android:background="@drawable/circle_background"
+        android:src="@drawable/no_cancion"
+        android:background="@drawable/rounded_edittext"
         android:clipToOutline="true"
-        android:outlineProvider="background"
-        android:src="@drawable/ic_profile" />
+        android:outlineProvider="background" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="Nombre del artista"
+        android:text="Nombre de la playlist"
         android:textStyle="bold"
         style="@style/TextColor"
         android:fontFamily="@font/poppins_bold"
@@ -30,3 +30,4 @@
         android:ellipsize="end" />
 
 </LinearLayout>
+

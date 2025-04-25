@@ -24,6 +24,7 @@ import com.example.myapplication.io.request.CancionInfoRequest
 import com.example.myapplication.io.request.CrearAlbumRequest
 import com.example.myapplication.io.request.CrearCancionRequest
 import com.example.myapplication.io.request.ChangeFollowRequest
+import com.example.myapplication.io.request.ChangePasswordRequest
 import com.example.myapplication.io.request.CreatePlaylistRequest
 import com.example.myapplication.io.request.DarLikeNoizzyRequest
 import com.example.myapplication.io.request.DeleteAccountRequest
@@ -34,6 +35,7 @@ import com.example.myapplication.io.request.DeleteFromPlaylistRequest
 import com.example.myapplication.io.request.DeletePlaylistRequest
 import com.example.myapplication.io.request.PlaylistRequest
 import com.example.myapplication.io.request.EditarPerfilRequest
+import com.example.myapplication.io.request.ExpelUserRequest
 import com.example.myapplication.io.request.InvitarPlaylistRequest
 import com.example.myapplication.io.request.LeavePlaylistRequest
 import com.example.myapplication.io.request.LeerNotiLikeRequest
@@ -545,6 +547,20 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body request: LeavePlaylistRequest
     ): Call<Void>
+
+    @HTTP(method = "DELETE", path = "/expel-from-playlist", hasBody = true)
+    fun expulsarUsuario(
+        @Header("Authorization") token: String,
+        @Body request: ExpelUserRequest
+    ): Call<Void>
+
+    @PUT("change-contrasenya")
+    fun changePassword(
+        @Header("Authorization") token: String,
+        @Body request: ChangePasswordRequest
+    ): Call<Void>
+
+
 
 
 

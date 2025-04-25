@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#DDDCDC"
+    style="@style/ScreenBackground"
     tools:context=".activities.Home">
 
     <!-- Barra de herramientas con imagen de perfil alineada a la derecha -->
@@ -20,27 +20,43 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_height="match_parent">
 
+            <!-- Logo -->
             <ImageView
                 android:id="@+id/toolbar_logo"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
-                android:src="@drawable/logo"
                 android:layout_centerVertical="true"
-                android:contentDescription="@string/logo"/>
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="16dp"
+                android:src="@drawable/logo"
+                android:contentDescription="@string/logo" />
 
-            <!-- Imagen de notificaciones como botón -->
+            <!-- Botón de perfil -->
+            <ImageButton
+                android:id="@+id/profileImageButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="16dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_profile"
+                android:background="@android:color/transparent"
+                android:contentDescription="Imagen de perfil"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <!-- Botón de notificación -->
             <FrameLayout
                 android:id="@+id/notificationButtonContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="92dp">
+                android:layout_toStartOf="@id/profileImageButton"
+                android:layout_marginEnd="16dp">
 
-                <!-- Imagen de notificaciones como botón -->
                 <ImageButton
                     android:id="@+id/notificationImageButton"
                     android:layout_width="40dp"
@@ -51,9 +67,8 @@
                     android:background="@android:color/transparent"
                     android:contentDescription="Imagen de notificaciones"
                     android:clickable="true"
-                    android:focusable="true"/>
+                    android:focusable="true" />
 
-                <!-- Circulito rojo -->
                 <View
                     android:id="@+id/notificationDot"
                     android:layout_width="10dp"
@@ -62,24 +77,19 @@
                     android:layout_marginTop="4dp"
                     android:layout_marginEnd="4dp"
                     android:background="@drawable/dot_notificacion"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
             </FrameLayout>
 
-
-            <!-- Imagen de perfil como botón -->
-            <ImageButton
-                android:id="@+id/profileImageButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_alignParentEnd="true"
+            <!-- Switch de modo -->
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="21dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_profile"
-                android:background="@android:color/transparent"
-                android:contentDescription="Imagen de perfil"
-                android:clickable="true"
-                android:focusable="true"/>
+                android:layout_toStartOf="@id/notificationButtonContainer"
+                android:layout_marginEnd="16dp"
+                android:thumb="@drawable/thumb"
+                app:track="@drawable/track" />
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 
@@ -114,7 +124,7 @@
                 android:text="Escuchado recientemente"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:textColor="#000E3B"
+                style="@style/TextColor"
                 android:fontFamily="@font/poppins_bold"
                 android:layout_gravity="start"
                 android:paddingTop="16dp" />
@@ -142,7 +152,7 @@
                 android:text="Últimas escuchas"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:textColor="#000E3B"
+                style="@style/TextColor"
                 android:fontFamily="@font/poppins_bold"
                 android:layout_gravity="start"
                 android:paddingTop="16dp"/>
@@ -170,7 +180,7 @@
                 android:text="Tus playlists"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:textColor="#000E3B"
+                style="@style/TextColor"
                 android:fontFamily="@font/poppins_bold"
                 android:layout_gravity="start"
                 android:paddingTop="16dp"/>
@@ -198,7 +208,7 @@
                 android:text="Recomendado para ti"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:textColor="#000E3B"
+                style="@style/TextColor"
                 android:fontFamily="@font/poppins_bold"
                 android:layout_gravity="start"
                 android:paddingTop="16dp"/>
@@ -444,5 +454,8 @@
         </LinearLayout>
 
     </LinearLayout>
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -20,13 +20,13 @@
     </style>
 
     <style name="ScreenBackground">
-        <item name="android:background">@color/blancoClaro</item>
+        <item name="android:background">@color/greyClaro</item>
     </style>
     <style name="CardBackgroungd">
-        <item name="android:background">@color/blancoClaro</item>
+        <item name="android:background">@color/greyOscuro</item>
     </style>
     <style name="TextColor">
-        <item name="android:textColor">@color/fondo</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
 

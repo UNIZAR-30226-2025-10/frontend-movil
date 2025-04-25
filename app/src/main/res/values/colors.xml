@@ -13,4 +13,8 @@
     <color name="fondo">#000E3B</color>
     <color name="colorFollowText">#FFFFFF</color>
     <color name="colorFollowingText">#000e3b</color>
+    <color name="greyClaro">#515050</color>
+    <color name="greyOscuro">#3C3B3B</color>
+    <color name="blancoClaro">#F4F4F4</color>
+    <color name="blancoOscuro">#DDDCDC</color>
 </resources>

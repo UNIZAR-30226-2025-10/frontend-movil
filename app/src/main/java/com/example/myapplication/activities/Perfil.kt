@@ -38,6 +38,7 @@ import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.CloudinaryApiService
 import com.example.myapplication.io.request.AudioColeccionRequest
 import com.example.myapplication.io.request.AudioRequest
+import com.example.myapplication.io.request.ChangePasswordRequest
 import com.example.myapplication.io.request.EditarPerfilRequest
 import com.example.myapplication.io.response.AddReproduccionResponse
 import com.example.myapplication.io.response.AudioResponse
@@ -215,6 +216,10 @@ class Perfil : AppCompatActivity() {
                         showDeleteAccountDialog()
                         true
                     }
+                    R.id.menu_change_password -> {
+                        showChangePasswordDialog()
+                        true
+                    }
                     else -> false
                 }
             }
@@ -283,6 +288,41 @@ class Perfil : AppCompatActivity() {
 
         dialog.show()
     }
+
+    private fun showChangePasswordDialog() {
+        Log.d("MiAppPerfil", "change pass 1")
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.dialog_change_password)
+
+        val window: Window? = dialog.window
+        if (window != null) {
+            window.setLayout((Resources.getSystem().displayMetrics.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
+            window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        }
+
+        dialog.setCancelable(true)
+        Log.d("MiAppPerfil", "change pass 2")
+
+        val passActual = dialog.findViewById<EditText>(R.id.passActual)
+        val passNueva = dialog.findViewById<EditText>(R.id.passNueva)
+        val btnChange = dialog.findViewById<Button>(R.id.btnConfirm)
+
+        Log.d("MiAppPerfil", "change pass 3")
+
+        Log.d("MiAppPerfil", "change pass 4")
+
+        btnChange.setOnClickListener {
+            Log.d("MiAppPerfil", "change pass 5")
+            changePassword(passActual.text.toString(),passNueva.text.toString() )
+            Log.d("MiAppPerfil", "PERFIL show edit 6")
+
+            Log.d("MiAppPerfil", "PERFIL show edit 7")
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
 
     private fun showEditProfileDialog() {
         Log.d("MiAppPerfil", "PERFIL show edit 1")
@@ -483,6 +523,28 @@ class Perfil : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<EditarPerfilResponse>, t: Throwable) {
+                Log.d("updateUserProfile", "Error en la solicitud2")
+                showToast("Error en la solicitud: ${t.message}")
+            }
+        })
+    }
+
+    private fun changePassword(passActual: String, passNueva: String) {
+        val request = ChangePasswordRequest(passActual, passNueva)
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+        Log.d("updateUserProfile", "2")
+        apiService.changePassword(authHeader, request).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    showToast("Contraseña actualizada")
+                } else {
+                    Log.d("updateUserProfile", "Error en la solicitud ${response.code()}")
+                    showToast("Error al actualizar contraseña")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
                 Log.d("updateUserProfile", "Error en la solicitud2")
                 showToast("Error en la solicitud: ${t.message}")
             }

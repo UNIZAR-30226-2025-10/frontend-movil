@@ -12,6 +12,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.myapplication.R
 import com.example.myapplication.io.response.HCancion
 import com.example.myapplication.io.response.Recomendaciones
+import com.example.myapplication.utils.Preferencias
 
 class RecomendacionesAdapter (
     private var listaRecomendaciones: MutableList<Recomendaciones>,
@@ -32,6 +33,7 @@ class RecomendacionesAdapter (
     override fun onBindViewHolder(holder: RecomendacionViewHolder, position: Int) {
         val recomendacion = listaRecomendaciones[position]
         holder.nombreCancion.text = recomendacion.nombre
+        holder.nombreArtista.text = recomendacion.nombreArtisticoArtista
         var foto: Any
         if (recomendacion.fotoPortada == "DEFAULT") {
             foto = R.drawable.no_cancion
@@ -61,6 +63,7 @@ class RecomendacionesAdapter (
 
     class RecomendacionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nombreCancion: TextView = itemView.findViewById(R.id.textView)
+        val nombreArtista: TextView = itemView.findViewById(R.id.textViewArtist)
         val imagenCancion: ImageView = itemView.findViewById(R.id.imageView)
     }
 }

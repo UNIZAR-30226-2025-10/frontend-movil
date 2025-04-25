@@ -1,5 +1,6 @@
 package com.example.myapplication.activities
 
+import ParticipantesAdapter
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
@@ -33,6 +34,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -49,6 +52,7 @@ import com.example.myapplication.io.request.AudioRequest
 import com.example.myapplication.io.request.CambiarPrivacidadPlaylistRequest
 import com.example.myapplication.io.request.DeleteFromPlaylistRequest
 import com.example.myapplication.io.request.DeletePlaylistRequest
+import com.example.myapplication.io.request.ExpelUserRequest
 import com.example.myapplication.io.request.InvitarPlaylistRequest
 import com.example.myapplication.io.request.LeavePlaylistRequest
 import com.example.myapplication.io.request.UpdatePlaylistRequest
@@ -80,6 +84,7 @@ import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.Collections.addAll
 
 class PlaylistDetail : AppCompatActivity() {
 
@@ -88,6 +93,7 @@ class PlaylistDetail : AppCompatActivity() {
     private lateinit var recyclerViewCanciones: RecyclerView
     private lateinit var cancionPAdapter: CancionPAdapter
     private lateinit var playlistTextView: TextView
+    private lateinit var personas: TextView
     private lateinit var playlistImageView: ImageView
     private lateinit var playlistImageButton: ImageView
     private lateinit var duracion: TextView
@@ -103,6 +109,8 @@ class PlaylistDetail : AppCompatActivity() {
     }
     var playlistId: String? = null
     private var isFavorito = false
+    var alguienExpulsado = false
+    private lateinit var switchMode: SwitchCompat
 
     private var rol: String? = null
 
@@ -194,6 +202,7 @@ class PlaylistDetail : AppCompatActivity() {
         val textViewNombre = findViewById<TextView>(R.id.textViewNombrePlaylist)
         val textViewNumCanciones = findViewById<TextView>(R.id.textViewNumCanciones)
         val imageViewPlaylist = findViewById<ImageView>(R.id.imageViewPlaylist)
+        personas = findViewById<TextView>(R.id.participantes)
         dot = findViewById<View>(R.id.notificationDot)
         duracion = findViewById<TextView>(R.id.duracion)
 
@@ -353,6 +362,15 @@ class PlaylistDetail : AppCompatActivity() {
         }
 
         setupNavigation()
+
+        switchMode = findViewById(R.id.switchMode)
+        switchMode.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+        }
     }
 
     // Función para realizar la llamada a la API y obtener los datos
@@ -376,17 +394,61 @@ class PlaylistDetail : AppCompatActivity() {
                         textViewNombre.text = it.nombrePlaylist
                         rol = response.body()?.rol
                         Log.d("MiAppPlaylist", "Nombre${textViewNombre.text}")
+                        Log.d("MiAppPlaylist", "Creador${playlist.creador}")
                         val numCanciones = canciones?.size ?: 0
                         textViewNumCanciones.text = "$numCanciones ${if (numCanciones == 1) "Canción" else "Canciones"}"
                         val segundos = playlist.duracion
                         val minutos = segundos / 60
                         val restoSegundos = segundos % 60
-                        duracion.text = String.format("%d:%02d", minutos, restoSegundos)
+                        //duracion.text = String.format("%d:%02d", minutos, restoSegundos)
+                        duracion.text = "$minutos minutos $restoSegundos segundos"
+
+                        val textoParticipantes = if (playlist.colaboradores.isNotEmpty()) {
+                            "${playlist.creador}, +${playlist.colaboradores.size} más"
+                        } else {
+                            "${playlist.creador}"
+                        }
+                        personas.text = textoParticipantes
+
+                        val participantes = mutableListOf(it.creador).apply {
+                            addAll(it.colaboradores)
+                        }
+
+                        val creador = it.creador
+                        val colaboradores = it.colaboradores
+
+
+                        personas.setOnClickListener {
+                            val participantes = mutableListOf(creador).apply {
+                                addAll(colaboradores)
+                            }
+
+                            val recyclerView = RecyclerView(this@PlaylistDetail).apply {
+                                layoutManager = LinearLayoutManager(this@PlaylistDetail)
+                                adapter = ParticipantesAdapter(participantes, creador) { expulsado ->
+                                    alguienExpulsado = true
+                                    Toast.makeText(this@PlaylistDetail, "Expulsaste a $expulsado", Toast.LENGTH_SHORT).show()
+                                    expelUser(playlistId, expulsado)
+                                }
+                            }
+
+                            AlertDialog.Builder(this@PlaylistDetail)
+                                .setTitle("Participantes")
+                                .setView(recyclerView)
+                                .setPositiveButton("Cerrar") { _, _ ->
+                                    if (alguienExpulsado) {
+                                        recreate()
+                                    }
+                                }
+                                .show()
+                        }
                         Glide.with(this@PlaylistDetail)
                             .load(it.fotoPortada)
                             .placeholder(R.drawable.no_cancion)
                             .error(R.drawable.no_cancion)
                             .into(imageViewPlaylist)
+
+                        updateUIForPlaylistOwnership()
                     }
 
                     // Actualizar RecyclerView con la lista de canciones
@@ -413,6 +475,33 @@ class PlaylistDetail : AppCompatActivity() {
                 Toast.makeText(this@PlaylistDetail, "Error de conexión: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun updateUIForPlaylistOwnership() {
+        val btnAnadirCancion: ImageButton = findViewById(R.id.btnAnadirCancion)
+        val btnAddUser: ImageButton = findViewById(R.id.btnAddUser)
+        val btnMoreOptions: ImageButton = findViewById(R.id.btnMoreOptions)
+
+        when (rol?.lowercase()) {
+            "creador" -> {
+                // Mostrar todos los botones para el creador
+                btnAnadirCancion.visibility = View.VISIBLE
+                btnAddUser.visibility = View.VISIBLE
+                btnMoreOptions.visibility = View.VISIBLE
+            }
+            "participante" -> {
+                // Ocultar botones de administración para participantes
+                btnAnadirCancion.visibility = View.VISIBLE
+                btnAddUser.visibility = View.GONE
+                btnMoreOptions.visibility = View.VISIBLE
+            }
+            else -> {
+                // Para usuarios que solo están viendo la playlist
+                btnAnadirCancion.visibility = View.GONE
+                btnAddUser.visibility = View.GONE
+                btnMoreOptions.visibility = View.GONE
+            }
+        }
     }
 
     private fun showSearchSongDialog() {
@@ -1001,21 +1090,24 @@ class PlaylistDetail : AppCompatActivity() {
         })
     }
     private fun showSongOptionsDialog(cancion: CancionP) {
-        val options = arrayOf(
+        val opcionesTotales = mutableListOf(
             "Añadir a playlist",
-            "Eliminar de esta playlist",
             "Ir al álbum",
             "Ir al artista"
         )
 
+        if (rol?.lowercase() == "creador" || rol?.lowercase() == "participante") {
+            opcionesTotales.add(1, "Eliminar de esta playlist")
+        }
+
         AlertDialog.Builder(this)
             .setTitle(cancion.nombre)
-            .setItems(options) { _, which ->
-                when (which) {
-                    0 -> addToPlaylist(cancion)
-                    1 -> removeFromPlaylist(cancion)
-                    2 -> goToAlbum(cancion)
-                    3 -> goToArtist(cancion)
+            .setItems(opcionesTotales.toTypedArray()) { _, which ->
+                when {
+                    opcionesTotales[which] == "Añadir a playlist" -> addToPlaylist(cancion)
+                    opcionesTotales[which] == "Eliminar de esta playlist" -> removeFromPlaylist(cancion)
+                    opcionesTotales[which] == "Ir al álbum" -> goToAlbum(cancion)
+                    opcionesTotales[which] == "Ir al artista" -> goToArtist(cancion)
                 }
             }
             .setNegativeButton("Cancelar", null)
@@ -1187,30 +1279,23 @@ class PlaylistDetail : AppCompatActivity() {
 
 
 
-    private fun actualizarFavorito(id: String, fav: Boolean) {
-        val request = ActualizarFavoritoRequest(id, fav)
+    private fun expelUser(idPlaylist: String, user: String) {
+        val request = ExpelUserRequest(idPlaylist, user)
         val token = Preferencias.obtenerValorString("token", "")
         val authHeader = "Bearer $token"
 
         // Llamar al servicio API para actualizar el estado del favorito
-        apiService.actualizarFavorito(authHeader, request).enqueue(object : Callback<Void> {
+        apiService.expulsarUsuario(authHeader, request).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    showToast("Estado de favorito actualizado")
-                    // Regresar a la pantalla anterior
-                    val resultIntent = Intent()
-                    resultIntent.putExtra("es_favorito", fav) // Devolver el nuevo estado del favorito
-                    setResult(RESULT_OK, resultIntent)
-                    finish()
+                    Log.e("expulsar", "Expulsado correcto")
                 } else {
-                    showToast( "Error al actualizar el estado")
+                    Log.e("expulsar", "Error al expulsar")
                 }
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
-                showToast("Error de conexión")
-                showToast("Error en la solicitud: ${t.message}")
-                Log.e("Favoritos", "Error al actualizar favorito", t)
+                Log.e("expulsar", "Error al conexion", t)
             }
         })
     }

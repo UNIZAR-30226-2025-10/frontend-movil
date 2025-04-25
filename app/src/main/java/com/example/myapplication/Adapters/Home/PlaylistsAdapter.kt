@@ -26,7 +26,7 @@ class PlaylistsAdapter (
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MisPlaylistViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_playlist, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_mis_playlists, parent, false)
         return MisPlaylistViewHolder(view)
     }
 

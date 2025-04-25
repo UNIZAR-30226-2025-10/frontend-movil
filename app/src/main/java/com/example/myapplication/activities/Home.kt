@@ -24,6 +24,8 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.SwitchCompat
 import com.example.myapplication.R
 import com.example.myapplication.utils.Preferencias
 import com.example.myapplication.io.ApiService
@@ -87,6 +89,11 @@ class Home : AppCompatActivity() {
     private val listaArtistas = mutableListOf<HArtistas>()
 
     private lateinit var dot: View
+
+    private lateinit var switchMode: SwitchCompat
+    //boolean nightMode;
+    //var modo = ""
+
 
     private lateinit var progressBar: ProgressBar
     private var musicService: MusicPlayerService? = null
@@ -297,6 +304,18 @@ class Home : AppCompatActivity() {
 
         // Configurar botones de navegación
         setupNavigation()
+
+        //switchMode = findViewById(R.id.switchMode)
+        //nightMode = Preferencias.obtenerValorString("modo", "")
+        //nightMode =
+        switchMode = findViewById(R.id.switchMode)
+        switchMode.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+        }
     }
 
     private fun updateMiniReproductor() {

@@ -31,7 +31,7 @@ class PlaylistAdapter(
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
         val playlist = listaPLaylists[position]
         holder.nombrePlaylist.text = playlist.nombre
-
+        holder.nombreCreador.text = playlist.nombreUsuarioCreador
         var foto: Any
         if (playlist.fotoPortada == "DEFAULT") {
             foto = R.drawable.no_cancion
@@ -61,6 +61,7 @@ class PlaylistAdapter(
 
     class PlaylistViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nombrePlaylist: TextView = itemView.findViewById(R.id.textView)
+        val nombreCreador: TextView = itemView.findViewById(R.id.usuarioPlaylist)
         val imagenPlaylist: ImageView = itemView.findViewById(R.id.imageView)
     }
 }
