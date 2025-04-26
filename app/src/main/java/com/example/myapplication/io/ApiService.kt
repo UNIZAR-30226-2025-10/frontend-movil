@@ -93,6 +93,7 @@ import com.example.myapplication.io.response.InfoSeguidoresResponse
 import com.example.myapplication.io.response.Interaccion
 import com.example.myapplication.io.response.MisAlbumesResponse
 import com.example.myapplication.io.response.MisNoizzysResponse
+import com.example.myapplication.io.response.NoizzyDetailResponse
 import com.example.myapplication.io.response.NumFavoritasArtistaResponse
 import com.example.myapplication.io.response.PendientesResponse
 import com.example.myapplication.io.response.PlaylistResponse
@@ -562,6 +563,12 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body request: ChangePasswordRequest
     ): Call<Void>
+
+    @GET("get-datos-noizzy")
+    fun datosNoizzy(
+        @Header("Authorization") token: String,
+        @Query("id") id: String,
+    ): Call<NoizzyDetailResponse>
 
 
 

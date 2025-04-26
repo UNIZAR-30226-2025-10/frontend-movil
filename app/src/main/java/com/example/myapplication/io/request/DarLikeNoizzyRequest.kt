@@ -1,6 +1,6 @@
 package com.example.myapplication.io.request
 
-data class DarLikeNoizzyRequest (
+data class DarLikeNoizzyRequest(
     val like: Boolean,
     val noizzy: Int
 )

@@ -24,15 +24,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myapplication.Adapters.Noizzys.MisNoizzysAdapter
-import com.example.myapplication.Adapters.Notificaciones.InvitacionesAdapter
 import com.example.myapplication.Adapters.Playlist.CancionesBuscadorNoizzyAdapter
-import com.example.myapplication.Adapters.Playlist.SongPlaylistSearchAdapter
 import com.example.myapplication.R
 import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.request.AudioColeccionRequest

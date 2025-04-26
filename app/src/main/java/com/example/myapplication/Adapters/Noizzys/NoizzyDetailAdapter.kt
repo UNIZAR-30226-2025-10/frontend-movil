@@ -1,9 +1,6 @@
 package com.example.myapplication.Adapters.Noizzys
 
 import android.content.Intent
-import android.util.Log
-import com.bumptech.glide.Glide
-import com.example.myapplication.io.response.Noizzy
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,15 +9,17 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.activities.NoizzyDetail
-import com.example.myapplication.io.response.InvitacionPlaylist
+import com.example.myapplication.io.response.NoizzitoData
+import com.example.myapplication.io.response.NoizzyDetailResponse
 
-class MisNoizzysAdapter(
-    private val noizzys: MutableList<Noizzy>,
-    private val onLikeClicked: (Noizzy) -> Unit,
-    private val onCommentClicked: (Noizzy) -> Unit
-) : RecyclerView.Adapter<MisNoizzysAdapter.NoizzyViewHolder>() {
+class NoizzyDetailAdapter(
+    private val noizzys: MutableList<NoizzitoData>,
+    private val onLikeClicked: (NoizzitoData) -> Unit,
+    private val onCommentClicked: (NoizzitoData) -> Unit
+) : RecyclerView.Adapter<NoizzyDetailAdapter.NoizzyViewHolder>() {
 
     class NoizzyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val profileImage: ImageView = view.findViewById(R.id.noizzyProfileImage)
@@ -37,10 +36,19 @@ class MisNoizzysAdapter(
         val commentButton: ImageButton = view.findViewById(R.id.commentButton)
     }
 
-    fun agregarNoizzy(noizzy: Noizzy) {
-        noizzys.add(0, noizzy)
+    fun agregarNoizzito(noizzito: NoizzitoData) {
+        noizzys.add(0, noizzito)
         notifyItemInserted(0)
     }
+
+    fun actualizarNoizzy(noizzy: NoizzitoData) {
+        val index = noizzys.indexOfFirst { it.id == noizzy.id }
+        if (index != -1) {
+            noizzys[index] = noizzy
+            notifyItemChanged(index)
+        }
+    }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoizzyViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -63,7 +71,7 @@ class MisNoizzysAdapter(
         holder.numLikes.text = noizzy.num_likes.toString()
         holder.numComments.text = noizzy.num_comentarios.toString()
 
-        if(noizzy.cancion != null) {
+        if (noizzy.cancion != null) {
             holder.recuadroCancion.visibility = View.VISIBLE
             Glide.with(holder.itemView.context)
                 .load(noizzy.cancion.fotoPortada)
@@ -77,35 +85,24 @@ class MisNoizzysAdapter(
             holder.recuadroCancion.visibility = View.GONE
         }
 
-        if (noizzy.like) {
-            Glide.with(holder.itemView.context)
-                .load(R.drawable.like_noizzy_selected)
-                .placeholder(R.drawable.like_noizzy_selected)
-                .error(R.drawable.like_noizzy_selected)
-                .into(holder.likeButton)
+        val likeDrawable = if (noizzy.like) {
+            R.drawable.like_noizzy_selected
         } else {
-            Glide.with(holder.itemView.context)
-                .load(R.drawable.like_noizzy)
-                .placeholder(R.drawable.like_noizzy)
-                .error(R.drawable.like_noizzy)
-                .into(holder.likeButton)
+            R.drawable.like_noizzy
         }
+
+        Glide.with(holder.itemView.context)
+            .load(likeDrawable)
+            .placeholder(likeDrawable)
+            .error(likeDrawable)
+            .into(holder.likeButton)
 
         holder.likeButton.setOnClickListener { onLikeClicked(noizzy) }
         holder.commentButton.setOnClickListener { onCommentClicked(noizzy) }
         holder.itemView.setOnClickListener {
-            Log.d("NoizzyAdapter", "ID que se pasa: ${noizzy.id}")
             val intent = Intent(holder.itemView.context, NoizzyDetail::class.java)
-            intent.putExtra("id", noizzy.id.toString())
+            intent.putExtra("id", noizzy.id)
             holder.itemView.context.startActivity(intent)
-        }
-    }
-
-    fun actualizarNoizzy(noizzyActualizado: Noizzy) {
-        val index = noizzys.indexOfFirst { it.id == noizzyActualizado.id }
-        if (index != -1) {
-            noizzys[index] = noizzyActualizado
-            notifyItemChanged(index)
         }
     }
 
