@@ -119,6 +119,9 @@ interface ApiService {
     @POST("login") // Petición a la ruta del login
     fun postlogin(@Body request: LoginRequest): Call<LoginResponse>
 
+    @POST("/switch-session") // Petición a la ruta del login
+    fun switch_session(@Body request: LoginRequest): Call<LoginResponse>
+
     @POST("register-oyente") // Petición a la ruta del registro
     fun postRegisterOyente(@Body request: RegisterUserRequest): Call<RegisterUserResponse>
     @POST("/register-artista")

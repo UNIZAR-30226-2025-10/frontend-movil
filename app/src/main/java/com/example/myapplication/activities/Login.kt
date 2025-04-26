@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
 import com.example.myapplication.databinding.LoginBinding
@@ -110,6 +111,9 @@ class Login : AppCompatActivity() {
                             Log.e("MiApp", "Error 401: $errorMessage")
                             showToast("Error en el login: $errorMessage")
                         }
+                    }
+                    if (response.code() == 403) {
+                        cambiar_sesion(loginRequest)
                     }
                     showToast("Error en el login: Código ${response.code()}")
                     Log.e("MiApp", "Error 503: ${response.body()}")
@@ -311,6 +315,44 @@ class Login : AppCompatActivity() {
                 onComplete()
             }
         })
+    }
+
+    private fun cambiar_sesion(loginRequest: LoginRequest){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Sesión activa")
+        builder.setMessage("Hay una sesión iniciada en esta cuenta, ¿desea cambiar la sesión?")
+
+        builder.setPositiveButton("Aceptar") { dialog, _ ->
+            // Llamada a la API para cambiar de sesión
+            apiService.switch_session(loginRequest).enqueue(object : Callback<LoginResponse> {
+                override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                    if (response.isSuccessful) {
+                        val loginResponse = response.body()
+                        if (loginResponse != null && loginResponse.respuestaHTTP == 0) {
+                            showToast("Sesión cambiada con éxito")
+                            guardarDatosUsuario(loginResponse)
+                        } else {
+                            showToast("No se pudo cambiar la sesión: ${loginResponse?.respuestaHTTP}")
+                        }
+                    } else {
+                        showToast("Error al cambiar sesión: ${response.code()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                    showToast("Fallo al cambiar sesión: ${t.message}")
+                }
+            })
+
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("Cancelar") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val dialog = builder.create()
+        dialog.show()
     }
 
     private fun showToast(message: String) {
