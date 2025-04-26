@@ -47,11 +47,13 @@ import android.media.MediaMetadataRetriever
 import android.widget.ImageButton
 import com.example.myapplication.io.request.CrearCancionRequest
 import com.example.myapplication.io.response.CloudinaryAudioResponse
+import com.example.myapplication.io.response.DeleteAlbumResponse
 import com.example.myapplication.io.response.Interaccion
 import com.example.myapplication.io.response.InvitacionPlaylist
 import com.example.myapplication.io.response.Novedad
 import com.example.myapplication.io.response.Seguidor
 import com.example.myapplication.services.WebSocketEventHandler
+import org.json.JSONObject
 
 
 class SubirCancion : AppCompatActivity() {
@@ -80,6 +82,7 @@ class SubirCancion : AppCompatActivity() {
     private var duracionGlobal: Double = 0.0
     private var albumSeleccionado: MiAlbum? = null
     private lateinit var dot: View
+    private var loadingDialog: AlertDialog? = null
 
     //EVENTOS PARA LAS NOTIFICACIONES
     private val listenerNovedad: (Novedad) -> Unit = {
@@ -183,12 +186,27 @@ class SubirCancion : AppCompatActivity() {
         }
 
         btnSubirCancion.setOnClickListener {
+            if (albumSeleccionado == null) {
+                Toast.makeText(this, "Selecciona un álbum", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             val nombreCancion = editNombreCancion.text.toString().trim()
 
             if (nombreCancion.isEmpty() || etiquetasSeleccionadas.isEmpty() || audioUriGlobal == null) {
                 Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
+            val builder = AlertDialog.Builder(this)
+            val view = layoutInflater.inflate(R.layout.dialog_loading, null)
+            val txt: TextView = view.findViewById(R.id.loadingText)
+            txt.text = "Subiendo canción"
+
+            builder.setView(view)
+            builder.setCancelable(false)
+
+            loadingDialog = builder.create()
+            loadingDialog?.show()
 
             val inputText = editFeaturings.text.toString()
             val artistasFt = inputText.split(",").map { it.trim() }
@@ -209,14 +227,11 @@ class SubirCancion : AppCompatActivity() {
                     }
                 }
                 override fun onFailure(call: Call<GetSignatureResponse>, t: Throwable) {
+                    loadingDialog?.dismiss()
                     Log.d("Signature", "Error en la solicitud: ${t.message}")
                 }
             })
         }
-
-
-
-
     }
 
     private fun obtenerAlbums() {
@@ -326,24 +341,30 @@ class SubirCancion : AppCompatActivity() {
             val nombreAlbum = input.text.toString()
             if (nombreAlbum.isNotEmpty() && imageView.drawable != resources.getDrawable(R.drawable.no_cancion)) {
 
-                //Subir foto a cloudinary y después crear el álbum
-                val token = Preferencias.obtenerValorString("token", "")
-                val authHeader = "Bearer $token"
-                val folder = "albumes"
+                comprobarNombreAlbum(nombreAlbum) { nombreExiste ->
+                    if (nombreExiste) {
+                        Toast.makeText(this, "Ya existe un álbum con ese nombre", Toast.LENGTH_SHORT).show()
+                    } else {
+                        //Subir foto a cloudinary y después crear el álbum
+                        val token = Preferencias.obtenerValorString("token", "")
+                        val authHeader = "Bearer $token"
+                        val folder = "albumes"
 
-                apiService.getSignature(authHeader, folder).enqueue(object : Callback<GetSignatureResponse> {
-                    override fun onResponse(call: Call<GetSignatureResponse>, response: Response<GetSignatureResponse>) {
-                        if (response.isSuccessful) {
-                            val signatureResponse = response.body()
-                            signatureResponse?.let {
-                                uploadImageToCloudinary(it, imageUri, nombreAlbum, folder)
+                        apiService.getSignature(authHeader, folder).enqueue(object : Callback<GetSignatureResponse> {
+                            override fun onResponse(call: Call<GetSignatureResponse>, response: Response<GetSignatureResponse>) {
+                                if (response.isSuccessful) {
+                                    val signatureResponse = response.body()
+                                    signatureResponse?.let {
+                                        uploadImageToCloudinary(it, imageUri, nombreAlbum, folder)
+                                    }
+                                }
                             }
-                        }
+                            override fun onFailure(call: Call<GetSignatureResponse>, t: Throwable) {
+                                Log.d("Signature", "Error en la solicitud: ${t.message}")
+                            }
+                        })
                     }
-                    override fun onFailure(call: Call<GetSignatureResponse>, t: Throwable) {
-                        Log.d("Signature", "Error en la solicitud: ${t.message}")
-                    }
-                })
+                }
             } else {
                 Toast.makeText(this, "El nombre y la foto del álbum no pueden estar vacíos", Toast.LENGTH_SHORT).show()
             }
@@ -411,10 +432,12 @@ class SubirCancion : AppCompatActivity() {
                     Log.d("Crear album", "Album creado con éxito")
                     obtenerAlbumsActualizado(nombreAlbum, nombreCancion, audioUrl, feats)
                 } else {
+                    loadingDialog?.dismiss()
                     Log.d("Crear album", "Error en crear album")
                 }
             }
             override fun onFailure(call: Call<CrearAlbumResponse>, t: Throwable) {
+                loadingDialog?.dismiss()
                 Log.d("Crear album", "Error en la solicitud: ${t.message}")
             }
         })
@@ -585,6 +608,7 @@ class SubirCancion : AppCompatActivity() {
             if (audioURI != null) {
                 val inputStream = contentResolver.openInputStream(audioURI)
                 if (inputStream == null) {
+                    loadingDialog?.dismiss()
                     Toast.makeText(this@SubirCancion, "Error al abrir el audio", Toast.LENGTH_SHORT).show()
                     return
                 }
@@ -622,30 +646,34 @@ class SubirCancion : AppCompatActivity() {
                                     if (album.id == "idProvisional") {
                                         crearAlbum(album.nombre, album.fotoPortada, nombreCancion, audioCloudinaryUrl, feats)
                                     } else {
-                                        crearCancion(nombreCancion, audioCloudinaryUrl, feats)
+                                        crearCancion(nombreCancion, audioCloudinaryUrl, feats, true)
                                     }
                                 }
                             } ?: Toast.makeText(this@SubirCancion, "Error: respuesta vacía de Cloudinary", Toast.LENGTH_SHORT).show()
                         } else {
+                            loadingDialog?.dismiss()
                             Log.d("uploadAudioToCloudinary", "ERROR 3 ${response.errorBody()?.string()}")
                         }
                     }
 
                     override fun onFailure(call: Call<CloudinaryAudioResponse>, t: Throwable) {
+                        loadingDialog?.dismiss()
                         Log.d("uploadAudioToCloudinary", "ERROR 3 ${t.message}")
                     }
                 })
             } else {
+                loadingDialog?.dismiss()
                 Toast.makeText(this@SubirCancion, "La URI de la imagen es nula", Toast.LENGTH_SHORT).show()
             }
 
         } catch (e: Exception) {
+            loadingDialog?.dismiss()
             Log.d("uploadAudioToCloudinary", "ERROR 4 ${e.message}")
             Toast.makeText(this@SubirCancion, "Error al procesar el audio", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun crearCancion(nombreCancion: String, audioUrl: String, feats: List<String>) {
+    private fun crearCancion(nombreCancion: String, audioUrl: String, feats: List<String>, existia: Boolean) {
         val token = Preferencias.obtenerValorString("token", "")
         val authHeader = "Bearer $token"
 
@@ -655,7 +683,7 @@ class SubirCancion : AppCompatActivity() {
         val durationEntera = duracionGlobal.toInt()
 
         if (albumSeleccionado is MiAlbum) {
-            Log.d("Crear canción", "Dentro if")
+
             val album = albumSeleccionado as MiAlbum
             val request = CrearCancionRequest(nombreCancion, durationEntera, audioUrl, album.id, listaEtiquetas, feats, true)
             Log.d("Crear cancion", album.id)
@@ -664,10 +692,47 @@ class SubirCancion : AppCompatActivity() {
                     if (response.isSuccessful) {
                         Log.d("Crear cancion", "Cancion creada con éxito")
                         Toast.makeText(this@SubirCancion, "Canción subida con éxito", Toast.LENGTH_SHORT).show()
+                        loadingDialog?.dismiss()
                         finish()
+                    } else {
+                        albumSeleccionado = spinner.selectedItem as MiAlbum
+                        if (existia == false) {
+                            apiService.deleteAlbum(authHeader, albumSeleccionado!!.id)
+                                .enqueue(object : Callback<DeleteAlbumResponse> {
+                                    override fun onResponse(
+                                        call: Call<DeleteAlbumResponse>,
+                                        response: Response<DeleteAlbumResponse>
+                                    ) {
+                                        if (response.isSuccessful) {}
+                                    }
+
+                                    override fun onFailure(
+                                        call: Call<DeleteAlbumResponse>,
+                                        t: Throwable
+                                    ) {
+                                        Log.d("Borrar álbum", "Error en la solicitud: ${t.message}")
+                                    }
+                                })
+                        }
+
+                        loadingDialog?.dismiss()
+                        val errorBody = response.errorBody()?.string()
+                        try {
+                            val json = JSONObject(errorBody)
+                            val mensajeError = json.getString("error")
+                            Toast.makeText(this@SubirCancion, mensajeError, Toast.LENGTH_LONG).show()
+
+                        } catch (e: Exception) {
+                            Toast.makeText(
+                                this@SubirCancion,
+                                "Error inesperado al crear canción",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
                     }
                 }
                 override fun onFailure(call: Call<Void>, t: Throwable) {
+                    loadingDialog?.dismiss()
                     Log.d("Crear cancion", "Error en la solicitud crear: ${t.message}")
                 }
             })
@@ -687,17 +752,42 @@ class SubirCancion : AppCompatActivity() {
                     val misAlbumes = response.body()?.albumes ?: emptyList()
                     val albumNuevo = misAlbumes.firstOrNull { it.nombre == nombreAlbum }
                     albumSeleccionado = albumNuevo
-                    crearCancion(nombreCancion,audioUrl,feats)
+                    crearCancion(nombreCancion,audioUrl,feats, false)
 
                 } else {
+                    loadingDialog?.dismiss()
                     Log.d("Mis albumes", "Error al obtener los álbumes: ${response.code()} - ${response.message()}")
                     Toast.makeText(this@SubirCancion, "Error cargando álbumes", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<MisAlbumesResponse>, t: Throwable) {
+                loadingDialog?.dismiss()
                 Log.d("Mis albumes", "Error en la solicitud: ${t.message}")
                 Toast.makeText(this@SubirCancion, "Error en la solicitud: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun comprobarNombreAlbum(nombreAlbum: String, callback: (Boolean) -> Unit) {
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+
+        apiService.getMisAlbumesArtista(authHeader).enqueue(object : Callback<MisAlbumesResponse> {
+            override fun onResponse(call: Call<MisAlbumesResponse>, response: Response<MisAlbumesResponse>) {
+                if (response.isSuccessful) {
+                    val misAlbumes = response.body()?.albumes ?: emptyList()
+                    val nombreExiste = misAlbumes.any { it.nombre == nombreAlbum }
+                    callback(nombreExiste)
+                } else {
+                    Log.d("Mis albumes", "Error al obtener los álbumes: ${response.code()} - ${response.message()}")
+                    callback(false)
+                }
+            }
+
+            override fun onFailure(call: Call<MisAlbumesResponse>, t: Throwable) {
+                Log.d("Mis albumes", "Error en la solicitud: ${t.message}")
+                callback(false)
             }
         })
     }
