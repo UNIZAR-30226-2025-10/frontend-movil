@@ -24,7 +24,13 @@ class Logout : AppCompatActivity() {
         // Inicialización de ApiService
         apiService = ApiService.create()
 
-        guardarprogreso()
+        val progreso = Preferencias.obtenerValorEntero("progresoCancionActual", -1)
+        if(progreso == -1){
+            logout()
+        }
+        else{
+            guardarprogreso()
+        }
     }
 
     // Método para hacer logout utilizando la API

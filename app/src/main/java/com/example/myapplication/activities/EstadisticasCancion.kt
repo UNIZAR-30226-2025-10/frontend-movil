@@ -2,7 +2,14 @@ package com.example.myapplication.activities
 
 import PublicasAdapter
 import QuienLikeAdapter
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.Handler
+import android.os.IBinder
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -15,11 +22,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.io.ApiService
+import com.example.myapplication.io.request.AudioColeccionRequest
+import com.example.myapplication.io.response.AddReproduccionResponse
+import com.example.myapplication.io.response.AudioResponse
+import com.example.myapplication.io.response.CancionInfoResponse
 import com.example.myapplication.io.response.GetEstadisticasFavsResponse
 import com.example.myapplication.io.response.GetEstadisticasPlaylistResponse
 import com.example.myapplication.io.response.GetSignatureResponse
 import com.example.myapplication.io.response.PersonasLike
 import com.example.myapplication.io.response.Publicas
+import com.example.myapplication.services.MusicPlayerService
 import com.example.myapplication.utils.Preferencias
 import retrofit2.Call
 import retrofit2.Callback
@@ -52,6 +64,47 @@ class EstadisticasCancion : AppCompatActivity() {
     private var verMegustasOpen: Boolean = false
     private var verPlaylistsOpen: Boolean = false
 
+    private var musicService: MusicPlayerService? = null
+    private var serviceBound = false
+
+    private var indexActual = 0
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as MusicPlayerService.MusicBinder
+            musicService = binder.getService()
+            serviceBound = true
+            handler.post(updateRunnable)
+            //actualizarIconoPlayPause()
+            MusicPlayerService.setOnCompletionListener {
+                runOnUiThread {
+                    val idcoleccion = Preferencias.obtenerValorString("coleccionActualId", "")
+                    if(idcoleccion == ""){
+                        Preferencias.guardarValorEntero("progresoCancionActual", 0)
+                        musicService?.resume()
+                    }
+                    else {
+                        Log.d("Reproducción", "Canción finalizada, pasando a la siguiente")
+                        indexActual++
+                        Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
+                        Preferencias.guardarValorEntero("progresoCancionActual", 0)
+                        reproducirColeccion()
+                    }
+                }
+            }
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            serviceBound = false
+        }
+    }
+    private val handler = Handler(Looper.getMainLooper())
+    private val updateRunnable = object : Runnable {
+        override fun run() {
+            //updateProgressBar()
+            handler.postDelayed(this, 1000) // cada segundo
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.estadisticas_cancion)
@@ -59,6 +112,8 @@ class EstadisticasCancion : AppCompatActivity() {
         apiService = ApiService.create()
         recycler = findViewById<RecyclerView>(R.id.recyclerHorizontal)
         recycler.layoutManager = LinearLayoutManager(this@EstadisticasCancion, LinearLayoutManager.HORIZONTAL, false)
+
+        indexActual = Preferencias.obtenerValorEntero("indexColeccionActual", 0)
 
         recycler2 = findViewById<RecyclerView>(R.id.recyclerHorizontal2)
         recycler2.layoutManager = LinearLayoutManager(this@EstadisticasCancion, LinearLayoutManager.HORIZONTAL, false)
@@ -245,6 +300,170 @@ class EstadisticasCancion : AppCompatActivity() {
                     Log.d("Estadisticas playlists", "Error en la solicitud: ${t.message}")
                 }
             })
+        }
+    }
+
+    private fun reproducirColeccion() {
+        val ordenColeccion = Preferencias.obtenerValorString("ordenColeccionActual", "")
+            .split(",")
+            .filter { id -> id.isNotEmpty() }
+
+        val modoColeccion =  Preferencias.obtenerValorString("modoColeccionActual", "")
+
+        val indice = Preferencias.obtenerValorEntero("indexColeccionActual", 0)
+
+        if (indice >= ordenColeccion.size) {
+            Log.d("Reproducción", "Fin de la playlist")
+            return
+        }
+
+        val idcoleccion = Preferencias.obtenerValorString("coleccionActualId", "")
+
+        val listaNatural = Preferencias.obtenerValorString("ordenNaturalColeccionActual", "")
+            .split(",")
+            .filter { id -> id.isNotEmpty() }
+
+        Log.d("ReproducirPlaylist", "Lista natural ids: ${listaNatural.joinToString(",")}")
+        Log.d("ReproducirPlaylist", "Lista ids reproduccion: ${ordenColeccion.joinToString(",")}")
+        Log.d("ReproducirPlaylist", "Indice: $indice")
+        Log.d("ReproducirPlaylist", "Modo: $modoColeccion")
+        Log.d("ReproducirPlaylist", "Id coleccion: $idcoleccion")
+
+        val request = AudioColeccionRequest(idcoleccion, modoColeccion, ordenColeccion, indice)
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+        val sid = WebSocketManager.getInstance().getSid() ?: run {
+            Log.e("WebSocket", "SID no disponible")
+            return
+        }
+
+        apiService.reproducirColeccion(authHeader, sid, request).enqueue(object : Callback<AudioResponse> {
+            override fun onResponse(call: Call<AudioResponse>, response: Response<AudioResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { audioResponse ->
+                        reproducirAudioColeccion(audioResponse.audio) // No enviar progreso
+                        notificarReproduccion()
+                        guardarDatoscCancion(ordenColeccion[indice])
+                    }
+                } else {
+                    Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<AudioResponse>, t: Throwable) {
+                Log.e("API", "Fallo: ${t.message}")
+            }
+        })
+    }
+
+    private fun reproducirAudio(audioUrl: String, progreso: Int = 0) {
+        try {
+            Preferencias.guardarValorEntero("progresoCancionActual", progreso)
+            val startIntent = Intent(this, MusicPlayerService::class.java).apply {
+                action = "PLAY"
+                putExtra("url", audioUrl)
+                putExtra("progreso", progreso)
+            }
+            startService(startIntent)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Error al reproducir el audio", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun reproducirAudioColeccion(audioUrl: String, progreso: Int = 0) {
+        try {
+            Preferencias.guardarValorEntero("progresoCancionActual", progreso)
+            val intent = Intent(this, MusicPlayerService::class.java).apply {
+                action = "PLAY"
+                putExtra("url", audioUrl)
+                putExtra("progreso", progreso)
+            }
+            startService(intent)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Error al reproducir el audio", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun notificarReproduccion() {
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+
+        apiService.addReproduccion(authHeader).enqueue(object : Callback<AddReproduccionResponse> {
+            override fun onResponse(call: Call<AddReproduccionResponse>, response: Response<AddReproduccionResponse>) {
+                if (response.isSuccessful) {
+                    Log.d("MiApp", "Reproducción registrada exitosamente")
+                } else {
+                    Log.e("MiApp", "Error al registrar la reproducción")
+                }
+            }
+
+            override fun onFailure(call: Call<AddReproduccionResponse>, t: Throwable) {
+                Log.e("MiApp", "Error de conexión al registrar reproducción")
+            }
+        })
+    }
+
+    private fun guardarDatoscCancion(id: String) {
+        Preferencias.guardarValorString("cancionActualId", id)
+
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+
+        // Llamada a la API con el sid en los headers
+        apiService.getInfoCancion(authHeader, id).enqueue(object : Callback<CancionInfoResponse> {
+            override fun onResponse(call: Call<CancionInfoResponse>, response: Response<CancionInfoResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { cancionResponse ->
+                        val foto = cancionResponse.fotoPortada
+                        val nombre = cancionResponse.nombre
+                        val artista = cancionResponse.nombreArtisticoArtista
+
+                        // Mostrar en Logcat
+                        Log.d("CancionInfo", "Respuesta exitosa Canción")
+                        Log.d("CancionInfo", "Canción: $nombre")
+                        Log.d("CancionInfo", "Artista: $artista")
+                        Log.d("CancionInfo", "Foto: $foto")
+
+                        Preferencias.guardarValorString("nombreCancionActual", nombre)
+                        Preferencias.guardarValorString("nombreArtisticoActual", artista)
+                        Preferencias.guardarValorString("fotoPortadaActual", foto)
+
+                    }
+                } else {
+                    val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
+
+                    // Mostrar en Logcat
+                    Log.e("API_RESPONSE", "Error en la respuesta: Código ${response.code()} - $errorMensaje")
+
+                    // Mostrar en Toast
+                    Toast.makeText(this@EstadisticasCancion, "Error: $errorMensaje", Toast.LENGTH_LONG).show()
+                }
+            }
+
+            override fun onFailure(call: Call<CancionInfoResponse>, t: Throwable) {
+                // Mostrar en Logcat
+                Log.e("API_RESPONSE", "Error de conexión: ${t.message}", t)
+
+                // Mostrar en Toast
+                Toast.makeText(this@EstadisticasCancion, "Error de conexión: ${t.message}", Toast.LENGTH_LONG).show()
+            }
+        })
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val intent = Intent(this, MusicPlayerService::class.java)
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (serviceBound) {
+            unbindService(serviceConnection)
+            serviceBound = false
         }
     }
 }

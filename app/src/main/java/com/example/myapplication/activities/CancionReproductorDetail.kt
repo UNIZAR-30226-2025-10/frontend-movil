@@ -265,13 +265,13 @@ class CancionReproductorDetail : AppCompatActivity() {
 
         // Imagen
         if (songImageUrl.isNullOrEmpty()) {
-            imageViewCancion.setImageResource(R.drawable.ic_default_song)
+            imageViewCancion.setImageResource(R.drawable.no_cancion)
         } else {
             Glide.with(this)
                 .load(songImageUrl)
                 .centerCrop()
-                .placeholder(R.drawable.ic_default_song)
-                .error(R.drawable.ic_default_song)
+                .placeholder(R.drawable.no_cancion)
+                .error(R.drawable.no_cancion)
                 .into(imageViewCancion)
         }
 

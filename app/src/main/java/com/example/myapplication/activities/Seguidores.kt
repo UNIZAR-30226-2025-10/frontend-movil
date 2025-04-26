@@ -193,19 +193,19 @@ class Seguidores : AppCompatActivity(), SeguidoresAdapter.OnFollowListener {
 
         // Imagen
         if (songImageUrl.isNullOrEmpty()) {
-            songImage.setImageResource(R.drawable.ic_default_song)
+            songImage.setImageResource(R.drawable.no_cancion)
         } else {
             Glide.with(this)
                 .load(songImageUrl)
                 .centerCrop()
-                .placeholder(R.drawable.ic_default_song)
-                .error(R.drawable.ic_default_song)
+                .placeholder(R.drawable.no_cancion)
+                .error(R.drawable.no_cancion)
                 .into(songImage)
         }
 
         songTitle.text = songTitleText
         songArtist.text = songArtistText
-        progressBar.progress = songProgress/2806
+        progressBar.progress = songProgress/1749
 
         songImage.setOnClickListener {
             startActivity(Intent(this, CancionReproductorDetail::class.java))
