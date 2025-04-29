@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#DDDCDC"
+    style="@style/ScreenBackground"
     tools:context=".activities.Home">
 
     <!-- Barra de herramientas con imagen de perfil alineada a la derecha -->
@@ -46,6 +46,17 @@
                 android:clickable="true"
                 android:focusable="true"/>
 
+            <!-- Switch de modo -->
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/notificationImageButton"
+                android:layout_marginEnd="16dp"
+                android:thumb="@drawable/thumb"
+                app:track="@drawable/track" />
+
             <!-- Imagen de perfil como botón -->
             <ImageButton
                 android:id="@+id/profileImageButton"
@@ -67,7 +78,7 @@
     <LinearLayout
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
         android:id="@+id/profileSection"
-        android:backgroundTint="#E9E6E6"
+        style="@style/ScreenBackground2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -75,8 +86,7 @@
         android:paddingTop="16dp"
         android:paddingBottom="16dp"
         android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:background="#F4F4F4">
+        android:paddingEnd="16dp">
 
         <!-- Parte izquierda: perfil y datos -->
         <LinearLayout
@@ -109,7 +119,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="18sp"
                     android:fontFamily="@font/poppins_bold"
-                    android:textColor="#000E3B"
+                    style="@style/TextColor"
                     android:layout_marginTop="4dp"/>
 
                 <LinearLayout
@@ -126,7 +136,7 @@
                         android:fontFamily="@font/poppins_regular"
                         android:text="0 Seguidores"
                         android:textSize="14sp"
-                        android:textColor="#000E3B"
+                        style="@style/TextColor"
                         android:layout_marginRight="12dp"/>
 
                     <!-- Seguidos -->
@@ -137,16 +147,16 @@
                         android:text="0 Seguidos"
                         android:fontFamily="@font/poppins_regular"
                         android:textSize="14sp"
-                        android:textColor="#000E3B"/>
+                        style="@style/TextColor"/>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
 
         <ImageButton
             android:id="@+id/options"
+            style="@style/IconButtonStyle"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:background="@android:color/transparent"
             android:src="@drawable/ic_more_vert"
             android:contentDescription="Opciones perfil"
             android:layout_marginStart="8dp"/>
@@ -173,7 +183,7 @@
                 android:text="Tus playlists"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:textColor="#000E3B"
+                style="@style/TextColor"
                 android:fontFamily="@font/poppins_bold"
                 android:layout_gravity="start"
                 android:paddingTop="4dp"/>

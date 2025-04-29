@@ -27,6 +27,8 @@ import android.view.Window
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -81,6 +83,10 @@ class Perfil : AppCompatActivity() {
                 .into(profileImageViewDialog!!)
         }
     }
+
+    private lateinit var dot: View
+
+    private lateinit var switchMode: SwitchCompat
 
     private lateinit var progressBar: ProgressBar
     private var musicService: MusicPlayerService? = null
@@ -259,6 +265,15 @@ class Perfil : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)
         setupNavigation()
         updateMiniReproductor()
+
+        switchMode = findViewById(R.id.switchMode)
+        switchMode.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+        }
     }
 
     private fun showDeleteAccountDialog() {

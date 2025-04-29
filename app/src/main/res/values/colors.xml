@@ -17,4 +17,6 @@
     <color name="greyOscuro">#3C3B3B</color>
     <color name="blancoClaro">#F4F4F4</color>
     <color name="blancoOscuro">#DDDCDC</color>
+    <color name="greyClaroB">#E9E6E6</color>
+
 </resources>
