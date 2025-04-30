@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
@@ -19,6 +20,8 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -118,6 +121,7 @@ class Notificaciones : AppCompatActivity() {
         }
     }
 
+    private lateinit var switchMode: SwitchCompat
     private lateinit var apiService: ApiService
     private lateinit var recyclerInvitaciones: RecyclerView
     private lateinit var recyclerInteracciones: RecyclerView
@@ -222,6 +226,19 @@ class Notificaciones : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)
         setupNavigation()
         updateMiniReproductor()
+
+        switchMode = findViewById(R.id.switchMode)
+        // Detectar el modo actual y actualizar el estado del switch
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        switchMode.isChecked = currentNightMode == Configuration.UI_MODE_NIGHT_YES
+
+        switchMode.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+        }
 
         val profileImageButton = findViewById<ImageButton>(R.id.profileImageButton)
         val profileImageUrl = Preferencias.obtenerValorString("fotoPerfil", "")

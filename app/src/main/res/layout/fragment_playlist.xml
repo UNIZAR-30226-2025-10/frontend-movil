@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#DDDCDC"
+    style="@style/ScreenBackground"
     android:fillViewport="true"
     tools:context=".activities.PlaylistDetail">
 
@@ -109,7 +109,7 @@
                     android:id="@+id/profileSection"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    style="@style/TextColor"
+                    style="@style/ScreenBackground2"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="16dp">

@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.res.Configuration
 import android.graphics.Paint
 import android.os.Bundle
 import android.os.Handler
@@ -23,6 +24,8 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -112,6 +115,8 @@ class MisNoizzys: AppCompatActivity() {
         }
     }
 
+    private lateinit var switchMode: SwitchCompat
+
     //EVENTOS PARA LAS NOTIFICACIONES
     private val listenerNovedad: (Novedad) -> Unit = {
         runOnUiThread {
@@ -182,6 +187,19 @@ class MisNoizzys: AppCompatActivity() {
         WebSocketEventHandler.registrarListenerSeguidor(listenerSeguidor)
         WebSocketEventHandler.registrarListenerInvitacion(listenerInvitacion)
         WebSocketEventHandler.registrarListenerInteraccion(listenerInteraccion)
+
+        switchMode = findViewById(R.id.switchMode)
+        // Detectar el modo actual y actualizar el estado del switch
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        switchMode.isChecked = currentNightMode == Configuration.UI_MODE_NIGHT_YES
+
+        switchMode.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+        }
 
         progressBar = findViewById(R.id.progressBar)
         setupNavigation()

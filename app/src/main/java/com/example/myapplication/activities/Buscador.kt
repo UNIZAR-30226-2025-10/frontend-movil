@@ -6,6 +6,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
@@ -25,6 +26,8 @@ import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -115,6 +118,8 @@ class Buscador : AppCompatActivity() {
             handler.postDelayed(this, 1000) // cada segundo
         }
     }
+
+    private lateinit var switchMode: SwitchCompat
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -349,6 +354,19 @@ class Buscador : AppCompatActivity() {
 
         songImage.setOnClickListener {
             startActivity(Intent(this, CancionReproductorDetail::class.java))
+        }
+
+        switchMode = findViewById(R.id.switchMode)
+        // Detectar el modo actual y actualizar el estado del switch
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        switchMode.isChecked = currentNightMode == Configuration.UI_MODE_NIGHT_YES
+
+        switchMode.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
         }
 
         // Configurar botón de play/pause

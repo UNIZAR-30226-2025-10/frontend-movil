@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#dddcdc">
+    style="@style/ScreenBackground">
 
     <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
@@ -61,6 +61,17 @@
                     android:layout_marginEnd="4dp"
                     android:background="@drawable/dot_notificacion"
                     android:visibility="gone"/>
+
+                <!-- Switch de modo -->
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@id/notificationButtonContainer"
+                    android:layout_marginEnd="16dp"
+                    android:thumb="@drawable/thumb"
+                    app:track="@drawable/track" />
             </FrameLayout>
 
 
@@ -107,6 +118,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                style="@style/TextColor"
                 android:text="Comentarios"
                 android:textSize="18sp"
                 android:textStyle="bold"

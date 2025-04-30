@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#dddcdc">
+    style="@style/ScreenBackground">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -76,6 +76,17 @@
                 android:contentDescription="Imagen de perfil"
                 android:clickable="true"
                 android:focusable="true"/>
+
+            <!-- Switch de modo -->
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/notificationButtonContainer"
+                android:layout_marginEnd="16dp"
+                android:thumb="@drawable/thumb"
+                app:track="@drawable/track" />
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 

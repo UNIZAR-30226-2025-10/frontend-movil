@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
+    style="@style/ScreenBackground"
     tools:context=".activities.OtroOyente">
 
     <!-- Barra de herramientas con imagen de perfil alineada a la derecha -->
@@ -75,6 +75,17 @@
                 android:contentDescription="Perfil"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_profile" />
+
+            <!-- Switch de modo -->
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/notificationButtonContainer"
+                android:layout_marginEnd="16dp"
+                android:thumb="@drawable/thumb"
+                app:track="@drawable/track" />
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 
@@ -82,13 +93,12 @@
     <LinearLayout
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
         android:id="@+id/profileSection"
-        android:backgroundTint="#E9E6E6"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:padding="16dp"
-        android:background="#F4F4F4">
+        style="@style/ScreenBackground2">
 
         <!-- Parte izquierda: perfil y datos -->
         <LinearLayout
@@ -129,7 +139,7 @@
                         android:textSize="18sp"
                         android:fontFamily="@font/poppins_bold"
                         android:layout_weight="1"
-                        android:textColor="#000E3B"
+                        style="@style/TextColor"
                         android:layout_marginTop="4dp"/>
 
                     <Button
@@ -160,7 +170,7 @@
                         android:fontFamily="@font/poppins_regular"
                         android:text="0 Seguidores"
                         android:textSize="14sp"
-                        android:textColor="#000E3B"
+                        style="@style/TextColor"
                         android:layout_marginRight="12dp"/>
 
                     <!-- Seguidos -->
@@ -171,7 +181,7 @@
                         android:text="0 Seguidos"
                         android:fontFamily="@font/poppins_regular"
                         android:textSize="14sp"
-                        android:textColor="#000E3B"/>
+                        style="@style/TextColor"/>
                 </LinearLayout>
 
                 <TextView
@@ -181,7 +191,7 @@
                     android:text="0 playlists públicas"
                     android:fontFamily="@font/poppins_regular"
                     android:textSize="14sp"
-                    android:textColor="#000E3B"/>
+                    style="@style/TextColor"/>
 
             </LinearLayout>
         </LinearLayout>
@@ -402,7 +412,7 @@
                     android:text="Playlists Públicas"
                     android:textSize="24sp"
                     android:textStyle="bold"
-                    android:textColor="#000E3B"
+                    style="@style/TextColor"
                     android:fontFamily="@font/poppins_bold"
                     android:layout_gravity="start"/>
 

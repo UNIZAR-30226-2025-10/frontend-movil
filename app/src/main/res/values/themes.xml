@@ -32,6 +32,11 @@
         <item name="android:textColor">@color/fondo</item>
     </style>
 
+    <style name="TituloSeg">
+        <item name="android:textColor">@color/fondo</item>
+        <item name="android:background">@color/greyClaroB</item>
+    </style>
+
     <style name="IconButtonStyle">
         <item name="android:background">@android:color/transparent</item>
         <item name="android:tint">@color/greyOscuro</item>
