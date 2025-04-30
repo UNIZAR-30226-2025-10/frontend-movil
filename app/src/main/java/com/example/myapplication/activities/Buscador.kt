@@ -185,7 +185,13 @@ class Buscador : AppCompatActivity() {
 
         // Inicia los adaptadores
         cancionAdapter = CancionAdapter(mutableListOf()) { cancion ->
-            reproducir(cancion.id)
+            val cancionId = Preferencias.obtenerValorString("cancionActualId", "")
+            if(cancionId == cancion.id){
+                startActivity(Intent(this, CancionReproductorDetail::class.java))
+            }
+            else {
+                reproducir(cancion.id)
+            }
         }
         recyclerViewCancion.adapter = cancionAdapter
 

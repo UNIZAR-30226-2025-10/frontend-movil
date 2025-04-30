@@ -216,7 +216,13 @@ class PlaylistDetail : AppCompatActivity() {
         recyclerViewCanciones.layoutManager = LinearLayoutManager(this)
         cancionPAdapter = CancionPAdapter(listOf(),
             { cancion ->
-                reproducir(cancion.id)
+                val cancionId = Preferencias.obtenerValorString("cancionActualId", "")
+                if(cancionId == cancion.id){
+                    startActivity(Intent(this, CancionReproductorDetail::class.java))
+                }
+                else {
+                    reproducir(cancion.id)
+                }
             },
             { cancion ->
                 showSongOptionsDialog(cancion)
@@ -226,6 +232,19 @@ class PlaylistDetail : AppCompatActivity() {
 
         textViewNombre.text = nombrePlaylist
         Glide.with(this).load(imagenUrl).into(imageViewPlaylist)
+
+
+        val idActual = Preferencias.obtenerValorString("cancionActualId", "")
+        val idColeccionActual = Preferencias.obtenerValorString("coleccionActualId", "")
+        orden = Preferencias.obtenerValorString("ordenNaturalColeccionMirada", "")
+            .split(",")
+            .filter { id -> id.isNotEmpty() }
+        if(idColeccionActual == playlistId){
+            indexActual = orden.indexOf(idActual)
+        }
+        else{
+            indexActual = 0
+        }
 
         val profileImageButton = findViewById<ImageButton>(R.id.profileImageButton)
         val profileImageUrl = Preferencias.obtenerValorString("fotoPerfil", "")

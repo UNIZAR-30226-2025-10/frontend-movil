@@ -259,7 +259,7 @@ class Home : AppCompatActivity() {
                         intent.putExtra("nombreArtista", item.autor)
                         intent.putExtra("imagen", item.fotoPortada)
                         intent.putExtra("id", item.id)
-                        Log.d("Cancion", "Home -> Cancion")
+                        Log.d("Album", "Home -> Album")
                         startActivity(intent)
                     }
 
@@ -268,7 +268,7 @@ class Home : AppCompatActivity() {
                     val intent = Intent(this, OtroArtista::class.java)
                     intent.putExtra("nombreUsuario", item.nombreUsuario)
                     intent.putExtra("nombreArtistico", item.nombreArtistico)
-                    Log.d("Album", "Buscador -> OtroArtista")
+                    Log.d("Album", "Home -> Artista")
                     startActivity(intent)
                 }
             }
@@ -276,7 +276,13 @@ class Home : AppCompatActivity() {
         recyclerViewRecientes.adapter = RecientesAdapter
 
         escuchasAdapter = EscuchasAdapter(mutableListOf()) { escucha ->
-            reproducir(escucha.id)
+            val cancionId = Preferencias.obtenerValorString("cancionActualId", "")
+            if(cancionId == escucha.id){
+                startActivity(Intent(this, CancionReproductorDetail::class.java))
+            }
+            else {
+                reproducir(escucha.id)
+            }
         }
         recyclerViewEscuchas.adapter = escuchasAdapter
 
@@ -291,7 +297,13 @@ class Home : AppCompatActivity() {
         recyclerViewPlaylists.adapter = playlistsAdapter
 
         recomendacionesAdapter = RecomendacionesAdapter(mutableListOf()){ recomendacion ->
-            reproducir(recomendacion.id)
+            val cancionId = Preferencias.obtenerValorString("cancionActualId", "")
+            if(cancionId == recomendacion.id){
+                startActivity(Intent(this, CancionReproductorDetail::class.java))
+            }
+            else {
+                reproducir(recomendacion.id)
+            }
         }
         recyclerViewRecomendaciones.adapter = recomendacionesAdapter
 

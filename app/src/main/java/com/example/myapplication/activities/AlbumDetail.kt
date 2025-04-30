@@ -154,7 +154,13 @@ class AlbumDetail : AppCompatActivity() {
 
         cancionesAdapter = CancionesAlbumAdapter(emptyList(), "",
             { cancion ->
-                reproducir(cancion.id)
+                val cancionId = Preferencias.obtenerValorString("cancionActualId", "")
+                if(cancionId == cancion.id){
+                    startActivity(Intent(this, CancionReproductorDetail::class.java))
+                }
+                else {
+                    reproducir(cancion.id)
+                }
             }
         ).apply {
             // Configurar listeners del adaptador
