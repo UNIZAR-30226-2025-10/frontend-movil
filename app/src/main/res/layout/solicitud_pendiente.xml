@@ -67,7 +67,7 @@ correo electrónico proporcionada con la decisión tomada"
             android:fontFamily="@font/poppins_bold"
             android:text="Eliminar Solicitud"
             android:textAllCaps="false"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/fondo"
             android:textSize="20sp"
             android:paddingHorizontal="20dp"
             android:background="@drawable/rounded_button"
@@ -83,7 +83,7 @@ correo electrónico proporcionada con la decisión tomada"
             android:layout_gravity="center"
             android:text="Cerrar Sesión"
             android:fontFamily="@font/poppins_bold"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/fondo"
             android:textAllCaps="false"
             android:textSize="20sp"
             android:paddingHorizontal="20dp"
@@ -94,8 +94,5 @@ correo electrónico proporcionada con la decisión tomada"
             android:layout_marginVertical="30dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

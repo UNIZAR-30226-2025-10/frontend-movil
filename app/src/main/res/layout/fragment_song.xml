@@ -1,140 +1,358 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    style="@style/ScreenBackground">
+    style="@style/ScreenBackground"
+    tools:context=".activities.Home">
 
-    <!-- Imagen de la canción -->
-    <ImageView
-        android:id="@+id/imageViewCancion"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:layout_marginTop="40dp"
-        android:layout_centerHorizontal="true"
-        android:scaleType="centerCrop" />
-
-    <!-- Nombre de la canción -->
-    <TextView
-        android:id="@+id/textViewNombreCancion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:layout_marginTop="16dp"
-        android:layout_below="@id/imageViewCancion"
-        android:layout_centerHorizontal="true" />
-
-    <!-- Artista de la canción -->
-    <TextView
-        android:id="@+id/textViewArtista"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:layout_marginTop="8dp"
-        android:layout_below="@id/textViewNombreCancion"
-        android:layout_centerHorizontal="true" />
-
-    <!-- Botón de Favorito -->
-    <ImageButton
-        android:id="@+id/btn_favorito"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@id/textViewArtista"
-        android:layout_marginEnd="70dp"
-        android:background="@null"
-        android:contentDescription="Botón de favorito"
-        android:src="@drawable/ic_heart_vacio" />
-
-    <!-- Barra de progreso de la canción -->
-    <SeekBar
-        android:id="@+id/seekBarProgreso"
+    <!-- Barra de herramientas con imagen de perfil alineada a la derecha -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/btn_favorito"
-        android:layout_marginTop="20dp" />
+        android:layout_height="65dp"
+        android:background="#000e3b"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <!-- Controles de reproducción -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- Logo -->
+            <ImageView
+                android:id="@+id/toolbar_logo"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentStart="true"
+                android:src="@drawable/logo"
+                android:contentDescription="@string/logo" />
+
+            <!-- Botón de perfil -->
+            <ImageButton
+                android:id="@+id/profileImageButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="16dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_profile"
+                android:background="@android:color/transparent"
+                android:contentDescription="Imagen de perfil"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <!-- Botón de notificación -->
+            <FrameLayout
+                android:id="@+id/notificationButtonContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/profileImageButton"
+                android:layout_marginEnd="16dp">
+
+                <ImageButton
+                    android:id="@+id/notificationImageButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:padding="4dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/notification"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="Imagen de notificaciones"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <View
+                    android:id="@+id/notificationDot"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:background="@drawable/dot_notificacion"
+                    android:visibility="gone" />
+            </FrameLayout>
+
+            <!-- Switch de modo -->
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/notificationButtonContainer"
+                android:layout_marginEnd="16dp"
+                android:thumb="@drawable/thumb"
+                app:track="@drawable/track" />
+        </RelativeLayout>
+    </androidx.appcompat.widget.Toolbar>
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/seekBarProgreso"
-        android:layout_marginTop="20dp"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
+        android:orientation="vertical"
+        android:gravity="center">
 
-    <ImageButton
-        android:id="@+id/btnRetroceder"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="Retroceder"
-        android:background="@null"
-        android:src="@android:drawable/ic_media_previous" />
+        <!-- Imagen de la canción -->
+        <ImageView
+            android:id="@+id/imageViewCancion"
+            android:layout_width="350dp"
+            android:layout_height="350dp"
+            android:layout_marginTop="30dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/no_cancion"
+            android:background="@drawable/rounded_song_background"
+            android:elevation="10dp"/>
 
-    <ImageButton
-        android:id="@+id/btn_PlayPause"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="@null"
-        android:contentDescription="Reproducir/Pausar"
-        android:src="@drawable/ic_play" />
+        <LinearLayout
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-    <ImageButton
-        android:id="@+id/btnAvanzar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="Avanzar"
-        android:background="@null"
-        android:src="@android:drawable/ic_media_next" />
+            <LinearLayout
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-</LinearLayout>
+                <!-- Nombre de la canción -->
+                <TextView
+                    android:id="@+id/textViewNombreCancion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre de la canción"
+                    android:fontFamily="@font/poppins_bold"
+                    style="@style/TextColor"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="16dp" />
 
-<!-- Barra de navegación inferior -->
+                <!-- Artista de la canción -->
+                <TextView
+                    android:id="@+id/textViewArtista"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre del artista"
+                    style="@style/TextColor"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+            <!-- Botón de Favorito -->
+            <ImageButton
+                android:id="@+id/btn_favorito"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:scaleType="centerCrop"
+                android:layout_marginTop="5dp"
+                android:background="@null"
+                android:contentDescription="Botón de favorito"
+                android:src="@drawable/ic_heart_vacio"
+                android:layout_gravity="center_vertical" />
+        </LinearLayout>
+
+        <!-- Barra de progreso de la canción -->
+        <SeekBar
+            android:id="@+id/seekBarProgreso"
+            android:layout_width="370dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:progressDrawable="@drawable/seekbar_custom"
+            android:thumb="@drawable/seekbar_thumb"
+            android:thumbOffset="0dp"
+            android:background="@android:color/transparent"/>
+
+        <!-- Controles de reproducción -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="20dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btnRetroceder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="Retroceder"
+                android:background="@null"
+                android:src="@drawable/ic_cancion_anterior" />
+
+            <ImageButton
+                android:id="@+id/btn_PlayPause"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@null"
+                android:scaleType="centerCrop"
+                android:contentDescription="Reproducir/Pausar"
+                android:src="@drawable/ic_pause" />
+
+            <ImageButton
+                android:id="@+id/btnAvanzar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="Avanzar"
+                android:background="@null"
+                android:src="@drawable/ic_cancion_siguiente" />
+        </LinearLayout>
+    </LinearLayout>
+    <!-- Navigation Bar en la parte inferior -->
     <LinearLayout
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="65dp"
         android:background="#000e3b"
         android:orientation="horizontal"
-        android:padding="10dp"
-        android:layout_alignParentBottom="true"
+        android:padding="7dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:gravity="center">
 
-        <!-- Botón Home -->
-        <ImageButton
-            android:id="@+id/nav_home"
+        <RelativeLayout
+            android:id="@+id/home_layout"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/ic_home"
-            android:background="@android:color/transparent"
-            android:contentDescription="Home"
-            app:tint="#FFFFFF" />
+            android:background="#000e3b"
+            android:gravity="center">
 
-        <!-- Botón Buscar -->
-        <ImageButton
-            android:id="@+id/nav_search"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/ic_search"
-            android:background="@android:color/transparent"
-            android:contentDescription="Buscar"
-            app:tint="#FFFFFF" />
+            <!-- Botón Home -->
+            <ImageButton
+                android:id="@+id/nav_home"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_home"
+                android:background="@android:color/transparent"
+                android:contentDescription="Home"
+                android:paddingBottom="20dp"
+                app:tint="#FFFFFF" />
 
-        <!-- Botón Crear -->
-        <ImageButton
-            android:id="@+id/nav_create"
+            <TextView
+                android:id="@+id/homeText"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:text="Home"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="#B3B3B3"
+                android:textSize="14sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/search_layout"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/ic_add"
-            android:background="@android:color/transparent"
-            android:contentDescription="Crear"
-            app:tint="#FFFFFF" />
+            android:background="#000e3b"
+            android:gravity="center">
+
+            <!-- Botón Buscar -->
+            <ImageButton
+                android:id="@+id/nav_search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_search"
+                android:background="@android:color/transparent"
+                android:contentDescription="Buscar"
+                android:paddingBottom="20dp"
+                app:tint="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/searchText"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:text="Buscar"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="#B3B3B3"
+                android:textSize="14sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/create_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#000e3b"
+            android:gravity="center">
+
+            <!-- Botón Crear -->
+            <ImageButton
+                android:id="@+id/nav_create"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_add"
+                android:background="@android:color/transparent"
+                android:contentDescription="Crear"
+                android:paddingBottom="20dp"
+                app:tint="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/createText"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:text="Crear Playlist"
+                android:fontFamily="@font/poppins_regular"
+                android:paddingTop="2dp"
+                android:textColor="#B3B3B3"
+                android:textSize="14sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/noizzys_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#000e3b"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <!-- Botón Mis Noizzys -->
+            <ImageButton
+                android:id="@+id/nav_noizzys"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/noizzy"
+                android:background="@android:color/transparent"
+                android:contentDescription="Noizzys"
+                android:paddingBottom="20dp"
+                app:tint="#FFFFFF"
+                android:scaleType="fitCenter"/>
+
+            <TextView
+                android:id="@+id/noizzysText"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:text="Mis Noizzys"
+                android:textColor="#B3B3B3"
+                android:fontFamily="@font/poppins_regular"
+                android:paddingTop="2dp"
+                android:textSize="14sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"/>
+        </RelativeLayout>
 
     </LinearLayout>
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

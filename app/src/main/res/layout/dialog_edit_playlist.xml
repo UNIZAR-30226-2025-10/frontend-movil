@@ -3,37 +3,71 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@color/blueNuestro"
-    android:padding="16dp">
+    android:background="@drawable/bg_dialog_rounded"
+    android:padding="24dp"
+    android:elevation="8dp"
+    android:gravity="center_horizontal">
 
-    <ImageView
-        android:id="@+id/profileImageDialog"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        android:scaleType="centerCrop"/>
+    <TextView
+        android:id="@+id/textViewHeadersEscuchas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Editar Playlist"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#000E3B"
+        android:fontFamily="@font/poppins_bold"
+        android:layout_gravity="start"
+        android:paddingBottom="2dp"/>
 
-    <Button
-        android:id="@+id/btnSelectImage"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Seleccionar imagen" />
+        android:gravity="center">
+        <ImageView
+            android:id="@+id/profileImageDialog"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/no_cancion"/>
+
+        <Button
+            android:id="@+id/btnSelectImage"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="Subir\n foto"
+            android:textSize="16sp"
+            android:fontFamily="@font/poppins_bold"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/rounded_button"
+            android:padding="8dp"
+            android:layout_marginLeft="20dp"/>
+    </LinearLayout>
 
     <EditText
         android:id="@+id/editPlaylistName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nombre" />
-
-    <EditText
-        android:id="@+id/editDesripcion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Descripción (opcional)" />
+        android:hint="Nuevo nombre de la Playlist"
+        android:padding="12dp"
+        android:background="@drawable/bg_edittext"
+        android:textColor="#000000"
+        android:textColorHint="#888888"
+        android:layout_margin="16dp"/>
 
     <Button
         android:id="@+id/btnSave"
-        android:layout_width="match_parent"
+        android:layout_width="235dp"
         android:layout_height="wrap_content"
-        android:text="Guardar" />
+        android:text="Guardar cambios"
+        android:textSize="16sp"
+        android:fontFamily="@font/poppins_bold"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/rounded_button"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"/>
 </LinearLayout>
+

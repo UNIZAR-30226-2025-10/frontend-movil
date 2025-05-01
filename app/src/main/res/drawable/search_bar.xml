@@ -4,5 +4,5 @@
     <corners android:radius="25dp" />
     <stroke
         android:width="2dp"
-        android:color="@color/fondo" /> <!-- Color del borde -->
+        android:color="@color/buttons" /> <!-- Color del borde -->
 </shape>

@@ -1,9 +1,27 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
-    android:viewportWidth="24"
-    android:viewportHeight="24">
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- Círculo de fondo -->
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M6,19h4V5H6v14zM14,5v14h4V5H14z"/>
+        android:fillColor="@color/buttons"
+        android:pathData="M24,0A24,24 0 1,0 24,48A24,24 0 1,0 24,0Z"/>
+
+    <!-- Barra izquierda del ícono de pausa -->
+    <path
+        android:strokeColor="@color/insideButtons"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M18,14V34" />
+
+    <!-- Barra derecha del ícono de pausa -->
+    <path
+        android:strokeColor="@color/insideButtons"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M30,14V34" />
 </vector>

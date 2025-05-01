@@ -4,7 +4,20 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="@color/white">
+    android:background="@drawable/bg_dialog_rounded"
+    android:elevation="8dp">
+
+    <TextView
+        android:id="@+id/textViewName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Añadir a lista"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#000E3B"
+        android:fontFamily="@font/poppins_regular"
+        android:layout_gravity="start"
+        android:paddingLeft="1dp"/>
 
     <SearchView
         android:id="@+id/searchViewPlaylists"
@@ -23,15 +36,13 @@
 
     <Button
         android:id="@+id/btnCreatePlaylist"
-        android:layout_width="match_parent"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:text="Crear Playlist"
-        android:layout_marginTop="8dp"/>
-
-    <Button
-        android:id="@+id/btnCancel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Cancelar"
-        android:layout_marginTop="8dp"/>
+        android:text="Nueva Lista"
+        android:textAllCaps="false"
+        android:background="@drawable/rounded_button"
+        android:fontFamily="@font/poppins_bold"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="8dp"
+        android:layout_gravity="center_horizontal"/>
 </LinearLayout>

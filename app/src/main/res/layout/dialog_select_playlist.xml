@@ -3,24 +3,34 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@drawable/bg_dialog_rounded"
+    android:elevation="8dp">
+
+    <TextView
+        android:id="@+id/textViewName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Añadir a lista"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#000E3B"
+        android:fontFamily="@font/poppins_regular"
+        android:layout_gravity="start"
+        android:paddingLeft="1dp"/>
 
     <SearchView
         android:id="@+id/searchViewPlaylists"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:queryHint="Buscar playlist..." />
+        android:queryHint="Buscar playlists..."
+        android:iconifiedByDefault="false"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewPlaylists"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_marginTop="8dp" />
-
-    <Button
-        android:id="@+id/btnCancel"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Cancelar" />
+        android:layout_marginBottom="8dp"
+        android:maxHeight="400dp"/>
 </LinearLayout>

@@ -25,8 +25,10 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.ServiceConnection
 import android.os.IBinder
+import android.util.TypedValue
 import android.view.MotionEvent
 import android.widget.ProgressBar
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.myapplication.io.request.ActualizarFavoritoRequest
 import com.example.myapplication.io.request.AudioColeccionRequest
 import com.example.myapplication.io.request.PlayPauseRequest
@@ -126,7 +128,21 @@ class CancionReproductorDetail : AppCompatActivity() {
 
         textViewNombre.text = nombreCancion
         textViewArtista.text = artistaCancion
-        Glide.with(this).load(imagenUrl).into(imageViewCancion)
+        Glide.with(this)
+            .load(imagenUrl)
+            .centerCrop()
+            .transform(
+                RoundedCorners(
+                    TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP,
+                        20f,
+                        this.resources.displayMetrics
+                    ).toInt()
+                )
+            )
+            .placeholder(R.drawable.no_cancion)
+            .error(R.drawable.no_cancion)
+            .into(imageViewCancion)
 
         mirarfav(id)
         /*
@@ -198,13 +214,13 @@ class CancionReproductorDetail : AppCompatActivity() {
                     val progreso = service.getProgress()
                     Preferencias.guardarValorEntero("progresoCancionActual", progreso)
                     service.pause()
-                    btnPlayPause.setImageResource(R.drawable.ic_pause)
+                    btnPlayPause.setImageResource(R.drawable.ic_pause_cancion)
                     Log.d("MiniReproductor", "Canción pausada en $progreso ms")
                     actualizarEstadoReproduccion(false, progreso) // Enviar estado 'pausado' con el progreso
                 } else {
                     Log.d("MiniReproductor", "Intentando reanudar la canción...")
                     service.resume()
-                    btnPlayPause.setImageResource(R.drawable.ic_play)
+                    btnPlayPause.setImageResource(R.drawable.ic_play_cancion)
                     Log.d("MiniReproductor", "Canción reanudada")
                     val progreso = service.getProgress()
                     actualizarEstadoReproduccion(true, progreso) // Enviar estado 'pausado' con el progreso
@@ -270,6 +286,15 @@ class CancionReproductorDetail : AppCompatActivity() {
             Glide.with(this)
                 .load(songImageUrl)
                 .centerCrop()
+                .transform(
+                    RoundedCorners(
+                        TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP,
+                            20f,
+                            this.resources.displayMetrics
+                        ).toInt()
+                    )
+                )
                 .placeholder(R.drawable.no_cancion)
                 .error(R.drawable.no_cancion)
                 .into(imageViewCancion)
@@ -388,7 +413,7 @@ class CancionReproductorDetail : AppCompatActivity() {
     private fun actualizarIconoPlayPause() {
         if (serviceBound && musicService != null) {
             val estaReproduciendo = musicService!!.isPlaying()
-            val icono = if (estaReproduciendo) R.drawable.ic_play else R.drawable.ic_pause
+            val icono = if (estaReproduciendo) R.drawable.ic_play_cancion else R.drawable.ic_pause_cancion
             val stopButton = findViewById<ImageButton>(R.id.btn_PlayPause)
             stopButton.setImageResource(icono)
         }

@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
@@ -1027,18 +1028,20 @@ class PlaylistDetail : AppCompatActivity() {
     }
 
     private fun showInvitarUsuarioDialog() {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_invitacion, null)
-        val searchView = dialogView.findViewById<SearchView>(R.id.searchViewSeguidores)
-        val listView = dialogView.findViewById<ListView>(R.id.listViewSeguidores)
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.dialog_invitacion)
+
+        val window: Window? = dialog.window
+        window?.setLayout((Resources.getSystem().displayMetrics.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        dialog.setCancelable(true)
+
+        val searchView = dialog.findViewById<SearchView>(R.id.searchViewSeguidores)
+        val listView = dialog.findViewById<ListView>(R.id.listViewSeguidores)
 
         val adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mutableListOf())
         listView.adapter = adapter
-
-        val dialog = AlertDialog.Builder(this)
-            .setTitle("Invitar usuario")
-            .setView(dialogView)
-            .setNegativeButton("Cancelar", null)
-            .create()
 
         val token = Preferencias.obtenerValorString("token", "") ?: ""
         val authHeader = "Bearer $token"
@@ -1166,12 +1169,11 @@ class PlaylistDetail : AppCompatActivity() {
     private fun showPlaylistSelectionDialog(cancion: CancionP, playlists: List<MisPlaylist>) {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.dialog_select_playlist)
-        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setLayout((Resources.getSystem().displayMetrics.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
 
         val searchView = dialog.findViewById<SearchView>(R.id.searchViewPlaylists)
         val recyclerView = dialog.findViewById<RecyclerView>(R.id.recyclerViewPlaylists)
-        val btnCancel = dialog.findViewById<Button>(R.id.btnCancel)
 
         // Configurar el adaptador
         val adapter = PlaylistSelectionAdapter(playlists) { selectedPlaylist ->
@@ -1191,8 +1193,6 @@ class PlaylistDetail : AppCompatActivity() {
                 return true
             }
         })
-
-        btnCancel.setOnClickListener { dialog.dismiss() }
 
         dialog.show()
     }

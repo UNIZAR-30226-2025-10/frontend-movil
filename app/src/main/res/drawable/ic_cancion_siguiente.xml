@@ -5,28 +5,27 @@
     android:viewportWidth="48"
     android:viewportHeight="48">
 
-    <!-- Círculo de fondo -->
+    <!-- Línea vertical (barra izquierda) -->
     <path
-        android:fillColor="@android:color/transparent"
-        android:strokeWidth="5"
-        android:strokeColor="@color/buttons"
-        android:pathData="M24,4A20,20 0 1,0 24,44A20,20 0 1,0 24,4Z"/>
-
-    <!-- Línea vertical del símbolo de más -->
-    <path
+        android:fillColor="@color/buttons"
         android:strokeColor="@color/buttons"
         android:strokeWidth="5"
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
-        android:fillColor="@color/buttons"
-        android:pathData="M24,15 L24,33" />
+        android:pathData="M34.9,10V38" />
 
-    <!-- Línea horizontal del símbolo de más -->
+    <!-- Triángulo con puntas redondeadas usando stroke (invertido) -->
     <path
         android:strokeColor="@color/buttons"
         android:strokeWidth="5"
-        android:strokeLineCap="round"
         android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M12,10L30,24L12,38Z" />
+
+    <!-- Triángulo con puntas redondeadas y relleno (invertido) -->
+    <path
         android:fillColor="@color/buttons"
-        android:pathData="M15,24 L33,24" />
+        android:strokeWidth="0"
+        android:pathData="M12,10L30,24L12,38Z" />
 </vector>

@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@drawable/bg_dialog_rounded"
+    android:elevation="8dp">
 
     <!-- EditText para realizar la búsqueda -->
     <EditText
@@ -12,7 +14,9 @@
         android:layout_height="wrap_content"
         android:hint="Buscar canción..."
         android:padding="10dp"
-        android:inputType="text" />
+        android:inputType="text"
+        android:fontFamily="@font/poppins_regular"
+        />
 
     <!-- RecyclerView para mostrar las canciones -->
     <androidx.recyclerview.widget.RecyclerView

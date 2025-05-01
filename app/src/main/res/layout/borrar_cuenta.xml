@@ -6,69 +6,95 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/fondo"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center"
     tools:context=".activities.DeleteAccount">
 
-    <!-- Logo de la app -->
-
-    <!-- Título de la actividad -->
-
-    <ImageView
-        android:id="@+id/logoImageView"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:contentDescription="@string/logo"
-        android:elevation="10dp"
-        android:src="@drawable/logo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="120dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="#FFFFFF" />
-
-    <TextView
-        android:id="@+id/registerTitle"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Eliminar cuenta"
-        android:textColor="@color/blueNuestro"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingVertical="20dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/logoImageView"
-        android:layout_marginTop="28dp" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- Campo para la contraseña -->
+        <ImageView
+            android:id="@+id/logoImageView"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:contentDescription="@string/logo"
+            android:elevation="10dp"
+            android:src="@drawable/logo"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Botón de eliminar cuenta -->
+        <TextView
+            android:id="@+id/registerTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Eliminar cuenta"
+            android:fontFamily="@font/poppins_bold"
+            android:textColor="@color/blueNuestro"
+            android:textSize="24sp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/logoImageView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"  />
 
-    <EditText
-        android:id="@+id/contrasenya"
-        android:layout_width="0dp"
-        android:layout_height="57dp"
-        android:layout_marginTop="60dp"
-        android:background="@drawable/borde_azul_redondo"
-        android:hint="Introducir contraseña"
-        android:padding="16dp"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#B3B3B3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.609"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/registerTitle"
-        app:layout_constraintWidth_percent="0.8" />
+        <TextView
+            android:id="@+id/tv_submessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_regular"
+            android:layout_gravity="fill"
+            android:justificationMode="inter_word"
+            android:text="Introduce tu contraseña para poder elimnar la cuenta."
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/registerTitle"
+            android:paddingHorizontal="34dp"
+            app:layout_constraintStart_toStartOf="parent"/>
 
-    <Button
-        android:id="@+id/nextButton"
-        android:layout_width="348dp"
-        android:layout_height="44dp"
-        android:layout_marginTop="52dp"
-        android:backgroundTint="@color/blueNuestro"
-        android:text="Eliminar cuenta"
-        android:textColor="#FFFFFF"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.492"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/contrasenya" />
+        <EditText
+            android:id="@+id/contrasenya"
+            android:layout_width="0dp"
+            android:layout_height="55dp"
+            android:hint="Contraseña"
+            android:textColorHint="#B3B3B3"
+            android:textColor="#FFFFFF"
+            android:fontFamily="@font/poppins_regular"
+            android:background="@drawable/borde_azul_redondo"
+            android:paddingStart="16dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="30dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_submessage"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+
+        <Button
+            android:id="@+id/nextButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="18sp"
+            android:text="Eliminar Cuenta"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="30dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:background="@drawable/rounded_button"
+            app:layout_constraintTop_toBottomOf="@id/contrasenya"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

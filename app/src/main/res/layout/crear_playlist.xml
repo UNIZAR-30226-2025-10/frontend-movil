@@ -8,63 +8,89 @@
     android:background="@color/fondo"
     android:gravity="center_horizontal|center_vertical"> <!-- Centro tanto horizontal como vertical -->
 
-    <!-- Vista para mostrar la foto seleccionada (se moverá a la parte superior) -->
-    <ImageView
-        android:id="@+id/selectedImageView"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_marginTop="50dp"
-        android:src="@drawable/no_cancion"
-        android:contentDescription="Imagen de la playlist"
-        android:elevation="10dp"
-        android:visibility="gone" />
-
-    <!-- Logo / Imagen predeterminada (ocultada si se selecciona una imagen) -->
-    <ImageView
-        android:id="@+id/logoImageView"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_marginTop="20dp"
-        android:contentDescription="@string/logo"
-        android:elevation="10dp"
-        android:src="@drawable/no_cancion" />
-
-
-    <!-- Entrada para el nombre de la playlist -->
-    <EditText
-        android:id="@+id/codigo"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nombre Playlist"
-        android:textColorHint="#B3B3B3"
-        android:textColor="#FFFFFF"
-        android:background="@drawable/borde_azul_redondo"
-        android:padding="16dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp" />
+        android:orientation="vertical"
+        android:background="@drawable/bg_dialog_rounded"
+        android:padding="24dp"
+        android:elevation="8dp"
+        android:gravity="center_horizontal">
 
-    <!-- Botón para seleccionar foto -->
-    <Button
-        android:id="@+id/selectPhotoButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Seleccionar Foto"
-        android:textColor="#FFFFFF"
-        android:backgroundTint="@color/blueNuestro"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp" />
+        <TextView
+            android:id="@+id/textViewHeadersEscuchas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Crear Playlist"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#000E3B"
+            android:fontFamily="@font/poppins_bold"
+            android:layout_gravity="start"
+            android:paddingLeft="1dp"
+            android:paddingBottom="6dp"/>
 
-    <!-- Botón para crear playlist -->
-    <Button
-        android:id="@+id/nextButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Crear"
-        android:textColor="#FFFFFF"
-        android:backgroundTint="@color/blueNuestro"
-        android:layout_marginTop="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+            <!-- Vista para mostrar la foto seleccionada (se moverá a la parte superior) -->
+            <ImageView
+                android:id="@+id/selectedImageView"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/no_cancion"
+                android:layout_gravity="center"
+                android:contentDescription="Imagen de la playlist"
+                android:elevation="10dp"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/logoImageView"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:scaleType="centerCrop"
+                android:src="@drawable/no_cancion"
+                android:elevation="10dp"/>
+
+            <Button
+                android:id="@+id/selectPhotoButton"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="Subir\n foto"
+                android:textSize="16sp"
+                android:fontFamily="@font/poppins_bold"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/rounded_button"
+                android:padding="8dp"
+                android:layout_marginLeft="20dp"/>
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/codigo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nombre Playlist"
+            android:padding="12dp"
+            android:background="@drawable/bg_edittext"
+            android:textColor="#000000"
+            android:textColorHint="#888888"
+            android:layout_margin="16dp"/>
+
+        <Button
+            android:id="@+id/nextButton"
+            android:layout_width="235dp"
+            android:layout_height="wrap_content"
+            android:text="CREAR"
+            android:textSize="16sp"
+            android:fontFamily="@font/poppins_bold"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/rounded_button"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"/>
+    </LinearLayout>
+
 </LinearLayout>

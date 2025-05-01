@@ -3,25 +3,40 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@drawable/bg_dialog_rounded">
+
+    <TextView
+        android:id="@+id/textViewName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Editar Álbum"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#000E3B"
+        android:fontFamily="@font/poppins_bold"
+        android:layout_gravity="start"
+        android:paddingLeft="1dp"
+        android:paddingBottom="6dp"/>
 
     <ImageView
         android:id="@+id/dialogImageView"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:src="@drawable/no_cancion"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_gravity="center"
-        android:layout_marginBottom="16dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/no_cancion"
+        android:elevation="10dp"
         android:contentDescription="Imagen del álbum"/>
 
     <EditText
         android:id="@+id/dialogEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nombre del álbum"
-        android:textColor="#000"
-        android:textSize="16sp"
-        android:layout_marginBottom="16dp"
-        android:padding="10dp" />
-
+        android:hint="Nombre del Álbum"
+        android:padding="12dp"
+        android:background="@drawable/bg_edittext"
+        android:textColor="#000000"
+        android:textColorHint="#888888"
+        android:layout_margin="16dp"/>
 </LinearLayout>

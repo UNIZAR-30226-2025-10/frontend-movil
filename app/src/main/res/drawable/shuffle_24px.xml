@@ -1,10 +1,44 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
-    android:viewportWidth="960"
-    android:viewportHeight="960"
-    android:tint="@color/blueNuestro">
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48"
+    android:tint="@color/fondo">
+
+  <!-- Línea de abajo izquierda a arriba derecha (continua) -->
   <path
-      android:fillColor="@android:color/white"
-      android:pathData="M560,800L560,720L664,720L537,593L594,536L720,662L720,560L800,560L800,800L560,800ZM216,800L160,744L664,240L560,240L560,160L800,160L800,400L720,400L720,296L216,800ZM367,423L160,216L216,160L423,367L367,423Z"/>
+      android:strokeColor="@android:color/white"
+      android:strokeWidth="5"
+      android:strokeLineCap="round"
+      android:pathData="M7,41 L41,7" />
+
+  <!-- Línea de arriba izquierda hacia el centro (mitad 1) -->
+  <path
+      android:strokeColor="@android:color/white"
+      android:strokeWidth="5"
+      android:strokeLineCap="round"
+      android:pathData="M7,7 L19,19" />
+
+  <!-- Línea de abajo derecha hacia el centro (mitad 2) -->
+  <path
+      android:strokeColor="@android:color/white"
+      android:strokeWidth="5"
+      android:strokeLineCap="round"
+      android:pathData="M41,41 L29,29" />
+
+  <!-- Ángulo recto superior derecho -->
+  <path
+      android:strokeColor="@android:color/white"
+      android:strokeWidth="5"
+      android:strokeLineCap="round"
+      android:strokeLineJoin="round"
+      android:pathData="M33,7 L41,7 L41,15" />
+
+  <!-- Ángulo recto inferior derecho -->
+  <path
+      android:strokeColor="@android:color/white"
+      android:strokeWidth="5"
+      android:strokeLineCap="round"
+      android:strokeLineJoin="round"
+      android:pathData="M33,41 L41,41 L41,33" />
 </vector>

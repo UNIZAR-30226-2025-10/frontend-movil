@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Fondo del track -->
+    <item android:id="@android:id/background">
+        <shape>
+            <size android:height="7dp"/>
+            <corners android:radius="7dp"/>
+            <solid android:color="@color/seekbar"/>
+        </shape>
+    </item>
+
+    <!-- Progreso -->
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape>
+                <corners android:radius="7dp"/>
+                <size android:height="7dp"/>
+                <solid android:color="@color/blueNuestro"/>
+            </shape>
+        </clip>
+    </item>
+</layer-list>

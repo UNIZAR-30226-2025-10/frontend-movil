@@ -1,10 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="72dp"
-    android:height="72dp"
-    android:tint="@color/blueNuestro"
-    android:viewportWidth="24"
-    android:viewportHeight="24">
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- Círculo de fondo -->
     <path
-        android:fillColor="@android:color/white"
-        android:pathData="M8,5v14l11,-7z" />
+        android:fillColor="@color/buttons"
+        android:pathData="M24,4A20,20 0 1,0 24,44A20,20 0 1,0 24,4Z"/>
+
+    <!-- Triángulo con stroke reducido -->
+    <path
+        android:strokeColor="@color/insideButtons"
+        android:strokeWidth="5"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M18.41,12.6L34.69,24L18.41,35.4Z"/>
+
+    <!-- Triángulo relleno reducido -->
+    <path
+        android:fillColor="@color/insideButtons"
+        android:strokeWidth="0"
+        android:pathData="M18.41,12.6L34.69,24L18.41,35.4Z" />
 </vector>

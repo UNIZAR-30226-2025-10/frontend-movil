@@ -4,7 +4,21 @@
     android:padding="20dp"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_dialog_rounded"
+    android:elevation="8dp">
+
+    <TextView
+        android:id="@+id/textViewName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Invitar a:"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#000E3B"
+        android:fontFamily="@font/poppins_regular"
+        android:layout_gravity="start"
+        android:paddingLeft="1dp"/>
 
     <SearchView
         android:id="@+id/searchViewSeguidores"

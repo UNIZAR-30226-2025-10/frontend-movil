@@ -2,6 +2,7 @@ package com.example.myapplication.Adapters.Album
 
 import android.app.Dialog
 import android.content.Intent
+import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.util.Log
@@ -120,12 +121,11 @@ class CancionesAlbumAdapter(
             val context = itemView.context
             val dialog = Dialog(context)
             dialog.setContentView(R.layout.dialog_select_playlist_album)
-            dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            dialog.window?.setLayout((Resources.getSystem().displayMetrics.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
             dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
             val searchView = dialog.findViewById<SearchView>(R.id.searchViewPlaylists)
             val recyclerView = dialog.findViewById<RecyclerView>(R.id.recyclerViewPlaylists)
-            val btnCancel = dialog.findViewById<Button>(R.id.btnCancel)
             val btnCreatePlaylist = dialog.findViewById<Button>(R.id.btnCreatePlaylist)
 
             // Configurar el adaptador con las playlists obtenidas
@@ -147,8 +147,6 @@ class CancionesAlbumAdapter(
                     return true
                 }
             })
-
-            btnCancel.setOnClickListener { dialog.dismiss() }
 
             // Cuando se crea una nueva playlist
             btnCreatePlaylist.setOnClickListener {
