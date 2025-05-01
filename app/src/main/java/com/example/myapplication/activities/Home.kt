@@ -94,8 +94,6 @@ class Home : AppCompatActivity() {
     private lateinit var dot: View
 
     private lateinit var switchMode: SwitchCompat
-    //boolean nightMode;
-    //var modo = ""
 
 
     private lateinit var progressBar: ProgressBar
@@ -320,9 +318,7 @@ class Home : AppCompatActivity() {
         // Configurar botones de navegación
         setupNavigation()
 
-        //switchMode = findViewById(R.id.switchMode)
-        //nightMode = Preferencias.obtenerValorString("modo", "")
-        //nightMode =
+
         switchMode = findViewById(R.id.switchMode)
 
         // Detectar el modo actual y actualizar el estado del switch

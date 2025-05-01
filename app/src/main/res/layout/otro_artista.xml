@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    style="@style/ScreenBackground"
+    android:background="#DDDCDC"
     android:fillViewport="true"
     tools:context=".activities.OtroArtista">
 
@@ -78,18 +78,6 @@
                     android:contentDescription="Perfil"
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_profile" />
-
-                <!-- Switch de modo -->
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchMode"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toStartOf="@id/notificationButtonContainer"
-                    android:layout_marginEnd="16dp"
-                    android:thumb="@drawable/thumb"
-                    app:track="@drawable/track" />
-
             </RelativeLayout>
         </androidx.appcompat.widget.Toolbar>
 
@@ -99,7 +87,7 @@
             android:layout_height="match_parent"
             android:layout_below="@id/toolbar"
             android:paddingBottom="130dp"
-            style="@style/ScreenBackground"
+            android:background="#DDDCDC"
             android:fillViewport="true">
 
             <LinearLayout
@@ -112,7 +100,7 @@
                     android:id="@+id/profileSection"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    style="@style/ScreenBackground2"
+                    android:background="#F4F4F4"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="16dp">
@@ -144,7 +132,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
                                 android:fontFamily="@font/poppins_bold"
-                                style="@style/TextColor"
+                                android:textColor="#000E3B"
                                 android:textSize="14sp" />
 
                             <TextView
@@ -152,7 +140,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/poppins_regular"
-                                style="@style/TextColor"
+                                android:textColor="#000E3B"
                                 android:textSize="18sp" />
 
                             <LinearLayout
@@ -167,7 +155,7 @@
                                     android:layout_marginRight="12dp"
                                     android:fontFamily="@font/poppins_regular"
                                     android:text="0 seguidores"
-                                    style="@style/TextColor"
+                                    android:textColor="#000E3B"
                                     android:textSize="14sp" />
 
                                 <Button
@@ -194,7 +182,7 @@
                     android:padding="16dp">
 
                     <Button
-                        android:id="@+id/noizzys"
+                        android:id="@+id/allNoizzys"
                         android:layout_width="wrap_content"
                         android:layout_height="37dp"
                         android:background="@drawable/rounded_button"
@@ -216,7 +204,7 @@
                     android:paddingStart="16dp"
                     android:paddingTop="16dp"
                     android:text="Populares"
-                    style="@style/TextColor"
+                    android:textColor="#000E3B"
                     android:textSize="24sp"
                     android:textStyle="bold" />
 
@@ -236,7 +224,7 @@
                     android:paddingStart="16dp"
                     android:paddingTop="16dp"
                     android:text="Canciones que te gustan"
-                    style="@style/TextColor"
+                    android:textColor="#000E3B"
                     android:textSize="24sp"
                     android:textStyle="bold" />
 
@@ -275,7 +263,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
                                 android:fontFamily="@font/poppins_regular"
-                                style="@style/TextColor"
+                                android:textColor="#000E3B"
                                 android:textSize="14sp" />
 
                             <TextView
@@ -283,7 +271,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/poppins_bold"
-                                style="@style/TextColor"
+                                android:textColor="#000E3B"
                                 android:textSize="18sp" />
                         </LinearLayout>
                     </LinearLayout>
@@ -297,7 +285,7 @@
                     android:paddingStart="16dp"
                     android:paddingTop="16dp"
                     android:text="Discografía"
-                    style="@style/TextColor"
+                    android:textColor="#000E3B"
                     android:textSize="24sp"
                     android:textStyle="bold" />
 

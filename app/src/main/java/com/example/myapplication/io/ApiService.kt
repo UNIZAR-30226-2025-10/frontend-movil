@@ -10,9 +10,7 @@ import com.example.myapplication.io.request.LoginRequest
 import com.example.myapplication.io.request.RegisterArtistRequest
 import com.example.myapplication.io.request.RegisterUserRequest
 import com.example.myapplication.io.request.VerifyArtistRequest
-import com.example.myapplication.io.response.CambiarPass1Response
 import com.example.myapplication.io.response.CambiarPass2Response
-import com.example.myapplication.io.response.CambiarPass3Response
 import com.example.myapplication.io.response.RegisterArtistResponse
 import com.example.myapplication.io.response.RegisterUserResponse
 import com.example.myapplication.io.response.VerifyArtistResponse
@@ -20,7 +18,6 @@ import com.example.myapplication.io.request.CambiarPass1Request
 import com.example.myapplication.io.request.CambiarPass2Request
 import com.example.myapplication.io.request.CambiarPass3Request
 import com.example.myapplication.io.request.CambiarPrivacidadPlaylistRequest
-import com.example.myapplication.io.request.CancionInfoRequest
 import com.example.myapplication.io.request.CrearAlbumRequest
 import com.example.myapplication.io.request.CrearCancionRequest
 import com.example.myapplication.io.request.ChangeFollowRequest
@@ -33,7 +30,6 @@ import com.example.myapplication.io.request.DeleteNotiCancionRequest
 import com.example.myapplication.io.request.EditarAlbumRequest
 import com.example.myapplication.io.request.DeleteFromPlaylistRequest
 import com.example.myapplication.io.request.DeletePlaylistRequest
-import com.example.myapplication.io.request.PlaylistRequest
 import com.example.myapplication.io.request.EditarPerfilRequest
 import com.example.myapplication.io.request.ExpelUserRequest
 import com.example.myapplication.io.request.InvitarPlaylistRequest
@@ -48,9 +44,8 @@ import com.example.myapplication.io.request.PostNoizzyRequest
 import com.example.myapplication.io.request.ProgresoRequest
 import com.example.myapplication.io.request.UpdatePlaylistRequest
 import com.example.myapplication.io.request.ValidarArtistaRequest
-import com.example.myapplication.io.request.ValidarArtistaResponse
 import com.example.myapplication.io.request.VerInteraccionRequest
-import com.example.myapplication.io.response.ActualizarFavoritoResponse
+import com.example.myapplication.io.request.DeleteNoizzyRequest
 import com.example.myapplication.io.response.AddReproduccionResponse
 import com.example.myapplication.io.response.AudioResponse
 import com.example.myapplication.io.response.BuscadorResponse
@@ -62,7 +57,6 @@ import com.example.myapplication.io.response.CancionesFavsArtistaResponse
 import com.example.myapplication.io.response.CrearPlaylistResponse
 import com.example.myapplication.io.response.DatosAlbumResponse
 import com.example.myapplication.io.response.DatosArtistaResponse
-import com.example.myapplication.io.response.DeleteAccountResponse
 import com.example.myapplication.io.response.DeleteAlbumResponse
 import com.example.myapplication.io.response.DiscografiaAlbumArtistaResponse
 import com.example.myapplication.io.response.EditarPerfilResponse
@@ -84,13 +78,11 @@ import com.example.myapplication.io.response.GetSignatureResponse
 import com.example.myapplication.io.response.HayNotificacionesResponse
 import com.example.myapplication.io.response.HistorialArtistasResponse
 import com.example.myapplication.io.response.HistorialRecientesResponse
-import com.example.myapplication.io.response.LogOutResponse
 import com.example.myapplication.io.response.HistorialEscuchasResponse
 import com.example.myapplication.io.response.InfoPerfilArtistaResponse
 import com.example.myapplication.io.response.PlaylistsResponse
 import com.example.myapplication.io.response.RecomendacionesResponse
 import com.example.myapplication.io.response.InfoSeguidoresResponse
-import com.example.myapplication.io.response.Interaccion
 import com.example.myapplication.io.response.MisAlbumesResponse
 import com.example.myapplication.io.response.MisNoizzysResponse
 import com.example.myapplication.io.response.NoizzyDetailResponse
@@ -339,7 +331,7 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Query("id") id: String
     ): Call<Void>
-    
+
     @GET("/get-datos-oyente")
     fun getDatosOyente(
         @Header("Authorization") token: String,
@@ -570,11 +562,22 @@ interface ApiService {
         @Query("id") id: String,
     ): Call<NoizzyDetailResponse>
 
+    @GET("/get-noizzys")
+    fun getNoizzys(
+        @Header("Authorization") token: String,
+        @Query("nombreUsuario") nombreUsuario: String,
+    ): Call<MisNoizzysResponse>
+
+    @HTTP(method = "DELETE", path = "/delete-noizzy", hasBody = true)
+    fun deleteNoizzy(
+        @Header("Authorization") authHeader: String,
+        @Body request: DeleteNoizzyRequest
+    ): Call<Void>
 
 
 
 
-    
+
     companion object Factory {
         private const val BASE_URL = "https://api-noizz.onrender.com" // URL de la API
         //private const val BASE_URL = "http://192.168.0.62:5000"

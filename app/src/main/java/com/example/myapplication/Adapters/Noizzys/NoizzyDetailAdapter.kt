@@ -13,12 +13,15 @@ import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.activities.NoizzyDetail
 import com.example.myapplication.io.response.NoizzitoData
+import com.example.myapplication.io.response.Noizzy
 import com.example.myapplication.io.response.NoizzyDetailResponse
 
 class NoizzyDetailAdapter(
     private val noizzys: MutableList<NoizzitoData>,
+    private val onItemClicked: (NoizzitoData) -> Unit,
     private val onLikeClicked: (NoizzitoData) -> Unit,
-    private val onCommentClicked: (NoizzitoData) -> Unit
+    private val onCommentClicked: (NoizzitoData) -> Unit,
+    private val onDeleteClicked: (NoizzitoData) -> Unit
 ) : RecyclerView.Adapter<NoizzyDetailAdapter.NoizzyViewHolder>() {
 
     class NoizzyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -34,11 +37,20 @@ class NoizzyDetailAdapter(
 
         val likeButton: ImageButton = view.findViewById(R.id.likeButton)
         val commentButton: ImageButton = view.findViewById(R.id.commentButton)
+        val deleteButton: ImageButton = view.findViewById(R.id.deleteButtonNoizzy)
     }
 
     fun agregarNoizzito(noizzito: NoizzitoData) {
         noizzys.add(0, noizzito)
         notifyItemInserted(0)
+    }
+
+    fun eliminarNoizzitoPorId (id: String) {
+        val index = noizzys.indexOfFirst { it.id == id}
+        if (index != -1) {
+            noizzys.removeAt(index)
+            notifyItemRemoved(index)
+        }
     }
 
     fun actualizarNoizzy(noizzy: NoizzitoData) {
@@ -66,10 +78,14 @@ class NoizzyDetailAdapter(
             .error(R.drawable.ic_profile)
             .into(holder.profileImage)
 
-        holder.userName.text = noizzy.nombreUsuario
+        holder.userName.text = noizzy.nombre
         holder.content.text = noizzy.texto
         holder.numLikes.text = noizzy.num_likes.toString()
         holder.numComments.text = noizzy.num_comentarios.toString()
+
+        if (noizzy.mio) {
+            holder.deleteButton.visibility = View.VISIBLE
+        }
 
         if (noizzy.cancion != null) {
             holder.recuadroCancion.visibility = View.VISIBLE
@@ -99,10 +115,12 @@ class NoizzyDetailAdapter(
 
         holder.likeButton.setOnClickListener { onLikeClicked(noizzy) }
         holder.commentButton.setOnClickListener { onCommentClicked(noizzy) }
+        holder.deleteButton.setOnClickListener { onDeleteClicked(noizzy) }
         holder.itemView.setOnClickListener {
-            val intent = Intent(holder.itemView.context, NoizzyDetail::class.java)
-            intent.putExtra("id", noizzy.id)
-            holder.itemView.context.startActivity(intent)
+            //val intent = Intent(holder.itemView.context, NoizzyDetail::class.java)
+            //intent.putExtra("id", noizzy.id)
+            //holder.itemView.context.startActivity(intent)
+            onItemClicked(noizzy)
         }
     }
 

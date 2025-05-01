@@ -1,6 +1,5 @@
 package com.example.myapplication.activities
 
-import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -23,7 +22,6 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -37,7 +35,7 @@ import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.request.AudioColeccionRequest
 import com.example.myapplication.io.request.AudioRequest
 import com.example.myapplication.io.request.DarLikeNoizzyRequest
-import com.example.myapplication.io.request.DeleteNoizzyRequest
+import com.example.myapplication.io.request.LeerNotiSeguidorRequest
 import com.example.myapplication.io.request.PostNoizzitoRequest
 import com.example.myapplication.io.request.PostNoizzyRequest
 import com.example.myapplication.io.response.AddReproduccionResponse
@@ -48,6 +46,7 @@ import com.example.myapplication.io.response.GetInvitacionesResponse
 import com.example.myapplication.io.response.Interaccion
 import com.example.myapplication.io.response.InvitacionPlaylist
 import com.example.myapplication.io.response.MisNoizzysResponse
+import com.example.myapplication.io.response.NoizzitoData
 import com.example.myapplication.io.response.Noizzy
 import com.example.myapplication.io.response.Novedad
 import com.example.myapplication.io.response.SearchPlaylistResponse
@@ -60,15 +59,15 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-class MisNoizzys: AppCompatActivity() {
+class NoizzysOtro: AppCompatActivity() {
 
     private lateinit var apiService: ApiService
     private lateinit var dot: View
     private lateinit var adapter: MisNoizzysAdapter
     private lateinit var recyclerNoizzys: RecyclerView
     private lateinit var botonPublicar: Button
-    private var cancionAnadidaEnNoizzy: Cancion? = null
     private var cancionAnadidaEnNoizzito: Cancion? = null
+    private var nombreUser: String? = null
 
     private lateinit var progressBar: ProgressBar
     private var musicService: MusicPlayerService? = null
@@ -147,11 +146,6 @@ class MisNoizzys: AppCompatActivity() {
         }
     }
 
-    private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            cargarMisNoizzys()
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -162,6 +156,9 @@ class MisNoizzys: AppCompatActivity() {
         recyclerNoizzys = findViewById(R.id.noizzysRecyclerView)
         recyclerNoizzys.layoutManager = LinearLayoutManager(this)
         botonPublicar = findViewById(R.id.publicarNoizzyButton)
+        botonPublicar.visibility = View.GONE
+        nombreUser = intent.getStringExtra("nombreUsuario")
+        Log.d("INTENT_TEST", "Recibido nombreUsuario: $nombreUser")
 
         indexActual = Preferencias.obtenerValorEntero("indexColeccionActual", 0)
 
@@ -195,146 +192,15 @@ class MisNoizzys: AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)
         setupNavigation()
         updateMiniReproductor()
-        cargarMisNoizzys()
+        cargarNoizzys()
 
-        botonPublicar.setOnClickListener {
-            val dialogView = layoutInflater.inflate(R.layout.popup_publicar_noizzy, null)
-
-            val dialog = android.app.AlertDialog.Builder(this)
-                .setView(dialogView)
-                .setCancelable(true)
-                .create()
-
-            dialog.window?.setDimAmount(0.7f)
-
-            val imageView = dialogView.findViewById<ImageView>(R.id.popupProfileImage)
-            val url = Preferencias.obtenerValorString("fotoPerfil", "")
-
-            if (url.isNullOrEmpty() || url == "DEFAULT") {
-                imageView.setImageResource(R.drawable.ic_profile)
-            } else {
-                Glide.with(this)
-                    .load(url)
-                    .circleCrop()
-                    .placeholder(R.drawable.ic_profile)
-                    .error(R.drawable.ic_profile)
-                    .into(imageView)
-            }
-
-            val editText = dialogView.findViewById<EditText>(R.id.popupEditText)
-            val addSongText= dialogView.findViewById<TextView>(R.id.popupAddSongButton)
-            addSongText.paintFlags = addSongText.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-            val publishButton = dialogView.findViewById<Button>(R.id.popupPublishButton)
-            val cerrarVentana = dialogView.findViewById<ImageButton>(R.id.closeButton)
-
-            val buscador = dialogView.findViewById<LinearLayout>(R.id.buscador)
-            val cancionAnadida = dialogView.findViewById<LinearLayout>(R.id.cancionNoizzy)
-            val searchEditText = dialogView.findViewById<EditText>(R.id.searchSongEditText)
-            val songResults = dialogView.findViewById<RecyclerView>(R.id.songResultsRecyclerView)
-            songResults.layoutManager = LinearLayoutManager(this)
-
-            val dividerItemDecoration = DividerItemDecoration(this, LinearLayoutManager.VERTICAL)
-            ContextCompat.getDrawable(this, R.drawable.recycler_divider)?.let {
-                dividerItemDecoration.setDrawable(it)
-            }
-            songResults.addItemDecoration(dividerItemDecoration)
-
-            addSongText.setOnClickListener {
-                addSongText.visibility = View.GONE
-                buscador.visibility = View.VISIBLE
-            }
-
-            searchEditText.addTextChangedListener(object : TextWatcher {
-                override fun afterTextChanged(s: Editable?) {}
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    val query = s.toString().trim()
-                    if (query.isNotEmpty()) {
-
-                        val token = Preferencias.obtenerValorString("token", "")
-                        val authHeader = "Bearer $token"
-
-                        apiService.searchForSongsNoizzy(authHeader, query).enqueue(object :
-                            Callback<SearchPlaylistResponse> {
-                            override fun onResponse(call: Call<SearchPlaylistResponse>, response: Response<SearchPlaylistResponse>) {
-                                if (response.isSuccessful) {
-                                    val canciones = response.body()?.canciones ?: emptyList()
-                                    songResults.adapter = CancionesBuscadorNoizzyAdapter(canciones) { cancionSeleccionada ->
-                                        buscador.visibility = View.GONE
-                                        cancionAnadidaEnNoizzy = cancionSeleccionada
-                                        val imagenCancion = dialogView.findViewById<ImageView>(R.id.recuerdoImage)
-                                        val nombreCancion = dialogView.findViewById<TextView>(R.id.recuerdoText1)
-                                        val nombreArtista = dialogView.findViewById<TextView>(R.id.recuerdoText2)
-                                        val botonQuitar = dialogView.findViewById<ImageButton>(R.id.quitarCancion)
-
-                                        Glide.with(this@MisNoizzys)
-                                            .load(cancionSeleccionada.fotoPortada)
-                                            .placeholder(R.drawable.no_cancion)
-                                            .error(R.drawable.no_cancion)
-                                            .into(imagenCancion)
-
-                                        nombreCancion.text = cancionSeleccionada.nombre
-                                        nombreArtista.text = cancionSeleccionada.nombreArtisticoArtista
-
-                                        botonQuitar.setOnClickListener {
-                                            cancionAnadidaEnNoizzy = null
-                                            addSongText.visibility = View.VISIBLE
-                                            cancionAnadida.visibility = View.GONE
-                                        }
-
-                                        cancionAnadida.visibility = View.VISIBLE
-                                    }
-                                }
-                            }
-                            override fun onFailure(call: Call<SearchPlaylistResponse>, t: Throwable) {
-                                Log.d("Buscar Canciones para Noizzy", "Error en la solicitud: ${t.message}")
-                            }
-                        })
-                    }
-                }
-            })
-
-
-            cerrarVentana.setOnClickListener {
-                cancionAnadidaEnNoizzy = null
-                dialog.dismiss()
-            }
-
-            publishButton.setOnClickListener {
-                val texto = editText.text.toString()
-
-                val token = Preferencias.obtenerValorString("token", "")
-                val authHeader = "Bearer $token"
-                val request: PostNoizzyRequest
-                if (cancionAnadidaEnNoizzy != null) {
-                    request = PostNoizzyRequest(texto, cancionAnadidaEnNoizzy!!.id)
-                } else {
-                    request = PostNoizzyRequest(texto, null)
-                }
-
-                apiService.postNoizzy(authHeader, request).enqueue(object :
-                    Callback<Void> {
-                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                        if (response.isSuccessful) {
-                            //cargarMisNoizzys()
-                        }
-                    }
-                    override fun onFailure(call: Call<Void>, t: Throwable) {
-                        Log.d("Post Noizzy", "Error en la solicitud: ${t.message}")
-                    }
-                })
-                dialog.dismiss()
-            }
-            dialog.show()
-        }
     }
 
-    private fun cargarMisNoizzys() {
+    private fun cargarNoizzys() {
         val token = Preferencias.obtenerValorString("token", "")
         val authHeader = "Bearer $token"
 
-        apiService.getMisNoizzys(authHeader).enqueue(object :
+        apiService.getNoizzys(authHeader, nombreUser!!).enqueue(object :
             Callback<MisNoizzysResponse> {
             override fun onResponse(call: Call<MisNoizzysResponse>, response: Response<MisNoizzysResponse>) {
                 if (response.isSuccessful) {
@@ -343,17 +209,23 @@ class MisNoizzys: AppCompatActivity() {
                         val noizzys = response.body()?.noizzys ?: emptyList()
                         val noizzysMutable: MutableList<Noizzy> = noizzys.toMutableList()
 
+                        if (noizzys.size == 0) {
+                            Toast.makeText(this@NoizzysOtro, nombreUser + " todavía no ha publicado ningún Noizzy", Toast.LENGTH_SHORT).show()
+                            finish()
+                            return
+                        }
+
                         adapter = MisNoizzysAdapter(
                             noizzysMutable,
-                            "misNoizzys",
+                            "noizzysOtro",
                             onItemClicked = { noizzy ->
-                                val intent = Intent(this@MisNoizzys, NoizzyDetail::class.java)
+                                val intent = Intent(this@NoizzysOtro, NoizzyDetail::class.java)
                                 intent.putExtra("id", noizzy.id.toString())
-                                launcher.launch(intent)
+                                startActivity(intent)
                             },
                             onLikeClicked = { noizzy -> darLike(noizzy)},
                             onCommentClicked = { noizzy -> comentar(noizzy) },
-                            onDeleteClicked = { noizzy -> borrar(noizzy) }
+                            onDeleteClicked = {noizzy -> borrar(noizzy)}
                         )
 
                         recyclerNoizzys.adapter = adapter
@@ -461,7 +333,7 @@ class MisNoizzys: AppCompatActivity() {
                                     val nombreArtista = dialogView.findViewById<TextView>(R.id.recuerdoText2)
                                     val botonQuitar = dialogView.findViewById<ImageButton>(R.id.quitarCancion)
 
-                                    Glide.with(this@MisNoizzys)
+                                    Glide.with(this@NoizzysOtro)
                                         .load(cancionSeleccionada.fotoPortada)
                                         .placeholder(R.drawable.no_cancion)
                                         .error(R.drawable.no_cancion)
@@ -522,23 +394,8 @@ class MisNoizzys: AppCompatActivity() {
         }
         dialog.show()
     }
-    private fun borrar(noizzy: Noizzy){
-        val token = Preferencias.obtenerValorString("token", "")
-        val authHeader = "Bearer $token"
 
-        val request = DeleteNoizzyRequest(noizzy.id)
-        apiService.deleteNoizzy(authHeader, request).enqueue(object :
-            Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful) {
-                    adapter.eliminarNoizzyPorId(noizzy.id)
-                }
-            }
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                Log.d("Delete Noizzy", "Error en la solicitud: ${t.message}")
-            }
-        })
-    }
+    private fun borrar(noizzy: Noizzy){}
 
     private fun updateMiniReproductor() {
         val songImage = findViewById<ImageView>(R.id.songImage)
@@ -892,7 +749,7 @@ class MisNoizzys: AppCompatActivity() {
                     Log.e("API_RESPONSE", "Error en la respuesta: Código ${response.code()} - $errorMensaje")
 
                     // Mostrar en Toast
-                    Toast.makeText(this@MisNoizzys, "Error: $errorMensaje", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@NoizzysOtro, "Error: $errorMensaje", Toast.LENGTH_LONG).show()
                 }
             }
 
@@ -901,7 +758,7 @@ class MisNoizzys: AppCompatActivity() {
                 Log.e("API_RESPONSE", "Error de conexión: ${t.message}", t)
 
                 // Mostrar en Toast
-                Toast.makeText(this@MisNoizzys, "Error de conexión: ${t.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@NoizzysOtro, "Error de conexión: ${t.message}", Toast.LENGTH_LONG).show()
             }
         })
     }
@@ -968,4 +825,10 @@ class MisNoizzys: AppCompatActivity() {
         WebSocketEventHandler.eliminarListenerInvitacion(listenerInvitacion)
         WebSocketEventHandler.eliminarListenerInteraccion(listenerInteraccion)
     }
+
+    override fun onResume() {
+        super.onResume()
+        cargarNoizzys()
+    }
+
 }

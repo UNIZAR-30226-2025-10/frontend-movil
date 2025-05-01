@@ -3,6 +3,8 @@ package com.example.myapplication.io.response
 // Clases de datos para parsear la respuesta
 data class NoizzyDetailResponse(
     val id: String,
+    val tipo: String,
+    val nombre: String,
     val fotoPerfil: String,
     val nombreUsuario: String,
     val mio: Boolean,
@@ -24,13 +26,16 @@ data class CancionData(
 
 data class NoizzitoData(
     val id: String,
+    val tipo: String,
+    val nombre: String,
     val nombreUsuario: String,
     val mio: Boolean,
     val fotoPerfil: String,
     val fecha: String,
     val texto: String,
     var like: Boolean,
-    val cancion: Cancion?,
+    val cancion: CancionData?,
     var num_likes: Int,
     var num_comentarios: Int
 )
+

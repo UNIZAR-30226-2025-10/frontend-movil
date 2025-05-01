@@ -270,12 +270,15 @@ class Perfil : AppCompatActivity() {
         switchMode = findViewById(R.id.switchMode)
         // Detectar el modo actual y actualizar el estado del switch
         val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        Log.d("MiAppPerfil", "colorrrr 1")
         switchMode.isChecked = currentNightMode == Configuration.UI_MODE_NIGHT_YES
-
+        Log.d("MiAppPerfil", "colorrrr 2")
         switchMode.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
+                Log.d("MiAppPerfil", "colorrrr 3")
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             } else {
+                Log.d("MiAppPerfil", "colorrrr 4")
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
         }

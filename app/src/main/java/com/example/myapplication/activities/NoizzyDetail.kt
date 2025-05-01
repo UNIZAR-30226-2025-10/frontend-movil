@@ -1,7 +1,7 @@
 package com.example.myapplication.activities
 
+import android.app.Activity
 import android.content.Intent
-import android.content.res.Configuration
 import android.graphics.Paint
 import android.os.Bundle
 import android.text.Editable
@@ -15,9 +15,8 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,6 +28,7 @@ import com.example.myapplication.Adapters.Playlist.CancionesBuscadorNoizzyAdapte
 import com.example.myapplication.R
 import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.request.DarLikeNoizzyRequest
+import com.example.myapplication.io.request.DeleteNoizzyRequest
 import com.example.myapplication.io.request.PostNoizzitoRequest
 import com.example.myapplication.io.response.Cancion
 import com.example.myapplication.io.response.CancionData
@@ -50,7 +50,6 @@ class NoizzyDetail : AppCompatActivity() {
 
     private lateinit var apiService: ApiService
     private var noizzyId: String? = null
-    private var cancionAnadidaEnNoizzy: CancionData? = null
     private var cancionAnadidaEnNoizzito: Cancion? = null
 
     // Vistas
@@ -69,8 +68,7 @@ class NoizzyDetail : AppCompatActivity() {
     private lateinit var adapter: NoizzyDetailAdapter
     private lateinit var noizzyPrincipal: NoizzyDetailResponse
     private lateinit var btnLikePrincipal: ImageButton
-
-    private lateinit var switchMode: SwitchCompat
+    private lateinit var btnDeletePrincipal: ImageButton
 
     //EVENTOS PARA LAS NOTIFICACIONES
     private val listenerNovedad: (Novedad) -> Unit = {
@@ -94,13 +92,26 @@ class NoizzyDetail : AppCompatActivity() {
         }
     }
 
-    private val listenerNoizzy: (Noizzy, Boolean) -> Unit = { noizzy, mio ->
+
+    //ESTOS NO SON DE NOTIS
+
+    private val listenerNoizzito: (NoizzitoData, String) -> Unit = { noizzito, idNoizzy ->
         runOnUiThread {
-            Log.d("LOGS_NOTIS", "evento en mis noizzys")
-            if (mio) {
-                val adapter = recyclerNoizzys.adapter as? MisNoizzysAdapter
-                adapter?.agregarNoizzy(noizzy)
+            Log.d("LOGS_NOTIS", "evento en noizzydetail")
+
+            if(idNoizzy == noizzyId) {
+                val adapter = recyclerViewNoizzitos.adapter as? NoizzyDetailAdapter
+                adapter?.agregarNoizzito(noizzito)
+                val numeroActual = textViewNumComentarios.text.toString().toInt()
+                textViewNumComentarios.text = (numeroActual + 1).toString()
+                recyclerViewNoizzitos.smoothScrollToPosition(0)
             }
+        }
+    }
+
+    private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            noizzyId?.let { datosNoizzy(it) }
         }
     }
 
@@ -145,6 +156,9 @@ class NoizzyDetail : AppCompatActivity() {
             Toast.makeText(this, "Comentario en el principal: ${noizzyId}", Toast.LENGTH_SHORT).show()
         }
 
+        btnDeletePrincipal = findViewById(R.id.deleteButtonNoizzy)
+        btnDeletePrincipal.setOnClickListener { borrarPrincipal()}
+
         recyclerViewNoizzitos.layoutManager = LinearLayoutManager(this)
 
 
@@ -176,19 +190,7 @@ class NoizzyDetail : AppCompatActivity() {
         WebSocketEventHandler.registrarListenerSeguidor(listenerSeguidor)
         WebSocketEventHandler.registrarListenerInvitacion(listenerInvitacion)
         WebSocketEventHandler.registrarListenerInteraccion(listenerInteraccion)
-
-        switchMode = findViewById(R.id.switchMode)
-        // Detectar el modo actual y actualizar el estado del switch
-        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        switchMode.isChecked = currentNightMode == Configuration.UI_MODE_NIGHT_YES
-
-        switchMode.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
-        }
+        WebSocketEventHandler.registrarListenerNoizzito(listenerNoizzito)
 
         datosNoizzy(noizzyId!!)
         setupNavigation()
@@ -209,6 +211,10 @@ class NoizzyDetail : AppCompatActivity() {
                         Log.d("NoizzyAdapter", "ID ${noizzy.nombreUsuario}")
                         noizzyPrincipal = noizzy
 
+                        if(noizzyPrincipal.mio) {
+                            btnDeletePrincipal.visibility = View.VISIBLE
+                        }
+
                         val likeDrawable = if (noizzy.like) {
                             R.drawable.like_noizzy_selected
                         } else {
@@ -218,7 +224,7 @@ class NoizzyDetail : AppCompatActivity() {
 
 
                         // Mostrar datos en vistas
-                        textViewNombreUsuario.text = noizzy.nombreUsuario
+                        textViewNombreUsuario.text = noizzy.nombre
                         textViewTexto.text = noizzy.texto
                         textViewNumLikes.text = noizzy.num_likes.toString()
                         textViewNumComentarios.text = noizzy.num_comentarios.toString()
@@ -269,6 +275,11 @@ class NoizzyDetail : AppCompatActivity() {
                         // Cargar noizzitos en RecyclerView
                         adapter = NoizzyDetailAdapter(
                             noizzy.noizzitos.toMutableList(),
+                            onItemClicked = { noizzito ->
+                                val intent = Intent(this@NoizzyDetail, NoizzyDetail::class.java)
+                                intent.putExtra("id", noizzito.id)
+                                launcher.launch(intent)
+                            },
                             onLikeClicked = { noizzito ->
                                 darLike(noizzito)
                                 Toast.makeText(this@NoizzyDetail, "Like en: ${noizzito.id}", Toast.LENGTH_SHORT).show()
@@ -276,7 +287,8 @@ class NoizzyDetail : AppCompatActivity() {
                             onCommentClicked = { noizzito ->
                                 comentar(noizzito)
                                 Toast.makeText(this@NoizzyDetail, "Comentario en: ${noizzito.id}", Toast.LENGTH_SHORT).show()
-                            }
+                            },
+                            onDeleteClicked = { noizzito -> borrar(noizzito)}
                         )
                         recyclerViewNoizzitos.adapter = adapter
                     }
@@ -450,7 +462,25 @@ class NoizzyDetail : AppCompatActivity() {
         dialog.show()
     }
 
+    private fun borrar(noizzy: NoizzitoData) {
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
 
+        val request = DeleteNoizzyRequest(noizzy.id.toInt())
+        apiService.deleteNoizzy(authHeader, request).enqueue(object :
+            Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    adapter.eliminarNoizzitoPorId(noizzy.id)
+                    val numeroActual = textViewNumComentarios.text.toString().toInt()
+                    textViewNumComentarios.text = (numeroActual -1).toString()
+                }
+            }
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.d("Delete Noizzito", "Error en la solicitud: ${t.message}")
+            }
+        })
+    }
 
 
     private fun darLikePrincipal(noizzy: NoizzyDetailResponse) {
@@ -614,30 +644,7 @@ class NoizzyDetail : AppCompatActivity() {
             if (request != null) {
                 apiService.postNoizzito(authHeader, request).enqueue(object : Callback<Void> {
                     override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                        if (response.isSuccessful) {
-                            noizzy.num_comentarios += 1
-                            actualizarNoizzyPrincipal(noizzy, "comentario")
-                            val nuevoNoizzito = NoizzitoData(
-                                id = "temp_${System.currentTimeMillis()}", // ID temporal
-                                texto = texto,
-                                nombreUsuario = Preferencias.obtenerValorString("nombreUsuario", "") ?: "",
-                                fotoPerfil = Preferencias.obtenerValorString("fotoPerfil", "") ?: "",
-                                num_likes = 0,
-                                num_comentarios = 0,
-                                like = false,
-                                cancion = cancionAnadidaEnNoizzito,
-                                fecha = "",
-                                mio = true
-                            )
-
-                            // Agregar el nuevo comentario al adaptador
-                            adapter.agregarNoizzito(nuevoNoizzito)
-
-                            // Desplazarse al nuevo comentario
-                            recyclerViewNoizzitos.smoothScrollToPosition(0)
-                        } else {
-                            Log.d("PostNoizzito", "Error en la respuesta: ${response.message()}")
-                        }
+                        if (response.isSuccessful) {}
                     }
 
                     override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -648,6 +655,31 @@ class NoizzyDetail : AppCompatActivity() {
             dialog.dismiss()
         }
         dialog.show()
+    }
+
+    private fun borrarPrincipal() {
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+
+        // Proteger conversión de id
+        val idNoizzy = noizzyId?.toInt()
+        if (idNoizzy == null) {
+            return
+        }
+
+        val request = DeleteNoizzyRequest(idNoizzy)
+        apiService.deleteNoizzy(authHeader, request).enqueue(object :
+            Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    setResult(Activity.RESULT_OK)
+                    finish()
+                }
+            }
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.d("Delete Noizzy", "Error en la solicitud: ${t.message}")
+            }
+        })
     }
 
     fun actualizarNoizzyPrincipal(noizzyActualizado: NoizzyDetailResponse, tipo: String) {
@@ -713,21 +745,12 @@ class NoizzyDetail : AppCompatActivity() {
 
     }
 
-    override fun onStart() {
-        super.onStart()
-        WebSocketEventHandler.registrarListenerNoizzy(listenerNoizzy)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        WebSocketEventHandler.eliminarListenerNoizzy(listenerNoizzy)
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         WebSocketEventHandler.eliminarListenerNovedad(listenerNovedad)
         WebSocketEventHandler.eliminarListenerSeguidor(listenerSeguidor)
         WebSocketEventHandler.eliminarListenerInvitacion(listenerInvitacion)
         WebSocketEventHandler.eliminarListenerInteraccion(listenerInteraccion)
+        WebSocketEventHandler.eliminarListenerNoizzito(listenerNoizzito)
     }
 }

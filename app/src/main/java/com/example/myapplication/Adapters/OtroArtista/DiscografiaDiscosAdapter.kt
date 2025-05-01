@@ -10,15 +10,16 @@ import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.io.response.AlbumArtista
 
-class DiscografiaDiscosAdapter : RecyclerView.Adapter<DiscografiaDiscosAdapter.DiscoViewHolder>() {
+class DiscografiaDiscosAdapter(
+    private var onItemClick: (AlbumArtista) -> Unit // Lambda para manejar clics
+) : RecyclerView.Adapter<DiscografiaDiscosAdapter.DiscoViewHolder>() {
 
     private var albumes: List<AlbumArtista> = listOf()
-    private var nombreArtista: String = ""  // Variable para almacenar el nombre del artista
+    private var nombreArtista: String = ""
 
-    // Método para actualizar el nombre del artista
     fun actualizarNombreArtista(nombre: String) {
         nombreArtista = nombre
-        notifyDataSetChanged()  // Notificar que el nombre del artista ha cambiado
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DiscoViewHolder {
@@ -31,13 +32,18 @@ class DiscografiaDiscosAdapter : RecyclerView.Adapter<DiscografiaDiscosAdapter.D
         holder.nombre.text = album.nombre
         holder.artista.text = nombreArtista
 
-        // Cargar la imagen del álbum con Glide
+        // Cargar imagen con Glide
         if (!album.fotoPortada.isNullOrEmpty()) {
             Glide.with(holder.itemView.context)
                 .load(album.fotoPortada)
-                .placeholder(R.drawable.no_cancion)  // Imagen por defecto
+                .placeholder(R.drawable.no_cancion)
                 .error(R.drawable.no_cancion)
                 .into(holder.fotoPortada)
+        }
+
+        // Configurar clic en el item
+        holder.itemView.setOnClickListener {
+            onItemClick(album) // Llamar a la lambda con el álbum seleccionado
         }
     }
 
@@ -48,10 +54,9 @@ class DiscografiaDiscosAdapter : RecyclerView.Adapter<DiscografiaDiscosAdapter.D
         notifyDataSetChanged()
     }
 
-    // ViewHolder para los álbumes
     class DiscoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val nombre: TextView = view.findViewById(R.id.textView)
-        val artista: TextView = view.findViewById(R.id.textViewArtist)  // Texto donde se muestra el nombre del artista
+        val artista: TextView = view.findViewById(R.id.textViewArtist)
         val fotoPortada: ImageView = view.findViewById(R.id.imageView)
     }
 }
