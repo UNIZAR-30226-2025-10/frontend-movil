@@ -9,7 +9,7 @@
     <!-- Número -->
     <TextView
         android:id="@+id/numero"
-        android:layout_width="12dp"
+        android:layout_width="15dp"
         android:layout_height="wrap_content"
         android:text="1"
         android:fontFamily="@font/poppins_bold"
@@ -32,7 +32,8 @@
         app:layout_constraintStart_toEndOf="@id/numero"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/duracion">
+        app:layout_constraintEnd_toStartOf="@id/duracion"
+        android:gravity="center_vertical">
 
         <!-- Imagen de portada -->
         <ImageView

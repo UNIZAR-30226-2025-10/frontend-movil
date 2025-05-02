@@ -16,7 +16,7 @@ import com.example.myapplication.io.response.CancionP
 class CancionPAdapter(
     private var listaCanciones: List<CancionP>,
     private val clickListener: (CancionP) -> Unit,
-    private val onOptionsClick: (CancionP) -> Unit,
+    private val onOptionsClick: (View, CancionP) -> Unit,
 ) : RecyclerView.Adapter<CancionPAdapter.CancionPViewHolder>() {
 
     fun updateData(searchResponse: List<CancionP>) {
@@ -68,7 +68,7 @@ class CancionPAdapter(
             itemView.setOnClickListener { clickListener(cancion) }
 
             btnOptions.setOnClickListener {
-                onOptionsClick(cancion)
+                onOptionsClick(it, cancion)
             }
 
 

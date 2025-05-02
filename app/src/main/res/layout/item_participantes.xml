@@ -9,7 +9,7 @@
     <!-- Número -->
     <TextView
         android:id="@+id/numero"
-        android:layout_width="wrap_content"
+        android:layout_width="15dp"
         android:layout_height="wrap_content"
         android:text="1"
         android:fontFamily="@font/poppins_bold"
@@ -18,7 +18,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginEnd="8dp" />
+        android:layout_marginHorizontal="8dp"
+        android:gravity="end"/>
 
     <!-- Info de usuario (nombre) -->
     <LinearLayout
@@ -48,14 +49,16 @@
     <!-- Botón Expulsar -->
     <Button
         android:id="@+id/btnExpulsar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button_notificaciones"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:background="@drawable/rounded_button"
         android:text="Expulsar"
-        android:textSize="10sp"
+        android:textSize="14sp"
+        android:fontFamily="@font/poppins_bold"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="8dp" />
+        android:layout_marginEnd="8dp"
+        android:paddingHorizontal="10dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,9 +1,15 @@
 package com.example.myapplication.activities
 
+import android.app.Dialog
 import android.content.Intent
+import android.content.res.Resources
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
+import android.view.Window
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -318,11 +324,20 @@ class Login : AppCompatActivity() {
     }
 
     private fun cambiar_sesion(loginRequest: LoginRequest){
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Sesión activa")
-        builder.setMessage("Hay una sesión iniciada en esta cuenta, ¿desea cambiar la sesión?")
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.dialog_switch_session)
 
-        builder.setPositiveButton("Aceptar") { dialog, _ ->
+        val window: Window? = dialog.window
+        window?.setLayout((Resources.getSystem().displayMetrics.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        dialog.setCancelable(false)
+
+        val btnAceptar = dialog.findViewById<Button>(R.id.btnAceptar)
+        val btnRechazar = dialog.findViewById<Button>(R.id.btnRechazar)
+
+
+        btnAceptar.setOnClickListener {
             // Llamada a la API para cambiar de sesión
             apiService.switch_session(loginRequest).enqueue(object : Callback<LoginResponse> {
                 override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
@@ -347,11 +362,10 @@ class Login : AppCompatActivity() {
             dialog.dismiss()
         }
 
-        builder.setNegativeButton("Cancelar") { dialog, _ ->
+        btnRechazar.setOnClickListener {
             dialog.dismiss()
         }
 
-        val dialog = builder.create()
         dialog.show()
     }
 

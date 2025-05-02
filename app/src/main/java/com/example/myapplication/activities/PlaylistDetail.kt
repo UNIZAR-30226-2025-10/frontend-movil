@@ -18,8 +18,12 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.text.Editable
+import android.text.Spannable
+import android.text.SpannableString
 import android.text.TextWatcher
+import android.text.style.TypefaceSpan
 import android.util.Log
+import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -30,6 +34,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.ListView
+import android.widget.PopupMenu
 import android.widget.ProgressBar
 import android.widget.SearchView
 import android.widget.TextView
@@ -38,6 +43,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SwitchCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -225,8 +231,8 @@ class PlaylistDetail : AppCompatActivity() {
                     reproducir(cancion.id)
                 }
             },
-            { cancion ->
-                showSongOptionsDialog(cancion)
+            { anchorView, cancion ->
+                showSongOptionsPopupMenu(anchorView, cancion)
             }
         )
         recyclerViewCanciones.adapter = cancionPAdapter
@@ -326,7 +332,7 @@ class PlaylistDetail : AppCompatActivity() {
 
         val btnMoreOptions: ImageButton = findViewById(R.id.btnMoreOptions)
         btnMoreOptions.setOnClickListener {
-                showMoreOptionsDialog()
+                showMoreOptionsPopupMenu(it)
         }
         val btnAnadirCancion: ImageButton = findViewById(R.id.btnAnadirCancion)
         btnAnadirCancion.setOnClickListener {
@@ -448,24 +454,31 @@ class PlaylistDetail : AppCompatActivity() {
                                 addAll(colaboradores)
                             }
 
-                            val recyclerView = RecyclerView(this@PlaylistDetail).apply {
-                                layoutManager = LinearLayoutManager(this@PlaylistDetail)
-                                adapter = ParticipantesAdapter(participantes, creador) { expulsado ->
-                                    alguienExpulsado = true
-                                    Toast.makeText(this@PlaylistDetail, "Expulsaste a $expulsado", Toast.LENGTH_SHORT).show()
-                                    expelUser(playlistId, expulsado)
+                            val dialogView = layoutInflater.inflate(R.layout.dialog_participantes, null)
+
+                            val recyclerView = dialogView.findViewById<RecyclerView>(R.id.recyclerViewParticipantes)
+                            recyclerView.layoutManager = LinearLayoutManager(this@PlaylistDetail)
+                            recyclerView.adapter = ParticipantesAdapter(participantes, creador) { expulsado ->
+                                alguienExpulsado = true
+                                Toast.makeText(this@PlaylistDetail, "Expulsaste a $expulsado", Toast.LENGTH_SHORT).show()
+                                expelUser(playlistId, expulsado)
+                            }
+
+                            val titulo = dialogView.findViewById<TextView>(R.id.textViewName)
+                            titulo.text = "Participantes"
+
+                            val alertDialog = AlertDialog.Builder(this@PlaylistDetail)
+                                .setView(dialogView)
+                                .create()
+
+                            alertDialog.setOnDismissListener {
+                                if (alguienExpulsado) {
+                                    recreate()
                                 }
                             }
 
-                            AlertDialog.Builder(this@PlaylistDetail)
-                                .setTitle("Participantes")
-                                .setView(recyclerView)
-                                .setPositiveButton("Cerrar") { _, _ ->
-                                    if (alguienExpulsado) {
-                                        recreate()
-                                    }
-                                }
-                                .show()
+                            alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+                            alertDialog.show()
                         }
                         Glide.with(this@PlaylistDetail)
                             .load(it.fotoPortada)
@@ -675,40 +688,49 @@ class PlaylistDetail : AppCompatActivity() {
     }
 
 
-    private fun showMoreOptionsDialog() {
-        Log.d("MiAppPlaylist", "Abrir diálogo de Mas opciones playlist")
+    private fun showMoreOptionsPopupMenu(anchorView: View) {
+        Log.d("MiAppPlaylist", "Abrir PopupMenu de Más opciones playlist")
 
         val privacyOption = if (currentPlaylist?.privacidad == true) "Hacer pública" else "Hacer privada"
 
-        val options = mutableListOf<String>()
+        val popup = PopupMenu(this, anchorView, Gravity.START, 0, R.style.PopupMenuStyle)
+        val menu = popup.menu
+
         when (rol?.lowercase()) {
             "creador" -> {
-                options.add(0, "Editar lista")
-                options.add(1, "Eliminar lista")
-                options.add(2, privacyOption)
+                menu.add(0, 1, 0, "Editar lista")
+                menu.add(0, 2, 1, "Eliminar lista")
+                menu.add(0, 4, 2, if (currentPlaylist?.privacidad == true) "Hacer pública" else "Hacer privada")
             }
             "participante" -> {
-                options.add(0, "Editar lista")
-                options.add(1, "Abandonar playlist")
-                options.add(2, privacyOption)
+                menu.add(0, 1, 0, "Editar lista")
+                menu.add(0, 3, 1, "Abandonar playlist")
+                menu.add(0, 4, 2, if (currentPlaylist?.privacidad == true) "Hacer pública" else "Hacer privada")
             }
         }
 
-        //val options = arrayOf("Editar lista", "Eliminar lista", privacyOption)
-
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Más opciones")
-        builder.setItems(options.toTypedArray()) { _, which ->
-            when (options[which]) {
-                "Editar lista" -> showEditPlaylistDialog()
-                "Eliminar lista" -> showConfirmDeleteDialog()
-                "Abandonar playlist" -> showConfirmLeaveDialog()
-                privacyOption -> changePrivacyPlaylist()
-
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                1 -> showEditPlaylistDialog()
+                2 -> showConfirmDeleteDialog()
+                3 -> showConfirmLeaveDialog()
+                4 -> changePrivacyPlaylist()
             }
+            true
         }
-        val dialog = builder.create()
-        dialog.show()
+
+        for (i in 0 until popup.menu.size()) {
+            val item = popup.menu.getItem(i)
+            val spanString = SpannableString(item.title)
+            spanString.setSpan(
+                TypefaceSpan(ResourcesCompat.getFont(anchorView.context, R.font.poppins_regular)!!),
+                0, spanString.length,
+                Spannable.SPAN_INCLUSIVE_INCLUSIVE
+            )
+            item.title = spanString
+        }
+
+        popup.show()
     }
 
     private fun showEditPlaylistDialog() {
@@ -915,26 +937,33 @@ class PlaylistDetail : AppCompatActivity() {
     }
 
     private fun showConfirmDeleteDialog() {
-        // Crear el AlertDialog.Builder
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Eliminar Playlist")
-        builder.setMessage("¿Estás seguro de que quieres eliminar esta playlist? Esta acción no se puede deshacer.")
+        val dialogView = layoutInflater.inflate(R.layout.dialog_delete, null)
 
-        // Botón "Aceptar"
-        builder.setPositiveButton("Aceptar") { _, _ ->
-            // Lógica para eliminar la playlist
-            deletePlaylist()  // Aquí llamas a la función que elimina la playlist
+        val titulo = dialogView.findViewById<TextView>(R.id.textViewHeadersEscuchas)
+        val mensaje = dialogView.findViewById<TextView>(R.id.txtMensaje)
+        val btnCancelar = dialogView.findViewById<Button>(R.id.btnRechazar)
+        val btnAceptar = dialogView.findViewById<Button>(R.id.btnAceptar)
+
+        titulo.text = "Eliminar Playlist"
+        mensaje.text = "¿Estás seguro de que quieres eliminar esta playlist? Esta acción no se puede deshacer."
+
+        val alertDialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .create()
+
+        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        btnCancelar.setOnClickListener {
+            alertDialog.dismiss()
+        }
+
+        btnAceptar.setOnClickListener {
+            deletePlaylist()
             showToast("Playlist eliminada con éxito")
+            alertDialog.dismiss()
         }
 
-        // Botón "Cancelar"
-        builder.setNegativeButton("Cancelar") { dialog, _ ->
-            dialog.dismiss()  // Cerrar el diálogo sin hacer nada
-        }
-
-        // Crear y mostrar el diálogo
-        val dialog = builder.create()
-        dialog.show()
+        alertDialog.show()
     }
 
     private fun deletePlaylist() {
@@ -964,14 +993,32 @@ class PlaylistDetail : AppCompatActivity() {
     }
 
     private fun showConfirmLeaveDialog() {
-        AlertDialog.Builder(this)
-            .setTitle("Abandonar Playlist")
-            .setMessage("¿Estás seguro de que quieres abandonar esta playlist?")
-            .setPositiveButton("Aceptar") { _, _ ->
-                abandonarPlaylist()
-            }
-            .setNegativeButton("Cancelar", null)
-            .show()
+        val dialogView = layoutInflater.inflate(R.layout.dialog_delete, null)
+
+        val titulo = dialogView.findViewById<TextView>(R.id.textViewHeadersEscuchas)
+        val mensaje = dialogView.findViewById<TextView>(R.id.txtMensaje)
+        val btnCancelar = dialogView.findViewById<Button>(R.id.btnRechazar)
+        val btnAceptar = dialogView.findViewById<Button>(R.id.btnAceptar)
+
+        titulo.text = "Abandonar Playlist"
+        mensaje.text = "¿Estás seguro de que quieres abandonar esta playlist?"
+
+        val alertDialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .create()
+
+        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        btnCancelar.setOnClickListener {
+            alertDialog.dismiss()
+        }
+
+        btnAceptar.setOnClickListener {
+            abandonarPlaylist()
+            alertDialog.dismiss()
+        }
+
+        alertDialog.show()
     }
 
     private fun abandonarPlaylist() {
@@ -1116,29 +1163,38 @@ class PlaylistDetail : AppCompatActivity() {
             }
         })
     }
-    private fun showSongOptionsDialog(cancion: CancionP) {
-        val opcionesTotales = mutableListOf(
-            "Añadir a playlist",
-            "Ir al álbum",
-            "Ir al artista"
-        )
+    private fun showSongOptionsPopupMenu(anchorView: View, cancion: CancionP) {
+        val popup = PopupMenu(this, anchorView, Gravity.START, 0, R.style.PopupMenuStyle)
 
+        popup.menu.add(0, 1, 0, "Añadir a playlist")
         if (rol?.lowercase() == "creador" || rol?.lowercase() == "participante") {
-            opcionesTotales.add(1, "Eliminar de esta playlist")
+            popup.menu.add(0, 2, 1, "Eliminar de esta playlist")
+        }
+        popup.menu.add(0, 3, 2, "Ir al álbum")
+        popup.menu.add(0, 4, 3, "Ir al artista")
+
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                1 -> addToPlaylist(cancion)
+                2 -> removeFromPlaylist(cancion)
+                3 -> goToAlbum(cancion)
+                4 -> goToArtist(cancion)
+            }
+            true
         }
 
-        AlertDialog.Builder(this)
-            .setTitle(cancion.nombre)
-            .setItems(opcionesTotales.toTypedArray()) { _, which ->
-                when {
-                    opcionesTotales[which] == "Añadir a playlist" -> addToPlaylist(cancion)
-                    opcionesTotales[which] == "Eliminar de esta playlist" -> removeFromPlaylist(cancion)
-                    opcionesTotales[which] == "Ir al álbum" -> goToAlbum(cancion)
-                    opcionesTotales[which] == "Ir al artista" -> goToArtist(cancion)
-                }
-            }
-            .setNegativeButton("Cancelar", null)
-            .show()
+        for (i in 0 until popup.menu.size()) {
+            val item = popup.menu.getItem(i)
+            val spanString = SpannableString(item.title)
+            spanString.setSpan(
+                TypefaceSpan(ResourcesCompat.getFont(anchorView.context, R.font.poppins_regular)!!),
+                0, spanString.length,
+                Spannable.SPAN_INCLUSIVE_INCLUSIVE
+            )
+            item.title = spanString
+        }
+
+        popup.show()
     }
 
     private fun addToPlaylist(cancion: CancionP) {
@@ -1197,9 +1253,6 @@ class PlaylistDetail : AppCompatActivity() {
         dialog.show()
     }
 
-
-
-
     private fun addSongToSelectedPlaylist(cancion: CancionP, playlistId: String) {
         val token = Preferencias.obtenerValorString("token", "")
         val authHeader = "Bearer $token"
@@ -1234,18 +1287,36 @@ class PlaylistDetail : AppCompatActivity() {
 
 
     private fun removeFromPlaylist(cancion: CancionP) {
-        AlertDialog.Builder(this)
-            .setTitle("Eliminar canción")
-            .setMessage("¿Estás seguro de que quieres eliminar '${cancion.nombre}' de esta playlist?")
-            .setPositiveButton("Eliminar") { _, _ ->
-                currentPlaylist?.let { playlistId?.let { it1 ->
-                    performRemoveFromPlaylist(cancion.id,
-                        it1
-                    )
-                } }
+        val dialogView = layoutInflater.inflate(R.layout.dialog_delete, null)
+
+        val titulo = dialogView.findViewById<TextView>(R.id.textViewHeadersEscuchas)
+        val mensaje = dialogView.findViewById<TextView>(R.id.txtMensaje)
+        val btnCancelar = dialogView.findViewById<Button>(R.id.btnRechazar)
+        val btnEliminar = dialogView.findViewById<Button>(R.id.btnAceptar)
+
+        titulo.text = "Eliminar canción"
+        mensaje.text = "¿Estás seguro de que quieres eliminar '${cancion.nombre}' de esta playlist?"
+
+        val alertDialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .create()
+
+        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        btnCancelar.setOnClickListener {
+            alertDialog.dismiss()
+        }
+
+        btnEliminar.setOnClickListener {
+            currentPlaylist?.let {
+                playlistId?.let { playlistId ->
+                    performRemoveFromPlaylist(cancion.id, playlistId)
+                }
             }
-            .setNegativeButton("Cancelar", null)
-            .show()
+            alertDialog.dismiss()
+        }
+
+        alertDialog.show()
     }
 
 

@@ -5,7 +5,11 @@ import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.TypefaceSpan
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +21,7 @@ import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -98,7 +103,7 @@ class CancionesAlbumAdapter(
         }
 
         private fun showOptionsMenu(anchorView: View, cancion: CancionesAlbum) {
-            val popup = PopupMenu(anchorView.context, anchorView)
+            val popup = PopupMenu(anchorView.context, anchorView, Gravity.START, 0, R.style.PopupMenuStyle)
             popup.menuInflater.inflate(R.menu.item_menu_options, popup.menu)
 
             popup.setOnMenuItemClickListener { item ->
@@ -113,6 +118,17 @@ class CancionesAlbumAdapter(
                     }
                     else -> false
                 }
+            }
+
+            for (i in 0 until popup.menu.size()) {
+                val item = popup.menu.getItem(i)
+                val spanString = SpannableString(item.title)
+                spanString.setSpan(
+                    TypefaceSpan(ResourcesCompat.getFont(anchorView.context, R.font.poppins_regular)!!),
+                    0, spanString.length,
+                    Spannable.SPAN_INCLUSIVE_INCLUSIVE
+                )
+                item.title = spanString
             }
             popup.show()
         }

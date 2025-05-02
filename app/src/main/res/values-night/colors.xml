@@ -19,8 +19,10 @@
     <color name="blancoOscuro">#DDDCDC</color>
     <color name="greyClaroB">#E9E6E6</color>
     <color name="buttons">#8CA4FF</color>
+    <color name="activeButtons">#FFFFFF</color>
     <color name="insideButtons">#FF000000</color>
     <color name="insideSong">#515050</color>
     <color name="seekbar">#DDDCDC</color>
+    <color name="background1">#515050</color>
 
 </resources>

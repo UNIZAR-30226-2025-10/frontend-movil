@@ -3,7 +3,7 @@
     android:height="48dp"
     android:viewportWidth="48"
     android:viewportHeight="48"
-    android:tint="@color/fondo">
+    android:tint="@color/buttons">
 
   <!-- Línea de abajo izquierda a arriba derecha (continua) -->
   <path
