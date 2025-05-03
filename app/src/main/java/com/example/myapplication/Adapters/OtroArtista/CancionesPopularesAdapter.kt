@@ -10,8 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.io.response.CancionPopulares
+import com.example.myapplication.io.response.CancionesArtista
 
 class CancionesPopularesAdapter(
+    private val clickListener: (CancionPopulares) -> Unit,
     private val onFavoriteClick: (CancionPopulares, Boolean, Int) -> Unit
 ) : RecyclerView.Adapter<CancionesPopularesAdapter.CancionViewHolder>() {
 
@@ -31,6 +33,8 @@ class CancionesPopularesAdapter(
 
     override fun onBindViewHolder(holder: CancionViewHolder, position: Int) {
         holder.bind(canciones[position], position)
+        val cancion = canciones[position]
+        holder.itemView.setOnClickListener { clickListener(cancion) }
     }
 
     override fun getItemCount() = canciones.size

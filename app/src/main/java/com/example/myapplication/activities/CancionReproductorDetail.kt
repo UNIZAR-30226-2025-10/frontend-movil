@@ -406,7 +406,6 @@ class CancionReproductorDetail : AppCompatActivity() {
                     val resultIntent = Intent()
                     resultIntent.putExtra("es_favorito", fav) // Devolver el nuevo estado del favorito
                     setResult(RESULT_OK, resultIntent)
-                    finish()
                 } else {
                     Toast.makeText(this@CancionReproductorDetail, "Error al actualizar el estado", Toast.LENGTH_SHORT).show()
                 }
@@ -605,6 +604,7 @@ class CancionReproductorDetail : AppCompatActivity() {
                 putExtra("progreso", progreso)
             }
             startService(startIntent)
+            actualizarIconoPlayPause()
         } catch (e: Exception) {
             e.printStackTrace()
             Toast.makeText(this, "Error al reproducir el audio", Toast.LENGTH_SHORT).show()
@@ -620,6 +620,7 @@ class CancionReproductorDetail : AppCompatActivity() {
                 putExtra("progreso", progreso)
             }
             startService(intent)
+            actualizarIconoPlayPause()
 
         } catch (e: Exception) {
             e.printStackTrace()

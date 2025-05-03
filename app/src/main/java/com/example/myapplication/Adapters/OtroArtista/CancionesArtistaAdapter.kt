@@ -8,9 +8,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myapplication.R
+import com.example.myapplication.io.response.Cancion
 import com.example.myapplication.io.response.CancionesArtista
 
-class CancionesArtistaAdapter : RecyclerView.Adapter<CancionesArtistaAdapter.CancionViewHolder>() {
+class CancionesArtistaAdapter(private val clickListener: (CancionesArtista) -> Unit)
+    : RecyclerView.Adapter<CancionesArtistaAdapter.CancionViewHolder>() {
 
     private var canciones: List<CancionesArtista> = listOf()
     private var nombreArtista: String = ""  // Variable para almacenar el nombre del artista
@@ -39,6 +41,9 @@ class CancionesArtistaAdapter : RecyclerView.Adapter<CancionesArtistaAdapter.Can
                 .error(R.drawable.no_cancion)
                 .into(holder.fotoPortada)
         }
+
+        // Corrección: Se pasa una lambda en lugar de ejecutar la función
+        holder.itemView.setOnClickListener { clickListener(cancion) }
     }
 
     override fun getItemCount(): Int = canciones.size

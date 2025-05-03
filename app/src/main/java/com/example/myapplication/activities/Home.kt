@@ -904,6 +904,7 @@ class Home : AppCompatActivity() {
                 putExtra("progreso", progreso)
             }
             startService(startIntent)
+            actualizarIconoPlayPause()
         } catch (e: Exception) {
             e.printStackTrace()
             Toast.makeText(this, "Error al reproducir el audio", Toast.LENGTH_SHORT).show()
@@ -919,6 +920,7 @@ class Home : AppCompatActivity() {
                 putExtra("progreso", progreso)
             }
             startService(intent)
+            actualizarIconoPlayPause()
 
         } catch (e: Exception) {
             e.printStackTrace()

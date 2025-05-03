@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.myapplication.Adapters.Buscador.CancionAdapter
 import com.example.myapplication.R
 import com.example.myapplication.Adapters.OtroArtista.CancionesArtistaAdapter
 import com.example.myapplication.Adapters.OtroArtista.CancionesPopularesAdapter
@@ -208,15 +209,33 @@ class OtroArtista : AppCompatActivity() {
 
         // Configurar RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)
-        cancionesAdapter = CancionesPopularesAdapter { cancion, isFavorite, position  ->
-            actualizarFavorito(cancion.id, isFavorite, position, nombreUsuario)
-        }
+        cancionesAdapter = CancionesPopularesAdapter(
+            { cancion ->
+                val cancionId = Preferencias.obtenerValorString("cancionActualId", "")
+                if (cancionId == cancion.id) {
+                    startActivity(Intent(this, CancionReproductorDetail::class.java))
+                } else {
+                    reproducir(cancion.id)
+                }
+            },
+            { cancion, isFavorite, position ->
+                actualizarFavorito(cancion.id, isFavorite, position, nombreUsuario)
+            }
+        )
         recyclerView.adapter = cancionesAdapter
 
         recyclerViewCanciones.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerViewAlbumes.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
-        cancionesArtistaAdapter = CancionesArtistaAdapter()
+        cancionesArtistaAdapter = CancionesArtistaAdapter{ cancion ->
+            val cancionId = Preferencias.obtenerValorString("cancionActualId", "")
+            if(cancionId == cancion.id.toString()){
+                startActivity(Intent(this, CancionReproductorDetail::class.java))
+            }
+            else {
+                reproducir(cancion.id.toString())
+            }
+        }
         albumesAdapter = DiscografiaDiscosAdapter { album ->
             // Intent para abrir AlbumDetail
             val intent = Intent(this, AlbumDetail::class.java).apply {
@@ -780,6 +799,7 @@ class OtroArtista : AppCompatActivity() {
                 putExtra("progreso", progreso)
             }
             startService(startIntent)
+            actualizarIconoPlayPause()
         } catch (e: Exception) {
             e.printStackTrace()
             Toast.makeText(this, "Error al reproducir el audio", Toast.LENGTH_SHORT).show()
@@ -795,6 +815,7 @@ class OtroArtista : AppCompatActivity() {
                 putExtra("progreso", progreso)
             }
             startService(intent)
+            actualizarIconoPlayPause()
 
         } catch (e: Exception) {
             e.printStackTrace()
