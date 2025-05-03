@@ -27,6 +27,7 @@ import android.content.ServiceConnection
 import android.os.IBinder
 import android.util.TypedValue
 import android.view.MotionEvent
+import android.view.View
 import android.widget.ProgressBar
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.myapplication.io.request.ActualizarFavoritoRequest
@@ -35,7 +36,12 @@ import com.example.myapplication.io.request.PlayPauseRequest
 import com.example.myapplication.io.request.PlayPauseResponse
 import com.example.myapplication.io.response.ActualizarFavoritoResponse
 import com.example.myapplication.io.response.CancionInfoResponse
+import com.example.myapplication.io.response.Interaccion
+import com.example.myapplication.io.response.InvitacionPlaylist
+import com.example.myapplication.io.response.Novedad
+import com.example.myapplication.io.response.Seguidor
 import com.example.myapplication.services.MusicPlayerService
+import com.example.myapplication.services.WebSocketEventHandler
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -45,6 +51,7 @@ class CancionReproductorDetail : AppCompatActivity() {
     private lateinit var apiService: ApiService
     private lateinit var btnFavorito: ImageButton
     private lateinit var btnPlayPause: ImageButton
+    private lateinit var dot: View
     private var isFavorito = false
     private lateinit var webSocketManager: WebSocketManager // Declara la variable
 
@@ -93,6 +100,33 @@ class CancionReproductorDetail : AppCompatActivity() {
         }
     }
 
+    //EVENTOS PARA LAS NOTIFICACIONES
+    private val listenerNovedad: (Novedad) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
+    private val listenerSeguidor: (Seguidor) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
+    private val listenerInvitacion: (InvitacionPlaylist) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
+    private val listenerInteraccion: (Interaccion) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
+
+
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -115,6 +149,20 @@ class CancionReproductorDetail : AppCompatActivity() {
         val nombreCancion = Preferencias.obtenerValorString("nombreCancionActual", "Nombre de la canción")
         val artistaCancion = Preferencias.obtenerValorString("nombreArtisticoActual", "Artista")
         val songProgress = Preferencias.obtenerValorEntero("progresoCancionActual", 0)
+
+        dot = findViewById<View>(R.id.notificationDot)
+        //PARA EL CIRCULITO ROJO DE NOTIFICACIONES
+        if (Preferencias.obtenerValorBooleano("hay_notificaciones",false) == true) {
+            dot.visibility = View.VISIBLE
+        } else {
+            dot.visibility = View.GONE
+        }
+
+        //Para actualizar el punto rojo en tiempo real, suscripcion a los eventos
+        WebSocketEventHandler.registrarListenerNovedad(listenerNovedad)
+        WebSocketEventHandler.registrarListenerSeguidor(listenerSeguidor)
+        WebSocketEventHandler.registrarListenerInvitacion(listenerInvitacion)
+        WebSocketEventHandler.registrarListenerInteraccion(listenerInteraccion)
 
         val btnAvanzar = findViewById<ImageButton>(R.id.btnAvanzar)
         val btnRetroceder = findViewById<ImageButton>(R.id.btnRetroceder)

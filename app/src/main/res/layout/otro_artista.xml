@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#DDDCDC"
+    style="@style/ScreenBackground"
     android:fillViewport="true"
     tools:context=".activities.OtroArtista">
 
@@ -87,7 +87,7 @@
             android:layout_height="match_parent"
             android:layout_below="@id/toolbar"
             android:paddingBottom="130dp"
-            android:background="#DDDCDC"
+            style="@style/TextColor"
             android:fillViewport="true">
 
             <LinearLayout
@@ -100,7 +100,7 @@
                     android:id="@+id/profileSection"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="#F4F4F4"
+                    style="@style/ScreenBackground2"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="16dp">
@@ -132,7 +132,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
                                 android:fontFamily="@font/poppins_bold"
-                                android:textColor="#000E3B"
+                                style="@style/TextColor"
                                 android:textSize="14sp" />
 
                             <TextView
@@ -140,7 +140,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/poppins_regular"
-                                android:textColor="#000E3B"
+                                style="@style/TextColor"
                                 android:textSize="18sp" />
 
                             <LinearLayout
@@ -155,7 +155,7 @@
                                     android:layout_marginRight="12dp"
                                     android:fontFamily="@font/poppins_regular"
                                     android:text="0 seguidores"
-                                    android:textColor="#000E3B"
+                                    style="@style/TextColor"
                                     android:textSize="14sp" />
 
                                 <Button
@@ -204,7 +204,7 @@
                     android:paddingStart="16dp"
                     android:paddingTop="16dp"
                     android:text="Populares"
-                    android:textColor="#000E3B"
+                    style="@style/TextColor"
                     android:textSize="24sp"
                     android:textStyle="bold" />
 
@@ -224,7 +224,7 @@
                     android:paddingStart="16dp"
                     android:paddingTop="16dp"
                     android:text="Canciones que te gustan"
-                    android:textColor="#000E3B"
+                    style="@style/TextColor"
                     android:textSize="24sp"
                     android:textStyle="bold" />
 
@@ -263,7 +263,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
                                 android:fontFamily="@font/poppins_regular"
-                                android:textColor="#000E3B"
+                                style="@style/TextColor"
                                 android:textSize="14sp" />
 
                             <TextView
@@ -271,7 +271,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/poppins_bold"
-                                android:textColor="#000E3B"
+                                style="@style/TextColor"
                                 android:textSize="18sp" />
                         </LinearLayout>
                     </LinearLayout>
@@ -285,7 +285,7 @@
                     android:paddingStart="16dp"
                     android:paddingTop="16dp"
                     android:text="Discografía"
-                    android:textColor="#000E3B"
+                    style="@style/TextColor"
                     android:textSize="24sp"
                     android:textStyle="bold" />
 

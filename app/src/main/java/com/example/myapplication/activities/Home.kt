@@ -318,20 +318,6 @@ class Home : AppCompatActivity() {
         // Configurar botones de navegación
         setupNavigation()
 
-
-        switchMode = findViewById(R.id.switchMode)
-
-        // Detectar el modo actual y actualizar el estado del switch
-        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        switchMode.isChecked = currentNightMode == Configuration.UI_MODE_NIGHT_YES
-
-        switchMode.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
-        }
     }
 
     private fun updateMiniReproductor() {

@@ -118,7 +118,6 @@ class PlaylistDetail : AppCompatActivity() {
     var playlistId: String? = null
     private var isFavorito = false
     var alguienExpulsado = false
-    private lateinit var switchMode: SwitchCompat
 
     private var rol: String? = null
 
@@ -390,18 +389,6 @@ class PlaylistDetail : AppCompatActivity() {
 
         setupNavigation()
 
-        switchMode = findViewById(R.id.switchMode)
-        // Detectar el modo actual y actualizar el estado del switch
-        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        switchMode.isChecked = currentNightMode == Configuration.UI_MODE_NIGHT_YES
-
-        switchMode.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
-        }
     }
 
     // Función para realizar la llamada a la API y obtener los datos

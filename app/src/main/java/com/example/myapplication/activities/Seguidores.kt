@@ -33,9 +33,14 @@ import com.example.myapplication.io.request.ChangeFollowRequest
 import com.example.myapplication.io.response.AddReproduccionResponse
 import com.example.myapplication.io.response.AudioResponse
 import com.example.myapplication.io.response.CancionInfoResponse
+import com.example.myapplication.io.response.Interaccion
+import com.example.myapplication.io.response.InvitacionPlaylist
+import com.example.myapplication.io.response.Novedad
+import com.example.myapplication.io.response.Seguidor
 import com.example.myapplication.io.response.Seguidores
 import com.example.myapplication.io.response.SeguidoresResponse
 import com.example.myapplication.services.MusicPlayerService
+import com.example.myapplication.services.WebSocketEventHandler
 import com.example.myapplication.utils.Preferencias
 import retrofit2.Call
 import retrofit2.Callback
@@ -46,6 +51,8 @@ class Seguidores : AppCompatActivity(), SeguidoresAdapter.OnFollowListener {
     private lateinit var apiService: ApiService
     private lateinit var rvFollowers: RecyclerView
     private lateinit var adapter: SeguidoresAdapter
+    private lateinit var dot: View
+
     private val followersList = mutableListOf<Seguidores>()
 
     private lateinit var progressBar: ProgressBar
@@ -91,7 +98,31 @@ class Seguidores : AppCompatActivity(), SeguidoresAdapter.OnFollowListener {
         }
     }
 
-    private lateinit var switchMode: SwitchCompat
+    //EVENTOS PARA LAS NOTIFICACIONES
+    private val listenerNovedad: (Novedad) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
+    private val listenerSeguidor: (Seguidor) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
+    private val listenerInvitacion: (InvitacionPlaylist) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
+    private val listenerInteraccion: (Interaccion) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -117,23 +148,25 @@ class Seguidores : AppCompatActivity(), SeguidoresAdapter.OnFollowListener {
         }
         indexActual = Preferencias.obtenerValorEntero("indexColeccionActual", 0)
 
-        switchMode = findViewById(R.id.switchMode)
-        // Detectar el modo actual y actualizar el estado del switch
-        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        switchMode.isChecked = currentNightMode == Configuration.UI_MODE_NIGHT_YES
-
-        switchMode.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
-        }
 
         apiService = ApiService.create()
         setupRecyclerView()
         loadFollowers()
         progressBar = findViewById(R.id.progressBar)
+
+        dot = findViewById<View>(R.id.notificationDot)
+        //PARA EL CIRCULITO ROJO DE NOTIFICACIONES
+        if (Preferencias.obtenerValorBooleano("hay_notificaciones",false) == true) {
+            dot.visibility = View.VISIBLE
+        } else {
+            dot.visibility = View.GONE
+        }
+
+        //Para actualizar el punto rojo en tiempo real, suscripcion a los eventos
+        WebSocketEventHandler.registrarListenerNovedad(listenerNovedad)
+        WebSocketEventHandler.registrarListenerSeguidor(listenerSeguidor)
+        WebSocketEventHandler.registrarListenerInvitacion(listenerInvitacion)
+        WebSocketEventHandler.registrarListenerInteraccion(listenerInteraccion)
         updateMiniReproductor()
         setupNavigation()
     }
@@ -601,5 +634,13 @@ class Seguidores : AppCompatActivity(), SeguidoresAdapter.OnFollowListener {
         buttonCrear.setOnClickListener {
             startActivity(Intent(this, Perfil::class.java))
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        WebSocketEventHandler.eliminarListenerNovedad(listenerNovedad)
+        WebSocketEventHandler.eliminarListenerSeguidor(listenerSeguidor)
+        WebSocketEventHandler.eliminarListenerInvitacion(listenerInvitacion)
+        WebSocketEventHandler.eliminarListenerInteraccion(listenerInteraccion)
     }
 }

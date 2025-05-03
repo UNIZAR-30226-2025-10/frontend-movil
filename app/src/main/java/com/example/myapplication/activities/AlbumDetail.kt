@@ -66,7 +66,6 @@ class AlbumDetail : AppCompatActivity() {
     var selectedCancionParaAñadir: CancionesAlbum? = null
     var albumId: String? = null
 
-    private lateinit var switchMode: SwitchCompat
 
     private var aleatorio = false
     private var modo = "enOrden"
@@ -207,18 +206,7 @@ class AlbumDetail : AppCompatActivity() {
         getDatosAlbum(albumId)
         setupNavigation()
 
-        switchMode = findViewById(R.id.switchMode)
         // Detectar el modo actual y actualizar el estado del switch
-        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        switchMode.isChecked = currentNightMode == Configuration.UI_MODE_NIGHT_YES
-
-        switchMode.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
-        }
 
         Preferencias.guardarValorString("modoColeccionMirada", "enOrden")
         Preferencias.guardarValorEntero("indexColeccionMirada", indexActual)

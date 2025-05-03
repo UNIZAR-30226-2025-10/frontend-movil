@@ -33,16 +33,6 @@
                     android:contentDescription="@string/logo"
                     android:src="@drawable/logo" />
 
-                <!-- Switch de modo -->
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchMode"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toStartOf="@id/notificationButtonContainer"
-                    android:layout_marginEnd="16dp"
-                    android:thumb="@drawable/thumb"
-                    app:track="@drawable/track" />
 
                 <FrameLayout
                     android:id="@+id/notificationButtonContainer"
@@ -95,7 +85,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="#DDDCDC"
+            style="@style/ScreenBackground"
             android:fillViewport="true">
 
             <LinearLayout
@@ -109,7 +99,7 @@
                     android:id="@+id/profileSection"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="#F4F4F4"
+                    style="@style/ScreenBackground2"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="16dp">
@@ -141,7 +131,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
                                 android:fontFamily="@font/poppins_bold"
-                                android:textColor="#000E3B"
+                                style="@style/TextColor"
                                 android:textSize="18sp" />
 
                             <TextView
@@ -149,7 +139,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/poppins_regular"
-                                android:textColor="#000E3B"
+                                style="@style/TextColor"
                                 android:textSize="14sp" />
 
                             <TextView
@@ -158,7 +148,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginRight="12dp"
                                 android:fontFamily="@font/poppins_regular"
-                                android:textColor="#000E3B"
+                                style="@style/TextColor"
                                 android:textSize="14sp" />
                         </LinearLayout>
                     </LinearLayout>

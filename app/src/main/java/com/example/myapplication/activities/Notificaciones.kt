@@ -121,7 +121,6 @@ class Notificaciones : AppCompatActivity() {
         }
     }
 
-    private lateinit var switchMode: SwitchCompat
     private lateinit var apiService: ApiService
     private lateinit var recyclerInvitaciones: RecyclerView
     private lateinit var recyclerInteracciones: RecyclerView
@@ -227,18 +226,6 @@ class Notificaciones : AppCompatActivity() {
         setupNavigation()
         updateMiniReproductor()
 
-        switchMode = findViewById(R.id.switchMode)
-        // Detectar el modo actual y actualizar el estado del switch
-        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        switchMode.isChecked = currentNightMode == Configuration.UI_MODE_NIGHT_YES
-
-        switchMode.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
-        }
 
         val profileImageButton = findViewById<ImageButton>(R.id.profileImageButton)
         val profileImageUrl = Preferencias.obtenerValorString("fotoPerfil", "")

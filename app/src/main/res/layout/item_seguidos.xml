@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
                 android:fontFamily="@font/poppins_bold"
-                android:textColor="#000E3B"
+                style="@style/TextColor"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="Nombre de usuario" />

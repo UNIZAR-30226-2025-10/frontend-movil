@@ -50,8 +50,13 @@ import com.example.myapplication.io.response.CloudinaryResponse
 import com.example.myapplication.io.response.EditarPerfilResponse
 import com.example.myapplication.io.response.GetSignatureResponse
 import com.example.myapplication.io.response.InfoSeguidoresResponse
+import com.example.myapplication.io.response.Interaccion
+import com.example.myapplication.io.response.InvitacionPlaylist
+import com.example.myapplication.io.response.Novedad
 import com.example.myapplication.io.response.PlaylistsResponse
+import com.example.myapplication.io.response.Seguidor
 import com.example.myapplication.services.MusicPlayerService
+import com.example.myapplication.services.WebSocketEventHandler
 import com.example.myapplication.utils.Preferencias
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -70,6 +75,7 @@ class Perfil : AppCompatActivity() {
     private lateinit var usernameTextView: TextView
     private lateinit var profileImageView: ImageView
     private lateinit var profileImageButton: ImageView
+    private lateinit var dot: View
     private var imageUri: Uri? = null
     private var profileImageViewDialog: ImageView? = null
     private val openGalleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -85,7 +91,6 @@ class Perfil : AppCompatActivity() {
         }
     }
 
-    private lateinit var dot: View
 
     private lateinit var switchMode: SwitchCompat
 
@@ -131,6 +136,32 @@ class Perfil : AppCompatActivity() {
         override fun onServiceDisconnected(name: ComponentName?) {
             serviceBound = false
             handler.removeCallbacks(updateRunnable)
+        }
+    }
+
+    //EVENTOS PARA LAS NOTIFICACIONES
+    private val listenerNovedad: (Novedad) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
+    private val listenerSeguidor: (Seguidor) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
+    private val listenerInvitacion: (InvitacionPlaylist) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
+    private val listenerInteraccion: (Interaccion) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
         }
     }
 
@@ -282,6 +313,20 @@ class Perfil : AppCompatActivity() {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
         }
+
+        dot = findViewById<View>(R.id.notificationDot)
+        //PARA EL CIRCULITO ROJO DE NOTIFICACIONES
+        if (Preferencias.obtenerValorBooleano("hay_notificaciones",false) == true) {
+            dot.visibility = View.VISIBLE
+        } else {
+            dot.visibility = View.GONE
+        }
+
+        //Para actualizar el punto rojo en tiempo real, suscripcion a los eventos
+        WebSocketEventHandler.registrarListenerNovedad(listenerNovedad)
+        WebSocketEventHandler.registrarListenerSeguidor(listenerSeguidor)
+        WebSocketEventHandler.registrarListenerInvitacion(listenerInvitacion)
+        WebSocketEventHandler.registrarListenerInteraccion(listenerInteraccion)
     }
 
     private fun showDeleteAccountDialog() {
@@ -1072,5 +1117,13 @@ class Perfil : AppCompatActivity() {
         buttonCrear.setOnClickListener {
             startActivity(Intent(this, Perfil::class.java))
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        WebSocketEventHandler.eliminarListenerNovedad(listenerNovedad)
+        WebSocketEventHandler.eliminarListenerSeguidor(listenerSeguidor)
+        WebSocketEventHandler.eliminarListenerInvitacion(listenerInvitacion)
+        WebSocketEventHandler.eliminarListenerInteraccion(listenerInteraccion)
     }
 }
