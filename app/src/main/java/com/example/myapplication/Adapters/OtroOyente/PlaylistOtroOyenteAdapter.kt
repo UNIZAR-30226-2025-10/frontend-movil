@@ -19,7 +19,7 @@ class PlaylistOtroOyenteAdapter(
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CancionViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_playlist, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_playlist_otro_oyente, parent, false)
         return CancionViewHolder(view)
     }
 

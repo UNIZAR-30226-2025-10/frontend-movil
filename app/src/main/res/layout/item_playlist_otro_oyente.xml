@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="4dp"
+    android:layout_marginEnd="8dp">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/no_cancion"
+        android:background="@drawable/rounded_edittext"
+        android:clipToOutline="true"
+        android:outlineProvider="background" />
+
+    <TextView
+        android:id="@+id/usuarioPlaylist"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:text="Nombre del dueño de la playlist"
+        style="@style/TextColor"
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="10sp"
+        android:maxLines="1"
+        android:ellipsize="end" />
+
+</LinearLayout>
+
