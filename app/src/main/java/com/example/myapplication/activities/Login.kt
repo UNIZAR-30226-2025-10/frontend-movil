@@ -6,15 +6,21 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.InputType
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.TypefaceSpan
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import com.example.myapplication.R
 import com.example.myapplication.databinding.LoginBinding
 import com.example.myapplication.io.ApiService
@@ -48,7 +54,34 @@ class Login : AppCompatActivity() {
         val buttonLogin: Button = findViewById(R.id.loginButton)
         val buttonRegister: Button = findViewById(R.id.registerLink)
         val buttonForgotPass: Button = findViewById(R.id.forgotPass)
+        val etPassword = findViewById<EditText>(R.id.etPassword)
+        val btnTogglePassword = findViewById<ImageButton>(R.id.btnTogglePassword)
+        val font = ResourcesCompat.getFont(this, R.font.poppins_regular)
+        val typefaceSpan = TypefaceSpan(font!!)
+        var passwordVisible = false
 
+        btnTogglePassword.setOnClickListener {
+            passwordVisible = !passwordVisible
+
+            if (passwordVisible) {
+                // Mostrar la contraseña
+                etPassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                btnTogglePassword.setImageResource(R.drawable.ic_visibility_on) // Ojo abierto
+            } else {
+                // Ocultar la contraseña
+                etPassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                btnTogglePassword.setImageResource(R.drawable.ic_visibility_off) // Ojo cerrado
+            }
+
+            // Para mantener el cursor al final del texto
+            etPassword.setSelection(etPassword.text.length)
+        }
+
+        // Aplicar la fuente con Spannable
+        val text = etPassword.text.toString()
+        val spannable = SpannableString(text)
+        spannable.setSpan(typefaceSpan, 0, text.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+        etPassword.setText(spannable)
         //Evento clic del he olvidado contraseña
         buttonForgotPass.setOnClickListener{
             startActivity(Intent(this, CambiarPassword1::class.java))

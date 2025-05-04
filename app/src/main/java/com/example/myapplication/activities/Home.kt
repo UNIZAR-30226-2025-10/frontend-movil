@@ -34,6 +34,8 @@ import com.example.myapplication.io.ApiService
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.myapplication.io.request.DeleteAccountRequest
 import com.example.myapplication.io.response.DeleteAccountResponse
@@ -339,14 +341,16 @@ class Home : AppCompatActivity() {
         } else {
             Glide.with(this)
                 .load(songImageUrl)
-                .centerCrop()
                 .transform(
-                    RoundedCorners(
-                        TypedValue.applyDimension(
-                            TypedValue.COMPLEX_UNIT_DIP,
-                            6f,
-                            this.resources.displayMetrics
-                        ).toInt()
+                    MultiTransformation(
+                        CenterCrop(),
+                        RoundedCorners(
+                            TypedValue.applyDimension(
+                                TypedValue.COMPLEX_UNIT_DIP,
+                                6f,
+                                this.resources.displayMetrics
+                            ).toInt()
+                        )
                     )
                 )
                 .placeholder(R.drawable.no_cancion)

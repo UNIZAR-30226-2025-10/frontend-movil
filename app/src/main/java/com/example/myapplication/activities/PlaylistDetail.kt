@@ -23,6 +23,7 @@ import android.text.SpannableString
 import android.text.TextWatcher
 import android.text.style.TypefaceSpan
 import android.util.Log
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -47,6 +48,9 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.myapplication.R
 import com.example.myapplication.Adapters.Playlist.CancionPAdapter
 import com.example.myapplication.Adapters.Playlist.PlaylistSelectionAdapter
@@ -237,7 +241,26 @@ class PlaylistDetail : AppCompatActivity() {
         recyclerViewCanciones.adapter = cancionPAdapter
 
         textViewNombre.text = nombrePlaylist
-        Glide.with(this).load(imagenUrl).into(imageViewPlaylist)
+        val foto: Any = when {
+            imagenUrl == "DEFAULT" || imagenUrl.isNullOrBlank() -> R.drawable.no_cancion
+            else -> imagenUrl
+        }
+        Glide.with(this)
+            .load(foto)
+            .transform(MultiTransformation(
+                    CenterCrop(),
+                    RoundedCorners(
+                        TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP,
+                            12f,
+                            this.resources.displayMetrics
+                        ).toInt()
+                    )
+                )
+            )
+            .placeholder(R.drawable.no_cancion)
+            .error(R.drawable.no_cancion)
+            .into(imageViewPlaylist)
 
 
         val idActual = Preferencias.obtenerValorString("cancionActualId", "")
@@ -467,8 +490,25 @@ class PlaylistDetail : AppCompatActivity() {
                             alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
                             alertDialog.show()
                         }
+                        var foto: Any
+                        if (it.fotoPortada == "DEFAULT") {
+                            foto = R.drawable.no_cancion
+                        } else {
+                            foto = it.fotoPortada
+                        }
                         Glide.with(this@PlaylistDetail)
-                            .load(it.fotoPortada)
+                            .load(foto)
+                            .transform(MultiTransformation(
+                                    CenterCrop(),
+                                    RoundedCorners(
+                                        TypedValue.applyDimension(
+                                            TypedValue.COMPLEX_UNIT_DIP,
+                                            12f,
+                                            this@PlaylistDetail.resources.displayMetrics
+                                        ).toInt()
+                                    )
+                                )
+                            )
                             .placeholder(R.drawable.no_cancion)
                             .error(R.drawable.no_cancion)
                             .into(imageViewPlaylist)
@@ -745,9 +785,25 @@ class PlaylistDetail : AppCompatActivity() {
         // Rellenar el EditText con el nombre actual
         editUsername.setText(playlistTextView.text.toString())
 
+        val foto: Any = if (currentPlaylist?.fotoPortada.isNullOrBlank() || currentPlaylist?.fotoPortada == "DEFAULT") {
+            R.drawable.no_cancion
+        } else {
+            currentPlaylist!!.fotoPortada
+        }
         // Cargar la imagen de portada de la playlist al ImageView dentro del diálogo
         Glide.with(this)
-            .load(currentPlaylist?.fotoPortada) // Usar la misma fuente de la foto
+            .load(foto) // Usar la misma fuente de la foto
+            .transform(MultiTransformation(
+                    CenterCrop(),
+                    RoundedCorners(
+                        TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP,
+                            12f,
+                            this@PlaylistDetail.resources.displayMetrics
+                        ).toInt()
+                    )
+                )
+            )
             .placeholder(R.drawable.no_cancion) // Imágen por defecto si no hay imagen
             .error(R.drawable.no_cancion) // Imágen de error si no se puede cargar
             .into(playlistImageViewDialog!!) // Colocar la imagen en el ImageView del diálogo
@@ -1404,7 +1460,18 @@ class PlaylistDetail : AppCompatActivity() {
         } else {
             Glide.with(this)
                 .load(songImageUrl)
-                .centerCrop()
+                .transform(
+                    MultiTransformation(
+                        CenterCrop(),
+                        RoundedCorners(
+                            TypedValue.applyDimension(
+                                TypedValue.COMPLEX_UNIT_DIP,
+                                6f,
+                                this.resources.displayMetrics
+                            ).toInt()
+                        )
+                    )
+                )
                 .placeholder(R.drawable.no_cancion)
                 .error(R.drawable.no_cancion)
                 .into(songImage)

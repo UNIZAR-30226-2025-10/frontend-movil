@@ -1,5 +1,6 @@
 package com.example.myapplication.Adapters.Album
 
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.myapplication.R
 import com.example.myapplication.io.response.MisPlaylist
 
@@ -34,16 +38,34 @@ class PlaylistSelectorAdapter(
     inner class PlaylistViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val playlistNumber: TextView = itemView.findViewById(R.id.numero) // Añadimos un TextView para el número
         private val playlistName: TextView = itemView.findViewById(R.id.nombre)
-        private val foto: ImageView = itemView.findViewById(R.id.fotoPortada)
+        private val fotoView: ImageView = itemView.findViewById(R.id.fotoPortada)
 
         fun bind(playlist: MisPlaylist, position: Int) {
             // Asignamos el número a partir de la posición en la lista (empezando desde 1)
             playlistNumber.text = (position + 1).toString()
-
             playlistName.text = playlist.nombre
+            var foto: Any
+            if (playlist.fotoPortada == "DEFAULT") {
+                foto = R.drawable.no_cancion
+            } else {
+                foto = playlist.fotoPortada
+            }
             Glide.with(itemView.context)
-                .load(playlist.fotoPortada)
-                .into(foto)
+                .load(foto)
+                .placeholder(R.drawable.no_cancion)
+                .transform(
+                    MultiTransformation(
+                    CenterCrop(),
+                    RoundedCorners(
+                        TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP,
+                            8f,
+                            itemView.context.resources.displayMetrics
+                        ).toInt()
+                    )
+                )
+                )
+                .into(fotoView)
             itemView.setOnClickListener { onPlaylistSelected(playlist) }
         }
     }

@@ -1,6 +1,7 @@
 package com.example.myapplication.Adapters.OtroOyente
 
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.myapplication.R
 import com.example.myapplication.io.response.Playlist
 import com.example.myapplication.io.response.PlaylistOyente
@@ -32,6 +36,18 @@ class PlaylistOtroOyenteAdapter(
         if (!playlist.fotoPortada.isNullOrEmpty()) {
             Glide.with(holder.itemView.context)
                 .load(playlist.fotoPortada)
+                .transform(
+                    MultiTransformation(
+                        CenterCrop(),
+                        RoundedCorners(
+                            TypedValue.applyDimension(
+                                TypedValue.COMPLEX_UNIT_DIP,
+                                12f,
+                                holder.itemView.context.resources.displayMetrics
+                            ).toInt()
+                        )
+                    )
+                )
                 .placeholder(R.drawable.no_cancion)  // Imagen por defecto
                 .error(R.drawable.no_cancion)
                 .into(holder.fotoPortada)

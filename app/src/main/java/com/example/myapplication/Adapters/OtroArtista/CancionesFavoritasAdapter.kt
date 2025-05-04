@@ -1,5 +1,6 @@
 package com.example.myapplication.Adapters.OtroArtista
 
+import android.util.TypedValue
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.io.response.cancionFavoritaArtista
 import android.view.LayoutInflater
@@ -8,6 +9,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.myapplication.R
 
 class CancionesFavoritasAdapter(
@@ -47,6 +51,18 @@ class CancionesFavoritasAdapter(
         // Carga la imagen de la portada
         Glide.with(holder.itemView.context)
             .load(cancion.fotoPortada)
+            .transform(
+                MultiTransformation(
+                    CenterCrop(),
+                    RoundedCorners(
+                        TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP,
+                            12f,
+                            holder.itemView.context.resources.displayMetrics
+                        ).toInt()
+                    )
+                )
+            )
             .placeholder(R.drawable.no_cancion)
             .into(holder.foto)
     }

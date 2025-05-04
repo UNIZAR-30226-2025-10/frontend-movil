@@ -2,6 +2,7 @@ package com.example.myapplication.Adapters.Noizzys
 
 import android.content.Intent
 import android.util.Log
+import android.util.TypedValue
 import com.bumptech.glide.Glide
 import com.example.myapplication.io.response.Noizzy
 import android.view.LayoutInflater
@@ -12,10 +13,12 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.example.myapplication.R
 import com.example.myapplication.activities.NoizzyDetail
 import com.example.myapplication.io.response.InvitacionPlaylist
 import com.example.myapplication.utils.Preferencias
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
 class MisNoizzysAdapter(
     private val noizzys: MutableList<Noizzy>,
@@ -83,6 +86,18 @@ class MisNoizzysAdapter(
             holder.recuadroCancion.visibility = View.VISIBLE
             Glide.with(holder.itemView.context)
                 .load(noizzy.cancion.fotoPortada)
+                .transform(
+                    CenterCrop(),
+                    RoundedCornersTransformation(
+                        TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP,
+                            8f,
+                            holder.itemView.context.resources.displayMetrics
+                        ).toInt(),
+                        0,
+                        RoundedCornersTransformation.CornerType.LEFT // Solo izquierda
+                    )
+                )
                 .placeholder(R.drawable.no_cancion)
                 .error(R.drawable.no_cancion)
                 .into(holder.fotoCancion)

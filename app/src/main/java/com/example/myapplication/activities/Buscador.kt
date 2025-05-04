@@ -14,6 +14,7 @@ import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 import android.widget.CheckBox
@@ -32,6 +33,9 @@ import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.myapplication.Adapters.Buscador.AlbumAdapter
 import com.example.myapplication.Adapters.Buscador.ArtistaAdapter
 import com.example.myapplication.R
@@ -394,7 +398,18 @@ class Buscador : AppCompatActivity() {
         } else {
             Glide.with(this)
                 .load(songImageUrl)
-                .centerCrop()
+                .transform(
+                    MultiTransformation(
+                        CenterCrop(),
+                        RoundedCorners(
+                            TypedValue.applyDimension(
+                                TypedValue.COMPLEX_UNIT_DIP,
+                                6f,
+                                this.resources.displayMetrics
+                            ).toInt()
+                        )
+                    )
+                )
                 .placeholder(R.drawable.no_cancion)
                 .error(R.drawable.no_cancion)
                 .into(songImage)

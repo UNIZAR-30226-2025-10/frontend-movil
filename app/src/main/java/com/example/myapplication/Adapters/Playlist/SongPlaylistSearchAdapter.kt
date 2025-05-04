@@ -1,6 +1,7 @@
 package com.example.myapplication.Adapters.Playlist
 
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.io.response.Cancion
 import com.bumptech.glide.Glide // Asegúrate de tener Glide importado
+import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 
 class SongPlaylistSearchAdapter(
     private var songs: List<Cancion>,
@@ -49,6 +53,18 @@ class SongPlaylistSearchAdapter(
             // Usar Glide para cargar la imagen de la portada
             Glide.with(itemView.context)
                 .load(song.fotoPortada) // Aquí la URL de la foto de portada
+                .transform(
+                    MultiTransformation(
+                    CenterCrop(),
+                    RoundedCorners(
+                        TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP,
+                            8f,
+                            itemView.context.resources.displayMetrics
+                        ).toInt()
+                    )
+                )
+                )
                 .into(imageSong) // Cargar la imagen en el ImageView
 
             itemView.setOnClickListener {

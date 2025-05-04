@@ -9,6 +9,7 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.TypefaceSpan
 import android.util.Log
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -25,6 +26,9 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.myapplication.R
 import com.example.myapplication.activities.AlbumDetail
 import com.example.myapplication.activities.CrearPlaylist
@@ -90,6 +94,18 @@ class CancionesAlbumAdapter(
 
             Glide.with(itemView.context)
                 .load(cancion.fotoPortada)
+                .transform(
+                    MultiTransformation(
+                        CenterCrop(),
+                        RoundedCorners(
+                            TypedValue.applyDimension(
+                                TypedValue.COMPLEX_UNIT_DIP,
+                                8f,
+                                itemView.context.resources.displayMetrics
+                            ).toInt()
+                        )
+                    )
+                )
                 .placeholder(R.drawable.no_cancion)
                 .error(R.drawable.no_cancion)
                 .into(fotoPortada)

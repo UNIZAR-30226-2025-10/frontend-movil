@@ -29,6 +29,8 @@ import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ProgressBar
+import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.myapplication.io.request.ActualizarFavoritoRequest
 import com.example.myapplication.io.request.AudioColeccionRequest
@@ -178,14 +180,16 @@ class CancionReproductorDetail : AppCompatActivity() {
         textViewArtista.text = artistaCancion
         Glide.with(this)
             .load(imagenUrl)
-            .centerCrop()
             .transform(
-                RoundedCorners(
-                    TypedValue.applyDimension(
-                        TypedValue.COMPLEX_UNIT_DIP,
-                        20f,
-                        this.resources.displayMetrics
-                    ).toInt()
+                MultiTransformation(
+                    CenterCrop(),
+                    RoundedCorners(
+                        TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP,
+                            20f,
+                            this.resources.displayMetrics
+                        ).toInt()
+                    )
                 )
             )
             .placeholder(R.drawable.no_cancion)
@@ -333,14 +337,16 @@ class CancionReproductorDetail : AppCompatActivity() {
         } else {
             Glide.with(this)
                 .load(songImageUrl)
-                .centerCrop()
                 .transform(
-                    RoundedCorners(
-                        TypedValue.applyDimension(
-                            TypedValue.COMPLEX_UNIT_DIP,
-                            20f,
-                            this.resources.displayMetrics
-                        ).toInt()
+                    MultiTransformation(
+                        CenterCrop(),
+                        RoundedCorners(
+                            TypedValue.applyDimension(
+                                TypedValue.COMPLEX_UNIT_DIP,
+                                20f,
+                                this.resources.displayMetrics
+                            ).toInt()
+                        )
                     )
                 )
                 .placeholder(R.drawable.no_cancion)

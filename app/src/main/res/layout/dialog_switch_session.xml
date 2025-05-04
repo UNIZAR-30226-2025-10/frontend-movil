@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:justificationMode="inter_word"
-        android:text="Ya hay una sesión iniciada. ¿Deseas cambiarla? La sesión actual se cerrará."
+        android:text="Ya hay una sesión iniciada.¿Deseas cambiarla?\nLa sesión actual se cerrará."
         android:fontFamily="@font/poppins_regular"
         android:textColor="#000E3B"
         android:paddingHorizontal="12dp"

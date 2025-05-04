@@ -1,6 +1,7 @@
 package com.example.myapplication.Adapters.Playlist
 
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.myapplication.R
 import com.example.myapplication.io.response.Cancion
 import com.example.myapplication.io.response.CancionP
@@ -62,6 +66,18 @@ class CancionPAdapter(
 
             Glide.with(itemView.context)
                 .load(cancion.fotoPortada)
+                .transform(
+                    MultiTransformation(
+                        CenterCrop(),
+                        RoundedCorners(
+                            TypedValue.applyDimension(
+                                TypedValue.COMPLEX_UNIT_DIP,
+                                8f,
+                                itemView.context.resources.displayMetrics
+                            ).toInt()
+                        )
+                    )
+                )
                 .into(imagenCancion)
 
 

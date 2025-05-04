@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.util.TypedValue
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -22,6 +23,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.example.myapplication.Adapters.Noizzys.MisNoizzysAdapter
 import com.example.myapplication.Adapters.Noizzys.NoizzyDetailAdapter
 import com.example.myapplication.Adapters.Playlist.CancionesBuscadorNoizzyAdapter
@@ -42,6 +44,7 @@ import com.example.myapplication.io.response.SearchPlaylistResponse
 import com.example.myapplication.io.response.Seguidor
 import com.example.myapplication.services.WebSocketEventHandler
 import com.example.myapplication.utils.Preferencias
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -254,6 +257,18 @@ class NoizzyDetail : AppCompatActivity() {
                                 // Cargamos la portada de la canción con Glide
                                 Glide.with(this@NoizzyDetail)
                                     .load(cancion.fotoPortada)
+                                    .transform(
+                                        CenterCrop(),
+                                        RoundedCornersTransformation(
+                                            TypedValue.applyDimension(
+                                                TypedValue.COMPLEX_UNIT_DIP,
+                                                8f,
+                                                this@NoizzyDetail.resources.displayMetrics
+                                            ).toInt(),
+                                            0,
+                                            RoundedCornersTransformation.CornerType.LEFT // Solo izquierda
+                                        )
+                                    )
                                     .placeholder(R.drawable.no_cancion)  // Placeholder por si no hay imagen
                                     .error(R.drawable.no_cancion)        // Error por si la URL es inválida
                                     .into(imageViewFotoPortada)
@@ -402,6 +417,18 @@ class NoizzyDetail : AppCompatActivity() {
 
                                     Glide.with(this@NoizzyDetail)
                                         .load(cancionSeleccionada.fotoPortada)
+                                        .transform(
+                                            CenterCrop(),
+                                            RoundedCornersTransformation(
+                                                TypedValue.applyDimension(
+                                                    TypedValue.COMPLEX_UNIT_DIP,
+                                                    8f,
+                                                    this@NoizzyDetail.resources.displayMetrics
+                                                ).toInt(),
+                                                0,
+                                                RoundedCornersTransformation.CornerType.LEFT // Solo izquierda
+                                            )
+                                        )
                                         .placeholder(R.drawable.no_cancion)
                                         .error(R.drawable.no_cancion)
                                         .into(imagenCancion)
@@ -590,6 +617,18 @@ class NoizzyDetail : AppCompatActivity() {
 
                                     Glide.with(this@NoizzyDetail)
                                         .load(cancionSeleccionada.fotoPortada)
+                                        .transform(
+                                            CenterCrop(),
+                                            RoundedCornersTransformation(
+                                                TypedValue.applyDimension(
+                                                    TypedValue.COMPLEX_UNIT_DIP,
+                                                    8f,
+                                                    this@NoizzyDetail.resources.displayMetrics
+                                                ).toInt(),
+                                                0,
+                                                RoundedCornersTransformation.CornerType.LEFT // Solo izquierda
+                                            )
+                                        )
                                         .placeholder(R.drawable.no_cancion)
                                         .error(R.drawable.no_cancion)
                                         .into(imagenCancion)

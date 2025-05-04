@@ -1,5 +1,6 @@
 package com.example.myapplication.Adapters.OtroArtista
 
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,6 +8,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.myapplication.R
 import com.example.myapplication.io.response.Cancion
 import com.example.myapplication.io.response.CancionesArtista
@@ -37,6 +41,18 @@ class CancionesArtistaAdapter(private val clickListener: (CancionesArtista) -> U
         if (!cancion.fotoPortada.isNullOrEmpty()) {
             Glide.with(holder.itemView.context)
                 .load(cancion.fotoPortada)
+                .transform(
+                    MultiTransformation(
+                        CenterCrop(),
+                        RoundedCorners(
+                            TypedValue.applyDimension(
+                                TypedValue.COMPLEX_UNIT_DIP,
+                                12f,
+                                holder.itemView.context.resources.displayMetrics
+                            ).toInt()
+                        )
+                    )
+                )
                 .placeholder(R.drawable.no_cancion)  // Imagen por defecto
                 .error(R.drawable.no_cancion)
                 .into(holder.fotoPortada)
