@@ -14,7 +14,7 @@
         android:text="Participantes"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:textColor="#000E3B"
+        style="@style/TextColor"
         android:fontFamily="@font/poppins_regular"
         android:layout_gravity="start"
         android:paddingLeft="1dp"/>

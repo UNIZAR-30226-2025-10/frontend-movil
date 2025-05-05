@@ -29,6 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
+            android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
             android:paddingStart="16dp">
 
@@ -41,7 +42,7 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textSize="14sp"
-                android:textColor="#000e3b"
+                style="@style/TextColor"
                 android:fontFamily="@font/poppins_regular"/>
 
             <TextView
@@ -59,12 +60,13 @@
         <!-- Botón para añadir canción -->
         <Button
             android:id="@+id/btnAddSong"
-            android:layout_width="42dp"
-            android:layout_height="32dp"
-            android:background="@drawable/btn_follow_selector"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="@drawable/ic_anadir_cancion_playlist"
             android:paddingHorizontal="16dp"
-            android:text="+"
+            android:layout_gravity="center_vertical"
             android:textSize="12sp"
+            android:layout_marginEnd="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

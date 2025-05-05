@@ -353,6 +353,7 @@ class NoizzyDetail : AppCompatActivity() {
             .create()
 
         dialog.window?.setDimAmount(0.7f)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         val imageView = dialogView.findViewById<ImageView>(R.id.popupProfileImage)
         val url = Preferencias.obtenerValorString("fotoPerfil", "")
@@ -553,6 +554,7 @@ class NoizzyDetail : AppCompatActivity() {
             .create()
 
         dialog.window?.setDimAmount(0.7f)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         val imageView = dialogView.findViewById<ImageView>(R.id.popupProfileImage)
         val url = Preferencias.obtenerValorString("fotoPerfil", "")

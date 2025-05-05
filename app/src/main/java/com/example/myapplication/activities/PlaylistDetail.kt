@@ -489,7 +489,8 @@ class PlaylistDetail : AppCompatActivity() {
                                 }
                             }
 
-                            alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+                            alertDialog.window?.setLayout((Resources.getSystem().displayMetrics.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
+                            alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                             alertDialog.show()
                         }
                         var foto: Any
@@ -587,8 +588,8 @@ class PlaylistDetail : AppCompatActivity() {
 
         // Configurar la ventana del diálogo
         val window: Window? = dialog.window
-        window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+        window?.setLayout((Resources.getSystem().displayMetrics.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         // Obtener los elementos del diálogo
         val etSearchSong: EditText = dialog.findViewById(R.id.etSearchSong)
@@ -779,7 +780,7 @@ class PlaylistDetail : AppCompatActivity() {
 
         // Configuración de la ventana del diálogo
         val window: Window? = dialog.window
-        window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        window?.setLayout((Resources.getSystem().displayMetrics.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         // Configurar el comportamiento del diálogo
@@ -1002,7 +1003,7 @@ class PlaylistDetail : AppCompatActivity() {
         val alertDialog = AlertDialog.Builder(this)
             .setView(dialogView)
             .create()
-
+        alertDialog.window?.setLayout((Resources.getSystem().displayMetrics.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         btnCancelar.setOnClickListener {
@@ -1059,6 +1060,7 @@ class PlaylistDetail : AppCompatActivity() {
             .setView(dialogView)
             .create()
 
+        alertDialog.window?.setLayout((Resources.getSystem().displayMetrics.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         btnCancelar.setOnClickListener {
@@ -1275,10 +1277,10 @@ class PlaylistDetail : AppCompatActivity() {
 
 
     private fun showPlaylistSelectionDialog(cancion: CancionP, playlists: List<MisPlaylist>) {
-        val dialog = Dialog(this)
+        val dialog = Dialog(this@PlaylistDetail)
         dialog.setContentView(R.layout.dialog_select_playlist)
         dialog.window?.setLayout((Resources.getSystem().displayMetrics.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         val searchView = dialog.findViewById<SearchView>(R.id.searchViewPlaylists)
         val recyclerView = dialog.findViewById<RecyclerView>(R.id.recyclerViewPlaylists)
@@ -1353,6 +1355,7 @@ class PlaylistDetail : AppCompatActivity() {
             .setView(dialogView)
             .create()
 
+        alertDialog.window?.setLayout((Resources.getSystem().displayMetrics.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         btnCancelar.setOnClickListener {

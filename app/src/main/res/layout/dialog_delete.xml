@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:textColor="#000E3B"
+        style="@style/TextColor"
         android:paddingHorizontal="12dp"
         android:fontFamily="@font/poppins_bold"
         android:layout_gravity="start"/>

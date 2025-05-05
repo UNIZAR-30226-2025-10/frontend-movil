@@ -16,6 +16,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.example.myapplication.R
 import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.CloudinaryApiService
@@ -93,6 +94,7 @@ class CrearPlaylist : AppCompatActivity() {
                 selectedImageUri = it
                 logoImageView.setImageURI(it)
                 logoImageView.scaleType = ImageView.ScaleType.CENTER_CROP
+                logoImageView.background =  ContextCompat.getDrawable(this, R.drawable.rounded_edittext)
             }
         }
 
