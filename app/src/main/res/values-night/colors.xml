@@ -23,6 +23,8 @@
     <color name="insideButtons">#FF000000</color>
     <color name="insideSong">#515050</color>
     <color name="seekbar">#DDDCDC</color>
-    <color name="background1">#515050</color>
+    <color name="cabecera">#3C3B3B</color>
+    <color name="searchbar">#515050</color>
+    <color name="searchbarText">#FFFFFF</color>
 
 </resources>

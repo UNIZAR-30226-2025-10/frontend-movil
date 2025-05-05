@@ -11,7 +11,7 @@
 
     <!-- Triángulo con stroke reducido -->
     <path
-        android:strokeColor="@color/background1"
+        android:strokeColor="@color/insideSong"
         android:strokeWidth="5"
         android:strokeLineJoin="round"
         android:strokeLineCap="round"
@@ -20,7 +20,7 @@
 
     <!-- Triángulo relleno reducido -->
     <path
-        android:fillColor="@color/background1"
+        android:fillColor="@color/insideSong"
         android:strokeWidth="0"
         android:pathData="M18,12.6L34,24L18,35.4Z" />
 </vector>

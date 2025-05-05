@@ -16,6 +16,7 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.provider.MediaStore
+import android.text.InputType
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.TypefaceSpan
@@ -345,6 +346,33 @@ class Perfil : AppCompatActivity() {
 
         val editPassword = dialog.findViewById<EditText>(R.id.editPassword)
         val btnConfirm = dialog.findViewById<Button>(R.id.btnConfirm)
+        val btnTogglePassword = dialog.findViewById<ImageButton>(R.id.btnTogglePassword)
+
+        val font = ResourcesCompat.getFont(this, R.font.poppins_regular)
+        val typefaceSpan = TypefaceSpan(font!!)
+        var passwordVisible = false
+
+        btnTogglePassword.setOnClickListener {
+            passwordVisible = !passwordVisible
+
+            if (passwordVisible) {
+                // Mostrar la contraseña
+                editPassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                btnTogglePassword.setImageResource(R.drawable.ic_visibility_on)
+            } else {
+                // Ocultar la contraseña
+                editPassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                btnTogglePassword.setImageResource(R.drawable.ic_visibility_off)
+            }
+
+            // Mantener el cursor al final
+            editPassword.setSelection(editPassword.text.length)
+            // Aplicar fuente personalizada si deseas
+            val text = editPassword.text.toString()
+            val spannable = SpannableString(text)
+            spannable.setSpan(typefaceSpan, 0, text.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+            editPassword.setText(spannable)
+        }
 
         btnConfirm.setOnClickListener {
             val password = editPassword.text.toString().trim()
@@ -378,6 +406,47 @@ class Perfil : AppCompatActivity() {
         val passActual = dialog.findViewById<EditText>(R.id.passActual)
         val passNueva = dialog.findViewById<EditText>(R.id.passNueva)
         val btnChange = dialog.findViewById<Button>(R.id.btnConfirm)
+        val btnToggleActual = dialog.findViewById<ImageButton>(R.id.btnToggleActual)
+        val btnToggleNueva = dialog.findViewById<ImageButton>(R.id.btnToggleNueva)
+
+        val font = ResourcesCompat.getFont(this, R.font.poppins_regular)
+        val typefaceSpan = TypefaceSpan(font!!)
+
+        var isActualVisible = false
+        var isNuevaVisible = false
+
+        btnToggleActual.setOnClickListener {
+            isActualVisible = !isActualVisible
+            if (isActualVisible) {
+                passActual.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                btnToggleActual.setImageResource(R.drawable.ic_visibility_on)
+            } else {
+                passActual.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                btnToggleActual.setImageResource(R.drawable.ic_visibility_off)
+            }
+            passActual.setSelection(passActual.text.length)
+        }
+
+        btnToggleNueva.setOnClickListener {
+            isNuevaVisible = !isNuevaVisible
+            if (isNuevaVisible) {
+                passNueva.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                btnToggleNueva.setImageResource(R.drawable.ic_visibility_on)
+            } else {
+                passNueva.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                btnToggleNueva.setImageResource(R.drawable.ic_visibility_off)
+            }
+            passNueva.setSelection(passNueva.text.length)
+        }
+
+        // Aplicar fuente personalizada con Spannable (opcional)
+        val spannableActual = SpannableString(passActual.text)
+        spannableActual.setSpan(typefaceSpan, 0, spannableActual.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+        passActual.setText(spannableActual)
+
+        val spannableNueva = SpannableString(passNueva.text)
+        spannableNueva.setSpan(typefaceSpan, 0, spannableNueva.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+        passNueva.setText(spannableNueva)
 
         Log.d("MiAppPerfil", "change pass 3")
 

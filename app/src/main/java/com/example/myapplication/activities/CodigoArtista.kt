@@ -3,11 +3,17 @@ package com.example.myapplication.activities
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.TypefaceSpan
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import com.example.myapplication.R
 import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.response.VerifyArtistResponse
@@ -47,6 +53,35 @@ class CodigoArtista : AppCompatActivity() {
                 showToast("Todos los campos son obligatorios")
             }
         }
+
+        val btnTogglePassword = findViewById<ImageButton>(R.id.btnTogglePassword)
+        val font = ResourcesCompat.getFont(this, R.font.poppins_regular)
+        val typefaceSpan = TypefaceSpan(font!!)
+        var passwordVisible = false
+
+        btnTogglePassword.setOnClickListener {
+            passwordVisible = !passwordVisible
+
+            if (passwordVisible) {
+                // Mostrar la contraseña
+                editTextCode.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                btnTogglePassword.setImageResource(R.drawable.ic_visibility_on) // Ojo abierto
+            } else {
+                // Ocultar la contraseña
+                editTextCode.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                btnTogglePassword.setImageResource(R.drawable.ic_visibility_off) // Ojo cerrado
+            }
+
+            // Para mantener el cursor al final del texto
+            editTextCode.setSelection(editTextCode.text.length)
+
+        }
+
+        // Aplicar la fuente con Spannable
+        val text = editTextCode.text.toString()
+        val spannable = SpannableString(text)
+        spannable.setSpan(typefaceSpan, 0, text.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+        editTextCode.setText(spannable)
     }
 
     private fun enviarcodigo(codigo: String?) {

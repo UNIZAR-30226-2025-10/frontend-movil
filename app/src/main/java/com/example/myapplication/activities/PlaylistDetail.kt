@@ -356,6 +356,7 @@ class PlaylistDetail : AppCompatActivity() {
         btnMoreOptions.setOnClickListener {
                 showMoreOptionsPopupMenu(it)
         }
+        btnMoreOptions.visibility = View.VISIBLE
         val btnAnadirCancion: ImageButton = findViewById(R.id.btnAnadirCancion)
         btnAnadirCancion.setOnClickListener {
             showSearchSongDialog()
@@ -364,6 +365,7 @@ class PlaylistDetail : AppCompatActivity() {
         btnAddUser.setOnClickListener {
             showInvitarUsuarioDialog()
         }
+        btnAddUser.visibility = View.VISIBLE
 
         val btnAleatorio: ImageButton = findViewById(R.id.aleatorio)
         btnAleatorio.setOnClickListener {
@@ -514,6 +516,13 @@ class PlaylistDetail : AppCompatActivity() {
                             .into(imageViewPlaylist)
 
                         updateUIForPlaylistOwnership()
+
+                        if (playlist.nombrePlaylist == "Favoritos") {
+                            val btnMoreOptions: ImageButton = findViewById(R.id.btnMoreOptions)
+                            val btnAddUser: ImageButton = findViewById(R.id.btnAddUser)
+                            btnMoreOptions.visibility = View.GONE
+                            btnAddUser.visibility = View.GONE
+                        }
                     }
 
                     // Actualizar RecyclerView con la lista de canciones

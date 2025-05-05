@@ -1,47 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:background="@drawable/bg_dialog_rounded"
     android:padding="24dp"
-    android:elevation="8dp"
-    android:gravity="center_horizontal">
+    android:elevation="8dp">
 
     <TextView
         android:id="@+id/textViewHeadersEscuchas"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Eliminar Cuenta"
         android:textSize="24sp"
         android:textStyle="bold"
         android:textColor="#000E3B"
         android:fontFamily="@font/poppins_bold"
-        android:layout_gravity="start"
-        android:paddingLeft="22dp"/>
+        android:paddingLeft="22dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <EditText
         android:id="@+id/editPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
         android:hint="Contraseña actual"
+        android:fontFamily="@font/poppins_regular"
         android:padding="12dp"
         android:background="@drawable/bg_edittext"
         android:textColor="#000000"
         android:textColorHint="#888888"
-        android:layout_margin="16dp"/>
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="16dp"
+        app:layout_constraintTop_toBottomOf="@id/textViewHeadersEscuchas"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:inputType="textPassword"
+        android:maxLines="1"/>
+
+    <!-- Botón de ojo para mostrar/ocultar contraseña -->
+    <ImageButton
+        android:id="@+id/btnTogglePassword"
+        android:scaleType="centerCrop"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="15dp"
+        android:src="@drawable/ic_visibility_off"
+        app:tint="@color/fondo"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Mostrar/Ocultar contraseña"
+        android:layout_marginTop="7dp"
+        app:layout_constraintTop_toTopOf="@id/editPassword"
+        app:layout_constraintEnd_toEndOf="@id/editPassword"/>
 
     <Button
         android:id="@+id/btnConfirm"
         android:layout_width="235dp"
         android:layout_height="wrap_content"
-        android:text="Eliminar"
+        android:text="Eliminar Cuenta"
         android:textSize="16sp"
         android:fontFamily="@font/poppins_bold"
         android:textColor="#FFFFFF"
         android:background="@drawable/rounded_button"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
-        android:layout_marginTop="3dp"
-        android:layout_marginBottom="3dp"/>
-</LinearLayout>
+        android:layout_marginVertical="20dp"
+        app:layout_constraintTop_toBottomOf="@id/editPassword"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

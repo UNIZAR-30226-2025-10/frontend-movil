@@ -11,7 +11,7 @@
 
     <!-- Barra izquierda del ícono de pausa -->
     <path
-        android:strokeColor="@color/background1"
+        android:strokeColor="@color/insideSong"
         android:strokeWidth="5"
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
@@ -19,7 +19,7 @@
 
     <!-- Barra derecha del ícono de pausa -->
     <path
-        android:strokeColor="@color/background1"
+        android:strokeColor="@color/insideSong"
         android:strokeWidth="5"
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
