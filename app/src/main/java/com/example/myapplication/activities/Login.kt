@@ -197,6 +197,8 @@ class Login : AppCompatActivity() {
         Preferencias.guardarValorEntero("volumen", loginResponse.usuario?.volumen ?: 0)
         Log.d("guardarDatosOyente", "Volumen: ${loginResponse.usuario?.volumen ?: 0}")
 
+        Preferencias.guardarValorBooleano("primerinicio", false)
+
         getMiniReproductor()
 
         // Conectar el WebSocket después de guardar los datos del usuario

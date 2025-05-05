@@ -46,6 +46,7 @@ import com.example.myapplication.io.request.UpdatePlaylistRequest
 import com.example.myapplication.io.request.ValidarArtistaRequest
 import com.example.myapplication.io.request.VerInteraccionRequest
 import com.example.myapplication.io.request.DeleteNoizzyRequest
+import com.example.myapplication.io.request.ModoRequest
 import com.example.myapplication.io.response.AddReproduccionResponse
 import com.example.myapplication.io.response.AudioResponse
 import com.example.myapplication.io.response.BuscadorResponse
@@ -152,6 +153,13 @@ interface ApiService {
     fun change_progreso(
         @Header("Authorization") authHeader: String,
         @Body progreso: ProgresoRequest
+    ): Call<Void>
+
+    //Nuevo método para guardar el progreso en la db
+    @PATCH("change-modo")
+    fun change_modo(
+        @Header("Authorization") authHeader: String,
+        @Body modo: ModoRequest
     ): Call<Void>
 
     // Nuevo método para el buscador

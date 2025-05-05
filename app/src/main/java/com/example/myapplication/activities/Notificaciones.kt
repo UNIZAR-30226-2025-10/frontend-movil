@@ -152,6 +152,7 @@ class Notificaciones : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private val updateRunnable = object : Runnable {
         override fun run() {
+            actualizarIconoPlayPause()
             updateProgressBar()
             handler.postDelayed(this, 1000) // cada segundo
         }
@@ -1054,7 +1055,6 @@ class Notificaciones : AppCompatActivity() {
                 putExtra("progreso", progreso)
             }
             startService(startIntent)
-            actualizarIconoPlayPause()
         } catch (e: Exception) {
             e.printStackTrace()
             Toast.makeText(this, "Error al reproducir el audio", Toast.LENGTH_SHORT).show()
@@ -1070,8 +1070,6 @@ class Notificaciones : AppCompatActivity() {
                 putExtra("progreso", progreso)
             }
             startService(intent)
-            actualizarIconoPlayPause()
-
         } catch (e: Exception) {
             e.printStackTrace()
             Toast.makeText(this, "Error al reproducir el audio", Toast.LENGTH_SHORT).show()

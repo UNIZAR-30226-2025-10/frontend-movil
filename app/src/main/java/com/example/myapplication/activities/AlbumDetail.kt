@@ -37,6 +37,7 @@ import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.request.AddToPlaylistRequest
 import com.example.myapplication.io.request.AudioColeccionRequest
 import com.example.myapplication.io.request.AudioRequest
+import com.example.myapplication.io.request.ModoRequest
 import com.example.myapplication.io.response.AddReproduccionResponse
 import com.example.myapplication.io.response.AudioResponse
 import com.example.myapplication.io.response.CancionInfoResponse
@@ -53,6 +54,7 @@ import com.example.myapplication.io.response.Seguidor
 import com.example.myapplication.services.MusicPlayerService
 import com.example.myapplication.services.WebSocketEventHandler
 import com.example.myapplication.utils.Preferencias
+import kotlinx.coroutines.delay
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -107,6 +109,7 @@ class AlbumDetail : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private val updateRunnable = object : Runnable {
         override fun run() {
+            actualizarIconoPlayPause()
             updateProgressBar()
             handler.postDelayed(this, 1000) // cada segundo
         }
@@ -155,17 +158,37 @@ class AlbumDetail : AppCompatActivity() {
         // Obtener el id del album del intent
         val albumId = intent.getStringExtra("id") ?: ""
 
-        cancionesAdapter = CancionesAlbumAdapter(emptyList(), "",
-            { cancion ->
-                val cancionId = Preferencias.obtenerValorString("cancionActualId", "")
-                if(cancionId == cancion.id){
-                    startActivity(Intent(this, CancionReproductorDetail::class.java))
-                }
-                else {
-                    reproducir(cancion.id)
-                }
+        cancionesAdapter = CancionesAlbumAdapter(emptyList(), ""
+        ) { cancion ->
+            val cancionId = Preferencias.obtenerValorString("cancionActualId", "")
+            if (cancionId == cancion.id) {
+                startActivity(Intent(this, CancionReproductorDetail::class.java))
+            } else {
+                Preferencias.guardarValorString("coleccionActualId", albumId)
+                orden = Preferencias.obtenerValorString("ordenColeccionMirada", "")
+                    .split(",")
+                    .filter { id -> id.isNotEmpty() }
+                val ordenNatural = Preferencias.obtenerValorString("ordenNaturalColeccionMirada", "")
+                        .split(",")
+                        .filter { id -> id.isNotEmpty() }
+                modo = "enOrden"
+                indexActual = ordenNatural.indexOf(cancion.id)
+
+                Preferencias.guardarValorString(
+                    "ordenNaturalColeccionActual",
+                    ordenNatural.joinToString(",")
+                )
+                Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
+                Preferencias.guardarValorString("modoColeccionActual", modo)
+
+                Preferencias.guardarValorString(
+                    "ordenColeccionActual",
+                    ordenNatural.joinToString(",")
+                )
+
+                reproducirColeccion()
             }
-        ).apply {
+        }.apply {
             // Configurar listeners del adaptador
             onAddToPlaylist = { cancion, playlistId ->
                 addSongToPlaylist(cancion, playlistId)
@@ -217,52 +240,76 @@ class AlbumDetail : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)
         updateMiniReproductor()
 
-        val btnPlayPauseAlbum: Button = findViewById(R.id.reproNormal)
+        val btnPlayPauseAlbum: ImageButton = findViewById(R.id.reproNormal)
         // Agregar funcionalidad al botón de añadir canción
         btnPlayPauseAlbum.setOnClickListener {
-            albumId?.let {
-                albumIdActual = it
-                Preferencias.guardarValorString("coleccionActualId", it)
-
-
-                orden = Preferencias.obtenerValorString("ordenColeccionMirada", "")
-                    .split(",")
-                    .filter { id -> id.isNotEmpty() }
-                val ordenNatural = Preferencias.obtenerValorString("ordenNaturalColeccionMirada", "")
-                    .split(",")
-                    .filter { id -> id.isNotEmpty() }
-                modo = Preferencias.obtenerValorString("modoColeccionMirada", "enOrden")
-
-                if (indexActual <= -1 || indexActual >= orden.size) {
-                    indexActual = 0
+            albumId.let {
+                val estaReproduciendo = musicService!!.isPlaying()
+                val coleccionactual = Preferencias.obtenerValorString("coleccionActualId", "")
+                if(coleccionactual==albumId){
+                    if(estaReproduciendo) {
+                        musicService!!.pause()
+                        actualizarIconoPlayPause()
+                    }
+                    else{
+                        musicService!!.resume()
+                        actualizarIconoPlayPause()
+                    }
                 }
+                else {
+                    albumIdActual = it
+                    Preferencias.guardarValorString("coleccionActualId", it)
 
-                Preferencias.guardarValorString("ordenNaturalColeccionActual", ordenNatural.joinToString(","))
-                Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
-                Preferencias.guardarValorString("modoColeccionActual", modo)
 
-                if(modo == "enOrden"){
-                    Preferencias.guardarValorString("ordenColeccionActual", ordenNatural.joinToString(","))
+                    orden = Preferencias.obtenerValorString("ordenColeccionMirada", "")
+                        .split(",")
+                        .filter { id -> id.isNotEmpty() }
+                    val ordenNatural =
+                        Preferencias.obtenerValorString("ordenNaturalColeccionMirada", "")
+                            .split(",")
+                            .filter { id -> id.isNotEmpty() }
+                    modo = Preferencias.obtenerValorString("modoColeccionMirada", "enOrden")
+
+                    if (indexActual <= -1 || indexActual >= orden.size) {
+                        indexActual = 0
+                    }
+
+                    Preferencias.guardarValorString(
+                        "ordenNaturalColeccionActual",
+                        ordenNatural.joinToString(",")
+                    )
+                    Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
+                    Preferencias.guardarValorString("modoColeccionActual", modo)
+
+                    if (modo == "enOrden") {
+                        Preferencias.guardarValorString(
+                            "ordenColeccionActual",
+                            ordenNatural.joinToString(",")
+                        )
+                    } else {
+                        Preferencias.guardarValorString(
+                            "ordenColeccionActual",
+                            orden.joinToString(",")
+                        )
+                    }
+
+
+                    reproducirColeccion()
                 }
-                else{
-                    Preferencias.guardarValorString("ordenColeccionActual", orden.joinToString(","))
-                }
-
-
-                reproducirColeccion()
             }
         }
 
         val btnAleatorio: ImageButton = findViewById(R.id.aleatorio)
         btnAleatorio.setOnClickListener {
+            val idColeccionActual = Preferencias.obtenerValorString("coleccionActualId", "")
+            val idActual = Preferencias.obtenerValorString("cancionActualId", "")
             if (aleatorio == true){
-                Preferencias.guardarValorString("modoColeccionMirada", "enOrden")
+
                 btnAleatorio.setImageResource(R.drawable.shuffle_24px)
                 aleatorio = false
                 modo = "enOrden"
 
-                val idActual = Preferencias.obtenerValorString("cancionActualId", "")
-                val idColeccionActual = Preferencias.obtenerValorString("coleccionActualId", "")
+
                 orden = Preferencias.obtenerValorString("ordenNaturalColeccionMirada", "")
                     .split(",")
                     .filter { id -> id.isNotEmpty() }
@@ -273,11 +320,21 @@ class AlbumDetail : AppCompatActivity() {
                     indexActual = 0
                 }
 
-                Preferencias.guardarValorString("ordenColeccionMirada", orden.joinToString(","))
+                if(idColeccionActual == albumId){
+                    Preferencias.guardarValorString("modoColeccionActual", "enOrden")
+                    Preferencias.guardarValorString("ordenColeccionActual", orden.joinToString(","))
+                    Preferencias.guardarValorEntero("indexColeccionActual", 0)
+                    cambiarModo()
+                }
+                else {
+                    Preferencias.guardarValorString("modoColeccionMirada", "enOrden")
+                    Preferencias.guardarValorString("ordenColeccionMirada", orden.joinToString(","))
+                }
                 Log.d("ReproducirAlbum", "IDs en orden normal: ${orden.joinToString(",")}")
                 Log.d("ReproducirAlbum", "Indice del id: $indexActual")
             }
             else{
+                modo = "aleatorio"
                 orden = Preferencias.obtenerValorString("ordenNaturalColeccionMirada", "")
                     .split(",")
                     .filter { id -> id.isNotEmpty() }
@@ -289,12 +346,20 @@ class AlbumDetail : AppCompatActivity() {
                 }
                 Log.d("ReproducirAlbum", "IDs aleatorios: ${orden.joinToString(",")}")
                 indexActual = 0
-                Preferencias.guardarValorEntero("indexColeccionMirada", indexActual)
-                Preferencias.guardarValorString("ordenColeccionMirada", orden.joinToString(","))
-                Preferencias.guardarValorString("modoColeccionMirada", "aleatorio")
+                if(idColeccionActual == albumId){
+                    indexActual = orden.indexOf(idActual)
+                    Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
+                    Preferencias.guardarValorString("ordenColeccionActual", orden.joinToString(","))
+                    Preferencias.guardarValorString("modoColeccionActual", "aleatorio")
+                    cambiarModo()
+                }
+                else {
+                    Preferencias.guardarValorEntero("indexColeccionMirada", indexActual)
+                    Preferencias.guardarValorString("ordenColeccionMirada", orden.joinToString(","))
+                    Preferencias.guardarValorString("modoColeccionMirada", "aleatorio")
+                }
                 btnAleatorio.setImageResource(R.drawable.shuffle_24px_act)
                 aleatorio = true
-                modo = "aleatorio"
             }
         }
     }
@@ -640,8 +705,15 @@ class AlbumDetail : AppCompatActivity() {
             val icono = if (estaReproduciendo) R.drawable.ic_play else R.drawable.ic_pause
             val stopButton = findViewById<ImageButton>(R.id.stopButton)
             stopButton.setImageResource(icono)
+            val coleccionactual = Preferencias.obtenerValorString("coleccionActualId", "")
+            if(coleccionactual==albumId){
+                val btnPlayPauseAlbum: ImageButton = findViewById(R.id.reproNormal)
+                val icono2 = if (estaReproduciendo) R.drawable.ic_pause_playlist else R.drawable.ic_play_playlist
+                btnPlayPauseAlbum.setImageResource(icono2)
+            }
         }
     }
+
 
     private fun reproducir(id: String) {
         val request = AudioRequest(id)
@@ -755,7 +827,6 @@ class AlbumDetail : AppCompatActivity() {
                 putExtra("progreso", progreso)
             }
             startService(startIntent)
-            actualizarIconoPlayPause()
         } catch (e: Exception) {
             e.printStackTrace()
             Toast.makeText(this, "Error al reproducir el audio", Toast.LENGTH_SHORT).show()
@@ -771,8 +842,6 @@ class AlbumDetail : AppCompatActivity() {
                 putExtra("progreso", progreso)
             }
             startService(intent)
-            actualizarIconoPlayPause()
-
         } catch (e: Exception) {
             e.printStackTrace()
             Toast.makeText(this, "Error al reproducir el audio", Toast.LENGTH_SHORT).show()
@@ -843,6 +912,40 @@ class AlbumDetail : AppCompatActivity() {
 
                 // Mostrar en Toast
                 Toast.makeText(this@AlbumDetail, "Error de conexión: ${t.message}", Toast.LENGTH_LONG).show()
+            }
+        })
+    }
+
+    private fun cambiarModo() {
+        val ordenColeccion = Preferencias.obtenerValorString("ordenColeccionActual", "")
+            .split(",")
+            .filter { id -> id.isNotEmpty() }
+
+        val modoColeccion =  modo
+
+        val indice = Preferencias.obtenerValorEntero("indexColeccionActual", 0)
+
+
+        Log.d("Modo", "Lista ids reproduccion: ${ordenColeccion.joinToString(",")}")
+        Log.d("Modo", "Indice: $indice")
+        Log.d("Modo", "Modo: $modoColeccion")
+
+        val request = ModoRequest(modoColeccion, ordenColeccion, indice)
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+
+        apiService.change_modo(authHeader, request).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Log.d("Modo", "Cambiado el modo")
+
+                } else {
+                    Log.e("Modo", "Error: ${response.code()} - ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("Modo", "Fallo: ${t.message}")
             }
         })
     }
