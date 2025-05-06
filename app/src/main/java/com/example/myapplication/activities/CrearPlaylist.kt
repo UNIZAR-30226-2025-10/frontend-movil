@@ -204,11 +204,13 @@ class CrearPlaylist : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val playlistId = response.body()?.id
                     Toast.makeText(this@CrearPlaylist, "Playlist creada correctamente", Toast.LENGTH_SHORT).show()
-                    val intent = Intent()
-                    intent.putExtra("playlist_id", playlistId)  // Usa el ID real aquí
-                    setResult(RESULT_OK, intent)
-                    finish()
-                    finish() // opcional: vuelve a la pantalla anterior
+
+                    val intent = Intent(this@CrearPlaylist, PlaylistDetail::class.java)
+                    intent.putExtra("nombre", nombre)
+                    intent.putExtra("imagen", imageUrl)
+                    intent.putExtra("id", playlistId)
+                    Log.d("Playlist", "Home ->Playlist")
+                    startActivity(intent)
                 } else {
                     Toast.makeText(this@CrearPlaylist, "Error al crear la playlist", Toast.LENGTH_SHORT).show()
                     Log.e("CrearPlaylist", "Error: ${response.code()} - ${response.errorBody()?.string()}")

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#dddcdc">
+    style="@style/ScreenBackground">
 
     <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
@@ -111,7 +111,8 @@
                 android:textStyle="bold"
                 android:paddingStart="16dp"
                 android:paddingTop="16dp"
-                android:paddingEnd="16dp" />
+                android:paddingEnd="16dp"
+                style="@style/TextColor"/>
 
             <TextView
                 android:id="@+id/tvNoComments"

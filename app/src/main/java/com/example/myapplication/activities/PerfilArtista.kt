@@ -356,7 +356,6 @@ class PerfilArtista : AppCompatActivity() {
         btnSave.setOnClickListener {
             imageUri?.let { uri -> getSignatureCloudinary(uri) }
             updateUserProfile(editUsername.text.toString())
-            imageUri?.let { uri -> profileImageView.setImageURI(uri) }
             dialog.dismiss()
         }
 
@@ -441,10 +440,12 @@ class PerfilArtista : AppCompatActivity() {
             override fun onResponse(call: Call<EditarPerfilResponse>, response: Response<EditarPerfilResponse>) {
                 if (response.isSuccessful) {
                     usernameTextView.text = newUsername
-                    Preferencias.guardarValorString("username", newUsername)
+                    Preferencias.guardarValorString("nombreUsuario", newUsername)
+                    Preferencias.guardarValorString("fotoPerfil", imagen)
                     showToast("Perfil actualizado")
                 } else {
                     showToast("Error al actualizar perfil")
+                    Log.d("ActualizarPerfil", "Código ${response.code()} - ${response.body()}")
                 }
             }
 

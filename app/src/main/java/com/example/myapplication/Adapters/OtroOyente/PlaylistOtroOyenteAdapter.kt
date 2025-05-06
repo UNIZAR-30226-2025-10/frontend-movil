@@ -64,8 +64,7 @@ class PlaylistOtroOyenteAdapter(
     }
 
     class CancionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val nombre: TextView = view.findViewById(R.id.textView)
-        val artista: TextView = view.findViewById(R.id.usuarioPlaylist)
+        val nombre: TextView = view.findViewById(R.id.usuarioPlaylist)
         val fotoPortada: ImageView = view.findViewById(R.id.imageView)
     }
 }
