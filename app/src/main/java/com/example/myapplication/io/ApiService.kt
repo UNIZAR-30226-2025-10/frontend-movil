@@ -46,6 +46,7 @@ import com.example.myapplication.io.request.UpdatePlaylistRequest
 import com.example.myapplication.io.request.ValidarArtistaRequest
 import com.example.myapplication.io.request.VerInteraccionRequest
 import com.example.myapplication.io.request.DeleteNoizzyRequest
+import com.example.myapplication.io.request.EditarPerfilArtistaRequest
 import com.example.myapplication.io.request.ModoRequest
 import com.example.myapplication.io.response.AddReproduccionResponse
 import com.example.myapplication.io.response.AudioResponse
@@ -242,6 +243,13 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body request: EditarPerfilRequest
     ): Call<EditarPerfilResponse>
+
+    @PUT("/change-datos-artista")
+    fun updateProfileArtista(
+        @Header("Authorization") token: String,
+        @Body request: EditarPerfilArtistaRequest
+    ): Call<EditarPerfilResponse>
+
 
     @GET("/get-signature")
     fun getSignature(

@@ -45,6 +45,7 @@ class CrearPlaylist : AppCompatActivity() {
     private lateinit var nextButton: Button
     private lateinit var nombreEditText: EditText
     private lateinit var logoImageView: ImageView
+    private lateinit var btnSubirFoto: Button
     private var selectedImageUri: Uri? = null
 
     private var musicService: MusicPlayerService? = null
@@ -109,8 +110,9 @@ class CrearPlaylist : AppCompatActivity() {
         nextButton = findViewById(R.id.nextButton)
         nombreEditText = findViewById(R.id.codigo)
         logoImageView = findViewById(R.id.logoImageView)
+        btnSubirFoto = findViewById(R.id.selectPhotoButton)
 
-        logoImageView.setOnClickListener {
+        btnSubirFoto.setOnClickListener {
             openGalleryLauncher.launch("image/*")
         }
 

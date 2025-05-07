@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_dialog_rounded"
+    android:padding="24dp"
+    android:elevation="8dp"
+    android:gravity="center_horizontal">
+
+    <TextView
+        android:id="@+id/textViewHeadersEscuchas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Editar Perfil"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        style="@style/TextColor"
+        android:fontFamily="@font/poppins_bold"
+        android:layout_gravity="start"
+        android:paddingLeft="22dp"
+        android:paddingBottom="2dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+        <ImageView
+            android:id="@+id/profileImageDialog"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"/>
+
+        <Button
+            android:id="@+id/btnSelectImage"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="Subir\n foto"
+            android:textSize="16sp"
+            android:fontFamily="@font/poppins_bold"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/rounded_button"
+            android:padding="8dp"
+            android:layout_marginLeft="20dp"/>
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/editUsername"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nuevo nombre de usuario"
+        android:padding="12dp"
+        android:background="@drawable/bg_edittext"
+        android:textColor="#000000"
+        android:textColorHint="#888888"
+        android:layout_margin="16dp"/>
+
+    <EditText
+        android:id="@+id/editArtisticName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nuevo nombre artístico"
+        android:padding="12dp"
+        android:background="@drawable/bg_edittext"
+        android:textColor="#000000"
+        android:textColorHint="#888888"
+        android:layout_margin="16dp"/>
+
+    <EditText
+        android:id="@+id/editBiografia"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nueva biografía"
+        android:padding="12dp"
+        android:background="@drawable/bg_edittext"
+        android:textColor="#000000"
+        android:textColorHint="#888888"
+        android:layout_margin="16dp"/>
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="235dp"
+        android:layout_height="wrap_content"
+        android:text="Guardar cambios"
+        android:textSize="16sp"
+        android:fontFamily="@font/poppins_bold"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/rounded_button"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"/>
+</LinearLayout>

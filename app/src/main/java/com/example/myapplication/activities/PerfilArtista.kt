@@ -41,6 +41,7 @@ import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.CloudinaryApiService
 import com.example.myapplication.io.request.AudioColeccionRequest
 import com.example.myapplication.io.request.AudioRequest
+import com.example.myapplication.io.request.EditarPerfilArtistaRequest
 import com.example.myapplication.io.request.EditarPerfilRequest
 import com.example.myapplication.io.response.*
 import com.example.myapplication.services.MusicPlayerService
@@ -61,6 +62,7 @@ class PerfilArtista : AppCompatActivity() {
     private lateinit var albumAdapter: AlbumsAdapter
     private lateinit var usernameTextView: TextView
     private lateinit var artisticnameTextView: TextView
+    private lateinit var biografiaArtistaTextView: TextView
     private lateinit var profileImageView: ImageView
     private lateinit var profileImageButton: ImageView
     private var imageUri: Uri? = null
@@ -138,6 +140,7 @@ class PerfilArtista : AppCompatActivity() {
         // Inicializar vistas
         usernameTextView = findViewById(R.id.username)
         artisticnameTextView = findViewById(R.id.artisticname)
+        biografiaArtistaTextView = findViewById(R.id.biografiaArtista)
         profileImageButton = findViewById(R.id.profileImageButton)
         profileImageView = findViewById(R.id.profileImage)
 
@@ -230,6 +233,7 @@ class PerfilArtista : AppCompatActivity() {
                 .error(R.drawable.ic_profile)
                 .into(profileImageView)
         }
+        Preferencias.guardarValorString("profile_image", profileImageUrl)
     }
 
     private fun loadArtistAlbums() {
@@ -281,6 +285,7 @@ class PerfilArtista : AppCompatActivity() {
                         if (it.respuestaHTTP == 0) {
                             usernameTextView.text = it.nombre
                             artisticnameTextView.text = it.nombreArtistico
+                            biografiaArtistaTextView.text = it.biografia
                             findViewById<TextView>(R.id.followers).text = "${it.numSeguidores} Seguidores"
                             findViewById<TextView>(R.id.following).text = "${it.numSeguidos} Seguidos"
                         } else {
@@ -328,7 +333,7 @@ class PerfilArtista : AppCompatActivity() {
 
     private fun showEditProfileDialog() {
         val dialog = Dialog(this)
-        dialog.setContentView(R.layout.dialog_edit_profile)
+        dialog.setContentView(R.layout.dialog_edit_profile_artista)
 
         val window: Window? = dialog.window
         window?.setLayout((Resources.getSystem().displayMetrics.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -337,11 +342,16 @@ class PerfilArtista : AppCompatActivity() {
         dialog.setCancelable(true)
 
         val editUsername = dialog.findViewById<EditText>(R.id.editUsername)
+        val editArtisticName = dialog.findViewById<EditText>(R.id.editArtisticName)
+        val editBiografia = dialog.findViewById<EditText>(R.id.editBiografia)
+
         profileImageViewDialog = dialog.findViewById(R.id.profileImageDialog)
         val btnSelectImage = dialog.findViewById<Button>(R.id.btnSelectImage)
         val btnSave = dialog.findViewById<Button>(R.id.btnSave)
 
         editUsername.setText(usernameTextView.text.toString())
+        editArtisticName.setText(artisticnameTextView.text.toString())
+        editBiografia.setText(biografiaArtistaTextView.text.toString())
         Glide.with(this)
             .load(Preferencias.obtenerValorString("fotoPerfil", "DEFAULT"))
             .circleCrop()
@@ -354,15 +364,15 @@ class PerfilArtista : AppCompatActivity() {
         }
 
         btnSave.setOnClickListener {
-            imageUri?.let { uri -> getSignatureCloudinary(uri) }
-            updateUserProfile(editUsername.text.toString())
+            imageUri?.let { uri -> getSignatureCloudinary(uri, editUsername.text.toString(), editArtisticName.text.toString(), editBiografia.text.toString()) }
+            //updateUserProfile(editUsername.text.toString(), editArtisticName.text.toString(), editBiografia.text.toString())
             dialog.dismiss()
         }
 
         dialog.show()
     }
 
-    private fun getSignatureCloudinary(imagenURI: Uri) {
+    private fun getSignatureCloudinary(imagenURI: Uri, newUsername: String, newArtisticname: String, newBiografia: String) {
         val token = Preferencias.obtenerValorString("token", "")
         val authHeader = "Bearer $token"
         val folder = "perfiles"
@@ -371,7 +381,7 @@ class PerfilArtista : AppCompatActivity() {
             override fun onResponse(call: Call<GetSignatureResponse>, response: Response<GetSignatureResponse>) {
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        uploadImageToCloudinary(it, imagenURI, folder)
+                        uploadImageToCloudinary(it, imagenURI, folder, newUsername, newArtisticname, newBiografia)
                     }
                 } else {
                     showToast("Error al obtener firma")
@@ -384,7 +394,7 @@ class PerfilArtista : AppCompatActivity() {
         })
     }
 
-    private fun uploadImageToCloudinary(signatureData: GetSignatureResponse, imagenURI: Uri, folder: String) {
+    private fun uploadImageToCloudinary(signatureData: GetSignatureResponse, imagenURI: Uri, folder: String, newUsername: String, newArtisticname: String, newBiografia: String) {
         try {
             val inputStream = contentResolver.openInputStream(imagenURI) ?: run {
                 showToast("Error al abrir la imagen")
@@ -415,6 +425,7 @@ class PerfilArtista : AppCompatActivity() {
                         response.body()?.let {
                             Preferencias.guardarValorString("profile_image", it.secure_url)
                             showToast("Imagen subida con éxito")
+                            updateUserProfile(newUsername, newArtisticname, newBiografia)
                         }
                     } else {
                         showToast("Error al subir la imagen")
@@ -430,18 +441,34 @@ class PerfilArtista : AppCompatActivity() {
         }
     }
 
-    private fun updateUserProfile(newUsername: String) {
+    private fun updateUserProfile(newUsername: String, newArtisticname: String, newBiografia: String) {
         val imagen = Preferencias.obtenerValorString("profile_image", "")
-        val request = EditarPerfilRequest(imagen, newUsername)
+        val request = EditarPerfilArtistaRequest(imagen, newUsername, newArtisticname, newBiografia)
         val token = Preferencias.obtenerValorString("token", "")
         val authHeader = "Bearer $token"
+        Log.d("ActualizarPerfil", "Foto: $imagen , User: $newUsername , Artist: $newArtisticname , Bio: $newBiografia")
 
-        apiService.updateProfile(authHeader, request).enqueue(object : Callback<EditarPerfilResponse> {
+        apiService.updateProfileArtista(authHeader, request).enqueue(object : Callback<EditarPerfilResponse> {
             override fun onResponse(call: Call<EditarPerfilResponse>, response: Response<EditarPerfilResponse>) {
                 if (response.isSuccessful) {
                     usernameTextView.text = newUsername
                     Preferencias.guardarValorString("nombreUsuario", newUsername)
                     Preferencias.guardarValorString("fotoPerfil", imagen)
+                    usernameTextView.text = newUsername
+                    artisticnameTextView.text = newArtisticname
+                    biografiaArtistaTextView.text = newBiografia
+                    Glide.with(this@PerfilArtista)
+                        .load(imagen)
+                        .circleCrop()
+                        .placeholder(R.drawable.ic_profile)
+                        .error(R.drawable.ic_profile)
+                        .into(profileImageButton)
+                    Glide.with(this@PerfilArtista)
+                        .load(imagen)
+                        .circleCrop()
+                        .placeholder(R.drawable.ic_profile)
+                        .error(R.drawable.ic_profile)
+                        .into(profileImageView)
                     showToast("Perfil actualizado")
                 } else {
                     showToast("Error al actualizar perfil")

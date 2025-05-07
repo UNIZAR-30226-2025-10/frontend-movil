@@ -25,7 +25,9 @@ class Logout : AppCompatActivity() {
         apiService = ApiService.create()
 
         val progreso = Preferencias.obtenerValorEntero("progresoCancionActual", -1)
-        if(progreso == -1){
+        val cancionid = Preferencias.obtenerValorString("cancionActualId", "")
+        val audio = Preferencias.obtenerValorString("audioCancionActual", "")
+        if(progreso == -1 || cancionid == "" || audio == ""){
             logout()
         }
         else{

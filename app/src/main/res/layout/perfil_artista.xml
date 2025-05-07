@@ -122,6 +122,14 @@
                     android:fontFamily="@font/poppins_bold"
                     style="@style/TextColor"/>
 
+                <TextView
+                    android:id="@+id/biografiaArtista"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/poppins_bold"
+                    style="@style/TextColor"/>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

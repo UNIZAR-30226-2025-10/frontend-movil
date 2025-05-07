@@ -219,6 +219,7 @@ class Perfil : AppCompatActivity() {
                 .error(R.drawable.ic_profile) // Imagen si hay error
                 .into(profileImageView)
         }
+        Preferencias.guardarValorString("profile_image", profileImageUrl)
         
         headerPlaylistsTextView = findViewById(R.id.textViewHeadersPlaylistsP)
         headerPlaylistsTextView.visibility = View.INVISIBLE
@@ -472,10 +473,9 @@ class Perfil : AppCompatActivity() {
         dialog.setContentView(R.layout.dialog_edit_profile)
 
         val window: Window? = dialog.window
-        if (window != null) {
-            window.setLayout((Resources.getSystem().displayMetrics.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
-            window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        }
+        window?.setLayout((Resources.getSystem().displayMetrics.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
 
         dialog.setCancelable(true)
         Log.d("MiAppPerfil", "PERFIL show edit 2")
@@ -503,23 +503,15 @@ class Perfil : AppCompatActivity() {
 
         Log.d("MiAppPerfil", "PERFIL show edit 5")
         btnSave.setOnClickListener {
-            imageUri?.let { it1 -> getSignatureCloudinary(it1) }
-            Log.d("MiAppPerfil", "PERFIL show edit 5.1")
-            updateUserProfile(editUsername.text.toString())
-            Log.d("MiAppPerfil", "PERFIL show edit 6")
-
-            // Asegurar que la imagen seleccionada no es nula antes de actualizar
-            imageUri?.let {
-                profileImageView.setImageURI(it) // Display selected image in main profile image view
-            }
-            Log.d("MiAppPerfil", "PERFIL show edit 7")
+            imageUri?.let { uri -> getSignatureCloudinary(uri, editUsername.text.toString()) }
+            //updateUserProfile(editUsername.text.toString())
             dialog.dismiss()
         }
 
         dialog.show()
     }
 
-    private fun getSignatureCloudinary(imagenURI: Uri){
+    private fun getSignatureCloudinary(imagenURI: Uri,newUsername: String){
         val token = Preferencias.obtenerValorString("token", "")
         val authHeader = "Bearer $token"
         val folder = "perfiles"
@@ -531,21 +523,8 @@ class Perfil : AppCompatActivity() {
             override fun onResponse(call: Call<GetSignatureResponse>, response: Response<GetSignatureResponse>) {
                 Log.d("Signature", "Signature 2")
                 if (response.isSuccessful) {
-                    val signatureResponse = response.body()
-                    signatureResponse?.let {
-                        // Acceder a los datos de la respuesta
-                        val signature = it.signature
-                        val apiKey = it.apiKey
-                        val timestamp = it.timestamp
-                        val cloudName = it.cloudName
-
-
-                        Log.d("Signature", "Signature: $signature")
-                        Log.d("Signature", "API Key: $apiKey")
-                        Log.d("Signature", "Timestamp: $timestamp")
-                        Log.d("Signature", "Cloud Name: $cloudName")
-
-                        uploadImageToCloudinary(it, imagenURI, folder)
+                    response.body()?.let {
+                        uploadImageToCloudinary(it, imagenURI, folder, newUsername)
                     }
                     showToast("Get signature correcto")
                 } else {
@@ -562,32 +541,24 @@ class Perfil : AppCompatActivity() {
         Log.d("Signature", "Signature FUERA")
     }
 
-    private fun uploadImageToCloudinary(signatureData: GetSignatureResponse, imagenURI: Uri, folder: String) {
+    private fun uploadImageToCloudinary(signatureData: GetSignatureResponse, imagenURI: Uri, folder: String, newUsername: String) {
         try {
-
-            Log.d("uploadImageToCloudinary", "uploadImageToCloudinary 1")
-            // Obtener el stream del archivo a partir del URI
             val inputStream = contentResolver.openInputStream(imagenURI) ?: run {
                 showToast("Error al abrir la imagen")
                 return
             }
 
-            Log.d("uploadImageToCloudinary", "uploadImageToCloudinary 2")
-
             val byteArray = inputStream.readBytes()
             inputStream.close()
 
-            Log.d("uploadImageToCloudinary", "uploadImageToCloudinary 3")
             val requestFile = RequestBody.create(MediaType.parse("image/*"), byteArray)
             val filePart = MultipartBody.Part.createFormData("file", "image.jpg", requestFile)
 
-            // Crear request bodies para los parámetros
             val apiKey = RequestBody.create(MediaType.parse("text/plain"), signatureData.apiKey)
             val timestamp = RequestBody.create(MediaType.parse("text/plain"), signatureData.timestamp.toString())
             val signature = RequestBody.create(MediaType.parse("text/plain"), signatureData.signature)
             val folderPart = RequestBody.create(MediaType.parse("text/plain"), folder)
 
-            // Llamada a la API de Cloudinary
             apiServiceCloud.uploadImage(
                 signatureData.cloudName,
                 filePart,
@@ -599,53 +570,27 @@ class Perfil : AppCompatActivity() {
                 override fun onResponse(call: Call<CloudinaryResponse>, response: Response<CloudinaryResponse>) {
                     if (response.isSuccessful) {
                         response.body()?.let {
-                            val imageUrl = it.secure_url
-                            Log.d("Cloudinary Upload", "Imagen subida correctamente: $imageUrl")
-
-                            // Guardar URL en preferencias
-                            Preferencias.guardarValorString("fotoPerfil", imageUrl)
-
-                            val profileImageUrl = Preferencias.obtenerValorString("fotoPerfil", "")
-
-                            Log.d("ProfileImage", "URL de la imagen de perfil: $profileImageUrl")
-
-
-                            // Verificar si la API devolvió "DEFAULT" o si no hay imagen guardada
-                            if (profileImageUrl.isNullOrEmpty() || profileImageUrl == "DEFAULT") {
-                                // Cargar la imagen predeterminada
-                                profileImageButton.setImageResource(R.drawable.ic_profile)
-                            } else {
-                                // Cargar la imagen desde la URL con Glide
-                                Glide.with(applicationContext)
-                                    .load(profileImageUrl)
-                                    .circleCrop()
-                                    .placeholder(R.drawable.ic_profile) // Imagen por defecto mientras carga
-                                    .error(R.drawable.ic_profile) // Imagen si hay error
-                                    .into(profileImageButton)
-                            }
-
+                            Preferencias.guardarValorString("profile_image", it.secure_url)
                             showToast("Imagen subida con éxito")
-                        } ?: showToast("Error: Respuesta vacía de Cloudinary")
+                            updateUserProfile(newUsername)
+                        }
                     } else {
-                        Log.d("uploadImageToCloudinary", "ERROR 3 ${response.errorBody()?.string()}")
-                        showToast("Error al subir la imagen: ${response.errorBody()?.string()}")
+                        showToast("Error al subir la imagen")
                     }
                 }
 
                 override fun onFailure(call: Call<CloudinaryResponse>, t: Throwable) {
-                    Log.d("uploadImageToCloudinary", "ERROR 3 ${t.message}")
                     showToast("Error en la subida: ${t.message}")
                 }
             })
         } catch (e: Exception) {
-            Log.d("uploadImageToCloudinary", "ERROR 4 ${e.message}")
             showToast("Error al procesar la imagen: ${e.message}")
         }
     }
 
     private fun updateUserProfile(newUsername: String) {
         Log.d("updateUserProfile", "1")
-        val imagen = Preferencias.obtenerValorString("fotoPerfil", "")
+        val imagen = Preferencias.obtenerValorString("profile_image", "")
         Log.d("updateUserProfile", "imag{$imagen}")
         Log.d("updateUserProfile", "user{$newUsername}")
         val request = EditarPerfilRequest(imagen, newUsername)
@@ -656,7 +601,21 @@ class Perfil : AppCompatActivity() {
             override fun onResponse(call: Call<EditarPerfilResponse>, response: Response<EditarPerfilResponse>) {
                 if (response.isSuccessful) {
                     usernameTextView.text = newUsername
-                    Preferencias.guardarValorString("username", newUsername)
+                    Preferencias.guardarValorString("nombreUsuario", newUsername)
+                    Preferencias.guardarValorString("fotoPerfil", imagen)
+                    usernameTextView.text = newUsername
+                    Glide.with(this@Perfil)
+                        .load(imagen)
+                        .circleCrop()
+                        .placeholder(R.drawable.ic_profile)
+                        .error(R.drawable.ic_profile)
+                        .into(profileImageButton)
+                    Glide.with(this@Perfil)
+                        .load(imagen)
+                        .circleCrop()
+                        .placeholder(R.drawable.ic_profile)
+                        .error(R.drawable.ic_profile)
+                        .into(profileImageView)
                     showToast("Perfil actualizado")
                 } else {
                     Log.d("updateUserProfile", "Error en la solicitud ${response.code()}")
