@@ -504,7 +504,7 @@ class Perfil : AppCompatActivity() {
         Log.d("MiAppPerfil", "PERFIL show edit 5")
         btnSave.setOnClickListener {
             imageUri?.let { uri -> getSignatureCloudinary(uri, editUsername.text.toString()) }
-            //updateUserProfile(editUsername.text.toString())
+            updateUserProfile(editUsername.text.toString())
             dialog.dismiss()
         }
 

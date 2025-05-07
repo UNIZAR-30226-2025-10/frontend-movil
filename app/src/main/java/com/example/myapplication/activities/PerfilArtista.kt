@@ -365,7 +365,7 @@ class PerfilArtista : AppCompatActivity() {
 
         btnSave.setOnClickListener {
             imageUri?.let { uri -> getSignatureCloudinary(uri, editUsername.text.toString(), editArtisticName.text.toString(), editBiografia.text.toString()) }
-            //updateUserProfile(editUsername.text.toString(), editArtisticName.text.toString(), editBiografia.text.toString())
+            updateUserProfile(editUsername.text.toString(), editArtisticName.text.toString(), editBiografia.text.toString())
             dialog.dismiss()
         }
 
