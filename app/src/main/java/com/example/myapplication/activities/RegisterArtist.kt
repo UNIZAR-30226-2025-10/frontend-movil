@@ -92,7 +92,7 @@ class RegisterArtist : AppCompatActivity() {
             }
 
             if (!isValidPassword(password)) {
-                showToast("La contraseña debe tener al menos 8 caracteres, una letra y un carácter especial.")
+                showToast("La contraseña debe tener al menos 10 caracteres, una letra y un carácter especial.")
                 return@setOnClickListener
             }
 
@@ -175,7 +175,7 @@ class RegisterArtist : AppCompatActivity() {
 
     // Función para validar la contraseña (mínimo 8 caracteres, 1 letra y 1 carácter especial)
     private fun isValidPassword(password: String): Boolean {
-        val regex = Regex("^(?=.*[A-Za-z])(?=.*[!@#\$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,}$")
+        val regex = Regex("^(?=.*[A-Za-z])(?=.*[!@#\$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{10,}$")
         return regex.matches(password)
     }
 

@@ -25,7 +25,7 @@ class Pendiente : AppCompatActivity() {
 
         logout.setOnClickListener {
             // Ir a pantalla de  elegir tipo de registro
-            startActivity(Intent(this, Inicio::class.java))
+            startActivity(Intent(this, Logout::class.java))
         }
 
     }
