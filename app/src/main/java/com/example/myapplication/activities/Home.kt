@@ -210,8 +210,18 @@ class Home : AppCompatActivity() {
             dot.visibility = View.GONE
         }
 
-        indexActual = Preferencias.obtenerValorEntero("indexColeccionActual", 0)
-
+        val primerinicio = Preferencias.obtenerValorBooleano("primerinicio", false)
+        if(primerinicio == false) {
+            val idActual = Preferencias.obtenerValorString("cancionActualId", "")
+            val orden = Preferencias.obtenerValorString("ordenColeccionActual", "")
+                .split(",")
+                .filter { id -> id.isNotEmpty() }
+            indexActual = orden.indexOf(idActual)
+            Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
+        }
+        else{
+            indexActual = Preferencias.obtenerValorEntero("indexColeccionActual", 0)
+        }
         //Para actualizar el punto rojo en tiempo real, suscripcion a los eventos
         WebSocketEventHandler.registrarListenerNovedad(listenerNovedad)
         WebSocketEventHandler.registrarListenerSeguidor(listenerSeguidor)
