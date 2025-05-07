@@ -199,7 +199,9 @@ class Login : AppCompatActivity() {
 
         Preferencias.guardarValorBooleano("primerinicio", false)
 
-        getMiniReproductor()
+        if(loginResponse.tipo != "admin") {
+            getMiniReproductor()
+        }
 
         // Conectar el WebSocket después de guardar los datos del usuario
         val token = loginResponse.token ?: ""
@@ -211,8 +213,13 @@ class Login : AppCompatActivity() {
             { error -> Log.e("WebSocket", "Error de conexión: $error") }
         )
 
-        comprobarSiHayNotificaciones {
+        if(loginResponse.tipo == "admin" || loginResponse.tipo == "valido" || loginResponse.tipo == "pendiente") {
             navigate(loginResponse)
+        }
+        else{
+            comprobarSiHayNotificaciones {
+                navigate(loginResponse)
+            }
         }
     }
 

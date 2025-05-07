@@ -48,6 +48,11 @@ class RegisterUser : AppCompatActivity() {
         val font = ResourcesCompat.getFont(this, R.font.poppins_regular)
         val typefaceSpan = TypefaceSpan(font!!)
         var passwordVisible = false
+        val buttonInicio: Button = findViewById(R.id.loginLink)
+
+        buttonInicio.setOnClickListener{
+            startActivity(Intent(this, Login::class.java))
+        }
 
         btnTogglePassword.setOnClickListener {
             passwordVisible = !passwordVisible
