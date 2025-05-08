@@ -217,6 +217,20 @@
                         android:src="@drawable/ic_more_vert"
                         android:contentDescription="Más opciones"
                         android:padding="10dp" />
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <ImageButton
+                        android:id="@+id/btnSortOptions"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Ordenar"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_sort" />
                 </LinearLayout>
 
                 <!-- Lista de canciones (ahora dentro del ScrollView) -->

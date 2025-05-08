@@ -133,6 +133,14 @@ class PlaylistDetail : AppCompatActivity() {
     private var orden: List<String> = listOf()
     private var indexActual: Int = 0
     private var playlistIdActual: String? = null
+    companion object {
+        private const val SORT_DEFAULT = 0
+        private const val SORT_ALPHABETICAL = 1
+        private const val SORT_PLAY_COUNT = 2
+        private const val SORT_DATE = 3
+    }
+    private var currentSortOption = SORT_DEFAULT
+    private var originalSongsOrder: List<CancionP> = listOf()
 
     private lateinit var progressBar: ProgressBar
     private var musicService: MusicPlayerService? = null
@@ -266,15 +274,15 @@ class PlaylistDetail : AppCompatActivity() {
         Glide.with(this)
             .load(foto)
             .transform(MultiTransformation(
-                    CenterCrop(),
-                    RoundedCorners(
-                        TypedValue.applyDimension(
-                            TypedValue.COMPLEX_UNIT_DIP,
-                            12f,
-                            this.resources.displayMetrics
-                        ).toInt()
-                    )
+                CenterCrop(),
+                RoundedCorners(
+                    TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP,
+                        12f,
+                        this.resources.displayMetrics
+                    ).toInt()
                 )
+            )
             )
             .placeholder(R.drawable.no_cancion)
             .error(R.drawable.no_cancion)
@@ -322,6 +330,8 @@ class PlaylistDetail : AppCompatActivity() {
         WebSocketEventHandler.registrarListenerInteraccion(listenerInteraccion)
 
         val btnPlayPausePlaylist: ImageButton = findViewById(R.id.btnPlay)
+        val btnSortOptions: ImageButton = findViewById(R.id.btnSortOptions)
+
 
         // Llamada a la API para obtener los datos de la playlist
         playlistId?.let {
@@ -393,9 +403,14 @@ class PlaylistDetail : AppCompatActivity() {
             }
         }
 
+        // Botón de ordenación
+        btnSortOptions.setOnClickListener {
+            showSortOptionsPopupMenu(it)
+        }
+
         val btnMoreOptions: ImageButton = findViewById(R.id.btnMoreOptions)
         btnMoreOptions.setOnClickListener {
-                showMoreOptionsPopupMenu(it)
+            showMoreOptionsPopupMenu(it)
         }
         btnMoreOptions.visibility = View.VISIBLE
         val btnAnadirCancion: ImageButton = findViewById(R.id.btnAnadirCancion)
@@ -562,15 +577,15 @@ class PlaylistDetail : AppCompatActivity() {
                         Glide.with(this@PlaylistDetail)
                             .load(foto)
                             .transform(MultiTransformation(
-                                    CenterCrop(),
-                                    RoundedCorners(
-                                        TypedValue.applyDimension(
-                                            TypedValue.COMPLEX_UNIT_DIP,
-                                            12f,
-                                            this@PlaylistDetail.resources.displayMetrics
-                                        ).toInt()
-                                    )
+                                CenterCrop(),
+                                RoundedCorners(
+                                    TypedValue.applyDimension(
+                                        TypedValue.COMPLEX_UNIT_DIP,
+                                        12f,
+                                        this@PlaylistDetail.resources.displayMetrics
+                                    ).toInt()
                                 )
+                            )
                             )
                             .placeholder(R.drawable.no_cancion)
                             .error(R.drawable.no_cancion)
@@ -611,6 +626,106 @@ class PlaylistDetail : AppCompatActivity() {
             }
         })
     }
+
+    private fun showSortOptionsPopupMenu(anchorView: View) {
+        val popup = PopupMenu(this, anchorView, Gravity.START, 0, R.style.PopupMenuStyle)
+        popup.menu.apply {
+            add(0, SORT_DEFAULT, 0, "Orden original")
+            add(0, SORT_ALPHABETICAL, 1, "Orden alfabético")
+            add(0, SORT_PLAY_COUNT, 2, "Más reproducidas")
+            add(0, SORT_DATE, 3, "Más recientes")
+        }
+
+        popup.setOnMenuItemClickListener { item ->
+            // Desactivar modo aleatorio al cambiar el orden
+            aleatorio = false
+            val btnAleatorio: ImageButton = findViewById(R.id.aleatorio)
+            btnAleatorio.setImageResource(R.drawable.shuffle_24px)
+
+            // Establecer modo "enOrden"
+            modo = "enOrden"
+            Preferencias.guardarValorString("modoColeccionMirada", modo)
+
+            when (item.itemId) {
+                SORT_DEFAULT -> sortSongs(SORT_DEFAULT)
+                SORT_ALPHABETICAL -> sortSongs(SORT_ALPHABETICAL)
+                SORT_PLAY_COUNT -> sortSongs(SORT_PLAY_COUNT)
+                SORT_DATE -> sortSongs(SORT_DATE)
+            }
+            true
+        }
+
+        // Estilo del texto del menú (código existente)
+        for (i in 0 until popup.menu.size()) {
+            val item = popup.menu.getItem(i)
+            val spanString = SpannableString(item.title)
+            spanString.setSpan(
+                TypefaceSpan(ResourcesCompat.getFont(anchorView.context, R.font.poppins_regular)!!),
+                0, spanString.length,
+                Spannable.SPAN_INCLUSIVE_INCLUSIVE
+            )
+            item.title = spanString
+        }
+
+        popup.show()
+    }
+
+    private fun sortSongs(sortOption: Int) {
+        currentSortOption = sortOption
+        val songs = cancionPAdapter.getCanciones().toMutableList()
+
+        // Guardar orden original si es la primera vez que ordenamos
+        if (originalSongsOrder.isEmpty()) {
+            originalSongsOrder = songs.toList()
+        }
+
+        when (sortOption) {
+            SORT_DEFAULT -> {
+                cancionPAdapter.updateData(originalSongsOrder)
+                updatePlaybackOrder(originalSongsOrder.map { it.id }, false)
+            }
+            SORT_ALPHABETICAL -> {
+                songs.sortBy { it.nombre.lowercase() }
+                cancionPAdapter.updateData(songs)
+                updatePlaybackOrder(songs.map { it.id }, true)
+            }
+            SORT_PLAY_COUNT -> {
+                songs.sortByDescending { it.reproducciones }
+                cancionPAdapter.updateData(songs)
+                updatePlaybackOrder(songs.map { it.id }, true)
+            }
+            SORT_DATE -> {
+                songs.sortByDescending { it.fecha }
+                cancionPAdapter.updateData(songs)
+                updatePlaybackOrder(songs.map { it.id }, true)
+            }
+        }
+    }
+
+    private fun updatePlaybackOrder(songIds: List<String>, isNewOrder: Boolean) {
+        // Actualizar el orden en las preferencias
+        Preferencias.guardarValorString("ordenColeccionMirada", songIds.joinToString(","))
+
+        // Si estamos creando un nuevo orden (no restaurando el original)
+        if (isNewOrder) {
+            Preferencias.guardarValorString("ordenNaturalColeccionMirada", songIds.joinToString(","))
+        }
+
+        // Si esta playlist es la que se está reproduciendo actualmente
+        val currentCollectionId = Preferencias.obtenerValorString("coleccionActualId", "")
+        if (currentCollectionId == playlistId) {
+            Preferencias.guardarValorString("ordenColeccionActual", songIds.joinToString(","))
+            Preferencias.guardarValorString("ordenNaturalColeccionActual", songIds.joinToString(","))
+            Preferencias.guardarValorEntero("indexColeccionActual", 0)
+
+            // Si está reproduciendo, actualizar el orden en el servicio
+            if (musicService?.isPlaying() == true) {
+                cambiarModo() // Esto enviará el nuevo orden al backend
+            }
+        }
+    }
+
+
 
     private fun updateUIForPlaylistOwnership() {
         val btnAnadirCancion: ImageButton = findViewById(R.id.btnAnadirCancion)
@@ -864,15 +979,15 @@ class PlaylistDetail : AppCompatActivity() {
         Glide.with(this)
             .load(foto) // Usar la misma fuente de la foto
             .transform(MultiTransformation(
-                    CenterCrop(),
-                    RoundedCorners(
-                        TypedValue.applyDimension(
-                            TypedValue.COMPLEX_UNIT_DIP,
-                            12f,
-                            this@PlaylistDetail.resources.displayMetrics
-                        ).toInt()
-                    )
+                CenterCrop(),
+                RoundedCorners(
+                    TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP,
+                        12f,
+                        this@PlaylistDetail.resources.displayMetrics
+                    ).toInt()
                 )
+            )
             )
             .placeholder(R.drawable.no_cancion) // Imágen por defecto si no hay imagen
             .error(R.drawable.no_cancion) // Imágen de error si no se puede cargar
@@ -1996,5 +2111,3 @@ class PlaylistDetail : AppCompatActivity() {
         WebSocketEventHandler.eliminarListenerInteraccion(listenerInteraccion)
     }
 }
-
-

@@ -33,6 +33,10 @@ class CancionPAdapter(
         return CancionPViewHolder(view)
     }
 
+    fun getCanciones(): List<CancionP> {
+        return listaCanciones
+    }
+
     override fun onBindViewHolder(holder: CancionPViewHolder, position: Int) {
         val cancion = listaCanciones[position]
         holder.bind(cancion)

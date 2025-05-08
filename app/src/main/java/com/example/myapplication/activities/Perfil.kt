@@ -398,7 +398,10 @@ class Perfil : AppCompatActivity() {
 
         val window: Window? = dialog.window
         if (window != null) {
-            window.setLayout((Resources.getSystem().displayMetrics.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
+            window.setLayout(
+                (Resources.getSystem().displayMetrics.widthPixels * 0.9).toInt(),
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
             window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
 
@@ -452,18 +455,36 @@ class Perfil : AppCompatActivity() {
 
         Log.d("MiAppPerfil", "change pass 3")
 
-        Log.d("MiAppPerfil", "change pass 4")
-
         btnChange.setOnClickListener {
-            Log.d("MiAppPerfil", "change pass 5")
-            changePassword(passActual.text.toString(),passNueva.text.toString() )
-            Log.d("MiAppPerfil", "PERFIL show edit 6")
+            val actual = passActual.text.toString()
+            val nueva = passNueva.text.toString()
 
-            Log.d("MiAppPerfil", "PERFIL show edit 7")
+            if (actual == nueva) {
+                Toast.makeText(this, "La nueva contraseña debe ser distinta de la actual.", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            if (!isValidPassword(nueva)) {
+                Toast.makeText(
+                    this,
+                    "La contraseña debe tener al menos 8 caracteres, una letra y un carácter especial.",
+                    Toast.LENGTH_LONG
+                ).show()
+                return@setOnClickListener
+            }
+
+            Log.d("MiAppPerfil", "change pass 5")
+            changePassword(actual, nueva)
+            Log.d("MiAppPerfil", "PERFIL show edit 6")
             dialog.dismiss()
         }
 
         dialog.show()
+    }
+
+    private fun isValidPassword(password: String): Boolean {
+        val regex = Regex("^(?=.*[A-Za-z])(?=.*[!@#\$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,}$")
+        return regex.matches(password)
     }
 
 
