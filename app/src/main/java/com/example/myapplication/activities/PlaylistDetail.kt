@@ -682,21 +682,25 @@ class PlaylistDetail : AppCompatActivity() {
         when (sortOption) {
             SORT_DEFAULT -> {
                 cancionPAdapter.updateData(originalSongsOrder)
+                Preferencias.guardarValorString("ordenNaturalColeccionMirada", originalSongsOrder.joinToString(","))
                 updatePlaybackOrder(originalSongsOrder.map { it.id }, false)
             }
             SORT_ALPHABETICAL -> {
                 songs.sortBy { it.nombre.lowercase() }
                 cancionPAdapter.updateData(songs)
+                Preferencias.guardarValorString("ordenNaturalColeccionMirada", songs.joinToString(","))
                 updatePlaybackOrder(songs.map { it.id }, true)
             }
             SORT_PLAY_COUNT -> {
                 songs.sortByDescending { it.reproducciones }
                 cancionPAdapter.updateData(songs)
+                Preferencias.guardarValorString("ordenNaturalColeccionMirada", songs.joinToString(","))
                 updatePlaybackOrder(songs.map { it.id }, true)
             }
             SORT_DATE -> {
                 songs.sortByDescending { it.fecha }
                 cancionPAdapter.updateData(songs)
+                Preferencias.guardarValorString("ordenNaturalColeccionMirada", songs.joinToString(","))
                 updatePlaybackOrder(songs.map { it.id }, true)
             }
         }
