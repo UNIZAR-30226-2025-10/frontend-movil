@@ -221,15 +221,6 @@ class PerfilArtista : AppCompatActivity() {
         getHistorialEscuchas()
 
 
-        val nombreUsuario = usernameTextView.text.toString()
-        Log.d("CancionesAdapter", "user22: ${nombreUsuario}")
-        recyclerViewCanciones = findViewById(R.id.recyclerViewCanciones)
-        recyclerViewCanciones.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        cancionesAdapter = CancionesAdapter(mutableListOf(),nombreUsuario) { cancion ->
-           //HACER QUE SUENE
-        }
-        recyclerViewCanciones.adapter = cancionesAdapter
-
 
         recyclerViewPlaylists = findViewById(R.id.recyclerViewPlaylistsP)
         recyclerViewPlaylists.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
@@ -424,6 +415,22 @@ class PerfilArtista : AppCompatActivity() {
                             biografiaArtistaTextView.text = it.biografia
                             findViewById<TextView>(R.id.followers).text = "${it.numSeguidores} Seguidores"
                             findViewById<TextView>(R.id.following).text = "${it.numSeguidos} Seguidos"
+
+                            val nombreUsuario = it.nombreArtistico
+                            Log.d("CancionesAdapter", "user22: ${nombreUsuario}")
+                            recyclerViewCanciones = findViewById(R.id.recyclerViewCanciones)
+                            recyclerViewCanciones.layoutManager = LinearLayoutManager(this@PerfilArtista, LinearLayoutManager.HORIZONTAL, false)
+                            cancionesAdapter = CancionesAdapter(mutableListOf(),nombreUsuario) { cancion ->
+                                val cancionId = Preferencias.obtenerValorString("cancionActualId", "")
+                                if(cancionId == cancion.id){
+                                    startActivity(Intent(this@PerfilArtista, CancionReproductorDetail::class.java))
+                                }
+                                else {
+                                    reproducir(cancion.id)
+                                }
+                            }
+                            recyclerViewCanciones.adapter = cancionesAdapter
+
                         } else {
                             handleErrorCode(it.respuestaHTTP)
                         }
