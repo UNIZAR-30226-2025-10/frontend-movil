@@ -89,7 +89,7 @@ class RegisterArtist : AppCompatActivity() {
                 if (username.isEmpty() ) {
                     showToast("Todos los campos son obligatorios.")
                 } else {
-                    showToast("El nombre de usuario no puede contener '@'.")
+                    showToast("El nombre de usuario no puede contener '@', espacios ni comas.")
                 }
                 return@setOnClickListener
             }
@@ -191,9 +191,11 @@ class RegisterArtist : AppCompatActivity() {
 
     // Función para validar el nombre de usuario (no debe contener "@")
     private fun isValidUsername(username: String): Boolean {
-        return !username.contains("@") && username.isNotEmpty()
+        return username.isNotEmpty() &&
+                !username.contains("@") &&
+                !username.contains(" ") &&
+                !username.contains(",")
     }
-
     // Función para validar el correo (debe contener "@")
     private fun isValidEmail(email: String): Boolean {
         return email.contains("@") && email.isNotEmpty()

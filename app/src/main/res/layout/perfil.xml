@@ -178,12 +178,13 @@
             android:layout_marginStart="8dp"/>
     </LinearLayout>
 
-    <ScrollView
+    <android.widget.ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/profileSection"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:layout_height="0dp"
+        android:backgroundTint="#dddcdc"
+        app:layout_constraintTop_toBottomOf="@id/profileSection"
+        app:layout_constraintBottom_toTopOf="@id/miniPlayer"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -191,6 +192,47 @@
             android:orientation="vertical"
             android:padding="16dp"
             >
+
+            <TextView
+                android:id="@+id/textViewHeadersTopArtistas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Top artistas recientes"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                style="@style/TextColor"
+                android:fontFamily="@font/poppins_bold"
+                android:layout_gravity="start"
+                android:paddingTop="4dp"/>
+
+            <!-- RecyclerView para Playlists -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewTopArtistas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="true"
+                tools:ignore="NotSibling" />
+
+            <TextView
+                android:id="@+id/textViewHeadersCancionesReciente"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Historial de canciones"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                style="@style/TextColor"
+                android:fontFamily="@font/poppins_bold"
+                android:layout_gravity="start"
+                android:paddingTop="4dp"/>
+
+            <!-- RecyclerView para Playlists -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewCancionesReciente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="true"
+                tools:ignore="NotSibling" />
+
 
             <TextView
                 android:id="@+id/textViewHeadersPlaylistsP"
@@ -209,9 +251,10 @@
                 android:id="@+id/recyclerViewPlaylistsP"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="true"
                 tools:ignore="NotSibling" />
         </LinearLayout>
-    </ScrollView>
+    </android.widget.ScrollView>
 
     <!-- Mini reproductor de música -->
     <LinearLayout

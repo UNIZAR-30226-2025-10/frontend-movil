@@ -243,6 +243,8 @@
         </RadioGroup>
     </HorizontalScrollView>
 
+
+
     <!-- ScrollView para los RecyclerViews -->
     <android.widget.ScrollView
         android:layout_width="match_parent"
@@ -257,6 +259,21 @@
             android:layout_height="wrap_content"
             android:paddingHorizontal="16dp">
 
+            <TextView
+                android:id="@+id/textViewNoResultsGeneral"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No se encontraron resultados"
+                android:textSize="16sp"
+                style="@style/TextColor"
+                android:fontFamily="@font/poppins_regular"
+                android:gravity="center"
+                android:paddingVertical="24dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/filtros"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
             <!-- Encabezado -->
             <TextView
                 android:id="@+id/textViewHeaderCanciones"
@@ -270,14 +287,26 @@
                 android:layout_gravity="start"
                 android:paddingTop="10dp" />
 
-            <!-- RecyclerView para Canciones -->
+            <!-- Mensaje cuando no hay canciones -->
+            <TextView
+                android:id="@+id/textViewNoResultsCanciones"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No se encontraron canciones"
+                android:textSize="16sp"
+                style="@style/TextColor"
+                android:fontFamily="@font/poppins_regular"
+                android:gravity="center"
+                android:paddingVertical="16dp"
+                android:visibility="gone" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewCanciones"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:ignore="NotSibling" />
 
-            <!-- Encabezado -->
+            <!-- Sección de Artistas -->
             <TextView
                 android:id="@+id/textViewHeaderArtistas"
                 android:layout_width="wrap_content"
@@ -290,14 +319,26 @@
                 android:layout_gravity="start"
                 android:paddingTop="15dp" />
 
-            <!-- RecyclerView para Artistas -->
+            <!-- Mensaje cuando no hay artistas -->
+            <TextView
+                android:id="@+id/textViewNoResultsArtistas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No se encontraron artistas"
+                android:textSize="16sp"
+                style="@style/TextColor"
+                android:fontFamily="@font/poppins_regular"
+                android:gravity="center"
+                android:paddingVertical="16dp"
+                android:visibility="gone" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewArtistas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:ignore="NotSibling" />
 
-            <!-- Encabezado -->
+            <!-- Sección de Álbumes -->
             <TextView
                 android:id="@+id/textViewHeaderAlbumes"
                 android:layout_width="wrap_content"
@@ -310,14 +351,26 @@
                 android:layout_gravity="start"
                 android:paddingTop="15dp" />
 
-            <!-- RecyclerView para Álbumes -->
+            <!-- Mensaje cuando no hay álbumes -->
+            <TextView
+                android:id="@+id/textViewNoResultsAlbumes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No se encontraron álbumes"
+                android:textSize="16sp"
+                style="@style/TextColor"
+                android:fontFamily="@font/poppins_regular"
+                android:gravity="center"
+                android:paddingVertical="16dp"
+                android:visibility="gone" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewAlbumes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:ignore="NotSibling" />
 
-            <!-- Encabezado -->
+            <!-- Sección de Playlists -->
             <TextView
                 android:id="@+id/textViewHeaderPlaylists"
                 android:layout_width="wrap_content"
@@ -330,14 +383,26 @@
                 android:layout_gravity="start"
                 android:paddingTop="15dp" />
 
-            <!-- RecyclerView para Playlists -->
+            <!-- Mensaje cuando no hay playlists -->
+            <TextView
+                android:id="@+id/textViewNoResultsPlaylists"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No se encontraron playlists"
+                android:textSize="16sp"
+                style="@style/TextColor"
+                android:fontFamily="@font/poppins_regular"
+                android:gravity="center"
+                android:paddingVertical="16dp"
+                android:visibility="gone" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewPlaylists"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:ignore="NotSibling" />
 
-            <!-- Encabezado -->
+            <!-- Sección de Perfiles -->
             <TextView
                 android:id="@+id/textViewHeaderPerfiles"
                 android:layout_width="wrap_content"
@@ -350,7 +415,19 @@
                 android:layout_gravity="start"
                 android:paddingTop="15dp" />
 
-            <!-- RecyclerView para Perfiles -->
+            <!-- Mensaje cuando no hay perfiles -->
+            <TextView
+                android:id="@+id/textViewNoResultsPerfiles"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No se encontraron perfiles"
+                android:textSize="16sp"
+                style="@style/TextColor"
+                android:fontFamily="@font/poppins_regular"
+                android:gravity="center"
+                android:paddingVertical="16dp"
+                android:visibility="gone" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewPerfiles"
                 android:layout_width="match_parent"

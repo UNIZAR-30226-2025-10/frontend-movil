@@ -352,16 +352,76 @@ class Buscador : AppCompatActivity() {
     }
 
     private fun aplicarFiltros() {
-        recyclerViewCancion.visibility = if ((radioTodos.isChecked || radioCanciones.isChecked) && cancionAdapter.itemCount > 0) View.VISIBLE else View.GONE
-        recyclerViewArtista.visibility = if ((radioTodos.isChecked || radioArtistas.isChecked) && artistaAdapter.itemCount > 0) View.VISIBLE else View.GONE
-        recyclerViewAlbum.visibility = if ((radioTodos.isChecked || radioAlbumes.isChecked) && albumAdapter.itemCount > 0) View.VISIBLE else View.GONE
-        recyclerViewPlaylist.visibility = if ((radioTodos.isChecked || radioPlaylists.isChecked) && playlistAdapter.itemCount > 0) View.VISIBLE else View.GONE
-        recyclerViewPerfil.visibility = if ((radioTodos.isChecked || radioPerfiles.isChecked) && perfilAdapter.itemCount > 0) View.VISIBLE else View.GONE
-        headerCancionesTextView.visibility = if ((radioTodos.isChecked || radioCanciones.isChecked) && cancionAdapter.itemCount > 0) View.VISIBLE else View.GONE
-        headerArtistasTextView.visibility = if ((radioTodos.isChecked || radioArtistas.isChecked) && artistaAdapter.itemCount > 0) View.VISIBLE else View.GONE
-        headerAlbumesTextView.visibility = if ((radioTodos.isChecked || radioAlbumes.isChecked) && albumAdapter.itemCount > 0) View.VISIBLE else View.GONE
-        headerPlaylistsTextView.visibility = if ((radioTodos.isChecked || radioPlaylists.isChecked) && playlistAdapter.itemCount > 0) View.VISIBLE else View.GONE
-        headerPerfilesTextView.visibility = if ((radioTodos.isChecked || radioPerfiles.isChecked) && perfilAdapter.itemCount > 0) View.VISIBLE else View.GONE
+        // Obtener referencias a los TextView para los mensajes
+        val noResultsGeneral = findViewById<TextView>(R.id.textViewNoResultsGeneral)
+        val noResultsCanciones = findViewById<TextView>(R.id.textViewNoResultsCanciones)
+        val noResultsArtistas = findViewById<TextView>(R.id.textViewNoResultsArtistas)
+        val noResultsAlbumes = findViewById<TextView>(R.id.textViewNoResultsAlbumes)
+        val noResultsPlaylists = findViewById<TextView>(R.id.textViewNoResultsPlaylists)
+        val noResultsPerfiles = findViewById<TextView>(R.id.textViewNoResultsPerfiles)
+
+        // Verificar si no hay resultados en ninguna categoría
+        val noHayResultados = cancionAdapter.itemCount == 0 &&
+                artistaAdapter.itemCount == 0 &&
+                albumAdapter.itemCount == 0 &&
+                playlistAdapter.itemCount == 0 &&
+                perfilAdapter.itemCount == 0
+
+        // Mostrar mensaje general cuando está en "Todo" y no hay resultados
+        if (radioTodos.isChecked && noHayResultados) {
+            noResultsGeneral.visibility = View.VISIBLE
+            // Ocultar todos los RecyclerViews y encabezados
+            recyclerViewCancion.visibility = View.GONE
+            recyclerViewArtista.visibility = View.GONE
+            recyclerViewAlbum.visibility = View.GONE
+            recyclerViewPlaylist.visibility = View.GONE
+            recyclerViewPerfil.visibility = View.GONE
+            headerCancionesTextView.visibility = View.GONE
+            headerArtistasTextView.visibility = View.GONE
+            headerAlbumesTextView.visibility = View.GONE
+            headerPlaylistsTextView.visibility = View.GONE
+            headerPerfilesTextView.visibility = View.GONE
+            // Ocultar también los mensajes individuales
+            noResultsCanciones.visibility = View.GONE
+            noResultsArtistas.visibility = View.GONE
+            noResultsAlbumes.visibility = View.GONE
+            noResultsPlaylists.visibility = View.GONE
+            noResultsPerfiles.visibility = View.GONE
+            return
+        } else {
+            noResultsGeneral.visibility = View.GONE
+        }
+
+        // Lógica para cada categoría individual (como antes)
+        val showCanciones = (radioTodos.isChecked || radioCanciones.isChecked)
+        val hasCanciones = cancionAdapter.itemCount > 0
+        recyclerViewCancion.visibility = if (showCanciones && hasCanciones) View.VISIBLE else View.GONE
+        headerCancionesTextView.visibility = if (showCanciones && hasCanciones) View.VISIBLE else View.GONE
+        noResultsCanciones.visibility = if (showCanciones && !hasCanciones) View.VISIBLE else View.GONE
+
+        val showArtistas = (radioTodos.isChecked || radioArtistas.isChecked)
+        val hasArtistas = artistaAdapter.itemCount > 0
+        recyclerViewArtista.visibility = if (showArtistas && hasArtistas) View.VISIBLE else View.GONE
+        headerArtistasTextView.visibility = if (showArtistas && hasArtistas) View.VISIBLE else View.GONE
+        noResultsArtistas.visibility = if (showArtistas && !hasArtistas) View.VISIBLE else View.GONE
+
+        val showAlbumes = (radioTodos.isChecked || radioAlbumes.isChecked)
+        val hasAlbumes = albumAdapter.itemCount > 0
+        recyclerViewAlbum.visibility = if (showAlbumes && hasAlbumes) View.VISIBLE else View.GONE
+        headerAlbumesTextView.visibility = if (showAlbumes && hasAlbumes) View.VISIBLE else View.GONE
+        noResultsAlbumes.visibility = if (showAlbumes && !hasAlbumes) View.VISIBLE else View.GONE
+
+        val showPlaylists = (radioTodos.isChecked || radioPlaylists.isChecked)
+        val hasPlaylists = playlistAdapter.itemCount > 0
+        recyclerViewPlaylist.visibility = if (showPlaylists && hasPlaylists) View.VISIBLE else View.GONE
+        headerPlaylistsTextView.visibility = if (showPlaylists && hasPlaylists) View.VISIBLE else View.GONE
+        noResultsPlaylists.visibility = if (showPlaylists && !hasPlaylists) View.VISIBLE else View.GONE
+
+        val showPerfiles = (radioTodos.isChecked || radioPerfiles.isChecked)
+        val hasPerfiles = perfilAdapter.itemCount > 0
+        recyclerViewPerfil.visibility = if (showPerfiles && hasPerfiles) View.VISIBLE else View.GONE
+        headerPerfilesTextView.visibility = if (showPerfiles && hasPerfiles) View.VISIBLE else View.GONE
+        noResultsPerfiles.visibility = if (showPerfiles && !hasPerfiles) View.VISIBLE else View.GONE
     }
 
     private fun setupNavigation() {

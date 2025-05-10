@@ -10,7 +10,7 @@ data class PlaylistResponse(
 
 data class PlaylistP(
     val nombrePlaylist: String,
-    val fotoPortada: String,
+    var fotoPortada: String,
     val duracion: Int,
     val creador: String,
     val colaboradores: List<String>,

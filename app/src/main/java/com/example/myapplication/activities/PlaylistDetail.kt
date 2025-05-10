@@ -1112,11 +1112,24 @@ class PlaylistDetail : AppCompatActivity() {
                             Log.d("Cloudinary Upload", "Imagen subida correctamente: $imageUrl")
 
                             // Cargar la imagen desde la URL con Glide
-                            Glide.with(applicationContext)
+                            val cornerRadius = TypedValue.applyDimension(
+                                TypedValue.COMPLEX_UNIT_DIP,
+                                6f,
+                                resources.displayMetrics
+                            ).toInt()
+
+                            Glide.with(this@PlaylistDetail) // o this@NombreDeLaClase
                                 .load(imageUrl)
-                                .placeholder(R.drawable.ic_profile) // Imagen por defecto mientras carga
-                                .error(R.drawable.ic_profile) // Imagen si hay error
-                                .into(playlistImageButton!!)
+                                .transform(
+                                    MultiTransformation(
+                                        CenterCrop(),
+                                        RoundedCorners(cornerRadius)
+                                    )
+                                )
+                                .placeholder(R.drawable.ic_profile)
+                                .error(R.drawable.ic_profile)
+                                .into(playlistImageButton!!) // Imagen si hay error
+
 
                             Log.d("updatePlaylist", "name ${newUsername} 2")
                             updatePlaylist(newUsername, imageUrl)
@@ -1152,6 +1165,7 @@ class PlaylistDetail : AppCompatActivity() {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     playlistTextView.text = newPlaylistName
+                    currentPlaylist?.fotoPortada = imageUrl
                 } else {
                     Log.d("updatePlaylist", "Error en la solicitud ${response.code()}")
                     showToast("Error al actualizar playlist")
@@ -1290,7 +1304,8 @@ class PlaylistDetail : AppCompatActivity() {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     Log.d("changePrivacyPlaylist", "1")
-                    navigateInicio()
+                    finish()
+                    startActivity(intent)
                     showToast("Privacidad cambiada")
                 } else {
                     Log.d("changePrivacyPlaylist", "Error en la solicitud ${response.code()}")
@@ -2069,6 +2084,7 @@ class PlaylistDetail : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
+
 
     private fun setupNavigation() {
         val buttonPerfil: ImageButton = findViewById(R.id.profileImageButton)

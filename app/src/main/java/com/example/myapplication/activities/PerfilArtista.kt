@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.text.InputType
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.TypefaceSpan
@@ -41,6 +42,7 @@ import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.CloudinaryApiService
 import com.example.myapplication.io.request.AudioColeccionRequest
 import com.example.myapplication.io.request.AudioRequest
+import com.example.myapplication.io.request.ChangePasswordRequest
 import com.example.myapplication.io.request.EditarPerfilArtistaRequest
 import com.example.myapplication.io.request.EditarPerfilRequest
 import com.example.myapplication.io.response.*
@@ -192,6 +194,10 @@ class PerfilArtista : AppCompatActivity() {
                         showDeleteAccountDialog()
                         true
                     }
+                    R.id.menu_change_password -> {
+                        showChangePasswordDialog()
+                        true
+                    }
                     else -> false
                 }
             }
@@ -329,6 +335,156 @@ class PerfilArtista : AppCompatActivity() {
 
         dialog.show()
     }
+
+    private fun showChangePasswordDialog() {
+        Log.d("MiAppPerfil", "change pass 1")
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.dialog_change_password)
+
+        val window: Window? = dialog.window
+        if (window != null) {
+            window.setLayout(
+                (Resources.getSystem().displayMetrics.widthPixels * 0.9).toInt(),
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        }
+
+        dialog.setCancelable(true)
+        Log.d("MiAppPerfil", "change pass 2")
+
+        val passActual = dialog.findViewById<EditText>(R.id.passActual)
+        val passNueva = dialog.findViewById<EditText>(R.id.passNueva)
+        val btnChange = dialog.findViewById<Button>(R.id.btnConfirm)
+        val btnToggleActual = dialog.findViewById<ImageButton>(R.id.btnToggleActual)
+        val btnToggleNueva = dialog.findViewById<ImageButton>(R.id.btnToggleNueva)
+
+        val font = ResourcesCompat.getFont(this, R.font.poppins_regular)
+        val typefaceSpan = TypefaceSpan(font!!)
+
+        var isActualVisible = false
+        var isNuevaVisible = false
+
+        btnToggleActual.setOnClickListener {
+            isActualVisible = !isActualVisible
+            val typeface = passActual.typeface
+            if (isActualVisible) {
+                passActual.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                btnToggleActual.setImageResource(R.drawable.ic_visibility_off)
+            } else {
+                passActual.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                btnToggleActual.setImageResource(R.drawable.ic_visibility_on)
+            }
+            passActual.typeface = typeface
+            passActual.setSelection(passActual.text.length)
+        }
+
+        btnToggleNueva.setOnClickListener {
+            isNuevaVisible = !isNuevaVisible
+            val typeface = passNueva.typeface
+            if (isNuevaVisible) {
+                passNueva.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                btnToggleNueva.setImageResource(R.drawable.ic_visibility_off)
+            } else {
+                passNueva.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                btnToggleNueva.setImageResource(R.drawable.ic_visibility_on)
+            }
+            passNueva.typeface = typeface
+            passNueva.setSelection(passNueva.text.length)
+        }
+
+        // Aplicar fuente personalizada con Spannable (opcional)
+        val spannableActual = SpannableString(passActual.text)
+        spannableActual.setSpan(typefaceSpan, 0, spannableActual.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+        passActual.setText(spannableActual)
+
+        val spannableNueva = SpannableString(passNueva.text)
+        spannableNueva.setSpan(typefaceSpan, 0, spannableNueva.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+        passNueva.setText(spannableNueva)
+
+        Log.d("MiAppPerfil", "change pass 3")
+
+        btnChange.setOnClickListener {
+            val actual = passActual.text.toString()
+            val nueva = passNueva.text.toString()
+
+            if(actual.isEmpty()) {
+                showToast("Todos los campos son obligatorios.")
+                return@setOnClickListener
+            }
+
+            if (!isValidPassword(this, nueva)) {
+                if (nueva.isEmpty()) {
+                    showToast("Todos los campos son obligatorios.")
+                }
+                return@setOnClickListener
+            }
+
+            if (actual == nueva) {
+                Toast.makeText(this, "La nueva contraseña debe ser distinta de la actual.", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            Log.d("MiAppPerfil", "change pass 5")
+            changePassword(actual, nueva, dialog)
+            Log.d("MiAppPerfil", "PERFIL show edit 6")
+        }
+
+        dialog.show()
+    }
+
+    private fun changePassword(passActual: String, passNueva: String, dialog: Dialog) {
+        val request = ChangePasswordRequest(passActual, passNueva)
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+        Log.d("updateUserProfile", "2")
+        apiService.changePassword(authHeader, request).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    dialog.dismiss()
+                    showToast("Contraseña actualizada")
+                } else {
+                    Log.d("updateUserProfile", "Error en la solicitud ${response.code()}")
+                    val errorBody = response.errorBody()?.string()
+                    try {
+                        val json = JSONObject(errorBody)
+                        val errorMessage = json.getString("error")
+                        Toast.makeText(this@PerfilArtista, errorMessage, Toast.LENGTH_LONG).show()
+                    } catch (e: Exception) {
+                        Toast.makeText(this@PerfilArtista, "Error desconocido.", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.d("updateUserProfile", "Error en la solicitud2")
+                showToast("Error en la solicitud: ${t.message}")
+            }
+        })
+    }
+
+    // Función para validar la contraseña (mínimo 10 caracteres, 1 letra y 1 carácter especial)
+    private fun isValidPassword(context: Context, password: String): Boolean {
+        return when {
+            password.isEmpty() -> {
+                false
+            }
+            password.length < 10 -> {
+                Toast.makeText(context, "La contraseña debe tener al menos 10 caracteres.", Toast.LENGTH_LONG).show()
+                false
+            }
+            !password.any { it.isLetter() } -> {
+                Toast.makeText(context, "La contraseña debe contener al menos una letra.", Toast.LENGTH_LONG).show()
+                false
+            }
+            !password.any { it.isDigit() || "!@#\$%^&*()_+-=[]{};':\"\\|,.<>/?".contains(it) } -> {
+                Toast.makeText(context, "La contraseña debe contener al menos un número o carácter especial.", Toast.LENGTH_LONG).show()
+                false
+            }
+            else -> true
+        }
+    }
+
 
     private fun showEditProfileDialog() {
         val dialog = Dialog(this)
