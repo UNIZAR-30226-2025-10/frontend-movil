@@ -93,11 +93,24 @@ class AlbumDetail : AppCompatActivity() {
             actualizarIconoPlayPause()
             MusicPlayerService.setOnCompletionListener {
                 runOnUiThread {
-                    Log.d("Reproducción", "Canción finalizada, pasando a la siguiente")
-                    indexActual++
-                    Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
-                    Preferencias.guardarValorEntero("progresoCancionActual", 0)
-                    reproducirColeccion()
+                    val idcoleccion = Preferencias.obtenerValorString("coleccionActualId", "")
+                    if(idcoleccion == ""){
+                        Preferencias.guardarValorEntero("progresoCancionActual", 0)
+                        musicService?.resume()
+                    }
+                    else {
+                        Log.d("Reproducción", "Canción finalizada, pasando a la siguiente")
+                        indexActual++
+                        val ordenAct = Preferencias.obtenerValorString("ordenColeccionActual", "")
+                            .split(",")
+                            .filter { id -> id.isNotEmpty() }
+                        if(indexActual >= ordenAct.size){
+                            indexActual=0
+                        }
+                        Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
+                        Preferencias.guardarValorEntero("progresoCancionActual", 0)
+                        reproducirColeccion()
+                    }
                 }
             }
         }
@@ -172,8 +185,8 @@ class AlbumDetail : AppCompatActivity() {
                 val ordenNatural = Preferencias.obtenerValorString("ordenNaturalColeccionMirada", "")
                         .split(",")
                         .filter { id -> id.isNotEmpty() }
-                modo = "enOrden"
-                indexActual = ordenNatural.indexOf(cancion.id)
+
+                indexActual = orden.indexOf(cancion.id)
 
                 Preferencias.guardarValorString(
                     "ordenNaturalColeccionActual",
@@ -184,7 +197,7 @@ class AlbumDetail : AppCompatActivity() {
 
                 Preferencias.guardarValorString(
                     "ordenColeccionActual",
-                    ordenNatural.joinToString(",")
+                    orden.joinToString(",")
                 )
 
                 reproducirColeccion()
@@ -201,6 +214,25 @@ class AlbumDetail : AppCompatActivity() {
         }
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = cancionesAdapter
+
+        val btnAleatorio: ImageButton = findViewById(R.id.aleatorio)
+
+        val idActual = Preferencias.obtenerValorString("cancionActualId", "")
+        val idColeccionActual = Preferencias.obtenerValorString("coleccionActualId", "")
+        val modoActual = Preferencias.obtenerValorString("modoColeccionActual", "")
+        orden = Preferencias.obtenerValorString("ordenNaturalColeccionMirada", "")
+            .split(",")
+            .filter { id -> id.isNotEmpty() }
+        if(idColeccionActual == albumId){
+            indexActual = orden.indexOf(idActual)
+            if(modoActual == "aleatorio") {
+                btnAleatorio.setImageResource(R.drawable.shuffle_24px_act)
+                aleatorio = true
+            }
+        }
+        else{
+            indexActual = 0
+        }
 
         val profileImageButton = findViewById<ImageButton>(R.id.profileImageButton)
         val profileImageUrl = Preferencias.obtenerValorString("fotoPerfil", "")
@@ -300,7 +332,7 @@ class AlbumDetail : AppCompatActivity() {
             }
         }
 
-        val btnAleatorio: ImageButton = findViewById(R.id.aleatorio)
+        //val btnAleatorio: ImageButton = findViewById(R.id.aleatorio)
         btnAleatorio.setOnClickListener {
             val idColeccionActual = Preferencias.obtenerValorString("coleccionActualId", "")
             val idActual = Preferencias.obtenerValorString("cancionActualId", "")
@@ -414,6 +446,7 @@ class AlbumDetail : AppCompatActivity() {
                     ids?.let {
                         Log.d("ReproducirAlbum", "IDs extraídos: ${it.joinToString(",")}")
                         Preferencias.guardarValorString("ordenNaturalColeccionMirada", ids.joinToString(","))
+                        Preferencias.guardarValorString("ordenColeccionMirada", ids.joinToString(","))
                     }
                     
 
@@ -610,9 +643,10 @@ class AlbumDetail : AppCompatActivity() {
                     .split(",")
                     .filter { id -> id.isNotEmpty() }
                 if (indexActual < 0){
-                    indexActual = ordenColeccion.size
+                    indexActual = ordenColeccion.size-1
                 }
                 Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
+                Preferencias.guardarValorEntero("progresoCancionActual", 0)
                 reproducirColeccion()
             }
         }
@@ -625,13 +659,14 @@ class AlbumDetail : AppCompatActivity() {
             }
             else{
                 indexActual++
-                val ordenColeccion = Preferencias.obtenerValorString("ordenColeccionActual", "")
+                val ordenAct = Preferencias.obtenerValorString("ordenColeccionActual", "")
                     .split(",")
                     .filter { id -> id.isNotEmpty() }
-                if (indexActual > ordenColeccion.size){
+                if(indexActual >= ordenAct.size){
                     indexActual=0
                 }
                 Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
+                Preferencias.guardarValorEntero("progresoCancionActual", 0)
                 reproducirColeccion()
             }
         }
@@ -890,13 +925,6 @@ class AlbumDetail : AppCompatActivity() {
                     Log.d("MiApp", "Reproducción registrada exitosamente")
                 } else {
                     Log.e("MiApp", "Error al registrar la reproducción")
-                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@AlbumDetail, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        showToast("Sesión iniciada en otro dispositivo")
-                    }
                 }
             }
 

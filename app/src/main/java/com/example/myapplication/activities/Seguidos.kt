@@ -90,6 +90,12 @@ class Seguidos : AppCompatActivity(), SeguidosAdapter.OnUnfollowListener {
                     else {
                         Log.d("Reproducción", "Canción finalizada, pasando a la siguiente")
                         indexActual++
+                        val ordenAct = Preferencias.obtenerValorString("ordenColeccionActual", "")
+                            .split(",")
+                            .filter { id -> id.isNotEmpty() }
+                        if(indexActual >= ordenAct.size){
+                            indexActual=0
+                        }
                         Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
                         Preferencias.guardarValorEntero("progresoCancionActual", 0)
                         reproducirColeccion()
@@ -305,7 +311,7 @@ class Seguidos : AppCompatActivity(), SeguidosAdapter.OnUnfollowListener {
                     .split(",")
                     .filter { id -> id.isNotEmpty() }
                 if (indexActual < 0){
-                    indexActual = ordenColeccion.size
+                    indexActual = ordenColeccion.size-1
                 }
                 Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
                 reproducirColeccion()
@@ -323,7 +329,7 @@ class Seguidos : AppCompatActivity(), SeguidosAdapter.OnUnfollowListener {
                 val ordenColeccion = Preferencias.obtenerValorString("ordenColeccionActual", "")
                     .split(",")
                     .filter { id -> id.isNotEmpty() }
-                if (indexActual > ordenColeccion.size){
+                if (indexActual >= ordenColeccion.size){
                     indexActual=0
                 }
                 Preferencias.guardarValorEntero("indexColeccionActual", indexActual)

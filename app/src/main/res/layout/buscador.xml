@@ -129,11 +129,12 @@
 
             <EditText
                 android:id="@+id/searchInput"
-                android:textColor="@color/searchbarText"
+                style="@style/TextColor"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="@font/poppins_regular"
+                android:textColorHint="@color/hintColor"
                 android:hint="¿Qué te apetece escuchar?"
                 android:textSize="16sp"
                 android:background="@android:color/transparent"

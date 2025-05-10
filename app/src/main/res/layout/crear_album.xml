@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#dddcdc">
+    style="@style/ScreenBackground">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -101,7 +101,7 @@
                 android:text="Crear Álbum"
                 android:textSize="24sp"
                 android:fontFamily="@font/poppins_bold"
-                android:textColor="#000e3b"
+                style="@style/TextColor"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="10dp" />
 
@@ -110,7 +110,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Álbum"
-                android:textColor="#000e3b"
+                style="@style/TextColor"
                 android:textSize="20sp"
                 android:fontFamily="@font/poppins_bold"
                 android:layout_marginBottom="15dp" />
@@ -170,7 +170,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
                     android:text="Canciones"
-                    android:textColor="#000e3b"
+                    style="@style/TextColor"
                     android:textSize="20sp"
                     android:fontFamily="@font/poppins_bold"/>
 
@@ -182,7 +182,7 @@
                     android:fontFamily="@font/poppins_regular"
                     android:paddingStart="5dp"
                     android:text=" + Añadir más"
-                    android:textColor="#000e3b"
+                    style="@style/TextColor"
                     android:textSize="14sp"
                     android:visibility="gone"/>
             </LinearLayout>
@@ -200,7 +200,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Nombre"
-                    android:textColor="#000e3b"
+                    style="@style/TextColor"
                     android:textSize="16sp"
                     android:fontFamily="@font/poppins_bold"
                     android:layout_marginTop="8dp"
@@ -221,7 +221,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Artistas que colaboran (separar por ',')"
-                    android:textColor="#000e3b"
+                    style="@style/TextColor"
                     android:textSize="16sp"
                     android:fontFamily="@font/poppins_bold"
                     android:layout_marginBottom="8dp" />
@@ -241,7 +241,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Etiquetas"
-                    android:textColor="#000e3b"
+                    style="@style/TextColor"
                     android:textSize="16sp"
                     android:fontFamily="@font/poppins_bold"
                     android:layout_marginBottom="8dp" />
@@ -268,7 +268,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Audio"
-                    android:textColor="#000e3b"
+                    style="@style/TextColor"
                     android:textSize="16sp"
                     android:fontFamily="@font/poppins_bold"
                     android:layout_marginBottom="8dp" />
@@ -336,6 +336,116 @@
                 android:layout_gravity="center_horizontal" />
         </LinearLayout>
     </ScrollView>
+
+    <!-- Mini reproductor de música -->
+    <LinearLayout
+        android:id="@+id/miniPlayer"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="#FFFFFF"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:background="@color/insideButtons"
+            android:orientation="horizontal"
+            android:paddingVertical="5dp"
+            android:paddingHorizontal="8dp">
+
+            <!-- Imagen de la canción -->
+            <ImageView
+                android:id="@+id/songImage"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="Portada de la canción"/>
+
+            <!-- Información de la canción -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingStart="10dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/songTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre de la Canción"
+                    android:fontFamily="@font/poppins_bold"
+                    android:textSize="14sp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textStyle="bold"
+                    style="@style/TextColor"/>
+
+                <TextView
+                    android:id="@+id/songArtist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Artista"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="12sp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    style="@style/TextColor"/>
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btnRetroceder"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:contentDescription="Retroceder"
+                android:background="@null"
+                android:layout_gravity="center_vertical"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_cancion_anterior"
+                android:layout_marginTop="1dp"
+                android:layout_marginStart="13dp"/>
+
+            <!-- Botón de stop -->
+            <ImageButton
+                android:id="@+id/stopButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_pause"
+                android:contentDescription="Detener"
+                android:background="@android:color/transparent"
+                android:scaleType="centerInside"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="1dp"
+                android:layout_marginHorizontal="5dp"/>
+
+            <ImageButton
+                android:id="@+id/btnAvanzar"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:contentDescription="Avanzar"
+                android:layout_gravity="center_vertical"
+                android:background="@null"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_cancion_siguiente"
+                android:layout_marginTop="1dp"
+                android:layout_marginEnd="5dp"/>
+        </LinearLayout>
+        <!-- Barra de progreso de reproducción -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:progress="40"
+            android:progressTint="@color/blueNuestro"
+            android:backgroundTint="@color/fondo"/>
+
+    </LinearLayout>
 
     <!-- Bottom Navigation (sin cambios) -->
     <LinearLayout

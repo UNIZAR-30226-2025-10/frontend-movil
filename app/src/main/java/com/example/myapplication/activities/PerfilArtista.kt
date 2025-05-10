@@ -6,6 +6,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -28,6 +29,8 @@ import android.view.Window
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -84,6 +87,8 @@ class PerfilArtista : AppCompatActivity() {
         }
     }
 
+    private lateinit var switchMode: SwitchCompat
+
     private lateinit var progressBar: ProgressBar
     private var musicService: MusicPlayerService? = null
     private var serviceBound = false
@@ -115,6 +120,12 @@ class PerfilArtista : AppCompatActivity() {
                     else {
                         Log.d("Reproducción", "Canción finalizada, pasando a la siguiente")
                         indexActual++
+                        val ordenAct = Preferencias.obtenerValorString("ordenColeccionActual", "")
+                            .split(",")
+                            .filter { id -> id.isNotEmpty() }
+                        if(indexActual >= ordenAct.size){
+                            indexActual=0
+                        }
                         Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
                         Preferencias.guardarValorEntero("progresoCancionActual", 0)
                         reproducirColeccion()
@@ -187,10 +198,12 @@ class PerfilArtista : AppCompatActivity() {
                         true
                     }
                     R.id.menu_logout -> {
+                        musicService?.pause()
                         startActivity(Intent(this, Logout::class.java))
                         true
                     }
                     R.id.menu_delete_account -> {
+                        musicService?.pause()
                         showDeleteAccountDialog()
                         true
                     }
@@ -214,6 +227,22 @@ class PerfilArtista : AppCompatActivity() {
             }
 
             popupMenu.show()
+        }
+
+        switchMode = findViewById(R.id.switchMode)
+        // Detectar el modo actual y actualizar el estado del switch
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        Log.d("MiAppPerfil", "colorrrr 1")
+        switchMode.isChecked = currentNightMode == Configuration.UI_MODE_NIGHT_YES
+        Log.d("MiAppPerfil", "colorrrr 2")
+        switchMode.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                Log.d("MiAppPerfil", "colorrrr 3")
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                Log.d("MiAppPerfil", "colorrrr 4")
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
         }
 
         progressBar = findViewById(R.id.progressBar)
@@ -693,7 +722,7 @@ class PerfilArtista : AppCompatActivity() {
                     .split(",")
                     .filter { id -> id.isNotEmpty() }
                 if (indexActual < 0){
-                    indexActual = ordenColeccion.size
+                    indexActual = ordenColeccion.size-1
                 }
                 Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
                 reproducirColeccion()
@@ -711,7 +740,7 @@ class PerfilArtista : AppCompatActivity() {
                 val ordenColeccion = Preferencias.obtenerValorString("ordenColeccionActual", "")
                     .split(",")
                     .filter { id -> id.isNotEmpty() }
-                if (indexActual > ordenColeccion.size){
+                if (indexActual >= ordenColeccion.size){
                     indexActual=0
                 }
                 Preferencias.guardarValorEntero("indexColeccionActual", indexActual)

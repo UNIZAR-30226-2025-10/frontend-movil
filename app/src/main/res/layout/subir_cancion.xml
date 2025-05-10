@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#dddcdc">
+    style="@style/ScreenBackground">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -107,7 +107,7 @@
                 android:text="Subir Canción"
                 android:textSize="24sp"
                 android:fontFamily="@font/poppins_bold"
-                android:textColor="#000e3b"
+                style="@style/TextColor"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp" />
 
@@ -116,7 +116,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Álbum"
-                android:textColor="#000e3b"
+                style="@style/TextColor"
                 android:textSize="16sp"
                 android:fontFamily="@font/poppins_bold"
                 android:layout_marginTop="12dp"
@@ -127,6 +127,8 @@
             <Spinner
                 android:id="@+id/spinnerAlbums"
                 android:layout_width="match_parent"
+                android:textColor="@color/spinnerTextColor"
+                android:backgroundTint="@color/blancoClaro"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp" />
 
@@ -144,7 +146,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Nombre"
-                    android:textColor="#000e3b"
+                    style="@style/TextColor"
                     android:textSize="16sp"
                     android:fontFamily="@font/poppins_bold"
                     android:layout_marginTop="8dp"
@@ -166,7 +168,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Artistas que colaboran (separar por ',')"
-                    android:textColor="#000e3b"
+                    style="@style/TextColor"
                     android:textSize="16sp"
                     android:fontFamily="@font/poppins_bold"
                     android:layout_marginBottom="8dp" />
@@ -187,7 +189,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Etiquetas"
-                    android:textColor="#000e3b"
+                    style="@style/TextColor"
                     android:textSize="16sp"
                     android:fontFamily="@font/poppins_bold"
                     android:layout_marginBottom="8dp" />
@@ -216,7 +218,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Audio"
-                    android:textColor="#000e3b"
+                    style="@style/TextColor"
                     android:textSize="16sp"
                     android:fontFamily="@font/poppins_bold"
                     android:layout_marginBottom="8dp" />

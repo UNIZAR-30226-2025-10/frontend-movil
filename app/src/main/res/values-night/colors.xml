@@ -26,5 +26,7 @@
     <color name="cabecera">#3C3B3B</color>
     <color name="searchbar">#515050</color>
     <color name="searchbarText">#FFFFFF</color>
+    <color name="hintColor">#CCCCCC</color> <!-- Gris más claro para modo oscuro, o el que prefieras -->
+    <color name="spinnerTextColor">#FFFFFF</color> <!-- Color en modo oscuro -->
 
 </resources>

@@ -69,6 +69,12 @@ class CrearPlaylist : AppCompatActivity() {
                     else {
                         Log.d("Reproducción", "Canción finalizada, pasando a la siguiente")
                         indexActual++
+                        val ordenAct = Preferencias.obtenerValorString("ordenColeccionActual", "")
+                            .split(",")
+                            .filter { id -> id.isNotEmpty() }
+                        if(indexActual >= ordenAct.size){
+                            indexActual=0
+                        }
                         Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
                         Preferencias.guardarValorEntero("progresoCancionActual", 0)
                         reproducirColeccion()

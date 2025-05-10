@@ -155,11 +155,24 @@ class PlaylistDetail : AppCompatActivity() {
             actualizarIconoPlayPause()
             MusicPlayerService.setOnCompletionListener {
                 runOnUiThread {
-                    Log.d("Reproducción", "Canción finalizada, pasando a la siguiente")
-                    indexActual++
-                    Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
-                    Preferencias.guardarValorEntero("progresoCancionActual", 0)
-                    reproducirColeccion()
+                    val idcoleccion = Preferencias.obtenerValorString("coleccionActualId", "")
+                    if(idcoleccion == ""){
+                        Preferencias.guardarValorEntero("progresoCancionActual", 0)
+                        musicService?.resume()
+                    }
+                    else {
+                        Log.d("Reproducción", "Canción finalizada, pasando a la siguiente")
+                        indexActual++
+                        val ordenAct = Preferencias.obtenerValorString("ordenColeccionActual", "")
+                            .split(",")
+                            .filter { id -> id.isNotEmpty() }
+                        if(indexActual >= ordenAct.size){
+                            indexActual=0
+                        }
+                        Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
+                        Preferencias.guardarValorEntero("progresoCancionActual", 0)
+                        reproducirColeccion()
+                    }
                 }
             }
         }
@@ -248,14 +261,14 @@ class PlaylistDetail : AppCompatActivity() {
                     val ordenNatural = Preferencias.obtenerValorString("ordenNaturalColeccionMirada", "")
                         .split(",")
                         .filter { id -> id.isNotEmpty() }
-                    modo = "enOrden"
-                    indexActual = ordenNatural.indexOf(cancion.id)
+
+                    indexActual = orden.indexOf(cancion.id)
 
                     Preferencias.guardarValorString("ordenNaturalColeccionActual", ordenNatural.joinToString(","))
                     Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
                     Preferencias.guardarValorString("modoColeccionActual", modo)
 
-                    Preferencias.guardarValorString("ordenColeccionActual", ordenNatural.joinToString(","))
+                    Preferencias.guardarValorString("ordenColeccionActual", orden.joinToString(","))
 
                     reproducirColeccion()
                 }
@@ -288,18 +301,26 @@ class PlaylistDetail : AppCompatActivity() {
             .error(R.drawable.no_cancion)
             .into(imageViewPlaylist)
 
+        val btnAleatorio: ImageButton = findViewById(R.id.aleatorio)
 
         val idActual = Preferencias.obtenerValorString("cancionActualId", "")
         val idColeccionActual = Preferencias.obtenerValorString("coleccionActualId", "")
+        val modoActual = Preferencias.obtenerValorString("modoColeccionActual", "")
         orden = Preferencias.obtenerValorString("ordenNaturalColeccionMirada", "")
             .split(",")
             .filter { id -> id.isNotEmpty() }
         if(idColeccionActual == playlistId){
             indexActual = orden.indexOf(idActual)
+            if(modoActual == "aleatorio") {
+                btnAleatorio.setImageResource(R.drawable.shuffle_24px_act)
+                aleatorio = true
+            }
         }
         else{
             indexActual = 0
         }
+
+
 
         val profileImageButton = findViewById<ImageButton>(R.id.profileImageButton)
         val profileImageUrl = Preferencias.obtenerValorString("fotoPerfil", "")
@@ -331,6 +352,7 @@ class PlaylistDetail : AppCompatActivity() {
 
         val btnPlayPausePlaylist: ImageButton = findViewById(R.id.btnPlay)
         val btnSortOptions: ImageButton = findViewById(R.id.btnSortOptions)
+
 
 
         // Llamada a la API para obtener los datos de la playlist
@@ -423,7 +445,7 @@ class PlaylistDetail : AppCompatActivity() {
         }
         btnAddUser.visibility = View.VISIBLE
 
-        val btnAleatorio: ImageButton = findViewById(R.id.aleatorio)
+
         btnAleatorio.setOnClickListener {
             if (aleatorio == true){
                 val idColeccionActual = Preferencias.obtenerValorString("coleccionActualId", "")
@@ -610,6 +632,7 @@ class PlaylistDetail : AppCompatActivity() {
                     ids?.let {
                         Log.d("ReproducirPlaylist", "IDs extraídos: ${it.joinToString(",")}")
                         Preferencias.guardarValorString("ordenNaturalColeccionMirada", ids.joinToString(","))
+                        Preferencias.guardarValorString("ordenColeccionMirada", ids.joinToString(","))
                     }
 
                 } else {
@@ -1702,7 +1725,7 @@ class PlaylistDetail : AppCompatActivity() {
                     .split(",")
                     .filter { id -> id.isNotEmpty() }
                 if (indexActual < 0){
-                    indexActual = ordenColeccion.size
+                    indexActual = ordenColeccion.size-1
                 }
                 Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
                 reproducirColeccion()
@@ -1720,7 +1743,7 @@ class PlaylistDetail : AppCompatActivity() {
                 val ordenColeccion = Preferencias.obtenerValorString("ordenColeccionActual", "")
                     .split(",")
                     .filter { id -> id.isNotEmpty() }
-                if (indexActual > ordenColeccion.size){
+                if (indexActual >= ordenColeccion.size){
                     indexActual=0
                 }
                 Preferencias.guardarValorEntero("indexColeccionActual", indexActual)

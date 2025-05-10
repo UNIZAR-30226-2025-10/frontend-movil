@@ -24,7 +24,8 @@ class NoizzyDetailAdapter(
     private val onItemClicked: (NoizzitoData) -> Unit,
     private val onLikeClicked: (NoizzitoData) -> Unit,
     private val onCommentClicked: (NoizzitoData) -> Unit,
-    private val onDeleteClicked: (NoizzitoData) -> Unit
+    private val onDeleteClicked: (NoizzitoData) -> Unit,
+    private val onCancionClicked: (NoizzitoData) -> Unit
 ) : RecyclerView.Adapter<NoizzyDetailAdapter.NoizzyViewHolder>() {
 
     class NoizzyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -131,6 +132,7 @@ class NoizzyDetailAdapter(
         holder.likeButton.setOnClickListener { onLikeClicked(noizzy) }
         holder.commentButton.setOnClickListener { onCommentClicked(noizzy) }
         holder.deleteButton.setOnClickListener { onDeleteClicked(noizzy) }
+        holder.recuadroCancion.setOnClickListener { onCancionClicked(noizzy) }
         holder.itemView.setOnClickListener {
             //val intent = Intent(holder.itemView.context, NoizzyDetail::class.java)
             //intent.putExtra("id", noizzy.id)

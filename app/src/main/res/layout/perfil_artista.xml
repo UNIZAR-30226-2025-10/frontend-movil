@@ -46,6 +46,17 @@
                 android:clickable="true"
                 android:focusable="true"/>
 
+            <!-- Switch de modo -->
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="19dp"
+                android:layout_toStartOf="@id/notificationImageButton"
+                android:thumb="@drawable/thumb"
+                android:layout_centerVertical="true"
+                app:track="@drawable/track" />
+
             <!-- Imagen de perfil como botón -->
             <ImageButton
                 android:id="@+id/profileImageButton"

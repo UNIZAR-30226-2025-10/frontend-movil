@@ -1,7 +1,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    style="@style/ScreenBackground">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline40"
@@ -72,7 +73,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        android:background="#e9e6e6"
+        style="@style/ScreenBackground2"
         android:padding="16dp"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintStart_toStartOf="parent"
@@ -107,7 +108,7 @@
                 android:layout_height="wrap_content"
                 android:text="Nombre Album"
                 android:fontFamily="@font/poppins_bold"
-                android:textColor="#000e3b"
+                style="@style/TextColor"
                 android:textSize="18sp" />
 
             <TextView
@@ -117,7 +118,7 @@
                 android:text="0 canciones"
                 android:fontFamily="@font/poppins_regular"
                 android:textSize="14sp"
-                android:textColor="#000e3b" />
+                style="@style/TextColor" />
 
             <TextView
                 android:id="@+id/text1"
@@ -126,7 +127,7 @@
                 android:text="Texto 1"
                 android:textSize="14sp"
                 android:fontFamily="@font/poppins_regular"
-                android:textColor="#000e3b" />
+                style="@style/TextColor" />
 
             <TextView
                 android:id="@+id/text2"
@@ -135,7 +136,7 @@
                 android:text="Texto 2"
                 android:fontFamily="@font/poppins_regular"
                 android:textSize="14sp"
-                android:textColor="#000e3b" />
+                style="@style/TextColor" />
         </LinearLayout>
 
     </LinearLayout>
@@ -146,7 +147,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="#dddcdc"
+        style="@style/ScreenBackground"
         app:layout_constraintTop_toBottomOf="@id/guideline40"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -184,7 +185,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="#dddcdc"
+        style="@style/ScreenBackground"
         android:paddingTop="0dp"
         android:paddingStart="16dp"
         android:paddingEnd="0dp"
@@ -205,7 +206,7 @@
                 android:layout_height="wrap_content"
                 android:text="0 Me Gustas"
                 android:textSize="18sp"
-                android:textColor="#000e3b"
+                style="@style/TextColor"
                 android:fontFamily="@font/poppins_bold" />
         </LinearLayout>
 
@@ -221,7 +222,7 @@
                 android:layout_height="wrap_content"
                 android:text="0 Reproducciones"
                 android:textSize="18sp"
-                android:textColor="#000e3b"
+                style="@style/TextColor"
                 android:fontFamily="@font/poppins_bold" />
         </LinearLayout>
 
@@ -231,7 +232,7 @@
             android:layout_height="wrap_content"
             android:text="Canciones"
             android:textSize="18sp"
-            android:textColor="#000e3b"
+            style="@style/TextColor"
             android:fontFamily="@font/poppins_bold" />
     </LinearLayout>
 
@@ -239,7 +240,7 @@
         android:id="@+id/recyclerCanciones"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="#dddcdc"
+        style="@style/ScreenBackground"
         android:paddingTop="0dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"

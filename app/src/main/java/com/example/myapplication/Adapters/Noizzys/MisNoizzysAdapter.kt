@@ -17,6 +17,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.example.myapplication.R
 import com.example.myapplication.activities.NoizzyDetail
 import com.example.myapplication.io.response.InvitacionPlaylist
+import com.example.myapplication.io.response.NoizzitoData
 import com.example.myapplication.utils.Preferencias
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
@@ -26,7 +27,8 @@ class MisNoizzysAdapter(
     private val onItemClicked: (Noizzy) -> Unit,
     private val onLikeClicked: (Noizzy) -> Unit,
     private val onCommentClicked: (Noizzy) -> Unit,
-    private val onDeleteClicked: (Noizzy) -> Unit
+    private val onDeleteClicked: (Noizzy) -> Unit,
+    private val onCancionClicked: (Noizzy) -> Unit
 ) : RecyclerView.Adapter<MisNoizzysAdapter.NoizzyViewHolder>() {
 
     class NoizzyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -131,6 +133,7 @@ class MisNoizzysAdapter(
         holder.likeButton.setOnClickListener { onLikeClicked(noizzy) }
         holder.commentButton.setOnClickListener { onCommentClicked(noizzy) }
         holder.deleteButton.setOnClickListener { onDeleteClicked(noizzy) }
+        holder.recuadroCancion.setOnClickListener{ onCancionClicked(noizzy) }
         holder.itemView.setOnClickListener {
             //Log.d("NoizzyAdapter", "ID que se pasa: ${noizzy.id}")
             //val intent = Intent(holder.itemView.context, NoizzyDetail::class.java)

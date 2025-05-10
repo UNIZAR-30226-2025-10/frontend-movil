@@ -110,6 +110,12 @@ class Buscador : AppCompatActivity() {
                     else {
                         Log.d("Reproducción", "Canción finalizada, pasando a la siguiente")
                         indexActual++
+                        val ordenAct = Preferencias.obtenerValorString("ordenColeccionActual", "")
+                            .split(",")
+                            .filter { id -> id.isNotEmpty() }
+                        if(indexActual >= ordenAct.size){
+                            indexActual=0
+                        }
                         Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
                         Preferencias.guardarValorEntero("progresoCancionActual", 0)
                         reproducirColeccion()
@@ -505,7 +511,7 @@ class Buscador : AppCompatActivity() {
                     .split(",")
                     .filter { id -> id.isNotEmpty() }
                 if (indexActual < 0){
-                    indexActual = ordenColeccion.size
+                    indexActual = ordenColeccion.size-1
                 }
                 Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
                 reproducirColeccion()
@@ -523,7 +529,7 @@ class Buscador : AppCompatActivity() {
                 val ordenColeccion = Preferencias.obtenerValorString("ordenColeccionActual", "")
                     .split(",")
                     .filter { id -> id.isNotEmpty() }
-                if (indexActual > ordenColeccion.size){
+                if (indexActual >= ordenColeccion.size){
                     indexActual=0
                 }
                 Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
@@ -784,13 +790,6 @@ class Buscador : AppCompatActivity() {
                     Log.d("MiApp", "Reproducción registrada exitosamente")
                 } else {
                     Log.e("MiApp", "Error al registrar la reproducción")
-                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@Buscador, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        showToast("Sesión iniciada en otro dispositivo")
-                    }
                 }
             }
 

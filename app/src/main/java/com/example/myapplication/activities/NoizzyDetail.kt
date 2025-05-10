@@ -88,6 +88,7 @@ class NoizzyDetail : AppCompatActivity() {
     private lateinit var noizzyPrincipal: NoizzyDetailResponse
     private lateinit var btnLikePrincipal: ImageButton
     private lateinit var btnDeletePrincipal: ImageButton
+    private lateinit var cancionNoizzy : CancionData
 
     private lateinit var progressBar: ProgressBar
     private var musicService: MusicPlayerService? = null
@@ -120,6 +121,12 @@ class NoizzyDetail : AppCompatActivity() {
                     else {
                         Log.d("Reproducción", "Canción finalizada, pasando a la siguiente")
                         indexActual++
+                        val ordenAct = Preferencias.obtenerValorString("ordenColeccionActual", "")
+                            .split(",")
+                            .filter { id -> id.isNotEmpty() }
+                        if(indexActual >= ordenAct.size){
+                            indexActual=0
+                        }
                         Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
                         Preferencias.guardarValorEntero("progresoCancionActual", 0)
                         reproducirColeccion()
@@ -229,7 +236,6 @@ class NoizzyDetail : AppCompatActivity() {
         recyclerViewNoizzitos.layoutManager = LinearLayoutManager(this)
 
 
-
         // Configurar imagen de perfil
         val profileImageButton = findViewById<ImageButton>(R.id.profileImageButton)
         val profileImageUrl = Preferencias.obtenerValorString("fotoPerfil", "")
@@ -320,6 +326,11 @@ class NoizzyDetail : AppCompatActivity() {
                                 textViewArtistaNombre.text = cancion.nombreArtisticoArtista
                                 imageViewFotoPortada.visibility = View.VISIBLE
 
+                                cancionNoizzy = cancion
+
+                                val recuadrocancion = findViewById<LinearLayout>(R.id.cancionNoizzy)
+                                recuadrocancion.setOnClickListener{reproducir(cancion.id)}
+
                                 // Cargamos la portada de la canción con Glide
                                 Glide.with(this@NoizzyDetail)
                                     .load(cancion.fotoPortada)
@@ -369,7 +380,8 @@ class NoizzyDetail : AppCompatActivity() {
                                 comentar(noizzito)
                                 Toast.makeText(this@NoizzyDetail, "Comentario en: ${noizzito.id}", Toast.LENGTH_SHORT).show()
                             },
-                            onDeleteClicked = { noizzito -> borrar(noizzito)}
+                            onDeleteClicked = { noizzito -> borrar(noizzito)},
+                            onCancionClicked = {noizzito -> reproducir(noizzito.cancion!!.id)}
                         )
                         recyclerViewNoizzitos.adapter = adapter
                     }
@@ -457,6 +469,7 @@ class NoizzyDetail : AppCompatActivity() {
             addSongText.visibility = View.GONE
             buscador.visibility = View.VISIBLE
         }
+
 
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
@@ -869,7 +882,7 @@ class NoizzyDetail : AppCompatActivity() {
                     .split(",")
                     .filter { id -> id.isNotEmpty() }
                 if (indexActual < 0){
-                    indexActual = ordenColeccion.size
+                    indexActual = ordenColeccion.size-1
                 }
                 Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
                 reproducirColeccion()
@@ -887,7 +900,7 @@ class NoizzyDetail : AppCompatActivity() {
                 val ordenColeccion = Preferencias.obtenerValorString("ordenColeccionActual", "")
                     .split(",")
                     .filter { id -> id.isNotEmpty() }
-                if (indexActual > ordenColeccion.size){
+                if (indexActual >= ordenColeccion.size){
                     indexActual=0
                 }
                 Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
