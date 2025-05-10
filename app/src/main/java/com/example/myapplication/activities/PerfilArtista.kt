@@ -294,7 +294,7 @@ class PerfilArtista : AppCompatActivity() {
 
         switchMode = findViewById(R.id.switchMode)
 
-        val oscuroAct = Preferencias.obtenerValorEntero("modoOscuro", 0)
+        val oscuroAct = Preferencias.obtenerValorEntero("modoOscuro", 1)
         if(oscuroAct == 0){
             switchMode.isChecked = true
         }
