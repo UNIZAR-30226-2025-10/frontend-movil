@@ -42,3 +42,18 @@ object Preferencias {
         sharedPreferences.edit().clear().apply()
     }
 }
+
+object TemaPreferencias {
+    private const val PREF_NAME = "tema_prefs"
+    private const val KEY_MODO_OSCURO = "modo_oscuro"
+
+    fun guardarModoOscuro(context: Context, esOscuro: Boolean) {
+        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        prefs.edit().putBoolean(KEY_MODO_OSCURO, esOscuro).apply()
+    }
+
+    fun obtenerModoOscuro(context: Context): Boolean {
+        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        return prefs.getBoolean(KEY_MODO_OSCURO, false)
+    }
+}

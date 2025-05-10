@@ -70,7 +70,9 @@
                 android:layout_toStartOf="@id/notificationButtonContainer"
                 android:thumb="@drawable/thumb"
                 android:layout_centerVertical="true"
-                app:track="@drawable/track" />
+                app:track="@drawable/track"
+                android:text=""
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
 
             <!-- Imagen de perfil como botón -->
 
@@ -87,6 +89,8 @@
                 android:contentDescription="Imagen de perfil"
                 android:clickable="true"
                 android:focusable="true"/>
+
+
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 

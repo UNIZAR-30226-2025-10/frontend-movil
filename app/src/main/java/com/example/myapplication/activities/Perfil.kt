@@ -354,18 +354,24 @@ class Perfil : AppCompatActivity() {
         updateMiniReproductor()
 
         switchMode = findViewById(R.id.switchMode)
-        // Detectar el modo actual y actualizar el estado del switch
-        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        Log.d("MiAppPerfil", "colorrrr 1")
-        switchMode.isChecked = currentNightMode == Configuration.UI_MODE_NIGHT_YES
+
+        val oscuroAct = Preferencias.obtenerValorEntero("modoOscuro", 0)
+        if(oscuroAct == 0){
+            switchMode.isChecked = true
+        }
+        else{
+            switchMode.isChecked = false
+        }
+
         Log.d("MiAppPerfil", "colorrrr 2")
-        switchMode.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                Log.d("MiAppPerfil", "colorrrr 3")
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                Log.d("MiAppPerfil", "colorrrr 4")
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        switchMode.setOnClickListener {
+            if(switchMode.isChecked){
+                Preferencias.guardarValorEntero("modoOscuro", 0)
+                setDayNight(0)
+            }
+            else{
+                Preferencias.guardarValorEntero("modoOscuro", 1)
+                setDayNight(1)
             }
         }
 
@@ -1328,6 +1334,15 @@ class Perfil : AppCompatActivity() {
 
         buttonCrear.setOnClickListener {
             startActivity(Intent(this, Perfil::class.java))
+        }
+    }
+
+    private fun setDayNight(mode: Int){
+        if(mode == 0){
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        }
+        else{
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
     }
 
