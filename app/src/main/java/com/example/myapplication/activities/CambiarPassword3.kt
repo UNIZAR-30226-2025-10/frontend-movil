@@ -1,6 +1,7 @@
 package com.example.myapplication.activities
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
@@ -27,6 +28,7 @@ class CambiarPassword3 : AppCompatActivity() {
 
     private lateinit var editTextCode: EditText
     private lateinit var apiService: ApiService
+    private var yaRedirigidoAlLogin = false
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,13 +57,14 @@ class CambiarPassword3 : AppCompatActivity() {
         buttonNext.setOnClickListener {
             val nuevaPass = editTextCode.text.toString().trim()
 
-
-            if (nuevaPass.isNotEmpty() ) {
-                Log.d("MiApp2", "despue6")
-                enviarNuevaPass(correo,nuevaPass)
-                Log.d("MiApp2", "despues7")
-            } else {
-                showToast("Todos los campos son obligatorios")
+            if (!isValidPassword(this, nuevaPass)) {
+                if (nuevaPass.isEmpty()) {
+                    showToast("Introduce una contraseña")
+                }
+                return@setOnClickListener
+            }
+            else {
+                enviarNuevaPass(correo, nuevaPass)
             }
         }
 
@@ -73,16 +76,17 @@ class CambiarPassword3 : AppCompatActivity() {
         btnTogglePassword.setOnClickListener {
             passwordVisible = !passwordVisible
 
+            val typeface = editTextCode.typeface
             if (passwordVisible) {
                 // Mostrar la contraseña
                 editTextCode.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                btnTogglePassword.setImageResource(R.drawable.ic_visibility_on) // Ojo abierto
+                btnTogglePassword.setImageResource(R.drawable.ic_visibility_off) // Ojo abierto
             } else {
                 // Ocultar la contraseña
                 editTextCode.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                btnTogglePassword.setImageResource(R.drawable.ic_visibility_off) // Ojo cerrado
+                btnTogglePassword.setImageResource(R.drawable.ic_visibility_on) // Ojo cerrado
             }
-
+            editTextCode.typeface = typeface
             // Para mantener el cursor al final del texto
             editTextCode.setSelection(editTextCode.text.length)
         }
@@ -104,14 +108,15 @@ class CambiarPassword3 : AppCompatActivity() {
                 Log.d("MiApp", "Respuesta : ${response.code()}")
                 if (response.isSuccessful) {
                     val registerResponse = response.body()
-
-
-                    showToast("Registro exitoso")
                     navigateLogin()
-
-
                 } else {
-                    showToast("Error en el verificar codigo: Código ${response.code()}")
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CambiarPassword3, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        showToast("Sesión iniciada en otro dispositivo")
+                    }
                 }
             }
 
@@ -129,6 +134,28 @@ class CambiarPassword3 : AppCompatActivity() {
             else -> "Error desconocido ($statusCode)"
         }
         // showToast(message)
+    }
+
+    // Función para validar la contraseña (mínimo 10 caracteres, 1 letra y 1 carácter especial)
+    private fun isValidPassword(context: Context, password: String): Boolean {
+        return when {
+            password.isEmpty() -> {
+                false
+            }
+            password.length < 10 -> {
+                Toast.makeText(context, "La contraseña debe tener al menos 10 caracteres.", Toast.LENGTH_LONG).show()
+                false
+            }
+            !password.any { it.isLetter() } -> {
+                Toast.makeText(context, "La contraseña debe contener al menos una letra.", Toast.LENGTH_LONG).show()
+                false
+            }
+            !password.any { it.isDigit() || "!@#\$%^&*()_+-=[]{};':\"\\|,.<>/?".contains(it) } -> {
+                Toast.makeText(context, "La contraseña debe contener al menos un número o carácter especial.", Toast.LENGTH_LONG).show()
+                false
+            }
+            else -> true
+        }
     }
 
     private fun showToast(message: String) {

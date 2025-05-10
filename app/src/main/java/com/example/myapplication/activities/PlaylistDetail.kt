@@ -630,10 +630,10 @@ class PlaylistDetail : AppCompatActivity() {
     private fun showSortOptionsPopupMenu(anchorView: View) {
         val popup = PopupMenu(this, anchorView, Gravity.START, 0, R.style.PopupMenuStyle)
         popup.menu.apply {
-            add(0, SORT_DEFAULT, 0, "Orden original")
+            add(0, SORT_DEFAULT, 0, "Fecha")
             add(0, SORT_ALPHABETICAL, 1, "Orden alfabético")
-            add(0, SORT_PLAY_COUNT, 2, "Más reproducidas")
-            add(0, SORT_DATE, 3, "Más recientes")
+            add(0, SORT_PLAY_COUNT, 2, "Reproducciones")
+            //add(0, SORT_DATE, 3, "Más recientes")
         }
 
         popup.setOnMenuItemClickListener { item ->
@@ -650,7 +650,7 @@ class PlaylistDetail : AppCompatActivity() {
                 SORT_DEFAULT -> sortSongs(SORT_DEFAULT)
                 SORT_ALPHABETICAL -> sortSongs(SORT_ALPHABETICAL)
                 SORT_PLAY_COUNT -> sortSongs(SORT_PLAY_COUNT)
-                SORT_DATE -> sortSongs(SORT_DATE)
+                //SORT_DATE -> sortSongs(SORT_DATE)
             }
             true
         }
@@ -697,12 +697,12 @@ class PlaylistDetail : AppCompatActivity() {
                 Preferencias.guardarValorString("ordenNaturalColeccionMirada", songs.joinToString(","))
                 updatePlaybackOrder(songs.map { it.id }, true)
             }
-            SORT_DATE -> {
+            /*SORT_DATE -> {
                 songs.sortByDescending { it.fecha }
                 cancionPAdapter.updateData(songs)
                 Preferencias.guardarValorString("ordenNaturalColeccionMirada", songs.joinToString(","))
                 updatePlaybackOrder(songs.map { it.id }, true)
-            }
+            }*/
         }
     }
 
@@ -1114,7 +1114,6 @@ class PlaylistDetail : AppCompatActivity() {
                             // Cargar la imagen desde la URL con Glide
                             Glide.with(applicationContext)
                                 .load(imageUrl)
-                                .circleCrop()
                                 .placeholder(R.drawable.ic_profile) // Imagen por defecto mientras carga
                                 .error(R.drawable.ic_profile) // Imagen si hay error
                                 .into(playlistImageButton!!)
@@ -1153,7 +1152,6 @@ class PlaylistDetail : AppCompatActivity() {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     playlistTextView.text = newPlaylistName
-                    showToast("playlist actualizado")
                 } else {
                     Log.d("updatePlaylist", "Error en la solicitud ${response.code()}")
                     showToast("Error al actualizar playlist")
@@ -1293,7 +1291,7 @@ class PlaylistDetail : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Log.d("changePrivacyPlaylist", "1")
                     navigateInicio()
-                    showToast("playlist privacy cambiada")
+                    showToast("Privacidad cambiada")
                 } else {
                     Log.d("changePrivacyPlaylist", "Error en la solicitud ${response.code()}")
                     showToast("Error al cambiar privacy playlist")

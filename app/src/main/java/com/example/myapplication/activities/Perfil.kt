@@ -66,6 +66,7 @@ import com.example.myapplication.utils.Preferencias
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -422,25 +423,29 @@ class Perfil : AppCompatActivity() {
 
         btnToggleActual.setOnClickListener {
             isActualVisible = !isActualVisible
+            val typeface = passActual.typeface
             if (isActualVisible) {
                 passActual.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                btnToggleActual.setImageResource(R.drawable.ic_visibility_on)
+                btnToggleActual.setImageResource(R.drawable.ic_visibility_off)
             } else {
                 passActual.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                btnToggleActual.setImageResource(R.drawable.ic_visibility_off)
+                btnToggleActual.setImageResource(R.drawable.ic_visibility_on)
             }
+            passActual.typeface = typeface
             passActual.setSelection(passActual.text.length)
         }
 
         btnToggleNueva.setOnClickListener {
             isNuevaVisible = !isNuevaVisible
+            val typeface = passNueva.typeface
             if (isNuevaVisible) {
                 passNueva.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                btnToggleNueva.setImageResource(R.drawable.ic_visibility_on)
+                btnToggleNueva.setImageResource(R.drawable.ic_visibility_off)
             } else {
                 passNueva.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                btnToggleNueva.setImageResource(R.drawable.ic_visibility_off)
+                btnToggleNueva.setImageResource(R.drawable.ic_visibility_on)
             }
+            passNueva.typeface = typeface
             passNueva.setSelection(passNueva.text.length)
         }
 
@@ -459,32 +464,51 @@ class Perfil : AppCompatActivity() {
             val actual = passActual.text.toString()
             val nueva = passNueva.text.toString()
 
+            if(actual.isEmpty()) {
+                showToast("Todos los campos son obligatorios.")
+                return@setOnClickListener
+            }
+
+            if (!isValidPassword(this, nueva)) {
+                if (nueva.isEmpty()) {
+                    showToast("Todos los campos son obligatorios.")
+                }
+                return@setOnClickListener
+            }
+
             if (actual == nueva) {
                 Toast.makeText(this, "La nueva contraseña debe ser distinta de la actual.", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
 
-            if (!isValidPassword(nueva)) {
-                Toast.makeText(
-                    this,
-                    "La contraseña debe tener al menos 8 caracteres, una letra y un carácter especial.",
-                    Toast.LENGTH_LONG
-                ).show()
-                return@setOnClickListener
-            }
-
             Log.d("MiAppPerfil", "change pass 5")
-            changePassword(actual, nueva)
+            changePassword(actual, nueva, dialog)
             Log.d("MiAppPerfil", "PERFIL show edit 6")
-            dialog.dismiss()
         }
 
         dialog.show()
     }
 
-    private fun isValidPassword(password: String): Boolean {
-        val regex = Regex("^(?=.*[A-Za-z])(?=.*[!@#\$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,}$")
-        return regex.matches(password)
+    // Función para validar la contraseña (mínimo 10 caracteres, 1 letra y 1 carácter especial)
+    private fun isValidPassword(context: Context, password: String): Boolean {
+        return when {
+            password.isEmpty() -> {
+                false
+            }
+            password.length < 10 -> {
+                Toast.makeText(context, "La contraseña debe tener al menos 10 caracteres.", Toast.LENGTH_LONG).show()
+                false
+            }
+            !password.any { it.isLetter() } -> {
+                Toast.makeText(context, "La contraseña debe contener al menos una letra.", Toast.LENGTH_LONG).show()
+                false
+            }
+            !password.any { it.isDigit() || "!@#\$%^&*()_+-=[]{};':\"\\|,.<>/?".contains(it) } -> {
+                Toast.makeText(context, "La contraseña debe contener al menos un número o carácter especial.", Toast.LENGTH_LONG).show()
+                false
+            }
+            else -> true
+        }
     }
 
 
@@ -547,16 +571,13 @@ class Perfil : AppCompatActivity() {
                     response.body()?.let {
                         uploadImageToCloudinary(it, imagenURI, folder, newUsername)
                     }
-                    showToast("Get signature correcto")
                 } else {
                     Log.d("Signature", "Signature 2")
-                    showToast("Error al Get signature")
                 }
             }
 
             override fun onFailure(call: Call<GetSignatureResponse>, t: Throwable) {
                 Log.d("Signature", "Error en la solicitud: ${t.message}")
-                showToast("Error en la solicitud: ${t.message}")
             }
         })
         Log.d("Signature", "Signature FUERA")
@@ -565,7 +586,6 @@ class Perfil : AppCompatActivity() {
     private fun uploadImageToCloudinary(signatureData: GetSignatureResponse, imagenURI: Uri, folder: String, newUsername: String) {
         try {
             val inputStream = contentResolver.openInputStream(imagenURI) ?: run {
-                showToast("Error al abrir la imagen")
                 return
             }
 
@@ -592,17 +612,12 @@ class Perfil : AppCompatActivity() {
                     if (response.isSuccessful) {
                         response.body()?.let {
                             Preferencias.guardarValorString("profile_image", it.secure_url)
-                            showToast("Imagen subida con éxito")
                             updateUserProfile(newUsername)
                         }
-                    } else {
-                        showToast("Error al subir la imagen")
                     }
                 }
 
-                override fun onFailure(call: Call<CloudinaryResponse>, t: Throwable) {
-                    showToast("Error en la subida: ${t.message}")
-                }
+                override fun onFailure(call: Call<CloudinaryResponse>, t: Throwable) {}
             })
         } catch (e: Exception) {
             showToast("Error al procesar la imagen: ${e.message}")
@@ -637,21 +652,25 @@ class Perfil : AppCompatActivity() {
                         .placeholder(R.drawable.ic_profile)
                         .error(R.drawable.ic_profile)
                         .into(profileImageView)
-                    showToast("Perfil actualizado")
                 } else {
-                    Log.d("updateUserProfile", "Error en la solicitud ${response.code()}")
-                    showToast("Error al actualizar perfil")
+                    val errorBody = response.errorBody()?.string()
+                    try {
+                        val json = JSONObject(errorBody)
+                        val errorMessage = json.getString("error")
+                        Toast.makeText(this@Perfil, errorMessage, Toast.LENGTH_LONG).show()
+                    } catch (e: Exception) {
+                        Toast.makeText(this@Perfil, "Error desconocido.", Toast.LENGTH_LONG).show()
+                    }
                 }
             }
 
             override fun onFailure(call: Call<EditarPerfilResponse>, t: Throwable) {
                 Log.d("updateUserProfile", "Error en la solicitud2")
-                showToast("Error en la solicitud: ${t.message}")
             }
         })
     }
 
-    private fun changePassword(passActual: String, passNueva: String) {
+    private fun changePassword(passActual: String, passNueva: String, dialog: Dialog) {
         val request = ChangePasswordRequest(passActual, passNueva)
         val token = Preferencias.obtenerValorString("token", "")
         val authHeader = "Bearer $token"
@@ -659,10 +678,18 @@ class Perfil : AppCompatActivity() {
         apiService.changePassword(authHeader, request).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
+                    dialog.dismiss()
                     showToast("Contraseña actualizada")
                 } else {
                     Log.d("updateUserProfile", "Error en la solicitud ${response.code()}")
-                    showToast("Error al actualizar contraseña")
+                    val errorBody = response.errorBody()?.string()
+                    try {
+                        val json = JSONObject(errorBody)
+                        val errorMessage = json.getString("error")
+                        Toast.makeText(this@Perfil, errorMessage, Toast.LENGTH_LONG).show()
+                    } catch (e: Exception) {
+                        Toast.makeText(this@Perfil, "Error desconocido.", Toast.LENGTH_LONG).show()
+                    }
                 }
             }
 
@@ -710,14 +737,10 @@ class Perfil : AppCompatActivity() {
                             handleErrorCode(it.respuestaHTTP)
                         }
                     } ?: showToast("Búsqueda fallida: Datos incorrectos")
-                } else {
-                    showToast("Error en la búsqueda: Código ${response.code()}")
                 }
             }
 
-            override fun onFailure(call: Call<InfoSeguidoresResponse>, t: Throwable) {
-                showToast("Error en la solicitud: ${t.message}")
-            }
+            override fun onFailure(call: Call<InfoSeguidoresResponse>, t: Throwable) {}
         })
     }
 
@@ -739,7 +762,6 @@ class Perfil : AppCompatActivity() {
                             } else {
                                 recyclerViewPlaylists.visibility = View.GONE
                                 headerPlaylistsTextView.visibility = View.GONE
-                                showToast("No hay playlists")
                             }
 
                         } else {

@@ -1001,6 +1001,11 @@ class MisNoizzys: AppCompatActivity() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        cargarMisNoizzys()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         WebSocketEventHandler.eliminarListenerNovedad(listenerNovedad)

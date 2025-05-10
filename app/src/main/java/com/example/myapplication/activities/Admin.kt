@@ -33,6 +33,7 @@ class Admin : AppCompatActivity() {
     private lateinit var apiService: ApiService
     private lateinit var recyclerSolicitudes: RecyclerView
     private lateinit var solicitudAdapter: SolicitudAdapter
+    private var yaRedirigidoAlLogin = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +62,6 @@ class Admin : AppCompatActivity() {
         val authHeader = "Bearer $token"
         apiService.getPendientes(authHeader).enqueue(object : Callback<PendientesResponse> {
             override fun onResponse(call: Call<PendientesResponse>, response: Response<PendientesResponse>) {
-                Log.d("ADMIN_RESPONES", "response: ${response.isSuccessful}")
                 if (response.isSuccessful) {
                     response.body()?.let {
                             val solicitudesPendientes = it.pendientes
@@ -69,8 +69,13 @@ class Admin : AppCompatActivity() {
                             recyclerSolicitudes.visibility = if (solicitudesPendientes.isNotEmpty()) View.VISIBLE else View.GONE
                     } ?: showToast("Búsqueda fallida: Datos incorrectos")
                 } else {
-                    Log.d("ADMIN_RESPONES", "ERROR BUSQUEDA: ${response.body()}")
-                    showToast("Error en la búsqueda: Código ${response.code()}")
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Admin, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        showToast("Sesión iniciada en otro dispositivo")
+                    }
                 }
             }
 
@@ -91,7 +96,13 @@ class Admin : AppCompatActivity() {
                     showToast(if (esValida) "Solicitud aceptada" else "Solicitud rechazada")
                     loadSolicitudes()
                 } else {
-                    showToast("Error al procesar la solicitud: Código ${response.code()}")
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Admin, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        showToast("Sesión iniciada en otro dispositivo")
+                    }
                 }
             }
 

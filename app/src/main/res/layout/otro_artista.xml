@@ -133,7 +133,7 @@
                                 android:layout_marginTop="4dp"
                                 android:fontFamily="@font/poppins_bold"
                                 style="@style/TextColor"
-                                android:textSize="14sp" />
+                                android:textSize="18sp" />
 
                             <TextView
                                 android:id="@+id/biografia"
@@ -141,7 +141,7 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/poppins_regular"
                                 style="@style/TextColor"
-                                android:textSize="18sp" />
+                                android:textSize="14sp" />
 
                             <LinearLayout
                                 android:layout_width="wrap_content"

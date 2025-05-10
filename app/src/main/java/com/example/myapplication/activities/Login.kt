@@ -29,6 +29,7 @@ import com.example.myapplication.io.request.LoginRequest
 import com.example.myapplication.io.response.CancionActualResponse
 import com.example.myapplication.io.response.HayNotificacionesResponse
 import com.example.myapplication.utils.Preferencias
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -63,16 +64,18 @@ class Login : AppCompatActivity() {
         btnTogglePassword.setOnClickListener {
             passwordVisible = !passwordVisible
 
+            val typeface = etPassword.typeface
             if (passwordVisible) {
                 // Mostrar la contraseña
                 etPassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                btnTogglePassword.setImageResource(R.drawable.ic_visibility_on) // Ojo abierto
+                btnTogglePassword.setImageResource(R.drawable.ic_visibility_off) // Ojo abierto
             } else {
                 // Ocultar la contraseña
                 etPassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                btnTogglePassword.setImageResource(R.drawable.ic_visibility_off) // Ojo cerrado
+                btnTogglePassword.setImageResource(R.drawable.ic_visibility_on) // Ojo cerrado
             }
 
+            etPassword.typeface = typeface
             // Para mantener el cursor al final del texto
             etPassword.setSelection(etPassword.text.length)
         }
@@ -82,6 +85,7 @@ class Login : AppCompatActivity() {
         val spannable = SpannableString(text)
         spannable.setSpan(typefaceSpan, 0, text.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
         etPassword.setText(spannable)
+
         //Evento clic del he olvidado contraseña
         buttonForgotPass.setOnClickListener{
             startActivity(Intent(this, CambiarPassword1::class.java))
@@ -126,7 +130,6 @@ class Login : AppCompatActivity() {
                         Log.d("MiApp", "Respuesta exitosa user: ${loginResponse.usuario?.nombreUsuario}")
                         Log.d("MiApp", "Respuesta exitosa volumen: ${loginResponse.usuario?.volumen}")
                         if(loginResponse.respuestaHTTP == 0){
-                            showToast("Login existoso")
                             guardarDatosUsuario(loginResponse)
                         } else{
                             handleErrorCode(loginResponse.respuestaHTTP)
@@ -135,27 +138,18 @@ class Login : AppCompatActivity() {
                         showToast("Inicio de sesión fallido: Datos incorrectos")
                     }
                 } else {
-                    if (response.code() == 401) {
-                        val errorMessage = response.errorBody()?.string() ?: "Error desconocido"
-                        if (errorMessage.contains("Nombre de usuario o correo no válido")) {
-                            // Error de usuario no válido
-                            Log.e("MiApp", "Error 401: Usuario no válido.")
-                            showToast("Usuario no válido")
-                        } else if (errorMessage.contains("Contraseña incorrecta")) {
-                            // Error de contraseña incorrecta
-                            Log.e("MiApp", "Error 401: Contraseña incorrecta.")
-                            showToast("Contraseña incorrecta")
-                        } else {
-                            // Otro error de autenticación
-                            Log.e("MiApp", "Error 401: $errorMessage")
-                            showToast("Error en el login: $errorMessage")
-                        }
-                    }
                     if (response.code() == 403) {
                         cambiar_sesion(loginRequest)
+                    } else {
+                        val errorBody = response.errorBody()?.string()
+                        try {
+                            val json = JSONObject(errorBody)
+                            val errorMessage = json.getString("error")
+                            Toast.makeText(this@Login, errorMessage, Toast.LENGTH_LONG).show()
+                        } catch (e: Exception) {
+                            Toast.makeText(this@Login, "Error desconocido.", Toast.LENGTH_LONG).show()
+                        }
                     }
-                    showToast("Error en el login: Código ${response.code()}")
-                    Log.e("MiApp", "Error 503: ${response.body()}")
                 }
             }
 
@@ -250,7 +244,8 @@ class Login : AppCompatActivity() {
                                 Preferencias.guardarValorString("nombreUsuarioArtistaActual", cancion.nombreUsuarioArtista ?: "")
                                 Log.d("MiniReproductor", "Nombre usuario artista guardado: ${cancion.nombreUsuarioArtista ?: "null"}")
 
-                                val progresoEnApp = cancion.progreso?.times(1000)
+                                //val progresoEnApp = cancion.progreso?.times(1000).toInt()
+                                val progresoEnApp = ((cancion.progreso ?: 0.0) * 1000).toInt()
                                 Preferencias.guardarValorEntero("progresoCancionActual", progresoEnApp ?: 0)
                                 Log.d("MiniReproductor", "Progreso canción guardado: ${cancion.progreso ?: 0}")
 
@@ -291,6 +286,8 @@ class Login : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<CancionActualResponse>, t: Throwable) {
+                Log.d("MiniReproductor","Error al pedir cancion: ${t.message}")
+                showToast("Error al pedir cancion: ${t.message}")
                 showToast("Error en la solicitud: ${t.message}")
             }
         })

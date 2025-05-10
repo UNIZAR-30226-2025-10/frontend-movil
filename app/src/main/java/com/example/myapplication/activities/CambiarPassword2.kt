@@ -27,6 +27,7 @@ class CambiarPassword2 : AppCompatActivity() {
 
     private lateinit var editTextCode: EditText
     private lateinit var apiService: ApiService
+    private var yaRedirigidoAlLogin = false
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,16 +75,17 @@ class CambiarPassword2 : AppCompatActivity() {
         btnTogglePassword.setOnClickListener {
             passwordVisible = !passwordVisible
 
+            val typeface = editTextCode.typeface
             if (passwordVisible) {
                 // Mostrar la contraseña
                 editTextCode.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                btnTogglePassword.setImageResource(R.drawable.ic_visibility_on) // Ojo abierto
+                btnTogglePassword.setImageResource(R.drawable.ic_visibility_off) // Ojo abierto
             } else {
                 // Ocultar la contraseña
                 editTextCode.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                btnTogglePassword.setImageResource(R.drawable.ic_visibility_off) // Ojo cerrado
+                btnTogglePassword.setImageResource(R.drawable.ic_visibility_on) // Ojo cerrado
             }
-
+            editTextCode.typeface = typeface
             // Para mantener el cursor al final del texto
             editTextCode.setSelection(editTextCode.text.length)
         }
@@ -105,7 +107,6 @@ class CambiarPassword2 : AppCompatActivity() {
                     val registerResponse = response.body()
                     if (registerResponse != null) {
                         if (registerResponse.respuestaHTTP == 0) {
-                            showToast("Registro exitoso")
                             guardarDatosCambioPass(registerResponse)
                             navigateToNext(correo)
                         } else {
@@ -115,7 +116,15 @@ class CambiarPassword2 : AppCompatActivity() {
                         showToast("Error: Respuesta vacía del servidor")
                     }
                 } else {
-                    showToast("Error en el verificar codigo: Código ${response.code()}")
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CambiarPassword2, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        showToast("Sesión iniciada en otro dispositivo")
+                    } else {
+                        showToast("Código incorrecto")
+                    }
                 }
             }
 

@@ -3,7 +3,7 @@ package com.example.myapplication.io.response
 data class CancionActualResponse(
     val respuestaHTTP: Int,
     val cancion: CancionActual?,
-    val coleccion: ColeccionActual? // si también quieres usarlo
+    val coleccion: ColeccionActual?
 )
 
 data class CancionActual(
@@ -12,7 +12,7 @@ data class CancionActual(
     val nombre: String?,
     val nombreArtisticoArtista: String?,
     val nombreUsuarioArtista: String?,
-    val progreso: Int?,
+    val progreso: Double?,
     val featuring: List<String>?,
     val fav: Boolean?,
     val fotoPortada: String?

@@ -50,6 +50,7 @@ import com.example.myapplication.utils.Preferencias
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -265,8 +266,6 @@ class PerfilArtista : AppCompatActivity() {
                             handleErrorCode(responseBody.respuestaHTTP)
                         }
                     } ?: showToast("Error: Respuesta vacía del servidor")
-                } else {
-                    showToast("Error al cargar álbumes: ${response.code()}")
                 }
             }
 
@@ -383,13 +382,10 @@ class PerfilArtista : AppCompatActivity() {
                     response.body()?.let {
                         uploadImageToCloudinary(it, imagenURI, folder, newUsername, newArtisticname, newBiografia)
                     }
-                } else {
-                    showToast("Error al obtener firma")
                 }
             }
 
             override fun onFailure(call: Call<GetSignatureResponse>, t: Throwable) {
-                showToast("Error en la solicitud: ${t.message}")
             }
         })
     }
@@ -397,7 +393,6 @@ class PerfilArtista : AppCompatActivity() {
     private fun uploadImageToCloudinary(signatureData: GetSignatureResponse, imagenURI: Uri, folder: String, newUsername: String, newArtisticname: String, newBiografia: String) {
         try {
             val inputStream = contentResolver.openInputStream(imagenURI) ?: run {
-                showToast("Error al abrir la imagen")
                 return
             }
 
@@ -424,11 +419,8 @@ class PerfilArtista : AppCompatActivity() {
                     if (response.isSuccessful) {
                         response.body()?.let {
                             Preferencias.guardarValorString("profile_image", it.secure_url)
-                            showToast("Imagen subida con éxito")
                             updateUserProfile(newUsername, newArtisticname, newBiografia)
                         }
-                    } else {
-                        showToast("Error al subir la imagen")
                     }
                 }
 
@@ -469,10 +461,16 @@ class PerfilArtista : AppCompatActivity() {
                         .placeholder(R.drawable.ic_profile)
                         .error(R.drawable.ic_profile)
                         .into(profileImageView)
-                    showToast("Perfil actualizado")
+
                 } else {
-                    showToast("Error al actualizar perfil")
-                    Log.d("ActualizarPerfil", "Código ${response.code()} - ${response.body()}")
+                    val errorBody = response.errorBody()?.string()
+                    try {
+                        val json = JSONObject(errorBody)
+                        val errorMessage = json.getString("error")
+                        Toast.makeText(this@PerfilArtista, errorMessage, Toast.LENGTH_LONG).show()
+                    } catch (e: Exception) {
+                        Toast.makeText(this@PerfilArtista, "Error desconocido.", Toast.LENGTH_LONG).show()
+                    }
                 }
             }
 

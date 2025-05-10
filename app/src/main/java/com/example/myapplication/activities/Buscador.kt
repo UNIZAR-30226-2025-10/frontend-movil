@@ -86,6 +86,7 @@ class Buscador : AppCompatActivity() {
     private lateinit var radioPlaylists: RadioButton
     private lateinit var radioPerfiles: RadioButton
     private lateinit var dot: View
+    private var yaRedirigidoAlLogin = false
 
     private lateinit var progressBar: ProgressBar
     private var musicService: MusicPlayerService? = null
@@ -334,7 +335,13 @@ class Buscador : AppCompatActivity() {
                         }
                     } ?: showToast("Búsqueda fallida: Datos incorrectos")
                 } else {
-                    showToast("Error en la búsqueda: Código ${response.code()}")
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Buscador, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        showToast("Sesión iniciada en otro dispositivo")
+                    }
                 }
             }
 
@@ -589,6 +596,13 @@ class Buscador : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Buscador, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        showToast("Sesión iniciada en otro dispositivo")
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat
@@ -654,6 +668,13 @@ class Buscador : AppCompatActivity() {
                     }
                 } else {
                     Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Buscador, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        showToast("Sesión iniciada en otro dispositivo")
+                    }
                 }
             }
 
@@ -703,6 +724,13 @@ class Buscador : AppCompatActivity() {
                     Log.d("MiApp", "Reproducción registrada exitosamente")
                 } else {
                     Log.e("MiApp", "Error al registrar la reproducción")
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Buscador, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        showToast("Sesión iniciada en otro dispositivo")
+                    }
                 }
             }
 
@@ -741,6 +769,13 @@ class Buscador : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Buscador, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        showToast("Sesión iniciada en otro dispositivo")
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat

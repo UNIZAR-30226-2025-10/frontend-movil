@@ -1237,8 +1237,11 @@ class NoizzyDetail : AppCompatActivity() {
         buttonCrear.setOnClickListener {
             startActivity(Intent(this, CrearPlaylist::class.java))
         }
+    }
 
-
+    override fun onResume() {
+        super.onResume()
+        datosNoizzy(noizzyId!!)
     }
 
     override fun onDestroy() {

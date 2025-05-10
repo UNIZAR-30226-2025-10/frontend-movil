@@ -71,7 +71,7 @@ class AlbumDetail : AppCompatActivity() {
     private var album:  DatosAlbumResponse? = null
     var selectedCancionParaAñadir: CancionesAlbum? = null
     var albumId: String? = null
-
+    private var yaRedirigidoAlLogin = false
 
     private var aleatorio = false
     private var modo = "enOrden"
@@ -156,6 +156,7 @@ class AlbumDetail : AppCompatActivity() {
         dot = findViewById<View>(R.id.notificationDot)
 
         // Obtener el id del album del intent
+        Log.d("id", intent.getStringExtra("id") ?: "")
         val albumId = intent.getStringExtra("id") ?: ""
 
         cancionesAdapter = CancionesAlbumAdapter(emptyList(), ""
@@ -417,7 +418,13 @@ class AlbumDetail : AppCompatActivity() {
                     
 
                 } else {
-                    Log.d("Album","Error al obtener los datos del artista")
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@AlbumDetail, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        showToast("Sesión iniciada en otro dispositivo")
+                    }
                 }
             }
 
@@ -437,8 +444,14 @@ class AlbumDetail : AppCompatActivity() {
                 if (response.isSuccessful) {
                     callback(response.body()?.playlists ?: emptyList())
                 } else {
-                    showToast("Error al obtener tus playlists")
                     callback(emptyList())
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@AlbumDetail, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        showToast("Sesión iniciada en otro dispositivo")
+                    }
                 }
             }
 
@@ -472,7 +485,13 @@ class AlbumDetail : AppCompatActivity() {
                         showToast("Esta canción ya está en la playlist")
                     }
                     else -> {
-                        showToast("Error al añadir canción")
+                        if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                            yaRedirigidoAlLogin = true
+                            val intent = Intent(this@AlbumDetail, Inicio::class.java)
+                            startActivity(intent)
+                            finish()
+                            showToast("Sesión iniciada en otro dispositivo")
+                        }
                     }
                 }
             }
@@ -749,6 +768,13 @@ class AlbumDetail : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@AlbumDetail, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        showToast("Sesión iniciada en otro dispositivo")
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat
@@ -808,7 +834,13 @@ class AlbumDetail : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
-                    Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@AlbumDetail, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        showToast("Sesión iniciada en otro dispositivo")
+                    }
                 }
             }
 
@@ -858,6 +890,13 @@ class AlbumDetail : AppCompatActivity() {
                     Log.d("MiApp", "Reproducción registrada exitosamente")
                 } else {
                     Log.e("MiApp", "Error al registrar la reproducción")
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@AlbumDetail, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        showToast("Sesión iniciada en otro dispositivo")
+                    }
                 }
             }
 
@@ -896,6 +935,13 @@ class AlbumDetail : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@AlbumDetail, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        showToast("Sesión iniciada en otro dispositivo")
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat
@@ -941,6 +987,13 @@ class AlbumDetail : AppCompatActivity() {
 
                 } else {
                     Log.e("Modo", "Error: ${response.code()} - ${response.errorBody()?.string()}")
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@AlbumDetail, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        showToast("Sesión iniciada en otro dispositivo")
+                    }
                 }
             }
 

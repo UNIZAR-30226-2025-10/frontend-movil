@@ -1,5 +1,7 @@
 package com.example.myapplication.activities
 
+import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
@@ -18,6 +20,7 @@ import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.request.RegisterUserRequest
 import com.example.myapplication.io.response.RegisterUserResponse
 import com.example.myapplication.utils.Preferencias
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -57,25 +60,22 @@ class RegisterUser : AppCompatActivity() {
         btnTogglePassword.setOnClickListener {
             passwordVisible = !passwordVisible
 
+            val typeface = editTextPassword.typeface
+
             if (passwordVisible) {
                 // Mostrar la contraseña
                 editTextPassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                btnTogglePassword.setImageResource(R.drawable.ic_visibility_on) // Ojo abierto
+                btnTogglePassword.setImageResource(R.drawable.ic_visibility_off) // Ojo abierto
             } else {
                 // Ocultar la contraseña
                 editTextPassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                btnTogglePassword.setImageResource(R.drawable.ic_visibility_off) // Ojo cerrado
+                btnTogglePassword.setImageResource(R.drawable.ic_visibility_on) // Ojo cerrado
             }
 
+            editTextPassword.typeface = typeface
             // Para mantener el cursor al final del texto
             editTextPassword.setSelection(editTextPassword.text.length)
         }
-
-        // Aplicar la fuente con Spannable
-        val text = editTextPassword.text.toString()
-        val spannable = SpannableString(text)
-        spannable.setSpan(typefaceSpan, 0, text.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
-        editTextPassword.setText(spannable)
 
         // Evento clic del botón de registro
         buttonRegister.setOnClickListener {
@@ -83,19 +83,30 @@ class RegisterUser : AppCompatActivity() {
             val email = editTextEmail.text.toString().trim()
             val password = editTextPassword.text.toString().trim()
 
+
             // Validaciones
             if (!isValidUsername(username)) {
-                showToast("El nombre de usuario no puede contener '@'.")
+                if (username.isEmpty() ) {
+                    showToast("Todos los campos son obligatorios.")
+                } else {
+                    showToast("El nombre de usuario no puede contener '@'.")
+                }
                 return@setOnClickListener
             }
 
             if (!isValidEmail(email)) {
-                showToast("El correo electrónico debe contener un '@'.")
+                if (email.isEmpty()) {
+                    showToast("Todos los campos son obligatorios.")
+                } else {
+                    showToast("El correo electrónico debe contener un '@'.")
+                }
                 return@setOnClickListener
             }
 
-            if (!isValidPassword(password)) {
-                showToast("La contraseña debe tener al menos 10 caracteres, una letra y un carácter especial.")
+            if (!isValidPassword(this, password)) {
+                if (password.isEmpty()) {
+                    showToast("Todos los campos son obligatorios.")
+                }
                 return@setOnClickListener
             }
 
@@ -127,12 +138,13 @@ class RegisterUser : AppCompatActivity() {
                         showToast("Error: Respuesta vacía del servidor")
                     }
                 } else {
-                    if (response.code() == 409) {
-                        // Manejar el código 409 - Conflicto, extraer el mensaje del cuerpo de la respuesta
-                        val errorResponse = response.errorBody()?.string()
-                        showToast("Error: $errorResponse")
-                    } else {
-                        showToast("Error en el registro: Código ${response.code()}")
+                    val errorBody = response.errorBody()?.string()
+                    try {
+                        val json = JSONObject(errorBody)
+                        val errorMessage = json.getString("error")
+                        Toast.makeText(this@RegisterUser, errorMessage, Toast.LENGTH_LONG).show()
+                    } catch (e: Exception) {
+                        Toast.makeText(this@RegisterUser, "Error desconocido.", Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -185,11 +197,28 @@ class RegisterUser : AppCompatActivity() {
         return email.contains("@") && email.isNotEmpty()
     }
 
-    // Función para validar la contraseña (mínimo 8 caracteres, 1 letra y 1 carácter especial)
-    private fun isValidPassword(password: String): Boolean {
-        val regex = Regex("^(?=.*[A-Za-z])(?=.*[!@#\$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{10,}$")
-        return regex.matches(password)
+    // Función para validar la contraseña (mínimo 10 caracteres, 1 letra y 1 carácter especial)
+    private fun isValidPassword(context: Context, password: String): Boolean {
+        return when {
+            password.isEmpty() -> {
+                false
+            }
+            password.length < 10 -> {
+                Toast.makeText(context, "La contraseña debe tener al menos 10 caracteres.", Toast.LENGTH_LONG).show()
+                false
+            }
+            !password.any { it.isLetter() } -> {
+                Toast.makeText(context, "La contraseña debe contener al menos una letra.", Toast.LENGTH_LONG).show()
+                false
+            }
+            !password.any { it.isDigit() || "!@#\$%^&*()_+-=[]{};':\"\\|,.<>/?".contains(it) } -> {
+                Toast.makeText(context, "La contraseña debe contener al menos un número o carácter especial.", Toast.LENGTH_LONG).show()
+                false
+            }
+            else -> true
+        }
     }
+
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()

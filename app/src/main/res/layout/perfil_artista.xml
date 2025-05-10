@@ -126,8 +126,8 @@
                     android:id="@+id/biografiaArtista"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:fontFamily="@font/poppins_bold"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/poppins_regular"
                     style="@style/TextColor"/>
 
                 <LinearLayout

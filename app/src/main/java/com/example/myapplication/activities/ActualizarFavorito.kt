@@ -18,6 +18,7 @@ class ActualizarFavorito : AppCompatActivity() {
     private lateinit var apiService: ApiService
     private var esFavorito: Boolean = false
     private var cancionId: String? = null
+    private var yaRedirigidoAlLogin = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +51,13 @@ class ActualizarFavorito : AppCompatActivity() {
                     setResult(RESULT_OK, resultIntent)
                     finish()
                 } else {
-                    Toast.makeText(this@ActualizarFavorito, "Error al actualizar el estado", Toast.LENGTH_SHORT).show()
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@ActualizarFavorito, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        showToast("Sesión iniciada en otro dispositivo")
+                    }
                 }
             }
 
@@ -58,5 +65,9 @@ class ActualizarFavorito : AppCompatActivity() {
                 Toast.makeText(this@ActualizarFavorito, "Error de conexión", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

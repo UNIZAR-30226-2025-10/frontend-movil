@@ -554,7 +554,10 @@ class Notificaciones : AppCompatActivity() {
                     if (numInteracciones == 0 && botonActivo == "interacciones") {
                         noHayInteracciones.visibility = View.VISIBLE
                     }
-                    //IR AL NOIZZY
+                    val intent = Intent(this@Notificaciones, NoizzyDetail::class.java).apply {
+                        putExtra("id", interaccion.noizzy)
+                    }
+                    startActivity(intent)
                 }
             }
 
@@ -730,7 +733,7 @@ class Notificaciones : AppCompatActivity() {
                         startActivity(intent)
                     } else {
                         val intent = Intent(this@Notificaciones, OtroArtista::class.java).apply {
-                            putExtra("nombre", seguidor.nombreUsuario)
+                            putExtra("nombreUsuario", seguidor.nombreUsuario)
                         }
                         startActivity(intent)
                     }

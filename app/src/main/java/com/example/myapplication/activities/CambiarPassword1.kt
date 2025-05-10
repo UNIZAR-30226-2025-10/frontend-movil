@@ -12,6 +12,7 @@ import com.example.myapplication.R
 import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.response.CambiarPass1Response
 import com.example.myapplication.io.request.CambiarPass1Request
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -20,6 +21,7 @@ class CambiarPassword1 : AppCompatActivity() {
 
     private lateinit var editTextCode: EditText
     private lateinit var apiService: ApiService
+    private var yaRedirigidoAlLogin = false
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,12 +58,24 @@ class CambiarPassword1 : AppCompatActivity() {
                 Log.d("MiApp", "Respuesta : ${response.code()}")
                 if (response.isSuccessful) {
 
-
-                    showToast("Rcmabia1 bine")
                     navigateToNext(correo)
 
                 } else {
-                    showToast("Error en el verificar codigo: Código ${response.code()}")
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CambiarPassword1, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        showToast("Sesión iniciada en otro dispositivo")
+                    }
+                    val errorBody = response.errorBody()?.string()
+                    try {
+                        val json = JSONObject(errorBody)
+                        val errorMessage = json.getString("error")
+                        Toast.makeText(this@CambiarPassword1, errorMessage, Toast.LENGTH_LONG).show()
+                    } catch (e: Exception) {
+                        Toast.makeText(this@CambiarPassword1, "Error desconocido.", Toast.LENGTH_LONG).show()
+                    }
                 }
             }
 
