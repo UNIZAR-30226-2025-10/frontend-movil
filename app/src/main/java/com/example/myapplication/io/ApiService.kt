@@ -73,6 +73,7 @@ import com.example.myapplication.io.response.GetInteraccionesResponse
 import com.example.myapplication.io.response.GetInvitacionesResponse
 
 import com.example.myapplication.io.response.GetMisAlbumesResponse
+import com.example.myapplication.io.response.GetMisCancionesResponse
 import com.example.myapplication.io.response.GetNovedadesResponse
 import com.example.myapplication.io.response.GetNuevosSeguidoresResponse
 import com.example.myapplication.io.response.GetPlaylistOyenteResponse
@@ -316,6 +317,11 @@ interface ApiService {
     fun getMisAlbumes(
         @Header("Authorization") token: String
     ): Call<GetMisAlbumesResponse>
+
+    @GET("/get-mis-canciones")
+    fun getMisCanciones(
+        @Header("Authorization") token: String
+    ): Call<GetMisCancionesResponse>
 
     @DELETE("/delete-album")
     fun deleteAlbum(

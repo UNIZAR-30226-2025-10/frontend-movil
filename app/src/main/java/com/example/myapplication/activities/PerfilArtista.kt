@@ -39,7 +39,11 @@ import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.myapplication.Adapters.Buscador.AlbumAdapter
+import com.example.myapplication.Adapters.Home.EscuchasAdapter
+import com.example.myapplication.Adapters.Home.PlaylistsAdapter
+import com.example.myapplication.Adapters.Perfil.TopArtistasAdapter
 import com.example.myapplication.Adapters.PerfilArtista.AlbumsAdapter
+import com.example.myapplication.Adapters.PerfilArtista.CancionesAdapter
 import com.example.myapplication.R
 import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.CloudinaryApiService
@@ -65,12 +69,23 @@ class PerfilArtista : AppCompatActivity() {
     private lateinit var apiService: ApiService
     private lateinit var apiServiceCloud: CloudinaryApiService
     private lateinit var recyclerViewAlbums: RecyclerView
+    private lateinit var recyclerViewCanciones: RecyclerView
     private lateinit var albumAdapter: AlbumsAdapter
+    private lateinit var cancionesAdapter: CancionesAdapter
     private lateinit var usernameTextView: TextView
     private lateinit var artisticnameTextView: TextView
     private lateinit var biografiaArtistaTextView: TextView
     private lateinit var profileImageView: ImageView
     private lateinit var profileImageButton: ImageView
+    private lateinit var artistasAdapter: TopArtistasAdapter
+    private lateinit var escuchasAdapter: EscuchasAdapter
+    private lateinit var recyclerViewTopArtistas: RecyclerView
+    private lateinit var recyclerViewEscuchas: RecyclerView
+    private lateinit var headerTopArtistaTextView: TextView
+    private lateinit var headerEscuchasTextView: TextView
+    private lateinit var recyclerViewPlaylists: RecyclerView
+    private lateinit var headerPlaylistsTextView: TextView
+    private lateinit var playlistsAdapter: PlaylistsAdapter
     private var imageUri: Uri? = null
     private var profileImageViewDialog: ImageView? = null
 
@@ -157,6 +172,15 @@ class PerfilArtista : AppCompatActivity() {
         biografiaArtistaTextView = findViewById(R.id.biografiaArtista)
         profileImageButton = findViewById(R.id.profileImageButton)
         profileImageView = findViewById(R.id.profileImage)
+        recyclerViewTopArtistas = findViewById(R.id.recyclerViewTopArtistas)
+        recyclerViewEscuchas = findViewById(R.id.recyclerViewCancionesReciente)
+        headerPlaylistsTextView = findViewById(R.id.textViewHeadersPlaylistsP)
+        headerPlaylistsTextView.visibility = View.INVISIBLE
+
+        // Cargar datos
+        loadProfileImage()
+        loadProfileData()
+        loadArtistAlbums()
 
         // Configurar RecyclerView para álbumes
         recyclerViewAlbums = findViewById(R.id.recyclerViewAlbums)
@@ -167,11 +191,59 @@ class PerfilArtista : AppCompatActivity() {
             startActivity(intent)
         }
         recyclerViewAlbums.adapter = albumAdapter
+        headerTopArtistaTextView = findViewById(R.id.textViewHeadersTopArtistas)
+        artistasAdapter = TopArtistasAdapter(mutableListOf()) { artista ->
+            val intent = Intent(this, OtroArtista::class.java)
+            intent.putExtra("nombreUsuario", artista.nombreUsuario)
+            intent.putExtra("nombreArtistico", artista.nombreArtistico)
+            startActivity(intent)
+            Log.d("Click", "Artista seleccionado: ${artista.nombreArtistico}")
+        }
 
-        // Cargar datos
-        loadProfileImage()
-        loadProfileData()
-        loadArtistAlbums()
+        recyclerViewTopArtistas.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        recyclerViewTopArtistas.adapter = artistasAdapter
+
+        getHistorialArtistas()
+
+
+        headerEscuchasTextView = findViewById(R.id.textViewHeadersCancionesReciente)
+        escuchasAdapter = EscuchasAdapter(mutableListOf()) { escucha ->
+            val cancionId = Preferencias.obtenerValorString("cancionActualId", "")
+            if(cancionId == escucha.id){
+                startActivity(Intent(this, CancionReproductorDetail::class.java))
+            }
+            else {
+                reproducir(escucha.id)
+            }
+        }
+        recyclerViewEscuchas.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        recyclerViewEscuchas.adapter = escuchasAdapter
+        getHistorialEscuchas()
+
+
+        val nombreUsuario = usernameTextView.text.toString()
+        Log.d("CancionesAdapter", "user22: ${nombreUsuario}")
+        recyclerViewCanciones = findViewById(R.id.recyclerViewCanciones)
+        recyclerViewCanciones.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        cancionesAdapter = CancionesAdapter(mutableListOf(),nombreUsuario) { cancion ->
+           //HACER QUE SUENE
+        }
+        recyclerViewCanciones.adapter = cancionesAdapter
+
+
+        recyclerViewPlaylists = findViewById(R.id.recyclerViewPlaylistsP)
+        recyclerViewPlaylists.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        playlistsAdapter = PlaylistsAdapter(mutableListOf()){ playlist ->
+            val intent = Intent(this, PlaylistDetail::class.java)
+            intent.putExtra("nombre", playlist.nombre)
+            intent.putExtra("imagen", playlist.fotoPortada)
+            intent.putExtra("id", playlist.id)
+            startActivity(intent)
+        }
+        recyclerViewPlaylists.adapter = playlistsAdapter
+        getMisPlaylists()
+
+
 
         // Configurar listeners
         findViewById<Button>(R.id.subirCancion).setOnClickListener {
@@ -308,6 +380,36 @@ class PerfilArtista : AppCompatActivity() {
                 showToast("Error de conexión: ${t.message}")
             }
         })
+
+
+        apiService.getMisCanciones(authHeader).enqueue(object : Callback<GetMisCancionesResponse> {
+            override fun onResponse(call: Call<GetMisCancionesResponse>, response: Response<GetMisCancionesResponse>) {
+                Log.d("PERFIL_ARTISTA", "entra en on response Album")
+                if (response.isSuccessful) {
+                    response.body()?.let { responseBody ->
+                        if (responseBody.respuestaHTTP == 0) {
+                            Log.d("PERFIL_ARTISTA", "entra en on response SUCCESS")
+                            val misCanciones = responseBody.canciones
+                            Log.d("PERFIL_ARTISTA", "misAlbums: $misCanciones")
+                            Log.d("PERFIL_ARTISTA", "entra en on response 2")
+                            // Actualizar el adaptador con los nuevos álbumes
+                            cancionesAdapter.updateDataMisCanciones(misCanciones)
+                            Log.d("PERFIL_ARTISTA", "entra en on response 3")
+                            // Mostrar u ocultar el RecyclerView según si hay álbumes
+                            //if (misAlbums.isNotEmpty()) {
+                            recyclerViewCanciones.visibility = View.VISIBLE
+
+                        } else {
+                            handleErrorCode(responseBody.respuestaHTTP)
+                        }
+                    } ?: showToast("Error: Respuesta vacía del servidor")
+                }
+            }
+
+            override fun onFailure(call: Call<GetMisCancionesResponse>, t: Throwable) {
+                showToast("Error de conexión: ${t.message}")
+            }
+        })
     }
 
     private fun loadProfileData() {
@@ -332,6 +434,119 @@ class PerfilArtista : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<InfoPerfilArtistaResponse>, t: Throwable) {
+                showToast("Error en la solicitud: ${t.message}")
+            }
+        })
+    }
+
+    private fun getMisPlaylists() {
+        val token = Preferencias.obtenerValorString("token", "")
+        apiService.getMisPlaylists("Bearer $token").enqueue(object : Callback<PlaylistsResponse> {
+            override fun onResponse(call: Call<PlaylistsResponse>, response: Response<PlaylistsResponse>) {
+                Log.d("Mi app", "entra en on response Playlists")
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        if (it.respuestaHTTP == 0) {
+                            val misPlaylists = it.playlists
+
+                            // Actualizar y mostrar las canciones si las hay
+                            if (misPlaylists.isNotEmpty()) {
+                                playlistsAdapter.updateDataMisPlaylists(misPlaylists)
+                                recyclerViewPlaylists.visibility = View.VISIBLE
+                                headerPlaylistsTextView.visibility = View.VISIBLE
+                            } else {
+                                recyclerViewPlaylists.visibility = View.GONE
+                                headerPlaylistsTextView.visibility = View.GONE
+                            }
+
+                        } else {
+                            handleErrorCode(it.respuestaHTTP)
+                        }
+                    } ?: showToast("Búsqueda fallida: Datos incorrectos")
+                } else {
+                    showToast("Error en la búsqueda: Código ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<PlaylistsResponse>, t: Throwable) {
+                showToast("Error en la solicitud: ${t.message}")
+            }
+        })
+    }
+
+    private fun getHistorialArtistas() {
+        val token = Preferencias.obtenerValorString("token", "")
+        apiService.getHistorialArtistas("Bearer $token")
+            .enqueue(object : Callback<HistorialArtistasResponse> {
+                override fun onResponse(
+                    call: Call<HistorialArtistasResponse>,
+                    response: Response<HistorialArtistasResponse>
+                ) {
+                    Log.d("MiApp", "onResponse Historial Artistas")
+
+                    if (response.isSuccessful) {
+                        response.body()?.let {
+                            if (it.respuestaHTTP == 0) {
+                                val topArtistas = it.historial_artistas
+
+                                if (topArtistas.isNotEmpty()) {
+                                    artistasAdapter.updateData(topArtistas)
+                                    recyclerViewTopArtistas.visibility = View.VISIBLE
+                                    headerTopArtistaTextView.visibility = View.VISIBLE
+                                } else {
+                                    recyclerViewTopArtistas.visibility = View.GONE
+                                    headerTopArtistaTextView.visibility = View.GONE
+                                }
+                            } else {
+                                handleErrorCode(it.respuestaHTTP)
+                            }
+                        } ?: showToast("Datos incorrectos en la respuesta")
+                    } else {
+                        showToast("Error en la búsqueda: Código ${response.code()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<HistorialArtistasResponse>, t: Throwable) {
+                    showToast("Error en la solicitud: ${t.message}")
+                }
+            })
+    }
+
+
+    private fun getHistorialEscuchas() {
+        val token = Preferencias.obtenerValorString("token", "")
+        apiService.getHistorialEscuchas("Bearer $token").enqueue(object : Callback<HistorialEscuchasResponse> {
+            override fun onResponse(call: Call<HistorialEscuchasResponse>, response: Response<HistorialEscuchasResponse>) {
+                Log.d("MiApp", "entra en on response Escuchas")
+                if (response.isSuccessful) {
+                    Log.d("MiApp", "entra en on response succesful Escuchas")
+                    response.body()?.let {
+                        if (it.respuestaHTTP == 0) {
+                            Log.d("MiApp", "entra en respuesta http escuchas = $it")
+                            val escuchas = it.historial_canciones
+                            Log.d("MiApp", "escuchas = $escuchas")
+
+                            // Actualizar y mostrar las canciones si las hay
+                            if (escuchas.isNotEmpty()) {
+                                escuchasAdapter.updateDataEscucha(escuchas)
+                                recyclerViewEscuchas.visibility = View.VISIBLE
+                                headerEscuchasTextView.visibility = View.VISIBLE
+                            } else {
+                                recyclerViewEscuchas.visibility = View.GONE
+                                headerEscuchasTextView.visibility = View.GONE
+                                showToast("No hay escuchas")
+                            }
+
+                        } else {
+                            handleErrorCode(it.respuestaHTTP)
+                        }
+                    } ?: showToast("Datos incorrectos en la respuesta")
+                } else {
+                    showToast("Error en la búsqueda: Código ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<HistorialEscuchasResponse>, t: Throwable) {
                 showToast("Error en la solicitud: ${t.message}")
             }
         })
