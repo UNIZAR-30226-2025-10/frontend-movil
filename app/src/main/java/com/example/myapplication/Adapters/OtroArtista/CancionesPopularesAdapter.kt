@@ -106,6 +106,8 @@ class CancionesPopularesAdapter(
                 it.isEnabled = false // Deshabilitar temporalmente
 
                 val newState = !cancion.fav
+                cancion.fav = newState // ✅ Actualizamos el estado real
+
                 favorito.setImageResource(
                     if (newState) R.drawable.ic_heart_lleno
                     else R.drawable.ic_heart_vacio

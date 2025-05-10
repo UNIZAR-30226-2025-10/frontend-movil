@@ -496,11 +496,13 @@ class OtroArtista : AppCompatActivity() {
                 }
                 // Actualizar contador
                 getNumFavoritas(nombreUsuario)
+                Log.d("FavoritoArtista", "Cambiado fav con exito")
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
                 // Revertir si hay error
                 cancionesAdapter.updateFavoriteState(position, !fav)
+                Log.d("FavoritoArtista", "Fallo al conectar fav artista")
             }
         })
     }
