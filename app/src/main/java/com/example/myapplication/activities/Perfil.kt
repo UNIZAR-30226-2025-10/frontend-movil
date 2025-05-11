@@ -49,7 +49,9 @@ import com.example.myapplication.io.CloudinaryApiService
 import com.example.myapplication.io.request.AudioColeccionRequest
 import com.example.myapplication.io.request.AudioRequest
 import com.example.myapplication.io.request.ChangePasswordRequest
+import com.example.myapplication.io.request.ClaroRequest
 import com.example.myapplication.io.request.EditarPerfilRequest
+import com.example.myapplication.io.request.ModoRequest
 import com.example.myapplication.io.response.AddReproduccionResponse
 import com.example.myapplication.io.response.AudioResponse
 import com.example.myapplication.io.response.CancionInfoResponse
@@ -373,6 +375,7 @@ class Perfil : AppCompatActivity() {
                 Preferencias.guardarValorEntero("modoOscuro", 1)
                 setDayNight(1)
             }
+            cambiarModoOsucro()
         }
 
         dot = findViewById<View>(R.id.notificationDot)
@@ -1344,6 +1347,34 @@ class Perfil : AppCompatActivity() {
         else{
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
+    }
+
+    private fun cambiarModoOsucro() {
+        var claro = true
+        val modoOscuro = Preferencias.obtenerValorEntero("modoOscuro", 1)
+
+        if(modoOscuro == 0){
+            claro = false
+        }
+
+        val request = ClaroRequest(claro)
+        val token = Preferencias.obtenerValorString("token", "")
+        val authHeader = "Bearer $token"
+
+        apiService.change_claro(authHeader, request).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Log.d("ModoOscuro", "Cambiado el modo oscuro")
+
+                } else {
+                    Log.e("ModoOscuro", "Error: ${response.code()} - ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("Modo", "Fallo: ${t.message}")
+            }
+        })
     }
 
     override fun onDestroy() {

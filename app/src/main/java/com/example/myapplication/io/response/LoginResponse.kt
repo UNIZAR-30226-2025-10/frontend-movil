@@ -12,4 +12,5 @@ class Usuario (
     val fotoPerfil: String,
     val nombreUsuario: String,
     val volumen: Int,
+    val claro: Boolean
 )

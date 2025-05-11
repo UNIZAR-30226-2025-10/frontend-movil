@@ -20,6 +20,7 @@ import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.res.ResourcesCompat
 import com.example.myapplication.R
 import com.example.myapplication.databinding.LoginBinding
@@ -190,6 +191,18 @@ class Login : AppCompatActivity() {
 
         Preferencias.guardarValorEntero("volumen", loginResponse.usuario?.volumen ?: 0)
         Log.d("guardarDatosOyente", "Volumen: ${loginResponse.usuario?.volumen ?: 0}")
+
+        var modooscuro = 0
+        if(loginResponse.usuario?.claro == true){
+            modooscuro = 1
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+        else{
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        }
+
+        Preferencias.guardarValorEntero("modoOscuro", modooscuro)
+        Log.d("guardarDatosOyente", "ModoOscuro: $modooscuro")
 
         Preferencias.guardarValorBooleano("primerinicio", false)
 

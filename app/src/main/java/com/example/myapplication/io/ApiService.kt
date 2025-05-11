@@ -22,6 +22,7 @@ import com.example.myapplication.io.request.CrearAlbumRequest
 import com.example.myapplication.io.request.CrearCancionRequest
 import com.example.myapplication.io.request.ChangeFollowRequest
 import com.example.myapplication.io.request.ChangePasswordRequest
+import com.example.myapplication.io.request.ClaroRequest
 import com.example.myapplication.io.request.CreatePlaylistRequest
 import com.example.myapplication.io.request.DarLikeNoizzyRequest
 import com.example.myapplication.io.request.DeleteAccountRequest
@@ -155,6 +156,13 @@ interface ApiService {
     fun change_progreso(
         @Header("Authorization") authHeader: String,
         @Body progreso: ProgresoRequest
+    ): Call<Void>
+
+    //Nuevo método para guardar el progreso en la db
+    @PATCH("change-claro")
+    fun change_claro(
+        @Header("Authorization") authHeader: String,
+        @Body modo: ClaroRequest
     ): Call<Void>
 
     //Nuevo método para guardar el progreso en la db
