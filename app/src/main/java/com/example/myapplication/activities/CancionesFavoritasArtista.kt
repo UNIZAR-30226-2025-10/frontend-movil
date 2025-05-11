@@ -57,6 +57,7 @@ class CancionesFavoritasArtista : AppCompatActivity() {
     private lateinit var nombreUsuario: String
     private lateinit var tvTitle: TextView
     private lateinit var dot: View
+    private var yaRedirigidoAlLogin = false
 
     private lateinit var progressBar: ProgressBar
     private var musicService: MusicPlayerService? = null
@@ -418,6 +419,13 @@ class CancionesFavoritasArtista : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CancionesFavoritasArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CancionesFavoritasArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat
@@ -478,7 +486,13 @@ class CancionesFavoritasArtista : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
-                    Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CancionesFavoritasArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CancionesFavoritasArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -527,6 +541,13 @@ class CancionesFavoritasArtista : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Log.d("MiApp", "Reproducción registrada exitosamente")
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CancionesFavoritasArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CancionesFavoritasArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("MiApp", "Error al registrar la reproducción")
                 }
             }
@@ -566,6 +587,13 @@ class CancionesFavoritasArtista : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CancionesFavoritasArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CancionesFavoritasArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat

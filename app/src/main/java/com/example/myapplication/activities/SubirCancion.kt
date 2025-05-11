@@ -82,6 +82,7 @@ class SubirCancion : AppCompatActivity() {
     private lateinit var layoutCamposCancion: LinearLayout
     private lateinit var apiService: ApiService
     private lateinit var apiServiceCloud: CloudinaryApiService
+    private var yaRedirigidoAlLogin = false
     companion object {
         private const val PICK_IMAGE_REQUEST = 1
     }
@@ -298,6 +299,14 @@ class SubirCancion : AppCompatActivity() {
                         signatureResponse?.let {
                             uploadAudioToCloudinary(it, audioUriGlobal, folder, nombreCancion, artistasFtFinal)
                         }
+                    } else {
+                        if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                            yaRedirigidoAlLogin = true
+                            val intent = Intent(this@SubirCancion, Inicio::class.java)
+                            startActivity(intent)
+                            finish()
+                            Toast.makeText(this@SubirCancion, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
                 override fun onFailure(call: Call<GetSignatureResponse>, t: Throwable) {
@@ -343,7 +352,13 @@ class SubirCancion : AppCompatActivity() {
                     }
                 } else {
                     Log.d("Mis albumes", "Error al obtener los álbumes: ${response.code()} - ${response.message()}")
-                    Toast.makeText(this@SubirCancion, "Error cargando álbumes", Toast.LENGTH_SHORT).show()
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@SubirCancion, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@SubirCancion, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -431,6 +446,14 @@ class SubirCancion : AppCompatActivity() {
                                     signatureResponse?.let {
                                         uploadImageToCloudinary(it, imageUri, nombreAlbum, folder)
                                     }
+                                } else {
+                                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                                        yaRedirigidoAlLogin = true
+                                        val intent = Intent(this@SubirCancion, Inicio::class.java)
+                                        startActivity(intent)
+                                        finish()
+                                        Toast.makeText(this@SubirCancion, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                                    }
                                 }
                             }
                             override fun onFailure(call: Call<GetSignatureResponse>, t: Throwable) {
@@ -508,6 +531,13 @@ class SubirCancion : AppCompatActivity() {
                 } else {
                     loadingDialog?.dismiss()
                     Log.d("Crear album", "Error en crear album")
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@SubirCancion, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@SubirCancion, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
             override fun onFailure(call: Call<CrearAlbumResponse>, t: Throwable) {
@@ -557,7 +587,13 @@ class SubirCancion : AppCompatActivity() {
                             } ?: Toast.makeText(this@SubirCancion, "Error: respuesta vacía de Cloudinary", Toast.LENGTH_SHORT).show()
                         } else {
                             Log.d("uploadImageToCloudinary", "ERROR 3 ${response.errorBody()?.string()}")
-                            Toast.makeText(this@SubirCancion, "Error al subir la imagen: ${response.errorBody()?.string()}\"", Toast.LENGTH_SHORT).show()
+                            if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@SubirCancion, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                Toast.makeText(this@SubirCancion, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
 
@@ -602,6 +638,13 @@ class SubirCancion : AppCompatActivity() {
                     etiquetasDisponibles.addAll(etiquetas)
 
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@SubirCancion, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@SubirCancion, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.d("Etiquetas", "Error al obtener las etiquetas: ${response.code()} - ${response.message()}")
                 }
             }
@@ -727,6 +770,13 @@ class SubirCancion : AppCompatActivity() {
                         } else {
                             loadingDialog?.dismiss()
                             Log.d("uploadAudioToCloudinary", "ERROR 3 ${response.errorBody()?.string()}")
+                            if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@SubirCancion, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                Toast.makeText(this@SubirCancion, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
 
@@ -803,6 +853,13 @@ class SubirCancion : AppCompatActivity() {
                                 Toast.LENGTH_LONG
                             ).show()
                         }
+                        if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                            yaRedirigidoAlLogin = true
+                            val intent = Intent(this@SubirCancion, Inicio::class.java)
+                            startActivity(intent)
+                            finish()
+                            Toast.makeText(this@SubirCancion, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
                 override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -831,7 +888,13 @@ class SubirCancion : AppCompatActivity() {
                 } else {
                     loadingDialog?.dismiss()
                     Log.d("Mis albumes", "Error al obtener los álbumes: ${response.code()} - ${response.message()}")
-                    Toast.makeText(this@SubirCancion, "Error cargando álbumes", Toast.LENGTH_SHORT).show()
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@SubirCancion, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@SubirCancion, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -856,6 +919,13 @@ class SubirCancion : AppCompatActivity() {
                 } else {
                     Log.d("Mis albumes", "Error al obtener los álbumes: ${response.code()} - ${response.message()}")
                     callback(false)
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@SubirCancion, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@SubirCancion, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -1074,6 +1144,13 @@ class SubirCancion : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@SubirCancion, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@SubirCancion, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat
@@ -1134,6 +1211,13 @@ class SubirCancion : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@SubirCancion, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@SubirCancion, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")
                 }
             }
@@ -1183,6 +1267,13 @@ class SubirCancion : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Log.d("MiApp", "Reproducción registrada exitosamente")
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@SubirCancion, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@SubirCancion, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("MiApp", "Error al registrar la reproducción")
                 }
             }
@@ -1222,6 +1313,13 @@ class SubirCancion : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@SubirCancion, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@SubirCancion, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat

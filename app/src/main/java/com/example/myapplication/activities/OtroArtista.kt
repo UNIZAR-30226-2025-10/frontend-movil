@@ -78,6 +78,7 @@ class OtroArtista : AppCompatActivity() {
     private lateinit var allNoizzys: Button
     private var artista:  DatosArtista? = null
     private lateinit var dot: View
+    private var yaRedirigidoAlLogin = false
 
     private var isFollowing = false
 
@@ -377,6 +378,13 @@ class OtroArtista : AppCompatActivity() {
                     }
 
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@OtroArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@OtroArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Toast.makeText(this@OtroArtista, "Error al obtener los datos del artista", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -400,6 +408,13 @@ class OtroArtista : AppCompatActivity() {
                     // Pasar las canciones al adaptador
                     cancionesAdapter.submitList(canciones)
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@OtroArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@OtroArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Toast.makeText(this@OtroArtista, "Error al obtener las canciones populares", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -423,7 +438,13 @@ class OtroArtista : AppCompatActivity() {
                         numCanciones.text = "Te gustan ${totalFavoritas} canciones"
                     }
                 } else {
-                    Toast.makeText(this@OtroArtista, "Error al obtener las num favoritas", Toast.LENGTH_SHORT).show()
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@OtroArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@OtroArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -451,7 +472,13 @@ class OtroArtista : AppCompatActivity() {
                     }
 
                 } else {
-                    Toast.makeText(this@OtroArtista, "Error al obtener albumes", Toast.LENGTH_SHORT).show()
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@OtroArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@OtroArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -475,6 +502,14 @@ class OtroArtista : AppCompatActivity() {
                     }else{
                         Log.d("GoToArtist", "NO HAY CANCIONES")
                     }
+                } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@OtroArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@OtroArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -493,6 +528,14 @@ class OtroArtista : AppCompatActivity() {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (!response.isSuccessful) {
                     cancionesAdapter.updateFavoriteState(position, !fav)
+                } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@OtroArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@OtroArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
                 // Actualizar contador
                 getNumFavoritas(nombreUsuario)
@@ -517,7 +560,13 @@ class OtroArtista : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val message = if (isFollowing) "Ahora sigues a este usuario" else "Dejaste de seguir al usuario"
                 } else {
-                    // Revertir el cambio si falla la API
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@OtroArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@OtroArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -744,6 +793,13 @@ class OtroArtista : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@OtroArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@OtroArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat
@@ -804,6 +860,13 @@ class OtroArtista : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@OtroArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@OtroArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")
                 }
             }
@@ -853,6 +916,13 @@ class OtroArtista : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Log.d("MiApp", "Reproducción registrada exitosamente")
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@OtroArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@OtroArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("MiApp", "Error al registrar la reproducción")
                 }
             }
@@ -892,6 +962,13 @@ class OtroArtista : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@OtroArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@OtroArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat

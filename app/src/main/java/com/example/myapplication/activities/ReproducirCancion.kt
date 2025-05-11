@@ -41,6 +41,7 @@ import retrofit2.Response
 class ReproducirCancion : AppCompatActivity() {
     private lateinit var apiService: ApiService
     private lateinit var webSocketManager: WebSocketManager // Declara la variable
+    private var yaRedirigidoAlLogin = false
 
     private var musicService: MusicPlayerService? = null
     private var serviceBound = false
@@ -105,6 +106,13 @@ class ReproducirCancion : AppCompatActivity() {
                         guardarDatoscCancion(id)
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@ReproducirCancion, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@ReproducirCancion, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat
@@ -149,6 +157,13 @@ class ReproducirCancion : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Log.d("MiApp", "Reproducción registrada exitosamente")
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@ReproducirCancion, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@ReproducirCancion, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("MiApp", "Error al registrar la reproducción")
                 }
             }
@@ -186,6 +201,13 @@ class ReproducirCancion : AppCompatActivity() {
 
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@ReproducirCancion, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@ReproducirCancion, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat

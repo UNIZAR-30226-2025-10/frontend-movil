@@ -56,6 +56,7 @@ class CancionReproductorDetail : AppCompatActivity() {
     private lateinit var dot: View
     private var isFavorito = false
     private lateinit var webSocketManager: WebSocketManager // Declara la variable
+    private var yaRedirigidoAlLogin = false
 
     private lateinit var progressBar: ProgressBar
     private var musicService: MusicPlayerService? = null
@@ -414,7 +415,13 @@ class CancionReproductorDetail : AppCompatActivity() {
                     resultIntent.putExtra("es_favorito", fav) // Devolver el nuevo estado del favorito
                     setResult(RESULT_OK, resultIntent)
                 } else {
-                    Toast.makeText(this@CancionReproductorDetail, "Error al actualizar el estado", Toast.LENGTH_SHORT).show()
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CancionReproductorDetail, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CancionReproductorDetail, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -449,6 +456,13 @@ class CancionReproductorDetail : AppCompatActivity() {
                         actualizarFavoritoEstado()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CancionReproductorDetail, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CancionReproductorDetail, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat
@@ -485,7 +499,13 @@ class CancionReproductorDetail : AppCompatActivity() {
                     // Regresar a la pantalla anterior
                     finish()
                 } else {
-                    Toast.makeText(this@CancionReproductorDetail, "Error al actualizar el estado", Toast.LENGTH_SHORT).show()
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CancionReproductorDetail, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CancionReproductorDetail, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -530,6 +550,13 @@ class CancionReproductorDetail : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CancionReproductorDetail, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CancionReproductorDetail, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat
@@ -592,7 +619,13 @@ class CancionReproductorDetail : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
-                    Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CancionReproductorDetail, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CancionReproductorDetail, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -641,6 +674,13 @@ class CancionReproductorDetail : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Log.d("MiApp", "Reproducción registrada exitosamente")
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CancionReproductorDetail, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CancionReproductorDetail, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("MiApp", "Error al registrar la reproducción")
                 }
             }
@@ -680,6 +720,13 @@ class CancionReproductorDetail : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CancionReproductorDetail, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CancionReproductorDetail, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat

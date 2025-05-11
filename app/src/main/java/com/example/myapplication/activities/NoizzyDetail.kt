@@ -83,6 +83,7 @@ class NoizzyDetail : AppCompatActivity() {
     private lateinit var imageViewFotoPortada: ImageView
     private lateinit var recyclerViewNoizzitos: RecyclerView
     private lateinit var recyclerNoizzys: RecyclerView
+    private var yaRedirigidoAlLogin = false
 
     private lateinit var adapter: NoizzyDetailAdapter
     private lateinit var noizzyPrincipal: NoizzyDetailResponse
@@ -386,8 +387,14 @@ class NoizzyDetail : AppCompatActivity() {
                         recyclerViewNoizzitos.adapter = adapter
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@NoizzyDetail, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@NoizzyDetail, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("NoizzyDetail", "Respuesta no exitosa: ${response.code()}")
-                    Toast.makeText(this@NoizzyDetail, "Error cargando datos del Noizzy", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -414,6 +421,14 @@ class NoizzyDetail : AppCompatActivity() {
                         noizzy.num_likes -= 1
                     }
                     adapter.actualizarNoizzy(noizzy)
+                } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@NoizzyDetail, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@NoizzyDetail, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
             override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -524,6 +539,14 @@ class NoizzyDetail : AppCompatActivity() {
 
                                     cancionAnadida.visibility = View.VISIBLE
                                 }
+                            } else {
+                                if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                                    yaRedirigidoAlLogin = true
+                                    val intent = Intent(this@NoizzyDetail, Inicio::class.java)
+                                    startActivity(intent)
+                                    finish()
+                                    Toast.makeText(this@NoizzyDetail, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                                }
                             }
                         }
                         override fun onFailure(call: Call<SearchPlaylistResponse>, t: Throwable) {
@@ -558,6 +581,14 @@ class NoizzyDetail : AppCompatActivity() {
                     if (response.isSuccessful) {
                         noizzy.num_comentarios += 1
                         adapter.actualizarNoizzy(noizzy)
+                    } else {
+                        if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                            yaRedirigidoAlLogin = true
+                            val intent = Intent(this@NoizzyDetail, Inicio::class.java)
+                            startActivity(intent)
+                            finish()
+                            Toast.makeText(this@NoizzyDetail, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
                 override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -581,6 +612,14 @@ class NoizzyDetail : AppCompatActivity() {
                     adapter.eliminarNoizzitoPorId(noizzy.id)
                     val numeroActual = textViewNumComentarios.text.toString().toInt()
                     textViewNumComentarios.text = (numeroActual -1).toString()
+                } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@NoizzyDetail, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@NoizzyDetail, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
             override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -614,6 +653,14 @@ class NoizzyDetail : AppCompatActivity() {
                     }
                     // Puedes actualizar la vista si quieres aquí
                     actualizarNoizzyPrincipal(noizzy,"like")
+                } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@NoizzyDetail, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@NoizzyDetail, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -725,6 +772,14 @@ class NoizzyDetail : AppCompatActivity() {
 
                                     cancionAnadida.visibility = View.VISIBLE
                                 }
+                            } else {
+                                if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                                    yaRedirigidoAlLogin = true
+                                    val intent = Intent(this@NoizzyDetail, Inicio::class.java)
+                                    startActivity(intent)
+                                    finish()
+                                    Toast.makeText(this@NoizzyDetail, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                                }
                             }
                         }
                         override fun onFailure(call: Call<SearchPlaylistResponse>, t: Throwable) {
@@ -764,7 +819,17 @@ class NoizzyDetail : AppCompatActivity() {
             if (request != null) {
                 apiService.postNoizzito(authHeader, request).enqueue(object : Callback<Void> {
                     override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                        if (response.isSuccessful) {}
+                        if (response.isSuccessful) {
+
+                        } else {
+                            if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@NoizzyDetail, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                Toast.makeText(this@NoizzyDetail, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     }
 
                     override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -794,6 +859,14 @@ class NoizzyDetail : AppCompatActivity() {
                 if (response.isSuccessful) {
                     setResult(Activity.RESULT_OK)
                     finish()
+                } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@NoizzyDetail, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@NoizzyDetail, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
             override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -1033,6 +1106,13 @@ class NoizzyDetail : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@NoizzyDetail, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@NoizzyDetail, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat
@@ -1093,6 +1173,13 @@ class NoizzyDetail : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@NoizzyDetail, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@NoizzyDetail, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")
                 }
             }
@@ -1142,6 +1229,13 @@ class NoizzyDetail : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Log.d("MiApp", "Reproducción registrada exitosamente")
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@NoizzyDetail, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@NoizzyDetail, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("MiApp", "Error al registrar la reproducción")
                 }
             }
@@ -1181,6 +1275,13 @@ class NoizzyDetail : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@NoizzyDetail, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@NoizzyDetail, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat

@@ -94,6 +94,7 @@ class Perfil : AppCompatActivity() {
     private lateinit var recyclerViewTopArtistas: RecyclerView
     private lateinit var recyclerViewEscuchas: RecyclerView
     private lateinit var dot: View
+    private var yaRedirigidoAlLogin = false
     private var imageUri: Uri? = null
     private var profileImageViewDialog: ImageView? = null
     private val openGalleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -628,6 +629,13 @@ class Perfil : AppCompatActivity() {
                         uploadImageToCloudinary(it, imagenURI, folder, newUsername)
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Perfil, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Perfil, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.d("Signature", "Signature 2")
                 }
             }
@@ -670,6 +678,14 @@ class Perfil : AppCompatActivity() {
                             Preferencias.guardarValorString("profile_image", it.secure_url)
                             updateUserProfile(newUsername)
                         }
+                    } else {
+                        if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                            yaRedirigidoAlLogin = true
+                            val intent = Intent(this@Perfil, Inicio::class.java)
+                            startActivity(intent)
+                            finish()
+                            Toast.makeText(this@Perfil, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
 
@@ -709,6 +725,13 @@ class Perfil : AppCompatActivity() {
                         .error(R.drawable.ic_profile)
                         .into(profileImageView)
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Perfil, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Perfil, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorBody = response.errorBody()?.string()
                     try {
                         val json = JSONObject(errorBody)
@@ -737,6 +760,13 @@ class Perfil : AppCompatActivity() {
                     dialog.dismiss()
                     showToast("Contraseña actualizada")
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Perfil, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Perfil, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.d("updateUserProfile", "Error en la solicitud ${response.code()}")
                     val errorBody = response.errorBody()?.string()
                     try {
@@ -793,6 +823,14 @@ class Perfil : AppCompatActivity() {
                             handleErrorCode(it.respuestaHTTP)
                         }
                     } ?: showToast("Búsqueda fallida: Datos incorrectos")
+                } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Perfil, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Perfil, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -825,7 +863,13 @@ class Perfil : AppCompatActivity() {
                         }
                     } ?: showToast("Búsqueda fallida: Datos incorrectos")
                 } else {
-                    showToast("Error en la búsqueda: Código ${response.code()}")
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Perfil, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Perfil, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -864,7 +908,13 @@ class Perfil : AppCompatActivity() {
                             }
                         } ?: showToast("Datos incorrectos en la respuesta")
                     } else {
-                        showToast("Error en la búsqueda: Código ${response.code()}")
+                        if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                            yaRedirigidoAlLogin = true
+                            val intent = Intent(this@Perfil, Inicio::class.java)
+                            startActivity(intent)
+                            finish()
+                            Toast.makeText(this@Perfil, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
 
@@ -904,7 +954,13 @@ class Perfil : AppCompatActivity() {
                         }
                     } ?: showToast("Datos incorrectos en la respuesta")
                 } else {
-                    showToast("Error en la búsqueda: Código ${response.code()}")
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Perfil, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Perfil, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -1122,6 +1178,13 @@ class Perfil : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Perfil, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Perfil, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat
@@ -1182,6 +1245,13 @@ class Perfil : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Perfil, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Perfil, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")
                 }
             }
@@ -1231,6 +1301,13 @@ class Perfil : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Log.d("MiApp", "Reproducción registrada exitosamente")
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Perfil, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Perfil, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("MiApp", "Error al registrar la reproducción")
                 }
             }
@@ -1270,6 +1347,13 @@ class Perfil : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Perfil, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Perfil, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat
@@ -1367,6 +1451,13 @@ class Perfil : AppCompatActivity() {
                     Log.d("ModoOscuro", "Cambiado el modo oscuro")
 
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Perfil, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Perfil, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("ModoOscuro", "Error: ${response.code()} - ${response.errorBody()?.string()}")
                 }
             }

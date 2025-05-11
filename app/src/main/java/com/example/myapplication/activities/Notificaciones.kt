@@ -139,6 +139,7 @@ class Notificaciones : AppCompatActivity() {
     private lateinit var noHayNovedades: TextView
     private lateinit var noHayInteracciones: TextView
     private lateinit var noHaySeguidores: TextView
+    private var yaRedirigidoAlLogin = false
 
     private var botonActivo: String = "invitaciones"
     private var numInvitaciones: Int = 0
@@ -400,6 +401,14 @@ class Notificaciones : AppCompatActivity() {
 
                         recyclerInvitaciones.adapter = adapter
                     }
+                } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Notificaciones, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Notificaciones, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -428,6 +437,14 @@ class Notificaciones : AppCompatActivity() {
 
                         val adapter = NovedadesAdapter(novedadesMutable, onAceptarClick = { novedad -> verNovedad(novedad) }, onCerrarClick = { novedad -> cerrarNovedad(novedad) })
                         recyclerNovedades.adapter = adapter
+                    }
+                } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Notificaciones, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Notificaciones, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -458,6 +475,14 @@ class Notificaciones : AppCompatActivity() {
                         val adapter = InteraccionesAdapter(interaccionesMutable,  onAceptarClick = { interaccion -> verInteraccion(interaccion) }, onCerrarClick = { interaccion -> cerrarInteraccion(interaccion) })
                         recyclerInteracciones.adapter = adapter
                     }
+                } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Notificaciones, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Notificaciones, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -487,6 +512,14 @@ class Notificaciones : AppCompatActivity() {
                         val adapter = SeguidoresAdapter(seguidoresMutable, onAceptarClick = { seguidor -> verSeguidor(seguidor) }, onCerrarClick = { seguidor -> cerrarSeguidor(seguidor) })
                         recyclerSeguidores.adapter = adapter
                     }
+                } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Notificaciones, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Notificaciones, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -512,6 +545,14 @@ class Notificaciones : AppCompatActivity() {
                     if (numInvitaciones == 0 && botonActivo == "invitaciones") {
                         noHayInvitaciones.visibility = View.VISIBLE
                     }
+                } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Notificaciones, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Notificaciones, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -535,6 +576,14 @@ class Notificaciones : AppCompatActivity() {
                     numInvitaciones = numInvitaciones - 1
                     if (numInvitaciones == 0 && botonActivo == "invitaciones") {
                         noHayInvitaciones.visibility = View.VISIBLE
+                    }
+                } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Notificaciones, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Notificaciones, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -564,6 +613,14 @@ class Notificaciones : AppCompatActivity() {
                         putExtra("id", interaccion.noizzy)
                     }
                     startActivity(intent)
+                } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Notificaciones, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Notificaciones, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -588,6 +645,14 @@ class Notificaciones : AppCompatActivity() {
                         if (numInteracciones == 0 && botonActivo == "interacciones") {
                             noHayInteracciones.visibility = View.VISIBLE
                         }
+                    } else {
+                        if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                            yaRedirigidoAlLogin = true
+                            val intent = Intent(this@Notificaciones, Inicio::class.java)
+                            startActivity(intent)
+                            finish()
+                            Toast.makeText(this@Notificaciones, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
 
@@ -606,6 +671,14 @@ class Notificaciones : AppCompatActivity() {
                         numInteracciones = numInteracciones - 1
                         if (numInteracciones == 0 && botonActivo == "interacciones") {
                             noHayInteracciones.visibility = View.VISIBLE
+                        }
+                    } else {
+                        if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                            yaRedirigidoAlLogin = true
+                            val intent = Intent(this@Notificaciones, Inicio::class.java)
+                            startActivity(intent)
+                            finish()
+                            Toast.makeText(this@Notificaciones, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -639,6 +712,14 @@ class Notificaciones : AppCompatActivity() {
                             putExtra("id", novedad.id)
                         }
                         startActivity(intent)
+                    } else {
+                        if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                            yaRedirigidoAlLogin = true
+                            val intent = Intent(this@Notificaciones, Inicio::class.java)
+                            startActivity(intent)
+                            finish()
+                            Toast.makeText(this@Notificaciones, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
 
@@ -663,6 +744,14 @@ class Notificaciones : AppCompatActivity() {
                             putExtra("id", novedad.id)
                         }
                         startActivity(intent)
+                    } else {
+                        if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                            yaRedirigidoAlLogin = true
+                            val intent = Intent(this@Notificaciones, Inicio::class.java)
+                            startActivity(intent)
+                            finish()
+                            Toast.makeText(this@Notificaciones, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
 
@@ -689,6 +778,14 @@ class Notificaciones : AppCompatActivity() {
                         if (numNovedades == 0 && botonActivo == "novedades") {
                             noHayNovedades.visibility = View.VISIBLE
                         }
+                    } else {
+                        if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                            yaRedirigidoAlLogin = true
+                            val intent = Intent(this@Notificaciones, Inicio::class.java)
+                            startActivity(intent)
+                            finish()
+                            Toast.makeText(this@Notificaciones, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
                 override fun onFailure(call: Call<Void>, t: Throwable) {
@@ -706,6 +803,14 @@ class Notificaciones : AppCompatActivity() {
                         numNovedades = numNovedades - 1
                         if (numNovedades == 0 && botonActivo == "novedades") {
                             noHayNovedades.visibility = View.VISIBLE
+                        }
+                    } else {
+                        if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                            yaRedirigidoAlLogin = true
+                            val intent = Intent(this@Notificaciones, Inicio::class.java)
+                            startActivity(intent)
+                            finish()
+                            Toast.makeText(this@Notificaciones, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -744,6 +849,14 @@ class Notificaciones : AppCompatActivity() {
                         startActivity(intent)
                     }
 
+                } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Notificaciones, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Notificaciones, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -767,6 +880,14 @@ class Notificaciones : AppCompatActivity() {
                     numSeguidores = numSeguidores - 1
                     if (numSeguidores == 0 && botonActivo == "seguidores") {
                         noHaySeguidores.visibility = View.VISIBLE
+                    }
+                } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Notificaciones, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Notificaciones, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -985,6 +1106,13 @@ class Notificaciones : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Notificaciones, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Notificaciones, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat
@@ -1045,6 +1173,13 @@ class Notificaciones : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Notificaciones, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Notificaciones, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")
                 }
             }
@@ -1094,6 +1229,13 @@ class Notificaciones : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Log.d("MiApp", "Reproducción registrada exitosamente")
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Notificaciones, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Notificaciones, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("MiApp", "Error al registrar la reproducción")
                 }
             }
@@ -1133,6 +1275,13 @@ class Notificaciones : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Notificaciones, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Notificaciones, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat

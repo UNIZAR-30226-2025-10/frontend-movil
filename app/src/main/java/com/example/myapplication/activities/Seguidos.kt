@@ -57,6 +57,7 @@ class Seguidos : AppCompatActivity(), SeguidosAdapter.OnUnfollowListener {
     private val followingList = mutableListOf<Seguidos>()
     private lateinit var adapter: SeguidosAdapter
     private lateinit var dot: View
+    private var yaRedirigidoAlLogin = false
 
 
     private lateinit var progressBar: ProgressBar
@@ -207,7 +208,13 @@ class Seguidos : AppCompatActivity(), SeguidosAdapter.OnUnfollowListener {
                     followingList.addAll(seguidosResponse.seguidos)
                     adapter.notifyDataSetChanged()
                 } else {
-                    Toast.makeText(this@Seguidos, "Error al cargar datos", Toast.LENGTH_SHORT).show()
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Seguidos, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Seguidos, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -239,12 +246,13 @@ class Seguidos : AppCompatActivity(), SeguidosAdapter.OnUnfollowListener {
                         Toast.makeText(this@Seguidos, "No sigues a este usuario", Toast.LENGTH_LONG).show()
                     }
                     else -> {
-                        val error = try {
-
-                        } catch (e: Exception) {
-                            "Error ${response.code()}"
+                        if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                            yaRedirigidoAlLogin = true
+                            val intent = Intent(this@Seguidos, Inicio::class.java)
+                            startActivity(intent)
+                            finish()
+                            Toast.makeText(this@Seguidos, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
                         }
-                        Toast.makeText(this@Seguidos, "Error: $error", Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -462,6 +470,13 @@ class Seguidos : AppCompatActivity(), SeguidosAdapter.OnUnfollowListener {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Seguidos, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Seguidos, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat
@@ -522,6 +537,13 @@ class Seguidos : AppCompatActivity(), SeguidosAdapter.OnUnfollowListener {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Seguidos, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Seguidos, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")
                 }
             }
@@ -571,6 +593,13 @@ class Seguidos : AppCompatActivity(), SeguidosAdapter.OnUnfollowListener {
                 if (response.isSuccessful) {
                     Log.d("MiApp", "Reproducción registrada exitosamente")
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Seguidos, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Seguidos, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("MiApp", "Error al registrar la reproducción")
                 }
             }
@@ -610,6 +639,13 @@ class Seguidos : AppCompatActivity(), SeguidosAdapter.OnUnfollowListener {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Seguidos, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Seguidos, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat

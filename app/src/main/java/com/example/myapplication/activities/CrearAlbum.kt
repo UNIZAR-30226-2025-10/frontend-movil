@@ -97,6 +97,7 @@ class CrearAlbum : AppCompatActivity() {
     private val PICK_AUDIO_REQUEST = 2
     private var audioUri: Uri? = null
     private var imageUri: Uri? = null
+    private var yaRedirigidoAlLogin = false
 
     private val cancionesList = mutableListOf<NuevaCancionRequest>()
     private lateinit var cancionAdapter: CancionesAnadidasAdapter
@@ -382,6 +383,13 @@ class CrearAlbum : AppCompatActivity() {
                     etiquetasDisponibles.addAll(etiquetas)
 
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CrearAlbum, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.d("Etiquetas", "Error al obtener las etiquetas: ${response.code()} - ${response.message()}")
                 }
             }
@@ -522,6 +530,14 @@ class CrearAlbum : AppCompatActivity() {
                                 signatureResponse?.let {
                                     uploadImageToCloudinary(it, imageUri, editNombreAlbum.text.toString(), folder)
                                 }
+                            } else {
+                                if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                                    yaRedirigidoAlLogin = true
+                                    val intent = Intent(this@CrearAlbum, Inicio::class.java)
+                                    startActivity(intent)
+                                    finish()
+                                    Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                                }
                             }
                         }
                         override fun onFailure(call: Call<GetSignatureResponse>, t: Throwable) {
@@ -571,6 +587,13 @@ class CrearAlbum : AppCompatActivity() {
                                 crearAlbum(nombreAlbum, urlDevuelta)
                             }
                         } else {
+                            if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@CrearAlbum, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                            }
                             Log.d("uploadImageToCloudinary", "Error: ${response.errorBody()?.string()}")
                         }
                     }
@@ -597,6 +620,13 @@ class CrearAlbum : AppCompatActivity() {
                     Log.d("Crear album", "Album creado con éxito")
                     obtenerAlbumsActualizado(nombreAlbum)
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CrearAlbum, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.d("Crear album", "Error en crear album")
                 }
             }
@@ -621,6 +651,13 @@ class CrearAlbum : AppCompatActivity() {
                     subirCanciones(albumNuevo!!.id)
 
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CrearAlbum, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.d("Mis albumes", "Error al obtener los álbumes: ${response.code()} - ${response.message()}")
                 }
             }
@@ -645,6 +682,14 @@ class CrearAlbum : AppCompatActivity() {
                             val esUltimo = index == cancionesList.lastIndex
                             uploadAudioToCloudinary(it, folder, cancion.audio_file, cancion.nombre, cancion.artistasFt, cancion.duracion, cancion.tags, idAlbum, esUltimo)
                         }
+                    }
+                } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CrearAlbum, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -693,6 +738,13 @@ class CrearAlbum : AppCompatActivity() {
                                 crearCancion(nombreCancion, audioCloudinaryUrl, feats, duracion, tags, idAlbum, esUltimo)
                             }
                         } else {
+                            if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@CrearAlbum, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                            }
                             Log.d("uploadAudioToCloudinary", "ERROR ${response.errorBody()?.string()}")
                         }
                     }
@@ -753,6 +805,13 @@ class CrearAlbum : AppCompatActivity() {
                         }
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CrearAlbum, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     if (cancionesList.size == 1) {
                         apiService.deleteAlbum(authHeader, idAlbum)
                         .enqueue(object : Callback<DeleteAlbumResponse> {
@@ -767,6 +826,14 @@ class CrearAlbum : AppCompatActivity() {
                                         "Álbum no creado",
                                         Toast.LENGTH_SHORT
                                     ).show()
+                                } else {
+                                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                                        yaRedirigidoAlLogin = true
+                                        val intent = Intent(this@CrearAlbum, Inicio::class.java)
+                                        startActivity(intent)
+                                        finish()
+                                        Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                                    }
                                 }
                             }
 
@@ -828,6 +895,13 @@ class CrearAlbum : AppCompatActivity() {
                 } else {
                     Log.d("Mis albumes", "Error al obtener los álbumes: ${response.code()} - ${response.message()}")
                     callback(false)
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CrearAlbum, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -1046,6 +1120,13 @@ class CrearAlbum : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CrearAlbum, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat
@@ -1106,6 +1187,13 @@ class CrearAlbum : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CrearAlbum, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")
                 }
             }
@@ -1155,6 +1243,13 @@ class CrearAlbum : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Log.d("MiApp", "Reproducción registrada exitosamente")
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CrearAlbum, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("MiApp", "Error al registrar la reproducción")
                 }
             }
@@ -1194,6 +1289,13 @@ class CrearAlbum : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CrearAlbum, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat

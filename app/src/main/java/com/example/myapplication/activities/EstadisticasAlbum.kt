@@ -78,6 +78,7 @@ class EstadisticasAlbum : AppCompatActivity() {
     private var currentImageUri: Uri? = null
     private var albumImageUrl: String? = null
     private var currentDialog: AlertDialog? = null
+    private var yaRedirigidoAlLogin = false
 
     private lateinit var progressBar: ProgressBar
     private var musicService: MusicPlayerService? = null
@@ -259,7 +260,15 @@ class EstadisticasAlbum : AppCompatActivity() {
                                 recyclerView.adapter = adapter
                             }
                         } else {
-                            finish()
+                            if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@EstadisticasAlbum, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                Toast.makeText(this@EstadisticasAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                            } else {
+                                finish()
+                            }
                         }
                     }
 
@@ -296,7 +305,13 @@ class EstadisticasAlbum : AppCompatActivity() {
                                 Toast.makeText(this@EstadisticasAlbum, "Álbum eliminado correctamente", Toast.LENGTH_SHORT).show()
                                 finish()
                             } else {
-                                Toast.makeText(this@EstadisticasAlbum, "Error al eliminar el álbum", Toast.LENGTH_SHORT).show()
+                                if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                                    yaRedirigidoAlLogin = true
+                                    val intent = Intent(this@EstadisticasAlbum, Inicio::class.java)
+                                    startActivity(intent)
+                                    finish()
+                                    Toast.makeText(this@EstadisticasAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                                }
                             }
                         }
 
@@ -393,6 +408,14 @@ class EstadisticasAlbum : AppCompatActivity() {
                             signatureResponse?.let {
                                 uploadImageToCloudinary(it, nuevaFoto, nuevoNombre, folder)
                             }
+                        } else {
+                            if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@EstadisticasAlbum, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                Toast.makeText(this@EstadisticasAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
                     override fun onFailure(call: Call<GetSignatureResponse>, t: Throwable) {
@@ -443,6 +466,13 @@ class EstadisticasAlbum : AppCompatActivity() {
                                 guardarCambios(nuevoNombre, albumImageUrl!!)
                             }
                         } else {
+                            if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@EstadisticasAlbum, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                Toast.makeText(this@EstadisticasAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                            }
                             Log.d("uploadImageToCloudinary", "ERROR ${response.errorBody()?.string()}")
                         }
                     }
@@ -476,6 +506,14 @@ class EstadisticasAlbum : AppCompatActivity() {
                                 .load(foto)
                                 .into(imageView)
 
+                        } else {
+                            if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@EstadisticasAlbum, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                Toast.makeText(this@EstadisticasAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
 
@@ -694,6 +732,13 @@ class EstadisticasAlbum : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@EstadisticasAlbum, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@EstadisticasAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat
@@ -754,6 +799,13 @@ class EstadisticasAlbum : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@EstadisticasAlbum, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@EstadisticasAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")
                 }
             }
@@ -803,6 +855,13 @@ class EstadisticasAlbum : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Log.d("MiApp", "Reproducción registrada exitosamente")
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@EstadisticasAlbum, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@EstadisticasAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("MiApp", "Error al registrar la reproducción")
                 }
             }
@@ -840,6 +899,13 @@ class EstadisticasAlbum : AppCompatActivity() {
 
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@EstadisticasAlbum, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@EstadisticasAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat

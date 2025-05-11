@@ -63,6 +63,7 @@ class EstadisticasCancion : AppCompatActivity() {
     private var playlistsPublicas: List<Publicas>? = null
     private var verMegustasOpen: Boolean = false
     private var verPlaylistsOpen: Boolean = false
+    private var yaRedirigidoAlLogin = false
 
     private var musicService: MusicPlayerService? = null
     private var serviceBound = false
@@ -215,7 +216,13 @@ class EstadisticasCancion : AppCompatActivity() {
                             Toast.makeText(this@EstadisticasCancion, "Canción eliminada con éxito", Toast.LENGTH_SHORT).show()
                             finish()
                         } else {
-                            Toast.makeText(this@EstadisticasCancion, "Error al eliminar la canción", Toast.LENGTH_SHORT).show()
+                            if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@EstadisticasCancion, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                Toast.makeText(this@EstadisticasCancion, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
 
@@ -270,6 +277,14 @@ class EstadisticasCancion : AppCompatActivity() {
                                 Log.e("API", "La lista quienLike es null")
                             }
                         }
+                    } else {
+                        if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                            yaRedirigidoAlLogin = true
+                            val intent = Intent(this@EstadisticasCancion, Inicio::class.java)
+                            startActivity(intent)
+                            finish()
+                            Toast.makeText(this@EstadisticasCancion, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
                 override fun onFailure(call: Call<GetEstadisticasFavsResponse>, t: Throwable) {
@@ -299,6 +314,14 @@ class EstadisticasCancion : AppCompatActivity() {
                             } else {
                                 Log.e("API", "La lista playlistsPublicas es null")
                             }
+                        }
+                    } else {
+                        if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                            yaRedirigidoAlLogin = true
+                            val intent = Intent(this@EstadisticasCancion, Inicio::class.java)
+                            startActivity(intent)
+                            finish()
+                            Toast.makeText(this@EstadisticasCancion, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -352,6 +375,13 @@ class EstadisticasCancion : AppCompatActivity() {
                         guardarDatoscCancion(ordenColeccion[indice])
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@EstadisticasCancion, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@EstadisticasCancion, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")
                 }
             }
@@ -402,6 +432,13 @@ class EstadisticasCancion : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Log.d("MiApp", "Reproducción registrada exitosamente")
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@EstadisticasCancion, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@EstadisticasCancion, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("MiApp", "Error al registrar la reproducción")
                 }
             }
@@ -439,6 +476,13 @@ class EstadisticasCancion : AppCompatActivity() {
 
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@EstadisticasCancion, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@EstadisticasCancion, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat

@@ -15,6 +15,7 @@ import retrofit2.Response
 class DeleteAccount : AppCompatActivity() {
 
     private lateinit var apiService: ApiService
+    private var yaRedirigidoAlLogin = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,9 +58,17 @@ class DeleteAccount : AppCompatActivity() {
                     showToast("Cuenta borrada con éxito")
                     navigateInicio()
                 } else {
-                    Log.e("Delete", "Error en la eliminación - Código: ${response.code()}")
-                    showToast("Error en la eliminación: Código ${response.code()}")
-                    finish()
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@DeleteAccount, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@DeleteAccount, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Log.e("Delete", "Error en la eliminación - Código: ${response.code()}")
+                        showToast("Error en la eliminación: Código ${response.code()}")
+                        finish()
+                    }
                 }
             }
 

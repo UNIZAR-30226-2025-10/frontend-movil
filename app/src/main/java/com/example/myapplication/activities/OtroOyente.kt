@@ -67,6 +67,7 @@ class OtroOyente : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: PlaylistOtroOyenteAdapter
     private lateinit var dot: View
+    private var yaRedirigidoAlLogin = false
 
     private var isFollowing = false
 
@@ -402,7 +403,13 @@ class OtroOyente : AppCompatActivity() {
                         }
                     } ?: showToast("Búsqueda fallida: Datos incorrectos")
                 } else {
-                    showToast("Error en la búsqueda: Código ${response.code()}")
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@OtroOyente, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@OtroOyente, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -423,7 +430,13 @@ class OtroOyente : AppCompatActivity() {
                     Toast.makeText(this@OtroOyente, message, Toast.LENGTH_SHORT).show()
                 } else {
                     // Revertir el cambio si falla la API
-                    Toast.makeText(this@OtroOyente, "Error: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@OtroOyente, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@OtroOyente, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -455,7 +468,13 @@ class OtroOyente : AppCompatActivity() {
                         Log.d("otroOyente1", "NO HAY playlist")
                     }
                 }else{
-                    Log.d("otroOyente1", "NO success")
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@OtroOyente, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@OtroOyente, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -697,6 +716,13 @@ class OtroOyente : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@OtroOyente, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@OtroOyente, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat
@@ -757,6 +783,13 @@ class OtroOyente : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@OtroOyente, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@OtroOyente, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")
                 }
             }
@@ -806,6 +839,13 @@ class OtroOyente : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Log.d("MiApp", "Reproducción registrada exitosamente")
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@OtroOyente, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@OtroOyente, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("MiApp", "Error al registrar la reproducción")
                 }
             }
@@ -845,6 +885,13 @@ class OtroOyente : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@OtroOyente, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@OtroOyente, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat

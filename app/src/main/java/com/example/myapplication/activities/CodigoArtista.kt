@@ -27,6 +27,7 @@ class CodigoArtista : AppCompatActivity() {
 
     private lateinit var editTextCode: EditText
     private lateinit var apiService: ApiService
+    private var yaRedirigidoAlLogin = false
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -112,7 +113,16 @@ class CodigoArtista : AppCompatActivity() {
                         showToast("Error: Respuesta vacía del servidor")
                     }
                 } else {
-                    showToast("Código incorrecto")
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CodigoArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CodigoArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    } else {
+                        showToast("Código incorrecto")
+                    }
+
                 }
             }
 

@@ -16,6 +16,7 @@ import retrofit2.Response
 class Logout : AppCompatActivity() {
 
     private lateinit var apiService: ApiService
+    private var yaRedirigidoAlLogin = false
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,10 +66,17 @@ class Logout : AppCompatActivity() {
                     Preferencias.guardarValorBooleano("primerinicio", false)
                     navigateInicio()
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Logout, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Logout, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("LOGOUT", "Error en el logout. Código HTTP: ${response.code()}")
                     val errorBody = response.errorBody()?.string()
                     Log.e("LOGOUT", "Cuerpo del error: $errorBody")
-                    showToast("Error en el logout: Código ${response.code()}")
+                    //showToast("Error en el logout: Código ${response.code()}")
                 }
             }
 
@@ -98,10 +106,16 @@ class Logout : AppCompatActivity() {
                     Log.d("LOGOUT", "Progreso que se guarda: $progreso")
                     logout()
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@Logout, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@Logout, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("LOGOUT", "Error en el logout. Código HTTP: ${response.code()}")
                     val errorBody = response.errorBody()?.string()
                     Log.e("LOGOUT", "Cuerpo del error: $errorBody")
-                    showToast("Error en el logout: Código ${response.code()}")
                 }
             }
 

@@ -89,6 +89,7 @@ class PerfilArtista : AppCompatActivity() {
     private lateinit var playlistsAdapter: PlaylistsAdapter
     private var imageUri: Uri? = null
     private var profileImageViewDialog: ImageView? = null
+    private var yaRedirigidoAlLogin = false
 
     private val openGalleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
@@ -372,6 +373,14 @@ class PerfilArtista : AppCompatActivity() {
                             handleErrorCode(responseBody.respuestaHTTP)
                         }
                     } ?: showToast("Error: Respuesta vacía del servidor")
+                } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -402,6 +411,14 @@ class PerfilArtista : AppCompatActivity() {
                             handleErrorCode(responseBody.respuestaHTTP)
                         }
                     } ?: showToast("Error: Respuesta vacía del servidor")
+                } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -444,7 +461,13 @@ class PerfilArtista : AppCompatActivity() {
                         }
                     } ?: showToast("Búsqueda fallida: Datos incorrectos")
                 } else {
-                    showToast("Error en la búsqueda: Código ${response.code()}")
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -479,7 +502,13 @@ class PerfilArtista : AppCompatActivity() {
                         }
                     } ?: showToast("Búsqueda fallida: Datos incorrectos")
                 } else {
-                    showToast("Error en la búsqueda: Código ${response.code()}")
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -517,7 +546,13 @@ class PerfilArtista : AppCompatActivity() {
                             }
                         } ?: showToast("Datos incorrectos en la respuesta")
                     } else {
-                        showToast("Error en la búsqueda: Código ${response.code()}")
+                        if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                            yaRedirigidoAlLogin = true
+                            val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                            startActivity(intent)
+                            finish()
+                            Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
 
@@ -557,7 +592,13 @@ class PerfilArtista : AppCompatActivity() {
                         }
                     } ?: showToast("Datos incorrectos en la respuesta")
                 } else {
-                    showToast("Error en la búsqueda: Código ${response.code()}")
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -703,6 +744,13 @@ class PerfilArtista : AppCompatActivity() {
                     dialog.dismiss()
                     showToast("Contraseña actualizada")
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.d("updateUserProfile", "Error en la solicitud ${response.code()}")
                     val errorBody = response.errorBody()?.string()
                     try {
@@ -797,6 +845,14 @@ class PerfilArtista : AppCompatActivity() {
                     response.body()?.let {
                         uploadImageToCloudinary(it, imagenURI, folder, newUsername, newArtisticname, newBiografia)
                     }
+                } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -835,6 +891,14 @@ class PerfilArtista : AppCompatActivity() {
                         response.body()?.let {
                             Preferencias.guardarValorString("profile_image", it.secure_url)
                             updateUserProfile(newUsername, newArtisticname, newBiografia)
+                        }
+                    } else {
+                        if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                            yaRedirigidoAlLogin = true
+                            val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                            startActivity(intent)
+                            finish()
+                            Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -878,6 +942,13 @@ class PerfilArtista : AppCompatActivity() {
                         .into(profileImageView)
 
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorBody = response.errorBody()?.string()
                     try {
                         val json = JSONObject(errorBody)
@@ -1103,6 +1174,13 @@ class PerfilArtista : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat
@@ -1163,6 +1241,13 @@ class PerfilArtista : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")
                 }
             }
@@ -1212,6 +1297,13 @@ class PerfilArtista : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Log.d("MiApp", "Reproducción registrada exitosamente")
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("MiApp", "Error al registrar la reproducción")
                 }
             }
@@ -1251,6 +1343,13 @@ class PerfilArtista : AppCompatActivity() {
                         actualizarIconoPlayPause()
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat
@@ -1289,6 +1388,13 @@ class PerfilArtista : AppCompatActivity() {
                     Log.d("ModoOscuro", "Cambiado el modo oscuro")
 
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("ModoOscuro", "Error: ${response.code()} - ${response.errorBody()?.string()}")
                 }
             }

@@ -47,6 +47,7 @@ class CrearPlaylist : AppCompatActivity() {
     private lateinit var logoImageView: ImageView
     private lateinit var btnSubirFoto: Button
     private var selectedImageUri: Uri? = null
+    private var yaRedirigidoAlLogin = false
 
     private var musicService: MusicPlayerService? = null
     private var serviceBound = false
@@ -147,7 +148,13 @@ class CrearPlaylist : AppCompatActivity() {
                         subirImagenCloudinary(it, imagenURI, folder, nombrePlaylist)
                     }
                 } else {
-                    Toast.makeText(this@CrearPlaylist, "Error al obtener firma de Cloudinary", Toast.LENGTH_SHORT).show()
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CrearPlaylist, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CrearPlaylist, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -188,7 +195,13 @@ class CrearPlaylist : AppCompatActivity() {
                         val imageUrl = response.body()?.secure_url ?: ""
                         createPlaylist(nombrePlaylist, imageUrl)
                     } else {
-                        Toast.makeText(this@CrearPlaylist, "Error al subir imagen", Toast.LENGTH_SHORT).show()
+                        if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                            yaRedirigidoAlLogin = true
+                            val intent = Intent(this@CrearPlaylist, Inicio::class.java)
+                            startActivity(intent)
+                            finish()
+                            Toast.makeText(this@CrearPlaylist, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
 
@@ -220,7 +233,13 @@ class CrearPlaylist : AppCompatActivity() {
                     Log.d("Playlist", "Home ->Playlist")
                     startActivity(intent)
                 } else {
-                    Toast.makeText(this@CrearPlaylist, "Error al crear la playlist", Toast.LENGTH_SHORT).show()
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CrearPlaylist, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CrearPlaylist, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("CrearPlaylist", "Error: ${response.code()} - ${response.errorBody()?.string()}")
                 }
             }
@@ -265,6 +284,13 @@ class CrearPlaylist : AppCompatActivity() {
                         guardarDatoscCancion(id)
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CrearPlaylist, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CrearPlaylist, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat
@@ -328,6 +354,13 @@ class CrearPlaylist : AppCompatActivity() {
                         guardarDatoscCancion(ordenColeccion[indice])
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CrearPlaylist, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CrearPlaylist, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")
                 }
             }
@@ -378,6 +411,13 @@ class CrearPlaylist : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Log.d("MiApp", "Reproducción registrada exitosamente")
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CrearPlaylist, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CrearPlaylist, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     Log.e("MiApp", "Error al registrar la reproducción")
                 }
             }
@@ -415,6 +455,13 @@ class CrearPlaylist : AppCompatActivity() {
 
                     }
                 } else {
+                    if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                        yaRedirigidoAlLogin = true
+                        val intent = Intent(this@CrearPlaylist, Inicio::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@CrearPlaylist, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                    }
                     val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
 
                     // Mostrar en Logcat
