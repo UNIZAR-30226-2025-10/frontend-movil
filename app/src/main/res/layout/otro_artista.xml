@@ -154,7 +154,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginRight="12dp"
                                     android:fontFamily="@font/poppins_regular"
-                                    android:text="0 seguidores"
+                                    android:text="0 Seguidores"
                                     style="@style/TextColor"
                                     android:textSize="14sp" />
 

@@ -6,6 +6,7 @@ data class GetNovedadesResponse (
 
 data class Novedad (
     val id: String,
+    val album: String,
     val nombre: String,
     val tipo: String,
     val fotoPortada: String,

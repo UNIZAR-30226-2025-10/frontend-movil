@@ -132,6 +132,7 @@ object WebSocketEventHandler {
 
             val data = args[0] as JSONObject
             val id = data.getString("id")
+            val id_album = data.getString("album")
             val nombre = data.getString("nombre")
             val tipo = data.getString("tipo")
             val fotoPortada = data.getString("fotoPortada")
@@ -145,6 +146,7 @@ object WebSocketEventHandler {
 
             val novedad = Novedad (
                 id = id,
+                album = id_album,
                 nombre = nombre,
                 tipo = tipo,
                 fotoPortada = fotoPortada,

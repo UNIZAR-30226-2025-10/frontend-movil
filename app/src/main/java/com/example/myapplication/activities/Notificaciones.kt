@@ -709,7 +709,7 @@ class Notificaciones : AppCompatActivity() {
                         }
 
                         val intent = Intent(this@Notificaciones, AlbumDetail::class.java).apply {
-                            putExtra("id", novedad.id)
+                            putExtra("id", novedad.album)
                         }
                         startActivity(intent)
                     } else {

@@ -288,7 +288,7 @@ class OtroArtista : AppCompatActivity() {
                     onFollowStatusChanged(nombreUsuario,false)
                 }
             }
-            seguidores.text = "Seguidores: ${artista?.numSeguidores}"
+            seguidores.text = "${artista?.numSeguidores} Seguidores"
         }
 
         allNoizzys.setOnClickListener {
@@ -345,7 +345,7 @@ class OtroArtista : AppCompatActivity() {
                     nombreArtistico.text = artista?.nombreArtistico
                     artistaLike.text = " De ${artista?.nombreArtistico}"
                     biografia.text = artista?.biografia
-                    seguidores.text = "Seguidores: ${artista?.numSeguidores}"
+                    seguidores.text = "${artista?.numSeguidores} Seguidores"
 
                     if (siguiendo != null) {
                         isFollowing = siguiendo
