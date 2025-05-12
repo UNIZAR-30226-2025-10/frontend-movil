@@ -137,6 +137,11 @@ class OtroOyente : AppCompatActivity() {
                             .error(R.drawable.no_cancion)
                             .into(fotoCancion)
 
+                        val idcancion = noizzy.cancion.id
+                        cancionNoizzy.setOnClickListener{
+                            reproducir(idcancion.toString())
+                        }
+
                         textoCancion.text = noizzy.cancion.nombre
                         textoArtista.text = noizzy.cancion.nombreArtisticoArtista
                     } else {
@@ -379,6 +384,11 @@ class OtroOyente : AppCompatActivity() {
                                     .placeholder(R.drawable.no_cancion)
                                     .error(R.drawable.no_cancion)
                                     .into(fotoCancion)
+
+                                val idcancion = it.ultimoNoizzy.cancion.id
+                                cancionNoizzy.setOnClickListener{
+                                    reproducir(idcancion.toString())
+                                }
 
                                 textoCancion.text = it.ultimoNoizzy.cancion.nombre
                                 textoArtista.text = it.ultimoNoizzy.cancion.nombreArtisticoArtista
@@ -934,6 +944,7 @@ class OtroOyente : AppCompatActivity() {
         val buttonHome: ImageButton = findViewById(R.id.nav_home)
         val buttonSearch: ImageButton = findViewById(R.id.nav_search)
         val buttonCrear: ImageButton = findViewById(R.id.nav_create)
+        val buttonNoizzys: ImageButton = findViewById(R.id.nav_noizzys)
 
         buttonPerfil.setOnClickListener {
             val esOyente = Preferencias.obtenerValorString("esOyente", "")
@@ -960,6 +971,10 @@ class OtroOyente : AppCompatActivity() {
 
         buttonCrear.setOnClickListener {
             startActivity(Intent(this, CrearPlaylist::class.java))
+        }
+
+        buttonNoizzys.setOnClickListener {
+            startActivity(Intent(this, MisNoizzys::class.java))
         }
     }
 

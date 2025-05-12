@@ -184,7 +184,22 @@ class Seguidores : AppCompatActivity(), SeguidoresAdapter.OnFollowListener {
     }
 
     private fun setupRecyclerView() {
-        adapter = SeguidoresAdapter(followersList, this)
+        adapter = SeguidoresAdapter(followersList, this){
+            seguidor ->
+            if(seguidor.tipo == "oyente"){
+                val intent = Intent(this, OtroOyente::class.java)
+                intent.putExtra("nombre", seguidor.nombreUsuario)
+                intent.putExtra("imagen", seguidor.fotoPerfil)
+                Log.d("Perfil", "Seguidor -> Perfil")
+                startActivity(intent)
+            }
+            else{
+                val intent = Intent(this, OtroArtista::class.java)
+                intent.putExtra("nombreUsuario", seguidor.nombreUsuario)
+                Log.d("Perfil", "Seguidor -> PerfilArtista")
+                startActivity(intent)
+            }
+        }
         rvFollowers.layoutManager = LinearLayoutManager(this)
         rvFollowers.adapter = adapter
     }
@@ -672,18 +687,25 @@ class Seguidores : AppCompatActivity(), SeguidoresAdapter.OnFollowListener {
 
     private fun setupNavigation() {
         val buttonPerfil: ImageButton = findViewById(R.id.profileImageButton)
+        val buttonNotis: ImageButton = findViewById(R.id.notificationImageButton)
         val buttonHome: ImageButton = findViewById(R.id.nav_home)
         val buttonSearch: ImageButton = findViewById(R.id.nav_search)
         val buttonCrear: ImageButton = findViewById(R.id.nav_create)
+        val buttonNoizzys: ImageButton = findViewById(R.id.nav_noizzys)
 
         buttonPerfil.setOnClickListener {
             val esOyente = Preferencias.obtenerValorString("esOyente", "")
-            val intent = if (esOyente == "oyente") {
-                Intent(this, Perfil::class.java)
+            if (esOyente == "oyente") {
+                Log.d("Login", "El usuario es un oyente")
+                startActivity(Intent(this, Perfil::class.java))
             } else {
-                Intent(this, PerfilArtista::class.java)
+                Log.d("Login", "El usuario NO es un oyente")
+                startActivity(Intent(this, PerfilArtista::class.java))
             }
-            startActivity(intent)
+        }
+
+        buttonNotis.setOnClickListener {
+            startActivity(Intent(this, Notificaciones::class.java))
         }
 
         buttonHome.setOnClickListener {
@@ -695,7 +717,11 @@ class Seguidores : AppCompatActivity(), SeguidoresAdapter.OnFollowListener {
         }
 
         buttonCrear.setOnClickListener {
-            startActivity(Intent(this, Perfil::class.java))
+            startActivity(Intent(this, CrearPlaylist::class.java))
+        }
+
+        buttonNoizzys.setOnClickListener {
+            startActivity(Intent(this, MisNoizzys::class.java))
         }
     }
 

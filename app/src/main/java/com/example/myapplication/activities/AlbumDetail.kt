@@ -58,6 +58,7 @@ import kotlinx.coroutines.delay
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.random.Random
 
 class AlbumDetail : AppCompatActivity() {
     private lateinit var nombreAlbum: TextView
@@ -360,8 +361,27 @@ class AlbumDetail : AppCompatActivity() {
                     cambiarModo()
                 }
                 else {
-                    Preferencias.guardarValorString("modoColeccionMirada", "enOrden")
-                    Preferencias.guardarValorString("ordenColeccionMirada", orden.joinToString(","))
+                    //Preferencias.guardarValorString("modoColeccionMirada", "enOrden")
+                    //Preferencias.guardarValorString("ordenColeccionMirada", orden.joinToString(","))
+                    albumId.let {
+                        albumIdActual = it
+                        Preferencias.guardarValorString("coleccionActualId", it)
+                        val ordenNatural =
+                            Preferencias.obtenerValorString("ordenNaturalColeccionMirada", "")
+                                .split(",")
+                                .filter { id -> id.isNotEmpty() }
+
+                        Preferencias.guardarValorString(
+                            "ordenNaturalColeccionActual",
+                            ordenNatural.joinToString(",")
+                        )
+                        Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
+                        Preferencias.guardarValorString("modoColeccionActual", modo)
+
+                        Preferencias.guardarValorString("ordenColeccionActual", orden.joinToString(","))
+
+                        reproducirColeccion()
+                    }
                 }
                 Log.d("ReproducirAlbum", "IDs en orden normal: ${orden.joinToString(",")}")
                 Log.d("ReproducirAlbum", "Indice del id: $indexActual")
@@ -378,7 +398,7 @@ class AlbumDetail : AppCompatActivity() {
                     add(0, primerId)
                 }
                 Log.d("ReproducirAlbum", "IDs aleatorios: ${orden.joinToString(",")}")
-                indexActual = 0
+                indexActual = Random.nextInt(orden.size)
                 if(idColeccionActual == albumId){
                     indexActual = orden.indexOf(idActual)
                     Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
@@ -387,9 +407,28 @@ class AlbumDetail : AppCompatActivity() {
                     cambiarModo()
                 }
                 else {
-                    Preferencias.guardarValorEntero("indexColeccionMirada", indexActual)
-                    Preferencias.guardarValorString("ordenColeccionMirada", orden.joinToString(","))
-                    Preferencias.guardarValorString("modoColeccionMirada", "aleatorio")
+                    //Preferencias.guardarValorEntero("indexColeccionMirada", indexActual)
+                    //Preferencias.guardarValorString("ordenColeccionMirada", orden.joinToString(","))
+                    //Preferencias.guardarValorString("modoColeccionMirada", "aleatorio")
+                    albumId.let {
+                        albumIdActual = it
+                        Preferencias.guardarValorString("coleccionActualId", it)
+                        val ordenNatural =
+                            Preferencias.obtenerValorString("ordenNaturalColeccionMirada", "")
+                                .split(",")
+                                .filter { id -> id.isNotEmpty() }
+
+                        Preferencias.guardarValorString(
+                            "ordenNaturalColeccionActual",
+                            ordenNatural.joinToString(",")
+                        )
+                        Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
+                        Preferencias.guardarValorString("modoColeccionActual", modo)
+
+                        Preferencias.guardarValorString("ordenColeccionActual", orden.joinToString(","))
+
+                        reproducirColeccion()
+                    }
                 }
                 btnAleatorio.setImageResource(R.drawable.shuffle_24px_act)
                 aleatorio = true
@@ -541,6 +580,7 @@ class AlbumDetail : AppCompatActivity() {
         val buttonHome: ImageButton = findViewById(R.id.nav_home)
         val buttonSearch: ImageButton = findViewById(R.id.nav_search)
         val buttonCrear: ImageButton = findViewById(R.id.nav_create)
+        val buttonNoizzys: ImageButton = findViewById(R.id.nav_noizzys)
 
         buttonPerfil.setOnClickListener {
             val esOyente = Preferencias.obtenerValorString("esOyente", "")
@@ -567,6 +607,10 @@ class AlbumDetail : AppCompatActivity() {
 
         buttonCrear.setOnClickListener {
             startActivity(Intent(this, CrearPlaylist::class.java))
+        }
+
+        buttonNoizzys.setOnClickListener {
+            startActivity(Intent(this, MisNoizzys::class.java))
         }
     }
 

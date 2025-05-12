@@ -187,7 +187,21 @@ class Seguidos : AppCompatActivity(), SeguidosAdapter.OnUnfollowListener {
     }
 
     private fun setupRecyclerView() {
-        adapter = SeguidosAdapter(followingList, this) // Pasamos this como listener
+        adapter = SeguidosAdapter(followingList, this){ seguido ->
+            if(seguido.tipo == "oyente"){
+                val intent = Intent(this, OtroOyente::class.java)
+                intent.putExtra("nombre", seguido.nombreUsuario)
+                intent.putExtra("imagen", seguido.fotoPerfil)
+                Log.d("Perfil", "Seguidor -> Perfil")
+                startActivity(intent)
+            }
+            else{
+                val intent = Intent(this, OtroArtista::class.java)
+                intent.putExtra("nombreUsuario", seguido.nombreUsuario)
+                Log.d("Perfil", "Seguidor -> PerfilArtista")
+                startActivity(intent)
+            }
+        } // Pasamos this como listener
         rvFollowing.layoutManager = LinearLayoutManager(this)
         rvFollowing.adapter = adapter
     }
@@ -682,17 +696,25 @@ class Seguidos : AppCompatActivity(), SeguidosAdapter.OnUnfollowListener {
 
     private fun setupNavigation() {
         val buttonPerfil: ImageButton = findViewById(R.id.profileImageButton)
+        val buttonNotis: ImageButton = findViewById(R.id.notificationImageButton)
         val buttonHome: ImageButton = findViewById(R.id.nav_home)
         val buttonSearch: ImageButton = findViewById(R.id.nav_search)
         val buttonCrear: ImageButton = findViewById(R.id.nav_create)
+        val buttonNoizzys: ImageButton = findViewById(R.id.nav_noizzys)
 
         buttonPerfil.setOnClickListener {
             val esOyente = Preferencias.obtenerValorString("esOyente", "")
             if (esOyente == "oyente") {
+                Log.d("Login", "El usuario es un oyente")
                 startActivity(Intent(this, Perfil::class.java))
             } else {
+                Log.d("Login", "El usuario NO es un oyente")
                 startActivity(Intent(this, PerfilArtista::class.java))
             }
+        }
+
+        buttonNotis.setOnClickListener {
+            startActivity(Intent(this, Notificaciones::class.java))
         }
 
         buttonHome.setOnClickListener {
@@ -704,7 +726,11 @@ class Seguidos : AppCompatActivity(), SeguidosAdapter.OnUnfollowListener {
         }
 
         buttonCrear.setOnClickListener {
-            startActivity(Intent(this, Perfil::class.java))
+            startActivity(Intent(this, CrearPlaylist::class.java))
+        }
+
+        buttonNoizzys.setOnClickListener {
+            startActivity(Intent(this, MisNoizzys::class.java))
         }
     }
 

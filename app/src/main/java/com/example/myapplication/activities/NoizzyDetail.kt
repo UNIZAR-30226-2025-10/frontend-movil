@@ -1323,7 +1323,7 @@ class NoizzyDetail : AppCompatActivity() {
         val buttonHome: ImageButton = findViewById(R.id.nav_home)
         val buttonSearch: ImageButton = findViewById(R.id.nav_search)
         val buttonCrear: ImageButton = findViewById(R.id.nav_create)
-
+        val buttonNoizzys: ImageButton = findViewById(R.id.nav_noizzys)
 
         buttonPerfil.setOnClickListener {
             val esOyente = Preferencias.obtenerValorString("esOyente", "")
@@ -1350,6 +1350,10 @@ class NoizzyDetail : AppCompatActivity() {
 
         buttonCrear.setOnClickListener {
             startActivity(Intent(this, CrearPlaylist::class.java))
+        }
+
+        buttonNoizzys.setOnClickListener {
+            startActivity(Intent(this, MisNoizzys::class.java))
         }
     }
 

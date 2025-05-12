@@ -1403,12 +1403,25 @@ class Perfil : AppCompatActivity() {
 
     private fun setupNavigation() {
         val buttonPerfil: ImageButton = findViewById(R.id.profileImageButton)
+        val buttonNotis: ImageButton = findViewById(R.id.notificationImageButton)
         val buttonHome: ImageButton = findViewById(R.id.nav_home)
         val buttonSearch: ImageButton = findViewById(R.id.nav_search)
         val buttonCrear: ImageButton = findViewById(R.id.nav_create)
+        val buttonNoizzys: ImageButton = findViewById(R.id.nav_noizzys)
 
         buttonPerfil.setOnClickListener {
-            startActivity(Intent(this, Perfil::class.java))
+            val esOyente = Preferencias.obtenerValorString("esOyente", "")
+            if (esOyente == "oyente") {
+                Log.d("Login", "El usuario es un oyente")
+                startActivity(Intent(this, Perfil::class.java))
+            } else {
+                Log.d("Login", "El usuario NO es un oyente")
+                startActivity(Intent(this, PerfilArtista::class.java))
+            }
+        }
+
+        buttonNotis.setOnClickListener {
+            startActivity(Intent(this, Notificaciones::class.java))
         }
 
         buttonHome.setOnClickListener {
@@ -1420,7 +1433,11 @@ class Perfil : AppCompatActivity() {
         }
 
         buttonCrear.setOnClickListener {
-            startActivity(Intent(this, Perfil::class.java))
+            startActivity(Intent(this, CrearPlaylist::class.java))
+        }
+
+        buttonNoizzys.setOnClickListener {
+            startActivity(Intent(this, MisNoizzys::class.java))
         }
     }
 

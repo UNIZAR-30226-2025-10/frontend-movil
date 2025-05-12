@@ -9,11 +9,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myapplication.R
+import com.example.myapplication.io.response.HCancion
+import com.example.myapplication.io.response.Seguidor
 import com.example.myapplication.io.response.Seguidores
 
 class SeguidoresAdapter(
     private var followers: MutableList<Seguidores>,
-    private val followListener: OnFollowListener
+    private val followListener: OnFollowListener,
+    private val clickListener: (Seguidores) -> Unit
 ) : RecyclerView.Adapter<SeguidoresAdapter.FollowersViewHolder>() {
 
     interface OnFollowListener {
@@ -52,6 +55,8 @@ class SeguidoresAdapter(
             // Notificar al activity para llamar a la API
             followListener.onFollowStatusChanged(user.nombreUsuario, newFollowStatus, position)
         }
+
+        holder.itemView.setOnClickListener { clickListener(user) }
     }
 
     private fun updateFollowButton(button: Button, isFollowing: Boolean) {

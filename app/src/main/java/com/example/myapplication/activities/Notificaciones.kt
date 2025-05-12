@@ -1326,9 +1326,11 @@ class Notificaciones : AppCompatActivity() {
 
     private fun setupNavigation() {
         val buttonPerfil: ImageButton = findViewById(R.id.profileImageButton)
+        val buttonNotis: ImageButton = findViewById(R.id.notificationImageButton)
         val buttonHome: ImageButton = findViewById(R.id.nav_home)
         val buttonSearch: ImageButton = findViewById(R.id.nav_search)
         val buttonCrear: ImageButton = findViewById(R.id.nav_create)
+        val buttonNoizzys: ImageButton = findViewById(R.id.nav_noizzys)
 
         buttonPerfil.setOnClickListener {
             val esOyente = Preferencias.obtenerValorString("esOyente", "")
@@ -1341,6 +1343,10 @@ class Notificaciones : AppCompatActivity() {
             }
         }
 
+        buttonNotis.setOnClickListener {
+            startActivity(Intent(this, Notificaciones::class.java))
+        }
+
         buttonHome.setOnClickListener {
             startActivity(Intent(this, Home::class.java))
         }
@@ -1351,6 +1357,10 @@ class Notificaciones : AppCompatActivity() {
 
         buttonCrear.setOnClickListener {
             startActivity(Intent(this, CrearPlaylist::class.java))
+        }
+
+        buttonNoizzys.setOnClickListener {
+            startActivity(Intent(this, MisNoizzys::class.java))
         }
     }
 

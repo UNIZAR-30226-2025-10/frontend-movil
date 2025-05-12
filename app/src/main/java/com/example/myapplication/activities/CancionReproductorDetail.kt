@@ -305,21 +305,7 @@ class CancionReproductorDetail : AppCompatActivity() {
             }
         }
         
-        val buttonHome: ImageButton = findViewById(R.id.nav_home)
-        val buttonSearch: ImageButton = findViewById(R.id.nav_search)
-        val buttonCrear: ImageButton = findViewById(R.id.nav_create)
-
-        buttonHome.setOnClickListener {
-            startActivity(Intent(this, Home::class.java))
-        }
-
-        buttonSearch.setOnClickListener {
-            startActivity(Intent(this, Buscador::class.java))
-        }
-
-        buttonCrear.setOnClickListener {
-            startActivity(Intent(this, Perfil::class.java))
-        }
+        setupNavigation()
 
     }
 
@@ -743,6 +729,46 @@ class CancionReproductorDetail : AppCompatActivity() {
                 Toast.makeText(this@CancionReproductorDetail, "Error de conexión: ${t.message}", Toast.LENGTH_LONG).show()
             }
         })
+    }
+
+    private fun setupNavigation() {
+        val buttonPerfil: ImageButton = findViewById(R.id.profileImageButton)
+        val buttonNotis: ImageButton = findViewById(R.id.notificationImageButton)
+        val buttonHome: ImageButton = findViewById(R.id.nav_home)
+        val buttonSearch: ImageButton = findViewById(R.id.nav_search)
+        val buttonCrear: ImageButton = findViewById(R.id.nav_create)
+        val buttonNoizzys: ImageButton = findViewById(R.id.nav_noizzys)
+
+        buttonPerfil.setOnClickListener {
+            val esOyente = Preferencias.obtenerValorString("esOyente", "")
+            if (esOyente == "oyente") {
+                Log.d("Login", "El usuario es un oyente")
+                startActivity(Intent(this, Perfil::class.java))
+            } else {
+                Log.d("Login", "El usuario NO es un oyente")
+                startActivity(Intent(this, PerfilArtista::class.java))
+            }
+        }
+
+        buttonNotis.setOnClickListener {
+            startActivity(Intent(this, Notificaciones::class.java))
+        }
+
+        buttonHome.setOnClickListener {
+            startActivity(Intent(this, Home::class.java))
+        }
+
+        buttonSearch.setOnClickListener {
+            startActivity(Intent(this, Buscador::class.java))
+        }
+
+        buttonCrear.setOnClickListener {
+            startActivity(Intent(this, CrearPlaylist::class.java))
+        }
+
+        buttonNoizzys.setOnClickListener {
+            startActivity(Intent(this, MisNoizzys::class.java))
+        }
     }
 
     override fun onStart() {

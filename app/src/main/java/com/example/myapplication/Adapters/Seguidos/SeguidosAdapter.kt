@@ -9,11 +9,13 @@ import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myapplication.R
+import com.example.myapplication.io.response.Seguidores
 import com.example.myapplication.io.response.Seguidos
 
 class SeguidosAdapter(
     private val following: MutableList<Seguidos>,
-    private val unfollowListener: OnUnfollowListener
+    private val unfollowListener: OnUnfollowListener,
+    private val clickListener: (Seguidos) -> Unit
 ) : RecyclerView.Adapter<SeguidosAdapter.FollowingViewHolder>() {
 
     interface OnUnfollowListener {
@@ -46,6 +48,8 @@ class SeguidosAdapter(
         holder.btnUnfollow.setOnClickListener {
             unfollowListener.onUnfollow(user.nombreUsuario, position)
         }
+
+        holder.itemView.setOnClickListener { clickListener(user) }
     }
 
     override fun getItemCount() = following.size

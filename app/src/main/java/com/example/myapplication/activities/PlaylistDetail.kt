@@ -98,6 +98,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.Collections.addAll
+import kotlin.random.Random
 
 class PlaylistDetail : AppCompatActivity() {
 
@@ -474,8 +475,27 @@ class PlaylistDetail : AppCompatActivity() {
                     cambiarModo()
                 }
                 else {
-                    Preferencias.guardarValorString("modoColeccionMirada", "enOrden")
-                    Preferencias.guardarValorString("ordenColeccionMirada", orden.joinToString(","))
+                    //Preferencias.guardarValorString("modoColeccionMirada", "enOrden")
+                    //Preferencias.guardarValorString("ordenColeccionMirada", orden.joinToString(","))
+                    playlistId?.let {
+                        playlistIdActual = it
+                        Preferencias.guardarValorString("coleccionActualId", it)
+                        val ordenNatural =
+                            Preferencias.obtenerValorString("ordenNaturalColeccionMirada", "")
+                                .split(",")
+                                .filter { id -> id.isNotEmpty() }
+
+                        Preferencias.guardarValorString(
+                            "ordenNaturalColeccionActual",
+                            ordenNatural.joinToString(",")
+                        )
+                        Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
+                        Preferencias.guardarValorString("modoColeccionActual", modo)
+
+                        Preferencias.guardarValorString("ordenColeccionActual", orden.joinToString(","))
+
+                        reproducirColeccion()
+                    }
                 }
                 Log.d("ReproducirPlaylist", "IDs en orden normal: ${orden.joinToString(",")}")
                 Log.d("ReproducirPlaylist", "Indice del id: $indexActual")
@@ -492,7 +512,7 @@ class PlaylistDetail : AppCompatActivity() {
                     add(0, primerId)
                 }
                 Log.d("ReproducirPlaylist", "IDs aleatorios: ${orden.joinToString(",")}")
-                indexActual = 0
+                indexActual = Random.nextInt(orden.size)
                 if(idColeccionActual == playlistId){
                     indexActual = orden.indexOf(idActual)
                     Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
@@ -501,9 +521,28 @@ class PlaylistDetail : AppCompatActivity() {
                     cambiarModo()
                 }
                 else {
-                    Preferencias.guardarValorEntero("indexColeccionMirada", indexActual)
-                    Preferencias.guardarValorString("ordenColeccionMirada", orden.joinToString(","))
-                    Preferencias.guardarValorString("modoColeccionMirada", "aleatorio")
+                    //Preferencias.guardarValorEntero("indexColeccionMirada", indexActual)
+                    //Preferencias.guardarValorString("ordenColeccionMirada", orden.joinToString(","))
+                    //Preferencias.guardarValorString("modoColeccionMirada", "aleatorio")
+                    playlistId?.let {
+                        playlistIdActual = it
+                        Preferencias.guardarValorString("coleccionActualId", it)
+                        val ordenNatural =
+                            Preferencias.obtenerValorString("ordenNaturalColeccionMirada", "")
+                                .split(",")
+                                .filter { id -> id.isNotEmpty() }
+
+                        Preferencias.guardarValorString(
+                            "ordenNaturalColeccionActual",
+                            ordenNatural.joinToString(",")
+                        )
+                        Preferencias.guardarValorEntero("indexColeccionActual", indexActual)
+                        Preferencias.guardarValorString("modoColeccionActual", modo)
+
+                        Preferencias.guardarValorString("ordenColeccionActual", orden.joinToString(","))
+
+                        reproducirColeccion()
+                    }
                 }
                 btnAleatorio.setImageResource(R.drawable.shuffle_24px_act)
                 aleatorio = true
@@ -2236,6 +2275,7 @@ class PlaylistDetail : AppCompatActivity() {
         val buttonHome: ImageButton = findViewById(R.id.nav_home)
         val buttonSearch: ImageButton = findViewById(R.id.nav_search)
         val buttonCrear: ImageButton = findViewById(R.id.nav_create)
+        val buttonNoizzys: ImageButton = findViewById(R.id.nav_noizzys)
 
         buttonPerfil.setOnClickListener {
             val esOyente = Preferencias.obtenerValorString("esOyente", "")
@@ -2262,6 +2302,10 @@ class PlaylistDetail : AppCompatActivity() {
 
         buttonCrear.setOnClickListener {
             startActivity(Intent(this, CrearPlaylist::class.java))
+        }
+
+        buttonNoizzys.setOnClickListener {
+            startActivity(Intent(this, MisNoizzys::class.java))
         }
     }
 
