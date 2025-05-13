@@ -263,6 +263,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
                                 android:fontFamily="@font/poppins_regular"
+                                android:textColorHint="@color/hintColor"
                                 style="@style/TextColor"
                                 android:textSize="14sp" />
 
@@ -271,6 +272,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/poppins_bold"
+                                android:textColorHint="@color/hintColor"
                                 style="@style/TextColor"
                                 android:textSize="18sp" />
                         </LinearLayout>

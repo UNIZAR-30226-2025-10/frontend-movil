@@ -195,6 +195,16 @@ class Home : AppCompatActivity() {
         Log.d("ProfileImage", "URL de la imagen de perfil: $profileImageUrl")
 
 
+        val modoscuro = Preferencias.obtenerValorEntero("modoOscuro", 1)
+        val modoActual = AppCompatDelegate.getDefaultNightMode()
+
+        if (modoscuro == 0 && modoActual != AppCompatDelegate.MODE_NIGHT_YES) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else if (modoscuro != 0 && modoActual != AppCompatDelegate.MODE_NIGHT_NO) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+
+
         // Verificar si la API devolvió "DEFAULT" o si no hay imagen guardada
         if (profileImageUrl.isNullOrEmpty() || profileImageUrl == "DEFAULT") {
             // Cargar la imagen predeterminada
@@ -1088,4 +1098,8 @@ class Home : AppCompatActivity() {
         WebSocketEventHandler.eliminarListenerInteraccion(listenerInteraccion)
     }
 
+    override fun onResume() {
+        super.onResume()
+        updateMiniReproductor()
+    }
 }

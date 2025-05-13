@@ -1364,4 +1364,8 @@ class Notificaciones : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        updateMiniReproductor()
+    }
 }

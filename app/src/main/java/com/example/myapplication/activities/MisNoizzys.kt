@@ -1098,6 +1098,7 @@ class MisNoizzys: AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         cargarMisNoizzys()
+        updateMiniReproductor()
     }
 
     override fun onDestroy() {

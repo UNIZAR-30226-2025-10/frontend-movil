@@ -1485,5 +1485,6 @@ class PerfilArtista : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         loadArtistAlbums()
+        updateMiniReproductor()
     }
 }

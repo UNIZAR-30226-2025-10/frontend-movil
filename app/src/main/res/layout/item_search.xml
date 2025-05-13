@@ -12,5 +12,7 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Nombre" />
+        android:text="Nombre"
+        android:textColorHint="@color/hintColor"
+        style="@style/TextColor"/>
 </LinearLayout>

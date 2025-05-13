@@ -1360,6 +1360,7 @@ class NoizzyDetail : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         datosNoizzy(noizzyId!!)
+        updateMiniReproductor()
     }
 
     override fun onDestroy() {

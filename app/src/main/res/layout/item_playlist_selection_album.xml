@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins_bold"
                 android:text="Nombre de la playlist"
-                android:textColor="#000e3b"
+                style="@style/TextColor"
                 android:textSize="14sp" />
         </LinearLayout>
     </LinearLayout>

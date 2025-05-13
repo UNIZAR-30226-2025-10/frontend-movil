@@ -914,6 +914,7 @@ class NoizzysOtro: AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         cargarNoizzys()
+        updateMiniReproductor()
     }
 
 }

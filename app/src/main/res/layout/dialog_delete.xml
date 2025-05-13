@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:justificationMode="inter_word"
         android:fontFamily="@font/poppins_regular"
-        android:textColor="#000E3B"
+        style="@style/TextColor"
         android:paddingHorizontal="12dp"
         android:textSize="16sp" />
 

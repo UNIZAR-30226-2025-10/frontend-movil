@@ -979,4 +979,9 @@ class EstadisticasAlbum : AppCompatActivity() {
             serviceBound = false
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        updateMiniReproductor()
+    }
  }

@@ -741,4 +741,9 @@ class Seguidos : AppCompatActivity(), SeguidosAdapter.OnUnfollowListener {
         WebSocketEventHandler.eliminarListenerInvitacion(listenerInvitacion)
         WebSocketEventHandler.eliminarListenerInteraccion(listenerInteraccion)
     }
+    override fun onResume() {
+        super.onResume()
+        updateMiniReproductor()
+    }
+
 }

@@ -732,4 +732,9 @@ class Seguidores : AppCompatActivity(), SeguidoresAdapter.OnFollowListener {
         WebSocketEventHandler.eliminarListenerInvitacion(listenerInvitacion)
         WebSocketEventHandler.eliminarListenerInteraccion(listenerInteraccion)
     }
+    override fun onResume() {
+        super.onResume()
+        updateMiniReproductor()
+    }
+
 }

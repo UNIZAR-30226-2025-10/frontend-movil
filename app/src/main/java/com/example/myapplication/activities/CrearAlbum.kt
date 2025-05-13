@@ -1377,4 +1377,10 @@ class CrearAlbum : AppCompatActivity() {
         WebSocketEventHandler.eliminarListenerInvitacion(listenerInvitacion)
         WebSocketEventHandler.eliminarListenerInteraccion(listenerInteraccion)
     }
+
+    override fun onResume() {
+        super.onResume()
+        updateMiniReproductor()
+    }
+
 }

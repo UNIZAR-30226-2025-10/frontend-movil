@@ -986,4 +986,8 @@ class OtroOyente : AppCompatActivity() {
         WebSocketEventHandler.eliminarListenerInteraccion(listenerInteraccion)
     }
 
+    override fun onResume() {
+        super.onResume()
+        updateMiniReproductor()
+    }
 }

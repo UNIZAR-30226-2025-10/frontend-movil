@@ -53,7 +53,7 @@
                 android:textSize="12sp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textColor="#666666"
+                style="@style/TextColor"
                 android:fontFamily="@font/poppins_regular"/>
         </LinearLayout>
 
