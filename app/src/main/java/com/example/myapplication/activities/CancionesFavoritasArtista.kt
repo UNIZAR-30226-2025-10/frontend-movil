@@ -536,8 +536,8 @@ class CancionesFavoritasArtista : AppCompatActivity() {
         val token = Preferencias.obtenerValorString("token", "")
         val authHeader = "Bearer $token"
 
-        apiService.addReproduccion(authHeader).enqueue(object : Callback<AddReproduccionResponse> {
-            override fun onResponse(call: Call<AddReproduccionResponse>, response: Response<AddReproduccionResponse>) {
+        apiService.addReproduccion(authHeader).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     Log.d("MiApp", "Reproducción registrada exitosamente")
                 } else {
@@ -552,7 +552,7 @@ class CancionesFavoritasArtista : AppCompatActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<AddReproduccionResponse>, t: Throwable) {
+            override fun onFailure(call: Call<Void>, t: Throwable) {
                 Log.e("MiApp", "Error de conexión al registrar reproducción")
             }
         })

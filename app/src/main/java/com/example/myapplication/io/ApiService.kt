@@ -214,7 +214,7 @@ interface ApiService {
     @PUT("/add-reproduccion")
     fun addReproduccion(
         @Header("Authorization") token: String,
-    ): Call<AddReproduccionResponse>
+    ): Call<Void>
 
     @GET("/get-cancion-actual")
     fun getCancionActual(@Header("Authorization") token: String): Call<CancionActualResponse>
