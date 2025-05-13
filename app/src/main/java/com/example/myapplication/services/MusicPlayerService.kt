@@ -2,6 +2,7 @@ package com.example.myapplication.services
 
 import android.app.Service
 import android.content.Intent
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Binder
 import android.os.IBinder
@@ -158,8 +159,33 @@ class MusicPlayerService : Service() {
     fun resume() {
         if (::mediaPlayer.isInitialized && !mediaPlayer.isPlaying) {
             mediaPlayer.start()
+        } else {
+            if (!::mediaPlayer.isInitialized) {
+                val audioUrl = Preferencias.obtenerValorString("audioCancionActual", "")
+                val progreso = Preferencias.obtenerValorEntero("progresoCancionActual", 0)
+
+                if (audioUrl.isNotEmpty()) {
+                    prepararMediaPlayer(audioUrl) {
+                        mediaPlayer.seekTo(progreso)
+                        mediaPlayer.start()
+                    }
+                } else {
+                    Log.d("LOG CANCION", "No hay audio guardado para reanudar")
+                }
+            }
         }
     }
+
+    fun prepararMediaPlayer(audioUrl: String, onPrepared: () -> Unit) {
+        mediaPlayer = MediaPlayer()
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
+        mediaPlayer.setDataSource(audioUrl)
+        mediaPlayer.prepareAsync()
+        mediaPlayer.setOnPreparedListener {
+            onPrepared()
+        }
+    }
+
 
     fun getProgress(): Int {
         return if (::mediaPlayer.isInitialized) mediaPlayer.currentPosition else 0

@@ -180,6 +180,15 @@ class Home : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val modoscuro = Preferencias.obtenerValorEntero("modoOscuro", 1)
+        val modoActual = AppCompatDelegate.getDefaultNightMode()
+
+        if (modoscuro == 0 && modoActual != AppCompatDelegate.MODE_NIGHT_YES) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else if (modoscuro != 0 && modoActual != AppCompatDelegate.MODE_NIGHT_NO) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_bueno)
 
@@ -193,16 +202,6 @@ class Home : AppCompatActivity() {
         val profileImageUrl = Preferencias.obtenerValorString("fotoPerfil", "")
 
         Log.d("ProfileImage", "URL de la imagen de perfil: $profileImageUrl")
-
-
-        val modoscuro = Preferencias.obtenerValorEntero("modoOscuro", 1)
-        val modoActual = AppCompatDelegate.getDefaultNightMode()
-
-        if (modoscuro == 0 && modoActual != AppCompatDelegate.MODE_NIGHT_YES) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        } else if (modoscuro != 0 && modoActual != AppCompatDelegate.MODE_NIGHT_NO) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        }
 
 
         // Verificar si la API devolvió "DEFAULT" o si no hay imagen guardada
@@ -545,6 +544,7 @@ class Home : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
+        Log.d("LOG", "DESTROY")
         if (serviceBound) {
             unbindService(serviceConnection)
             serviceBound = false
@@ -1096,6 +1096,7 @@ class Home : AppCompatActivity() {
         WebSocketEventHandler.eliminarListenerSeguidor(listenerSeguidor)
         WebSocketEventHandler.eliminarListenerInvitacion(listenerInvitacion)
         WebSocketEventHandler.eliminarListenerInteraccion(listenerInteraccion)
+        Log.d("LOG", "DESTROY")
     }
 
     override fun onResume() {
