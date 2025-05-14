@@ -10,6 +10,7 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
+import android.util.TypedValue
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -17,6 +18,10 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.myapplication.R
 import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.CloudinaryApiService
@@ -100,11 +105,30 @@ class CrearPlaylist : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
                 selectedImageUri = it
-                logoImageView.setImageURI(it)
+
+                Glide.with(this)
+                    .load(it)
+                    .transform(
+                        MultiTransformation(
+                            CenterCrop(),
+                            RoundedCorners(
+                                TypedValue.applyDimension(
+                                    TypedValue.COMPLEX_UNIT_DIP,
+                                    12f,
+                                    this.resources.displayMetrics
+                                ).toInt()
+                            )
+                        )
+                    )
+                    .placeholder(R.drawable.no_cancion)
+                    .error(R.drawable.no_cancion)
+                    .into(logoImageView)
+
                 logoImageView.scaleType = ImageView.ScaleType.CENTER_CROP
-                logoImageView.background =  ContextCompat.getDrawable(this, R.drawable.rounded_edittext)
+                logoImageView.background = ContextCompat.getDrawable(this, R.drawable.rounded_edittext)
             }
         }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

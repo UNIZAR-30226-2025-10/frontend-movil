@@ -12,6 +12,7 @@
         android:layout_width="15dp"
         android:layout_height="wrap_content"
         android:text="1"
+        style="@style/TextColor"
         android:fontFamily="@font/poppins_bold"
         android:textColor="#000e3b"
         android:textSize="14sp"
@@ -41,7 +42,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_bold"
             android:text="Nombre de usuario"
-            android:textColor="#000e3b"
+            style="@style/TextColor"
             android:textSize="14sp"
             tools:text="usuario123" />
     </LinearLayout>

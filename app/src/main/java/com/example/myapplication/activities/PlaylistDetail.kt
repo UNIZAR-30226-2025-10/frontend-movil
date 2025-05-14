@@ -120,9 +120,27 @@ class PlaylistDetail : AppCompatActivity() {
     private val openGalleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
             imageUri = it
-            playlistImageViewDialog?.setImageURI(imageUri)  // Set the selected image in the dialog ImageView
+
+            Glide.with(this)
+                .load(imageUri)
+                .transform(
+                    MultiTransformation(
+                        CenterCrop(),
+                        RoundedCorners(
+                            TypedValue.applyDimension(
+                                TypedValue.COMPLEX_UNIT_DIP,
+                                12f,
+                                this.resources.displayMetrics
+                            ).toInt()
+                        )
+                    )
+                )
+                .placeholder(R.drawable.no_cancion)
+                .error(R.drawable.no_cancion)
+                .into(playlistImageViewDialog!!)
         }
     }
+
     var playlistId: String? = null
     private var isFavorito = false
     var alguienExpulsado = false
@@ -1196,7 +1214,7 @@ class PlaylistDetail : AppCompatActivity() {
                             // Cargar la imagen desde la URL con Glide
                             val cornerRadius = TypedValue.applyDimension(
                                 TypedValue.COMPLEX_UNIT_DIP,
-                                6f,
+                                12f,
                                 resources.displayMetrics
                             ).toInt()
 
