@@ -86,6 +86,8 @@ class PerfilArtista : AppCompatActivity() {
     private lateinit var headerEscuchasTextView: TextView
     private lateinit var recyclerViewPlaylists: RecyclerView
     private lateinit var headerPlaylistsTextView: TextView
+    private lateinit var headerCancionesTextView: TextView
+    private lateinit var headerAlbumesTextView: TextView
     private lateinit var playlistsAdapter: PlaylistsAdapter
     private var imageUri: Uri? = null
     private var profileImageViewDialog: ImageView? = null
@@ -184,6 +186,16 @@ class PerfilArtista : AppCompatActivity() {
         loadProfileData()
         loadArtistAlbums()
 
+
+        headerTopArtistaTextView = findViewById(R.id.textViewHeadersTopArtistas)
+        headerTopArtistaTextView.visibility = View.GONE
+
+        headerCancionesTextView = findViewById(R.id.textViewHeadersCanciones)
+        headerCancionesTextView.visibility = View.GONE
+
+        headerAlbumesTextView = findViewById(R.id.textViewHeadersAlbums)
+        headerAlbumesTextView.visibility = View.GONE
+
         // Configurar RecyclerView para álbumes
         recyclerViewAlbums = findViewById(R.id.recyclerViewAlbums)
         recyclerViewAlbums.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
@@ -209,6 +221,7 @@ class PerfilArtista : AppCompatActivity() {
 
 
         headerEscuchasTextView = findViewById(R.id.textViewHeadersCancionesReciente)
+        headerEscuchasTextView.visibility = View.GONE
         escuchasAdapter = EscuchasAdapter(mutableListOf()) { escucha ->
             val cancionId = Preferencias.obtenerValorString("cancionActualId", "")
             if(cancionId == escucha.id){
@@ -362,13 +375,15 @@ class PerfilArtista : AppCompatActivity() {
                             albumAdapter.updateDataMisAlbums(misAlbums)
                             Log.d("PERFIL_ARTISTA", "entra en on response 3")
                             // Mostrar u ocultar el RecyclerView según si hay álbumes
-                            //if (misAlbums.isNotEmpty()) {
-                            recyclerViewAlbums.visibility = View.VISIBLE
+                            if (misAlbums.isNotEmpty()) {
+                                recyclerViewAlbums.visibility = View.VISIBLE
+                                headerAlbumesTextView.visibility = View.VISIBLE
 
-                            //} else {
-                            //recyclerViewAlbums.visibility = View.GONE
-                            //showToast("No tienes álbumes aún")
-                            //}
+                            } else {
+                                recyclerViewAlbums.visibility = View.GONE
+                                headerAlbumesTextView.visibility = View.GONE
+                                //showToast("No tienes álbumes aún")
+                            }
                         } else {
                             handleErrorCode(responseBody.respuestaHTTP)
                         }
@@ -404,8 +419,16 @@ class PerfilArtista : AppCompatActivity() {
                             cancionesAdapter.updateDataMisCanciones(misCanciones)
                             Log.d("PERFIL_ARTISTA", "entra en on response 3")
                             // Mostrar u ocultar el RecyclerView según si hay álbumes
-                            //if (misAlbums.isNotEmpty()) {
-                            recyclerViewCanciones.visibility = View.VISIBLE
+                            if (misCanciones.isNotEmpty()) {
+                                recyclerViewCanciones.visibility = View.VISIBLE
+                                headerCancionesTextView.visibility = View.VISIBLE
+
+                            } else {
+                                recyclerViewCanciones.visibility = View.GONE
+                                headerCancionesTextView.visibility = View.GONE
+                                //showToast("No tienes álbumes aún")
+                            }
+                            //recyclerViewCanciones.visibility = View.VISIBLE
 
                         } else {
                             handleErrorCode(responseBody.respuestaHTTP)

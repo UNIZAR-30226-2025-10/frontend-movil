@@ -260,6 +260,7 @@ class Perfil : AppCompatActivity() {
         recyclerViewPlaylists.adapter = playlistsAdapter
 
         headerTopArtistaTextView = findViewById(R.id.textViewHeadersTopArtistas)
+        headerTopArtistaTextView.visibility = View.GONE
         artistasAdapter = TopArtistasAdapter(mutableListOf()) { artista ->
             val intent = Intent(this, OtroArtista::class.java)
             intent.putExtra("nombreUsuario", artista.nombreUsuario)
@@ -275,6 +276,7 @@ class Perfil : AppCompatActivity() {
 
 
         headerEscuchasTextView = findViewById(R.id.textViewHeadersCancionesReciente)
+        headerEscuchasTextView.visibility = View.GONE
         escuchasAdapter = EscuchasAdapter(mutableListOf()) { escucha ->
             val cancionId = Preferencias.obtenerValorString("cancionActualId", "")
             if(cancionId == escucha.id){
@@ -946,7 +948,7 @@ class Perfil : AppCompatActivity() {
                             } else {
                                 recyclerViewEscuchas.visibility = View.GONE
                                 headerEscuchasTextView.visibility = View.GONE
-                                showToast("No hay escuchas")
+                                //showToast("No hay escuchas")
                             }
 
                         } else {
