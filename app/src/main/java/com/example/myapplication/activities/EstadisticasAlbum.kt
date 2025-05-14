@@ -18,6 +18,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -564,7 +565,8 @@ class EstadisticasAlbum : AppCompatActivity() {
         songArtist.text = songArtistText
         progressBar.progress = songProgress/1749
 
-        songImage.setOnClickListener {
+        val  minirep = findViewById<LinearLayout>(R.id.miniPlayer)
+        minirep.setOnClickListener{
             startActivity(Intent(this, CancionReproductorDetail::class.java))
         }
 

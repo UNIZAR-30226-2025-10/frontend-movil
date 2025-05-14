@@ -938,7 +938,8 @@ class NoizzyDetail : AppCompatActivity() {
         songArtist.text = songArtistText
         progressBar.progress = songProgress/1749
 
-        songImage.setOnClickListener {
+        val  minirep = findViewById<LinearLayout>(R.id.miniPlayer)
+        minirep.setOnClickListener{
             startActivity(Intent(this, CancionReproductorDetail::class.java))
         }
 
