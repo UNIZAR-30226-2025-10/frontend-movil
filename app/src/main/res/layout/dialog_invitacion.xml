@@ -26,6 +26,7 @@
         android:layout_height="wrap_content"
         android:textColorHint="@color/hintColor"
         style="@style/TextColor"
+        android:background="@android:color/white"
         android:queryHint="Buscar seguidor" />
 
     <ListView

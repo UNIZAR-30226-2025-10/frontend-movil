@@ -25,6 +25,7 @@
         android:layout_height="wrap_content"
         android:queryHint="Buscar playlists..."
         android:iconifiedByDefault="false"
+        android:background="@android:color/white"
         android:textColorHint="@color/hintColor"
         style="@style/TextColor"/>
 
