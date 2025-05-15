@@ -23,11 +23,17 @@ class MainActivity : AppCompatActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             val token = Preferencias.obtenerValorString("token", "")
             val nombreUsuario = Preferencias.obtenerValorString("nombreUsuario", "")
+            val tipo = Preferencias.obtenerValorString("tipo",  "")
+            Log.d("MainActivity", "tipo: ${tipo}")
             Log.e("MainActivity", "token: ${token}")
             Log.e("MainActivity", "user: ${nombreUsuario}")
 
             val nextActivity = if (!token.isNullOrEmpty()) {
-                Home::class.java
+                if(tipo == "pendiente"){
+                    Pendiente::class.java
+                }else{
+                    Home::class.java
+                }
             } else {
                 Inicio::class.java
             }
