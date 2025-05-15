@@ -68,6 +68,7 @@ class OtroOyente : AppCompatActivity() {
     private lateinit var adapter: PlaylistOtroOyenteAdapter
     private lateinit var dot: View
     private var yaRedirigidoAlLogin = false
+    private var seguidores : String = ""
 
     private var isFollowing = false
 
@@ -290,14 +291,21 @@ class OtroOyente : AppCompatActivity() {
             // Cambiar el estado de seguir/no seguir
             isFollowing = !isFollowing
             updateFollowButtonState()
+            val followersTextView = findViewById<TextView>(R.id.followers)
             // Aquí puedes añadir la lógica para realizar una acción, como seguir al oyente en la base de datos
             if (isFollowing) {
                 if (nombreUser != null) {
                     onFollowStatusChanged(nombreUser!!,true)
+                    val seg = seguidores.toInt() +1
+                    seguidores = seg.toString()
+                    followersTextView.text = "$seguidores Seguidores"
                 }
             } else {
                 if (nombreUser != null) {
                     onFollowStatusChanged(nombreUser!!,false)
+                    val seg = seguidores.toInt() -1
+                    seguidores = seg.toString()
+                    followersTextView.text = "$seguidores Seguidores"
                 }
             }
         }
@@ -328,7 +336,7 @@ class OtroOyente : AppCompatActivity() {
                     response.body()?.let {
                         if (it.respuestaHTTP == 0) {
                             val nombreperfil = it.oyente.nombreUsuario
-                            val seguidores = it.oyente.numSeguidores
+                            seguidores = it.oyente.numSeguidores
                             val seguidos = it.oyente.numSeguidos
 
                             var foto: Any

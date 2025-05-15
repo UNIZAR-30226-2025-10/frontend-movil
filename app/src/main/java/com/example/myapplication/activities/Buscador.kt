@@ -404,31 +404,31 @@ class Buscador : AppCompatActivity() {
         val hasCanciones = cancionAdapter.itemCount > 0
         recyclerViewCancion.visibility = if (showCanciones && hasCanciones) View.VISIBLE else View.GONE
         headerCancionesTextView.visibility = if (showCanciones && hasCanciones) View.VISIBLE else View.GONE
-        noResultsCanciones.visibility = if (showCanciones && !hasCanciones) View.VISIBLE else View.GONE
+        noResultsCanciones.visibility = if (radioCanciones.isChecked && !hasCanciones) View.VISIBLE else View.GONE
 
         val showArtistas = (radioTodos.isChecked || radioArtistas.isChecked)
         val hasArtistas = artistaAdapter.itemCount > 0
         recyclerViewArtista.visibility = if (showArtistas && hasArtistas) View.VISIBLE else View.GONE
         headerArtistasTextView.visibility = if (showArtistas && hasArtistas) View.VISIBLE else View.GONE
-        noResultsArtistas.visibility = if (showArtistas && !hasArtistas) View.VISIBLE else View.GONE
+        noResultsArtistas.visibility = if (radioArtistas.isChecked && !hasArtistas) View.VISIBLE else View.GONE
 
         val showAlbumes = (radioTodos.isChecked || radioAlbumes.isChecked)
         val hasAlbumes = albumAdapter.itemCount > 0
         recyclerViewAlbum.visibility = if (showAlbumes && hasAlbumes) View.VISIBLE else View.GONE
         headerAlbumesTextView.visibility = if (showAlbumes && hasAlbumes) View.VISIBLE else View.GONE
-        noResultsAlbumes.visibility = if (showAlbumes && !hasAlbumes) View.VISIBLE else View.GONE
+        noResultsAlbumes.visibility = if (radioAlbumes.isChecked && !hasAlbumes) View.VISIBLE else View.GONE
 
         val showPlaylists = (radioTodos.isChecked || radioPlaylists.isChecked)
         val hasPlaylists = playlistAdapter.itemCount > 0
         recyclerViewPlaylist.visibility = if (showPlaylists && hasPlaylists) View.VISIBLE else View.GONE
         headerPlaylistsTextView.visibility = if (showPlaylists && hasPlaylists) View.VISIBLE else View.GONE
-        noResultsPlaylists.visibility = if (showPlaylists && !hasPlaylists) View.VISIBLE else View.GONE
+        noResultsPlaylists.visibility = if (radioPlaylists.isChecked && !hasPlaylists) View.VISIBLE else View.GONE
 
         val showPerfiles = (radioTodos.isChecked || radioPerfiles.isChecked)
         val hasPerfiles = perfilAdapter.itemCount > 0
         recyclerViewPerfil.visibility = if (showPerfiles && hasPerfiles) View.VISIBLE else View.GONE
         headerPerfilesTextView.visibility = if (showPerfiles && hasPerfiles) View.VISIBLE else View.GONE
-        noResultsPerfiles.visibility = if (showPerfiles && !hasPerfiles) View.VISIBLE else View.GONE
+        noResultsPerfiles.visibility = if (radioPerfiles.isChecked && !hasPerfiles) View.VISIBLE else View.GONE
     }
 
     private fun setupNavigation() {

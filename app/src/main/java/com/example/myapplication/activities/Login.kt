@@ -192,13 +192,13 @@ class Login : AppCompatActivity() {
         Preferencias.guardarValorEntero("volumen", loginResponse.usuario?.volumen ?: 0)
         Log.d("guardarDatosOyente", "Volumen: ${loginResponse.usuario?.volumen ?: 0}")
 
-        var modooscuro = 0
-        if(loginResponse.usuario?.claro == true){
-            modooscuro = 1
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        var modooscuro = 1
+        if(loginResponse.usuario?.claro == false){
+            modooscuro = 0
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
         else{
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
 
         Preferencias.guardarValorEntero("modoOscuro", modooscuro)

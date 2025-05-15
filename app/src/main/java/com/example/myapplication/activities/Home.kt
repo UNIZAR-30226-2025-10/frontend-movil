@@ -683,7 +683,7 @@ class Home : AppCompatActivity() {
                             } else {
                                 recyclerViewEscuchas.visibility = View.GONE
                                 headerEscuchasTextView.visibility = View.GONE
-                                showToast("No hay escuchas")
+                                //showToast("No hay escuchas")
                             }
 
                         } else {

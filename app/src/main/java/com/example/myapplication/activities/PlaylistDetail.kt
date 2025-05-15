@@ -1315,7 +1315,6 @@ class PlaylistDetail : AppCompatActivity() {
 
         btnAceptar.setOnClickListener {
             deletePlaylist()
-            showToast("Playlist eliminada con éxito")
             alertDialog.dismiss()
         }
 
@@ -1333,7 +1332,7 @@ class PlaylistDetail : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Log.d("deletePlaylist", "1")
                     navigateInicio()
-                    showToast("playlist delete")
+                    showToast("Playlist eliminada con éxito")
                 } else {
                     Log.d("deletePlaylist", "Error en la solicitud ${response.code()}")
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
@@ -1463,7 +1462,7 @@ class PlaylistDetail : AppCompatActivity() {
         val searchView = dialog.findViewById<SearchView>(R.id.searchViewSeguidores)
         val listView = dialog.findViewById<ListView>(R.id.listViewSeguidores)
 
-        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mutableListOf())
+        val adapter = ArrayAdapter<String>(this, R.layout.item_invitara, mutableListOf())
         listView.adapter = adapter
 
         val token = Preferencias.obtenerValorString("token", "") ?: ""

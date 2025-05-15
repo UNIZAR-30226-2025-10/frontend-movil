@@ -186,6 +186,18 @@ class PerfilArtista : AppCompatActivity() {
         loadProfileData()
         loadArtistAlbums()
 
+        val followers: TextView = findViewById(R.id.followers)
+        val following: TextView = findViewById(R.id.following)
+
+        followers.setOnClickListener {
+            //Toast.makeText(this, "Abrir lista de seguidores", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, Seguidores::class.java))
+        }
+
+        following.setOnClickListener {
+            //Toast.makeText(this, "Abrir lista de seguidos", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, Seguidos::class.java))
+        }
 
         headerTopArtistaTextView = findViewById(R.id.textViewHeadersTopArtistas)
         headerTopArtistaTextView.visibility = View.GONE

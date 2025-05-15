@@ -228,7 +228,7 @@ class NoizzyDetail : AppCompatActivity() {
 
         btnCommentPrincipal.setOnClickListener {
             comentarPrincipal(noizzyPrincipal) // Ahora también correcto
-            Toast.makeText(this, "Comentario en el principal: ${noizzyId}", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this, "Comentario en el principal: ${noizzyId}", Toast.LENGTH_SHORT).show()
         }
 
         btnDeletePrincipal = findViewById(R.id.deleteButtonNoizzy)
