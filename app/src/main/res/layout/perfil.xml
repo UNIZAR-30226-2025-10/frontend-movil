@@ -242,7 +242,7 @@
                 android:id="@+id/textViewHeadersPlaylistsP"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tus playlists"
+                android:text="Mis playlists"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 style="@style/TextColor"
