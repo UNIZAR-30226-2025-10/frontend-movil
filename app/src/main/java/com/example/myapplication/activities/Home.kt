@@ -68,6 +68,7 @@ import com.example.myapplication.io.response.Interaccion
 import com.example.myapplication.io.response.InvitacionPlaylist
 import com.example.myapplication.io.response.Novedad
 import com.example.myapplication.io.response.Seguidor
+import com.example.myapplication.managers.ReproduccionTracker
 import com.example.myapplication.services.MusicPlayerService
 import com.example.myapplication.services.WebSocketEventHandler
 import org.json.JSONObject
@@ -450,12 +451,14 @@ class Home : AppCompatActivity() {
                     val progreso = service.getProgress()
                     Preferencias.guardarValorEntero("progresoCancionActual", progreso)
                     service.pause()
+                    ReproduccionTracker.pauseTracking()
                     stopButton.setImageResource(R.drawable.ic_pause)
                     Log.d("MiniReproductor", "Canción pausada en $progreso ms")
                 } else {
                     Log.d("MiniReproductor", "Intentando reanudar la canción...")
                     service.resume()
                     stopButton.setImageResource(R.drawable.ic_play)
+                    ReproduccionTracker.resumeTracking()
                     Log.d("MiniReproductor", "Canción reanudada")
                 }
             }
@@ -879,7 +882,10 @@ class Home : AppCompatActivity() {
                         //Toast.makeText(this@Home, respuestaTexto, Toast.LENGTH_LONG).show()
 
                         reproducirAudio(audioResponse.audio)
-                        notificarReproduccion()
+                        //notificarReproduccion()
+                        ReproduccionTracker.startTracking(this@Home, id) {
+                            notificarReproduccion()
+                        }
 
                         Preferencias.guardarValorString("audioCancionActual", audioResponse.audio)
                         guardarDatoscCancion(id)
@@ -953,7 +959,6 @@ class Home : AppCompatActivity() {
                 if (response.isSuccessful) {
                     response.body()?.let { audioResponse ->
                         reproducirAudioColeccion(audioResponse.audio) // No enviar progreso
-                        notificarReproduccion()
                         guardarDatoscCancion(ordenColeccion[indice])
                         actualizarIconoPlayPause()
                     }
@@ -1012,13 +1017,16 @@ class Home : AppCompatActivity() {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     Log.d("MiApp", "Reproducción registrada exitosamente")
+                    Log.d("NotificarReproduccion", "Reproducción registrada exitosamente")
                 } else {
                     Log.e("MiApp", "Error al registrar la reproducción")
+                    Log.e("NotificarReproduccion", "Error al registrar la reproducción")
                 }
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
                 Log.e("MiApp", "Error de conexión al registrar reproducción: ${t.message}", t)
+                Log.e("NotificarReproduccion", "Error de conexión al registrar reproducción: ${t.message}", t)
             }
         })
     }
@@ -1048,6 +1056,9 @@ class Home : AppCompatActivity() {
                         Preferencias.guardarValorString("nombreArtisticoActual", artista)
                         Preferencias.guardarValorString("fotoPortadaActual", foto)
 
+                        ReproduccionTracker.startTracking(this@Home, id) {
+                            notificarReproduccion()
+                        }
                         updateMiniReproductor()
                         actualizarIconoPlayPause()
                     }

@@ -56,6 +56,7 @@ import com.example.myapplication.io.response.AudioResponse
 import com.example.myapplication.io.response.CancionInfoResponse
 import com.example.myapplication.io.response.CloudinaryResponse
 import com.example.myapplication.io.response.GetSignatureResponse
+import com.example.myapplication.managers.ReproduccionTracker
 import com.example.myapplication.services.MusicPlayerService
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -625,12 +626,14 @@ class EstadisticasAlbum : AppCompatActivity() {
                     val progreso = service.getProgress()
                     Preferencias.guardarValorEntero("progresoCancionActual", progreso)
                     service.pause()
+                    ReproduccionTracker.pauseTracking()
                     stopButton.setImageResource(R.drawable.ic_pause)
                     Log.d("MiniReproductor", "Canción pausada en $progreso ms")
                 } else {
                     Log.d("MiniReproductor", "Intentando reanudar la canción...")
                     service.resume()
                     stopButton.setImageResource(R.drawable.ic_play)
+                    ReproduccionTracker.resumeTracking()
                     Log.d("MiniReproductor", "Canción reanudada")
                 }
             }
@@ -730,7 +733,9 @@ class EstadisticasAlbum : AppCompatActivity() {
                         //Toast.makeText(this@Home, respuestaTexto, Toast.LENGTH_LONG).show()
 
                         reproducirAudio(audioResponse.audio)
-                        notificarReproduccion()
+                        ReproduccionTracker.startTracking(this@EstadisticasAlbum, id) {
+                            notificarReproduccion()
+                        }
 
                         Preferencias.guardarValorString("audioCancionActual", audioResponse.audio)
                         guardarDatoscCancion(id)
@@ -799,7 +804,9 @@ class EstadisticasAlbum : AppCompatActivity() {
                 if (response.isSuccessful) {
                     response.body()?.let { audioResponse ->
                         reproducirAudioColeccion(audioResponse.audio) // No enviar progreso
-                        notificarReproduccion()
+                        ReproduccionTracker.startTracking(this@EstadisticasAlbum, ordenColeccion[indice]) {
+                            notificarReproduccion()
+                        }
                         guardarDatoscCancion(ordenColeccion[indice])
                         actualizarIconoPlayPause()
                     }

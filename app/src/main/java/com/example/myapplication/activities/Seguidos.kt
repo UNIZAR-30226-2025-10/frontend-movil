@@ -43,6 +43,7 @@ import com.example.myapplication.io.response.Novedad
 import com.example.myapplication.io.response.Seguidor
 import com.example.myapplication.io.response.Seguidos
 import com.example.myapplication.io.response.SeguidosResponse
+import com.example.myapplication.managers.ReproduccionTracker
 import com.example.myapplication.services.MusicPlayerService
 import com.example.myapplication.services.WebSocketEventHandler
 import com.example.myapplication.utils.Preferencias
@@ -374,12 +375,14 @@ class Seguidos : AppCompatActivity(), SeguidosAdapter.OnUnfollowListener {
                     val progreso = service.getProgress()
                     Preferencias.guardarValorEntero("progresoCancionActual", progreso)
                     service.pause()
+                    ReproduccionTracker.pauseTracking()
                     stopButton.setImageResource(R.drawable.ic_pause)
                     Log.d("MiniReproductor", "Canción pausada en $progreso ms")
                 } else {
                     Log.d("MiniReproductor", "Intentando reanudar la canción...")
                     service.resume()
                     stopButton.setImageResource(R.drawable.ic_play)
+                    ReproduccionTracker.resumeTracking()
                     Log.d("MiniReproductor", "Canción reanudada")
                 }
             }
@@ -479,7 +482,9 @@ class Seguidos : AppCompatActivity(), SeguidosAdapter.OnUnfollowListener {
                         //Toast.makeText(this@Home, respuestaTexto, Toast.LENGTH_LONG).show()
 
                         reproducirAudio(audioResponse.audio)
-                        notificarReproduccion()
+                        ReproduccionTracker.startTracking(this@Seguidos, id) {
+                            notificarReproduccion()
+                        }
 
                         Preferencias.guardarValorString("audioCancionActual", audioResponse.audio)
                         guardarDatoscCancion(id)
@@ -548,7 +553,9 @@ class Seguidos : AppCompatActivity(), SeguidosAdapter.OnUnfollowListener {
                 if (response.isSuccessful) {
                     response.body()?.let { audioResponse ->
                         reproducirAudioColeccion(audioResponse.audio) // No enviar progreso
-                        notificarReproduccion()
+                        ReproduccionTracker.startTracking(this@Seguidos, ordenColeccion[indice]) {
+                            notificarReproduccion()
+                        }
                         guardarDatoscCancion(ordenColeccion[indice])
                         actualizarIconoPlayPause()
                     }

@@ -54,6 +54,7 @@ import com.example.myapplication.io.request.ClaroRequest
 import com.example.myapplication.io.request.EditarPerfilArtistaRequest
 import com.example.myapplication.io.request.EditarPerfilRequest
 import com.example.myapplication.io.response.*
+import com.example.myapplication.managers.ReproduccionTracker
 import com.example.myapplication.services.MusicPlayerService
 import com.example.myapplication.services.WebSocketEventHandler
 import com.example.myapplication.utils.Preferencias
@@ -1098,12 +1099,14 @@ class PerfilArtista : AppCompatActivity() {
                     val progreso = service.getProgress()
                     Preferencias.guardarValorEntero("progresoCancionActual", progreso)
                     service.pause()
+                    ReproduccionTracker.pauseTracking()
                     stopButton.setImageResource(R.drawable.ic_pause)
                     Log.d("MiniReproductor", "Canción pausada en $progreso ms")
                 } else {
                     Log.d("MiniReproductor", "Intentando reanudar la canción...")
                     service.resume()
                     stopButton.setImageResource(R.drawable.ic_play)
+                    ReproduccionTracker.resumeTracking()
                     Log.d("MiniReproductor", "Canción reanudada")
                 }
             }
@@ -1203,7 +1206,9 @@ class PerfilArtista : AppCompatActivity() {
                         //Toast.makeText(this@Home, respuestaTexto, Toast.LENGTH_LONG).show()
 
                         reproducirAudio(audioResponse.audio)
-                        notificarReproduccion()
+                        ReproduccionTracker.startTracking(this@PerfilArtista, id) {
+                            notificarReproduccion()
+                        }
 
                         Preferencias.guardarValorString("audioCancionActual", audioResponse.audio)
                         guardarDatoscCancion(id)
@@ -1272,7 +1277,9 @@ class PerfilArtista : AppCompatActivity() {
                 if (response.isSuccessful) {
                     response.body()?.let { audioResponse ->
                         reproducirAudioColeccion(audioResponse.audio) // No enviar progreso
-                        notificarReproduccion()
+                        ReproduccionTracker.startTracking(this@PerfilArtista, ordenColeccion[indice]) {
+                            notificarReproduccion()
+                        }
                         guardarDatoscCancion(ordenColeccion[indice])
                         actualizarIconoPlayPause()
                     }

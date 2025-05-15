@@ -42,6 +42,7 @@ import com.example.myapplication.io.response.Interaccion
 import com.example.myapplication.io.response.InvitacionPlaylist
 import com.example.myapplication.io.response.Novedad
 import com.example.myapplication.io.response.Seguidor
+import com.example.myapplication.managers.ReproduccionTracker
 import com.example.myapplication.services.MusicPlayerService
 import com.example.myapplication.services.WebSocketEventHandler
 import retrofit2.Call
@@ -268,12 +269,14 @@ class CancionReproductorDetail : AppCompatActivity() {
                     val progreso = service.getProgress()
                     Preferencias.guardarValorEntero("progresoCancionActual", progreso)
                     service.pause()
+                    ReproduccionTracker.stopTracking()
                     btnPlayPause.setImageResource(R.drawable.ic_pause_cancion)
                     Log.d("MiniReproductor", "Canción pausada en $progreso ms")
                     actualizarEstadoReproduccion(false, progreso) // Enviar estado 'pausado' con el progreso
                 } else {
                     Log.d("MiniReproductor", "Intentando reanudar la canción...")
                     service.resume()
+                    ReproduccionTracker.resumeTracking()
                     btnPlayPause.setImageResource(R.drawable.ic_play_cancion)
                     Log.d("MiniReproductor", "Canción reanudada")
                     val progreso = service.getProgress()
@@ -529,7 +532,9 @@ class CancionReproductorDetail : AppCompatActivity() {
                         //Toast.makeText(this@Home, respuestaTexto, Toast.LENGTH_LONG).show()
 
                         reproducirAudio(audioResponse.audio)
-                        notificarReproduccion()
+                        ReproduccionTracker.startTracking(this@CancionReproductorDetail, id) {
+                            notificarReproduccion()
+                        }
 
                         Preferencias.guardarValorString("audioCancionActual", audioResponse.audio)
                         guardarDatoscCancion(id)
@@ -600,7 +605,9 @@ class CancionReproductorDetail : AppCompatActivity() {
                 if (response.isSuccessful) {
                     response.body()?.let { audioResponse ->
                         reproducirAudioColeccion(audioResponse.audio) // No enviar progreso
-                        notificarReproduccion()
+                        ReproduccionTracker.startTracking(this@CancionReproductorDetail, ordenColeccion[indice]) {
+                            notificarReproduccion()
+                        }
                         guardarDatoscCancion(ordenColeccion[indice])
                         actualizarIconoPlayPause()
                     }
