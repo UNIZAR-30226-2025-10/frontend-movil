@@ -385,13 +385,24 @@ class CrearAlbum : AppCompatActivity() {
 
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@CrearAlbum, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@CrearAlbum, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
-                    Log.d("Etiquetas", "Error al obtener las etiquetas: ${response.code()} - ${response.message()}")
                 }
             }
 
@@ -533,11 +544,23 @@ class CrearAlbum : AppCompatActivity() {
                                 }
                             } else {
                                 if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                                    yaRedirigidoAlLogin = true
-                                    val intent = Intent(this@CrearAlbum, Inicio::class.java)
-                                    startActivity(intent)
-                                    finish()
-                                    Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                                    val errorBody = response.errorBody()?.string()
+
+                                    try {
+                                        val json = JSONObject(errorBody ?: "")
+                                        val errorMessage = json.getString("error")
+
+                                        if (errorMessage == "Token inválido.") {
+                                            yaRedirigidoAlLogin = true
+                                            val intent = Intent(this@CrearAlbum, Inicio::class.java)
+                                            startActivity(intent)
+                                            finish()
+                                            Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                                        }
+
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
                                 }
                             }
                         }
@@ -589,13 +612,24 @@ class CrearAlbum : AppCompatActivity() {
                             }
                         } else {
                             if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                                yaRedirigidoAlLogin = true
-                                val intent = Intent(this@CrearAlbum, Inicio::class.java)
-                                startActivity(intent)
-                                finish()
-                                Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                                val errorBody = response.errorBody()?.string()
+
+                                try {
+                                    val json = JSONObject(errorBody ?: "")
+                                    val errorMessage = json.getString("error")
+
+                                    if (errorMessage == "Token inválido.") {
+                                        yaRedirigidoAlLogin = true
+                                        val intent = Intent(this@CrearAlbum, Inicio::class.java)
+                                        startActivity(intent)
+                                        finish()
+                                        Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                                    }
+
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
                             }
-                            Log.d("uploadImageToCloudinary", "Error: ${response.errorBody()?.string()}")
                         }
                     }
 
@@ -622,13 +656,24 @@ class CrearAlbum : AppCompatActivity() {
                     obtenerAlbumsActualizado(nombreAlbum)
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@CrearAlbum, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@CrearAlbum, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
-                    Log.d("Crear album", "Error en crear album")
                 }
             }
             override fun onFailure(call: Call<CrearAlbumResponse>, t: Throwable) {
@@ -653,13 +698,24 @@ class CrearAlbum : AppCompatActivity() {
 
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@CrearAlbum, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@CrearAlbum, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
-                    Log.d("Mis albumes", "Error al obtener los álbumes: ${response.code()} - ${response.message()}")
                 }
             }
 
@@ -686,11 +742,23 @@ class CrearAlbum : AppCompatActivity() {
                     }
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@CrearAlbum, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@CrearAlbum, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
@@ -740,13 +808,24 @@ class CrearAlbum : AppCompatActivity() {
                             }
                         } else {
                             if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                                yaRedirigidoAlLogin = true
-                                val intent = Intent(this@CrearAlbum, Inicio::class.java)
-                                startActivity(intent)
-                                finish()
-                                Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                                val errorBody = response.errorBody()?.string()
+
+                                try {
+                                    val json = JSONObject(errorBody ?: "")
+                                    val errorMessage = json.getString("error")
+
+                                    if (errorMessage == "Token inválido.") {
+                                        yaRedirigidoAlLogin = true
+                                        val intent = Intent(this@CrearAlbum, Inicio::class.java)
+                                        startActivity(intent)
+                                        finish()
+                                        Toast.makeText(this@CrearAlbum, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                                    }
+
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
                             }
-                            Log.d("uploadAudioToCloudinary", "ERROR ${response.errorBody()?.string()}")
                         }
                     }
 

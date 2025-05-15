@@ -61,16 +61,31 @@ class CambiarPassword1 : AppCompatActivity() {
                     navigateToNext(correo)
 
                 } else {
+                    val errorBodyString = response.errorBody()?.string()
+
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@CambiarPassword1, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        showToast("Sesión iniciada en otro dispositivo")
+                        try {
+                            val json = JSONObject(errorBodyString ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@CambiarPassword1, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                                return
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
-                    val errorBody = response.errorBody()?.string()
+
+                    Log.d("updateUserProfile", "Error en la solicitud ${response.code()}")
+
                     try {
-                        val json = JSONObject(errorBody)
+                        val json = JSONObject(errorBodyString ?: "")
                         val errorMessage = json.getString("error")
                         Toast.makeText(this@CambiarPassword1, errorMessage, Toast.LENGTH_LONG).show()
                     } catch (e: Exception) {

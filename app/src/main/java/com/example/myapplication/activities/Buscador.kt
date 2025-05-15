@@ -58,6 +58,7 @@ import com.example.myapplication.io.response.Seguidor
 import com.example.myapplication.managers.ReproduccionTracker
 import com.example.myapplication.services.MusicPlayerService
 import com.example.myapplication.services.WebSocketEventHandler
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -344,11 +345,23 @@ class Buscador : AppCompatActivity() {
                     } ?: showToast("Búsqueda fallida: Datos incorrectos")
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@Buscador, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        showToast("Sesión iniciada en otro dispositivo")
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@Buscador, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
@@ -687,19 +700,24 @@ class Buscador : AppCompatActivity() {
                     }
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@Buscador, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        showToast("Sesión iniciada en otro dispositivo")
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@Buscador, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
-                    val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
-
-                    // Mostrar en Logcat
-                    Log.e("API_RESPONSE", "Error en la respuesta: Código ${response.code()} - $errorMensaje")
-
-                    // Mostrar en Toast
-                    //Toast.makeText(this@Buscador, "Error: $errorMensaje", Toast.LENGTH_LONG).show()
                 }
             }
 
@@ -761,11 +779,23 @@ class Buscador : AppCompatActivity() {
                 } else {
                     Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@Buscador, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        showToast("Sesión iniciada en otro dispositivo")
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@Buscador, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
@@ -855,19 +885,24 @@ class Buscador : AppCompatActivity() {
                     }
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@Buscador, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        showToast("Sesión iniciada en otro dispositivo")
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@Buscador, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
-                    val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
-
-                    // Mostrar en Logcat
-                    Log.e("API_RESPONSE", "Error en la respuesta: Código ${response.code()} - $errorMensaje")
-
-                    // Mostrar en Toast
-                    Toast.makeText(this@Buscador, "Error: $errorMensaje", Toast.LENGTH_LONG).show()
                 }
             }
 

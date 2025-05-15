@@ -19,6 +19,7 @@ import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.response.CambiarPass2Response
 import com.example.myapplication.io.request.CambiarPass2Request
 import com.example.myapplication.utils.Preferencias
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -117,11 +118,23 @@ class CambiarPassword2 : AppCompatActivity() {
                     }
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@CambiarPassword2, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        showToast("Sesión iniciada en otro dispositivo")
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@CambiarPassword2, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     } else {
                         showToast("Código incorrecto")
                     }

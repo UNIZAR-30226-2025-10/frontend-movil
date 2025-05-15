@@ -44,6 +44,7 @@ import com.example.myapplication.io.response.Seguidor
 import com.example.myapplication.services.MusicPlayerService
 import com.example.myapplication.services.WebSocketEventHandler
 import com.example.myapplication.utils.Preferencias
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -420,17 +421,24 @@ class CancionesFavoritasArtista : AppCompatActivity() {
                     }
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@CancionesFavoritasArtista, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        Toast.makeText(this@CancionesFavoritasArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@CancionesFavoritasArtista, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                Toast.makeText(this@CancionesFavoritasArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
-                    val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
-
-                    // Mostrar en Logcat
-                    Log.e("API_RESPONSE", "Error en la respuesta: Código ${response.code()} - $errorMensaje")
-
                 }
             }
 
@@ -487,11 +495,23 @@ class CancionesFavoritasArtista : AppCompatActivity() {
                     }
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@CancionesFavoritasArtista, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        Toast.makeText(this@CancionesFavoritasArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@CancionesFavoritasArtista, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                Toast.makeText(this@CancionesFavoritasArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
@@ -542,11 +562,23 @@ class CancionesFavoritasArtista : AppCompatActivity() {
                     Log.d("MiApp", "Reproducción registrada exitosamente")
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@CancionesFavoritasArtista, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        Toast.makeText(this@CancionesFavoritasArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@CancionesFavoritasArtista, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                Toast.makeText(this@CancionesFavoritasArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                     Log.e("MiApp", "Error al registrar la reproducción")
                 }
@@ -588,19 +620,24 @@ class CancionesFavoritasArtista : AppCompatActivity() {
                     }
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@CancionesFavoritasArtista, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        Toast.makeText(this@CancionesFavoritasArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@CancionesFavoritasArtista, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                Toast.makeText(this@CancionesFavoritasArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
-                    val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
-
-                    // Mostrar en Logcat
-                    Log.e("API_RESPONSE", "Error en la respuesta: Código ${response.code()} - $errorMensaje")
-
-                    // Mostrar en Toast
-                    Toast.makeText(this@CancionesFavoritasArtista, "Error: $errorMensaje", Toast.LENGTH_LONG).show()
                 }
             }
 

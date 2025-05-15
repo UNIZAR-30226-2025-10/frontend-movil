@@ -24,6 +24,7 @@ import com.example.myapplication.io.request.ValidarArtistaResponse
 import com.example.myapplication.io.response.HistorialRecientesResponse
 import com.example.myapplication.io.response.PendientesResponse
 import com.example.myapplication.utils.Preferencias
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -70,11 +71,23 @@ class Admin : AppCompatActivity() {
                     } ?: showToast("Búsqueda fallida: Datos incorrectos")
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@Admin, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        showToast("Sesión iniciada en otro dispositivo")
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@Admin, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
@@ -97,11 +110,23 @@ class Admin : AppCompatActivity() {
                     loadSolicitudes()
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@Admin, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        showToast("Sesión iniciada en otro dispositivo")
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@Admin, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
             }

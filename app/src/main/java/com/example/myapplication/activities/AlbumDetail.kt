@@ -57,6 +57,7 @@ import com.example.myapplication.services.MusicPlayerService
 import com.example.myapplication.services.WebSocketEventHandler
 import com.example.myapplication.utils.Preferencias
 import kotlinx.coroutines.delay
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -494,11 +495,23 @@ class AlbumDetail : AppCompatActivity() {
 
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@AlbumDetail, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        showToast("Sesión iniciada en otro dispositivo")
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@AlbumDetail, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
@@ -521,11 +534,23 @@ class AlbumDetail : AppCompatActivity() {
                 } else {
                     callback(emptyList())
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@AlbumDetail, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        showToast("Sesión iniciada en otro dispositivo")
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@AlbumDetail, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
@@ -561,11 +586,23 @@ class AlbumDetail : AppCompatActivity() {
                     }
                     else -> {
                         if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                            yaRedirigidoAlLogin = true
-                            val intent = Intent(this@AlbumDetail, Inicio::class.java)
-                            startActivity(intent)
-                            finish()
-                            showToast("Sesión iniciada en otro dispositivo")
+                            val errorBody = response.errorBody()?.string()
+
+                            try {
+                                val json = JSONObject(errorBody ?: "")
+                                val errorMessage = json.getString("error")
+
+                                if (errorMessage == "Token inválido.") {
+                                    yaRedirigidoAlLogin = true
+                                    val intent = Intent(this@AlbumDetail, Inicio::class.java)
+                                    startActivity(intent)
+                                    finish()
+                                    showToast("Sesión iniciada en otro dispositivo")
+                                }
+
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
                         }
                     }
                 }
@@ -856,19 +893,24 @@ class AlbumDetail : AppCompatActivity() {
                     }
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@AlbumDetail, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        showToast("Sesión iniciada en otro dispositivo")
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@AlbumDetail, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
-                    val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
-
-                    // Mostrar en Logcat
-                    Log.e("API_RESPONSE", "Error en la respuesta: Código ${response.code()} - $errorMensaje")
-
-                    // Mostrar en Toast
-                    //Toast.makeText(this@PlaylistDetail, "Error: $errorMensaje", Toast.LENGTH_LONG).show()
                 }
             }
 
@@ -925,11 +967,23 @@ class AlbumDetail : AppCompatActivity() {
                     }
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@AlbumDetail, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        showToast("Sesión iniciada en otro dispositivo")
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@AlbumDetail, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
@@ -1019,19 +1073,24 @@ class AlbumDetail : AppCompatActivity() {
                     }
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@AlbumDetail, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        showToast("Sesión iniciada en otro dispositivo")
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@AlbumDetail, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
-                    val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
-
-                    // Mostrar en Logcat
-                    Log.e("API_RESPONSE", "Error en la respuesta: Código ${response.code()} - $errorMensaje")
-
-                    // Mostrar en Toast
-                    Toast.makeText(this@AlbumDetail, "Error: $errorMensaje", Toast.LENGTH_LONG).show()
                 }
             }
 
@@ -1071,11 +1130,23 @@ class AlbumDetail : AppCompatActivity() {
                 } else {
                     Log.e("Modo", "Error: ${response.code()} - ${response.errorBody()?.string()}")
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@AlbumDetail, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        showToast("Sesión iniciada en otro dispositivo")
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@AlbumDetail, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
             }

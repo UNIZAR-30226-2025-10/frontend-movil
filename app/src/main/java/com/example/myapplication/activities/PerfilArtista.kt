@@ -403,11 +403,23 @@ class PerfilArtista : AppCompatActivity() {
                     } ?: showToast("Error: Respuesta vacía del servidor")
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@PerfilArtista, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
@@ -449,11 +461,23 @@ class PerfilArtista : AppCompatActivity() {
                     } ?: showToast("Error: Respuesta vacía del servidor")
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@PerfilArtista, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
@@ -498,11 +522,23 @@ class PerfilArtista : AppCompatActivity() {
                     } ?: showToast("Búsqueda fallida: Datos incorrectos")
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@PerfilArtista, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
@@ -539,11 +575,23 @@ class PerfilArtista : AppCompatActivity() {
                     } ?: showToast("Búsqueda fallida: Datos incorrectos")
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@PerfilArtista, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
@@ -583,11 +631,23 @@ class PerfilArtista : AppCompatActivity() {
                         } ?: showToast("Datos incorrectos en la respuesta")
                     } else {
                         if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                            yaRedirigidoAlLogin = true
-                            val intent = Intent(this@PerfilArtista, Inicio::class.java)
-                            startActivity(intent)
-                            finish()
-                            Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                            val errorBody = response.errorBody()?.string()
+
+                            try {
+                                val json = JSONObject(errorBody ?: "")
+                                val errorMessage = json.getString("error")
+
+                                if (errorMessage == "Token inválido.") {
+                                    yaRedirigidoAlLogin = true
+                                    val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                                    startActivity(intent)
+                                    finish()
+                                    showToast("Sesión iniciada en otro dispositivo")
+                                }
+
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
                         }
                     }
                 }
@@ -629,11 +689,23 @@ class PerfilArtista : AppCompatActivity() {
                     } ?: showToast("Datos incorrectos en la respuesta")
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@PerfilArtista, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
@@ -780,17 +852,31 @@ class PerfilArtista : AppCompatActivity() {
                     dialog.dismiss()
                     showToast("Contraseña actualizada")
                 } else {
+                    val errorBodyString = response.errorBody()?.string()
+
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@PerfilArtista, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        try {
+                            val json = JSONObject(errorBodyString ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                                return
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
+
                     Log.d("updateUserProfile", "Error en la solicitud ${response.code()}")
-                    val errorBody = response.errorBody()?.string()
+
                     try {
-                        val json = JSONObject(errorBody)
+                        val json = JSONObject(errorBodyString ?: "")
                         val errorMessage = json.getString("error")
                         Toast.makeText(this@PerfilArtista, errorMessage, Toast.LENGTH_LONG).show()
                     } catch (e: Exception) {
@@ -883,11 +969,23 @@ class PerfilArtista : AppCompatActivity() {
                     }
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@PerfilArtista, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
@@ -930,11 +1028,23 @@ class PerfilArtista : AppCompatActivity() {
                         }
                     } else {
                         if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                            yaRedirigidoAlLogin = true
-                            val intent = Intent(this@PerfilArtista, Inicio::class.java)
-                            startActivity(intent)
-                            finish()
-                            Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                            val errorBody = response.errorBody()?.string()
+
+                            try {
+                                val json = JSONObject(errorBody ?: "")
+                                val errorMessage = json.getString("error")
+
+                                if (errorMessage == "Token inválido.") {
+                                    yaRedirigidoAlLogin = true
+                                    val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                                    startActivity(intent)
+                                    finish()
+                                    showToast("Sesión iniciada en otro dispositivo")
+                                }
+
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
                         }
                     }
                 }
@@ -1216,17 +1326,24 @@ class PerfilArtista : AppCompatActivity() {
                     }
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@PerfilArtista, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
-                    val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
-
-                    // Mostrar en Logcat
-                    Log.e("API_RESPONSE", "Error en la respuesta: Código ${response.code()} - $errorMensaje")
-
                 }
             }
 
@@ -1285,13 +1402,24 @@ class PerfilArtista : AppCompatActivity() {
                     }
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@PerfilArtista, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
-                    Log.e("API", "Error: ${response.code()} - ${response.errorBody()?.string()}")
                 }
             }
 
@@ -1341,13 +1469,24 @@ class PerfilArtista : AppCompatActivity() {
                     Log.d("MiApp", "Reproducción registrada exitosamente")
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@PerfilArtista, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
-                    Log.e("MiApp", "Error al registrar la reproducción")
                 }
             }
 
@@ -1387,19 +1526,24 @@ class PerfilArtista : AppCompatActivity() {
                     }
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@PerfilArtista, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
-                    val errorMensaje = response.errorBody()?.string() ?: "Error desconocido"
-
-                    // Mostrar en Logcat
-                    Log.e("API_RESPONSE", "Error en la respuesta: Código ${response.code()} - $errorMensaje")
-
-                    // Mostrar en Toast
-                    Toast.makeText(this@PerfilArtista, "Error: $errorMensaje", Toast.LENGTH_LONG).show()
                 }
             }
 
@@ -1432,13 +1576,24 @@ class PerfilArtista : AppCompatActivity() {
 
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@PerfilArtista, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        Toast.makeText(this@PerfilArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@PerfilArtista, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                showToast("Sesión iniciada en otro dispositivo")
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
-                    Log.e("ModoOscuro", "Error: ${response.code()} - ${response.errorBody()?.string()}")
                 }
             }
 

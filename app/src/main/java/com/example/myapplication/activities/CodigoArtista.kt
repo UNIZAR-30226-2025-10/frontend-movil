@@ -19,6 +19,7 @@ import com.example.myapplication.io.ApiService
 import com.example.myapplication.io.response.VerifyArtistResponse
 import com.example.myapplication.io.request.VerifyArtistRequest
 import com.example.myapplication.utils.Preferencias
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -114,11 +115,23 @@ class CodigoArtista : AppCompatActivity() {
                     }
                 } else {
                     if (response.code() == 401 && !yaRedirigidoAlLogin) {
-                        yaRedirigidoAlLogin = true
-                        val intent = Intent(this@CodigoArtista, Inicio::class.java)
-                        startActivity(intent)
-                        finish()
-                        Toast.makeText(this@CodigoArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                        val errorBody = response.errorBody()?.string()
+
+                        try {
+                            val json = JSONObject(errorBody ?: "")
+                            val errorMessage = json.getString("error")
+
+                            if (errorMessage == "Token inválido.") {
+                                yaRedirigidoAlLogin = true
+                                val intent = Intent(this@CodigoArtista, Inicio::class.java)
+                                startActivity(intent)
+                                finish()
+                                Toast.makeText(this@CodigoArtista, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                            }
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     } else {
                         showToast("Código incorrecto")
                     }
