@@ -175,6 +175,28 @@ class EstadisticasCancion : AppCompatActivity() {
         reproducciones.text = "$formattedRepros Reproducciones"
 
 
+        val profileImageButton = findViewById<ImageButton>(R.id.profileImageButton)
+
+        // Obtener la URL de la imagen de perfil desde SharedPreferences
+        val profileImageUrl = Preferencias.obtenerValorString("fotoPerfil", "")
+
+        Log.d("ProfileImage", "URL de la imagen de perfil: $profileImageUrl")
+
+
+        // Verificar si la API devolvió "DEFAULT" o si no hay imagen guardada
+        if (profileImageUrl.isNullOrEmpty() || profileImageUrl == "DEFAULT") {
+            // Cargar la imagen predeterminada
+            profileImageButton.setImageResource(R.drawable.ic_profile)
+        } else {
+            // Cargar la imagen desde la URL con Glide
+            Glide.with(this)
+                .load(profileImageUrl)
+                .circleCrop()
+                .placeholder(R.drawable.ic_profile) // Imagen por defecto mientras carga
+                .error(R.drawable.ic_profile) // Imagen si hay error
+                .into(profileImageButton)
+        }
+
         Glide.with(this)
             .load(fotoUrl)
             .into(fotoPortada)
@@ -254,7 +276,9 @@ class EstadisticasCancion : AppCompatActivity() {
             dialog.show()
         }
 
+        progressBar = findViewById(R.id.progressBar)
         setupNavigation()
+        updateMiniReproductor()
     }
 
     private fun formatearDuracion(segundos: Int): String {
