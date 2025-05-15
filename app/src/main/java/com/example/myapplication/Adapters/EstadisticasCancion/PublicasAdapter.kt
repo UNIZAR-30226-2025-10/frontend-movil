@@ -32,7 +32,6 @@ class PublicasAdapter(private val lista: List<Publicas>) : RecyclerView.Adapter<
         } else {
             Glide.with(holder.itemView.context)
                 .load(elemento.fotoPortada)
-                .circleCrop()
                 .into(holder.imagen)
         }
     }

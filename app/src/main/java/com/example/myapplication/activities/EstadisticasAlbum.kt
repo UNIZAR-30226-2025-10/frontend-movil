@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -41,6 +42,7 @@ import java.util.Locale
 import java.text.NumberFormat
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -346,7 +348,6 @@ class EstadisticasAlbum : AppCompatActivity() {
         }
 
         val builder = AlertDialog.Builder(this)
-            .setTitle("Editar Álbum")
             .setView(dialogView)
             .setPositiveButton("Guardar Cambios") { _, _ ->
                 val newName = editTextDialog.text.toString()
@@ -359,6 +360,8 @@ class EstadisticasAlbum : AppCompatActivity() {
             .setNegativeButton("Cancelar", null)
 
         val dialog = builder.create()
+        val color = ContextCompat.getColor(this, R.color.blancoOscuro)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(color))
         currentDialog = dialog
 
         imageViewDialog.setOnClickListener {

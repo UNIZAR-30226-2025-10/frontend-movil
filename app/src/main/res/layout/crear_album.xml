@@ -307,7 +307,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Añadidas"
-                android:textColor="#000e3b"
+                style="@style/TextColor"
                 android:textSize="14sp"
                 android:fontFamily="@font/poppins_regular"
                 android:layout_marginBottom="4dp"
