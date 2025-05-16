@@ -93,6 +93,7 @@ class PerfilArtista : AppCompatActivity() {
     private var imageUri: Uri? = null
     private var profileImageViewDialog: ImageView? = null
     private var yaRedirigidoAlLogin = false
+    private lateinit var dot: View
 
     private val openGalleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
@@ -161,6 +162,32 @@ class PerfilArtista : AppCompatActivity() {
         }
     }
 
+    //EVENTOS PARA LAS NOTIFICACIONES
+    private val listenerNovedad: (Novedad) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
+    private val listenerSeguidor: (Seguidor) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
+    private val listenerInvitacion: (InvitacionPlaylist) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
+    private val listenerInteraccion: (Interaccion) -> Unit = {
+        runOnUiThread {
+            Log.d("LOGS_NOTIS", "evento en home")
+            dot.visibility = View.VISIBLE
+        }
+    }
+
     @SuppressLint("WrongViewCast", "MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -185,7 +212,7 @@ class PerfilArtista : AppCompatActivity() {
         // Cargar datos
         loadProfileImage()
         loadProfileData()
-        loadArtistAlbums()
+        //loadArtistAlbums()
 
         val followers: TextView = findViewById(R.id.followers)
         val following: TextView = findViewById(R.id.following)
@@ -248,6 +275,16 @@ class PerfilArtista : AppCompatActivity() {
         recyclerViewEscuchas.adapter = escuchasAdapter
         getHistorialEscuchas()
 
+        /*cancionesAdapter = CancionesAdapter(mutableListOf(),nombreUsuario) { cancion ->
+            val cancionId = Preferencias.obtenerValorString("cancionActualId", "")
+            if(cancionId == cancion.id){
+                startActivity(Intent(this@PerfilArtista, CancionReproductorDetail::class.java))
+            }
+            else {
+                reproducir(cancion.id)
+            }
+        }
+        recyclerViewCanciones.adapter = cancionesAdapter*/
 
 
         recyclerViewPlaylists = findViewById(R.id.recyclerViewPlaylistsP)
@@ -342,6 +379,20 @@ class PerfilArtista : AppCompatActivity() {
             }
             cambiarModoOsucro()
         }
+
+        dot = findViewById<View>(R.id.notificationDot)
+        //PARA EL CIRCULITO ROJO DE NOTIFICACIONES
+        if (Preferencias.obtenerValorBooleano("hay_notificaciones",false) == true) {
+            dot.visibility = View.VISIBLE
+        } else {
+            dot.visibility = View.GONE
+        }
+
+        //Para actualizar el punto rojo en tiempo real, suscripcion a los eventos
+        WebSocketEventHandler.registrarListenerNovedad(listenerNovedad)
+        WebSocketEventHandler.registrarListenerSeguidor(listenerSeguidor)
+        WebSocketEventHandler.registrarListenerInvitacion(listenerInvitacion)
+        WebSocketEventHandler.registrarListenerInteraccion(listenerInteraccion)
 
         progressBar = findViewById(R.id.progressBar)
         updateMiniReproductor()
@@ -443,6 +494,7 @@ class PerfilArtista : AppCompatActivity() {
                             // Actualizar el adaptador con los nuevos álbumes
                             cancionesAdapter.updateDataMisCanciones(misCanciones)
                             Log.d("PERFIL_ARTISTA", "entra en on response 3")
+
                             // Mostrar u ocultar el RecyclerView según si hay álbumes
                             if (misCanciones.isNotEmpty()) {
                                 recyclerViewCanciones.visibility = View.VISIBLE
@@ -515,6 +567,7 @@ class PerfilArtista : AppCompatActivity() {
                                 }
                             }
                             recyclerViewCanciones.adapter = cancionesAdapter
+                            loadArtistAlbums()
 
                         } else {
                             handleErrorCode(it.respuestaHTTP)
@@ -1678,6 +1731,14 @@ class PerfilArtista : AppCompatActivity() {
         else{
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        WebSocketEventHandler.eliminarListenerNovedad(listenerNovedad)
+        WebSocketEventHandler.eliminarListenerSeguidor(listenerSeguidor)
+        WebSocketEventHandler.eliminarListenerInvitacion(listenerInvitacion)
+        WebSocketEventHandler.eliminarListenerInteraccion(listenerInteraccion)
     }
 
     override fun onResume() {

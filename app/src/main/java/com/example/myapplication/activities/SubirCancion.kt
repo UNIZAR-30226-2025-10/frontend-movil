@@ -822,22 +822,59 @@ class SubirCancion : AppCompatActivity() {
                     } else {
                         albumSeleccionado = spinner.selectedItem as MiAlbum
                         if (existia == false) {
-                            apiService.deleteAlbum(authHeader, albumSeleccionado!!.id)
-                                .enqueue(object : Callback<DeleteAlbumResponse> {
-                                    override fun onResponse(
-                                        call: Call<DeleteAlbumResponse>,
-                                        response: Response<DeleteAlbumResponse>
-                                    ) {
-                                        if (response.isSuccessful) {}
-                                    }
+                            Log.d("Borrar álbum", "EN EXISTIA FALSE")
 
-                                    override fun onFailure(
-                                        call: Call<DeleteAlbumResponse>,
-                                        t: Throwable
-                                    ) {
-                                        Log.d("Borrar álbum", "Error en la solicitud: ${t.message}")
+                            val token = Preferencias.obtenerValorString("token", "")
+                            val authHeader = "Bearer $token"
+
+                            apiService.getMisAlbumesArtista(authHeader).enqueue(object : Callback<MisAlbumesResponse> {
+                                override fun onResponse(
+                                    call: Call<MisAlbumesResponse>,
+                                    response: Response<MisAlbumesResponse>
+                                ) {
+                                    if (response.isSuccessful) {
+                                        val misAlbumes = response.body()?.albumes ?: emptyList()
+                                        val idMasAlto = misAlbumes
+                                            .mapNotNull { it.id.toIntOrNull() }
+                                            .maxOrNull()
+
+                                        Log.d("Borrar álbum", "id:" + idMasAlto)
+                                        apiService.deleteAlbum(authHeader, idMasAlto.toString())
+                                            .enqueue(object : Callback<DeleteAlbumResponse> {
+                                                override fun onResponse(
+                                                    call: Call<DeleteAlbumResponse>,
+                                                    response: Response<DeleteAlbumResponse>
+                                                ) {
+                                                    if (response.isSuccessful) {}
+                                                }
+
+                                                override fun onFailure(
+                                                    call: Call<DeleteAlbumResponse>,
+                                                    t: Throwable
+                                                ) {
+                                                    Log.d("Borrar álbum", "Error en la solicitud: ${t.message}")
+                                                }
+                                            })
+
+                                    } else {
+                                        loadingDialog?.dismiss()
+                                        Log.d("Mis albumes", "Error al obtener los álbumes: ${response.code()} - ${response.message()}")
+                                        if (response.code() == 401 && !yaRedirigidoAlLogin) {
+                                            yaRedirigidoAlLogin = true
+                                            val intent = Intent(this@SubirCancion, Inicio::class.java)
+                                            startActivity(intent)
+                                            finish()
+                                            Toast.makeText(this@SubirCancion, "Sesión iniciada en otro dispositivo", Toast.LENGTH_SHORT).show()
+                                        }
                                     }
-                                })
+                                }
+
+                                override fun onFailure(call: Call<MisAlbumesResponse>, t: Throwable) {
+                                    loadingDialog?.dismiss()
+                                    Log.d("Mis albumes", "Error en la solicitud: ${t.message}")
+                                    Toast.makeText(this@SubirCancion, "Error en la solicitud: ${t.message}", Toast.LENGTH_SHORT).show()
+                                }
+                            })
                         }
 
                         loadingDialog?.dismiss()

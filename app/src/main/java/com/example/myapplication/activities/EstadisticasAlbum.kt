@@ -995,5 +995,6 @@ class EstadisticasAlbum : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         updateMiniReproductor()
+        datosAlbum()
     }
  }

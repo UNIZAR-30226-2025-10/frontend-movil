@@ -856,6 +856,7 @@ class CrearAlbum : AppCompatActivity() {
                 if (response.isSuccessful) {
                     Log.d("Crear cancion", "Cancion creada con éxito")
                     if (esUltimo) {
+                        Log.d("Crear cancion", "Cancion ULTIMA creada con éxito")
                         if (nombreFallida == null) {
                             loadingDialog?.dismiss()
                             finish()
@@ -945,7 +946,30 @@ class CrearAlbum : AppCompatActivity() {
                             val mensajeError = json.getString("error")
                             nombreFallida = nombreCancion
                             featFallida = mensajeError
+                            if (esUltimo) {
+                                loadingDialog?.dismiss()
+                                val dialog = Dialog(this@CrearAlbum)
+                                dialog.setContentView(R.layout.dialog_aviso_album)
+                                dialog.setCancelable(true)
 
+                                val txtMensaje = dialog.findViewById<TextView>(R.id.txtMensaje)
+                                val btnCerrar = dialog.findViewById<ImageView>(R.id.btnCerrar)
+
+
+                                val palabras = featFallida!!.split(" ")
+                                val terceraPalabra = if (palabras.size >= 3) palabras[2] else ""
+
+                                txtMensaje.text = "El álbum se ha creado sin la canción '" + nombreFallida + "' porque el artista " + terceraPalabra + " no existe."
+
+                                btnCerrar.setOnClickListener {
+                                    nombreFallida = null
+                                    featFallida = null
+                                    dialog.dismiss()
+                                    finish()
+                                }
+
+                                dialog.show()
+                            }
                         } catch (e: Exception) {
                             Toast.makeText(
                                 this@CrearAlbum,
